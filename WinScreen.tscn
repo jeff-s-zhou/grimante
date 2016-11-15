@@ -1,0 +1,20 @@
+[gd_scene format=1]
+
+[node name="WinScreen" type="Node2D"]
+
+[node name="Label" type="Label" parent="."]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 624.0
+margin/top = 448.0
+margin/right = 710.0
+margin/bottom = 480.0
+text = "You win!!!"
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+
