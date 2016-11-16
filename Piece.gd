@@ -11,6 +11,8 @@ var state = States.DEFAULT
 var coords
 var side = "PLAYER"
 
+signal invalid_move
+
 var type
 
 func _ready():
@@ -21,7 +23,6 @@ func _ready():
 	get_node("ClickArea").connect("mouse_exit", self, "undisplay_action_range")
 	set_process_input(true)
 
-	
 
 func initialize(type):
 	add_to_group("player_pieces")
@@ -34,13 +35,17 @@ func turn_update():
 	self.state = States.DEFAULT
 	
 func set_coords(coords):
+	get_parent().move_piece(self.coords, coords)
 	self.coords = coords
 
 #when another unit is able to move to this location, it calls this function
 func movement_highlight():
 	pass
 	
-func movement_unhighlight():
+func attack_highlight():
+	pass
+	
+func unhighlight():
 	pass
 
 func input_event(viewport, event, shape_idx):
@@ -48,7 +53,7 @@ func input_event(viewport, event, shape_idx):
 	and event.button_index == BUTTON_LEFT and event.pressed and self.state != States.PLACED:
 		self.state = States.CLICKED
 
-		
+
 func input(event):
 	if self.state == States.CLICKED:
 		if event.type == InputEvent.MOUSE_BUTTON and event.button_index == BUTTON_LEFT and !event.pressed:
@@ -58,20 +63,23 @@ func input(event):
 				if type.act(self.coords, dropped_location.coords, get_parent()):
 					self.state = States.PLACED
 				else:
+					emit_signal("invalid_move")
 					self.state = States.DEFAULT
+
 
 #called when hovered over during player turn		
 func display_action_range():
 	if self.state == States.DEFAULT or self.state == States.CLICKED:
 		type.display_action_range(self.coords, get_parent())
 
+
 #only undisplay if the unit isn't selected
 func undisplay_action_range():
 	if self.state != States.CLICKED:
 		get_parent().reset_highlighting()
-	
-func push(distance):
-	get_parent().move_piece(self.coords, self.coords + distance)
 
+
+func push(distance):
+	type.move_to(self.coords, self.coords + distance, get_parent())
+	set_coords(self.coords + distance)
 	
-		

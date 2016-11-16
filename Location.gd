@@ -23,7 +23,10 @@ func set_coords(coords):
 func movement_highlight():
 	external_set_opacity()
 	
-func movement_unhighlight():
+func attack_highlight():
+	external_set_opacity(0.7)
+	
+func unhighlight():
 	external_set_opacity(0.4)
 	
 func _mouse_entered():

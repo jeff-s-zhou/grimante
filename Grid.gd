@@ -14,15 +14,15 @@ var pieces = {}
 
 #in order, (0, 8), (1, 8), (1, 9), (2, 9), (2, 10), (3, 10), (3, 11), (4, 11), (4, 12)
 
-var _GRID_X_OFFSET = -400
-var _GRID_Y_OFFSET = -400
+const _GRID_X_OFFSET = -400
+const _GRID_Y_OFFSET = -400
 
-var TILE_X_OFFSET = 8
-var TILE_Y_OFFSET = 32
+const TILE_X_OFFSET = 8
+const TILE_Y_OFFSET = 32
 
-var _Z_PIECE_OFFSET = Vector2(0, -0) #this is to offset for the pseudo-3d vertical distance of pieces
+const _Z_PIECE_OFFSET = Vector2(0, -0) #this is to offset for the pseudo-3d vertical distance of pieces
 
-var _LOCATION_Y_OFFSETS = [0, 1, 1, 2, 2, 3, 3, 4, 4]
+const _LOCATION_Y_OFFSETS = [0, 1, 1, 2, 2, 3, 3, 4, 4]
 
 var current_location
 
@@ -57,7 +57,7 @@ func set_current_location(location):
 	
 func add_piece(coords, piece):
 	pieces[coords] = piece
-	piece.set_coords(coords)
+	piece.coords = coords
 	var location = locations[coords]
 	piece.set_pos(location.get_pos() + _Z_PIECE_OFFSET)
 	add_child(piece)
@@ -81,9 +81,9 @@ func get_at_location(coords):
 #done once a piece is moved by the player	
 func reset_highlighting():
 	for location in locations.values():
-		location.movement_unhighlight()
+		location.unhighlight()
 	for piece in pieces.values():
-		piece.movement_unhighlight()
+		piece.unhighlight()
 
 #direction goes from 0-5, clockwise from top
 #magnitude is 1 indexed
@@ -144,15 +144,29 @@ func get_radial_neighbors(coords, radial_range=[1, 3]):
 	var diagonal_radial_range = [radial_range[0], radial_range[1] - 1]
 	return get_neighbors(coords, radial_range) + get_diagonal_neighbors(coords, diagonal_radial_range)
 
-#helper function for normalizing a single tile distance
-func hex_normalize(vector):
-	var reg_normalized = vector.normalized()
-	if reg_normalized.get_aspect() == 1.0:
-		if reg_normalized.x < 0:
-			return Vector2(-1, -1)
-		else:
-			return Vector2(1, 1)
-	return reg_normalized
+
+	
+static func hex_normalize(vector):
+	if(vector.x == 0 or vector.y == 0):
+		return vector.normalized()
+	else:
+		var lowest_denominator = abs(vector.x)
+		if(vector.y < vector.x):
+			lowest_denominator = abs(vector.y)
+		return Vector2(vector.x/lowest_denominator, vector.y/lowest_denominator)
+
+#utility function for enemy unit deployment
+func get_top_of_column(column):
+	return Vector2(column, _LOCATION_Y_OFFSETS[column])
+
+
+#utility function for player unit deployment
+func get_bottom_of_column(column):
+	var column_count = 8
+	if column % 2 == 1:
+		column_count = 7
+			
+	return Vector2(column, _LOCATION_Y_OFFSETS[column] + column_count - 1)
 
 
 

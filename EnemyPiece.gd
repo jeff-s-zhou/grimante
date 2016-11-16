@@ -1,9 +1,14 @@
 
-extends Area2D
+extends KinematicBody2D
 
 # member variables here, example:
 # var a=2
 # var b="textvar"
+
+const STATES = {"default":0, "moving":1}
+var animation_state = STATES.default
+var velocity
+var new_position
 
 var coords #enemies move automatically each turn a certain number of spaces forward
 var hp
@@ -11,11 +16,12 @@ var type
 var side = "ENEMY"
 
 signal broke_defenses
+signal turn_finished
 
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	set_process(true)
+	set_fixed_process(true)
 
 func initialize(type):
 	add_to_group("enemy_pieces")
@@ -45,22 +51,40 @@ func set_coords(coords):
 func movement_highlight():
 	pass
 	
-func movement_unhighlight():
+func unhighlight():
 	pass
 	
-func move(old_coords, new_coords):
+func attack_highlight():
+	pass
+	
+	
+func move_to(old_coords, new_coords):
 	self.coords = new_coords
 	get_parent().move_piece(old_coords, new_coords)
 	var location = get_parent().locations[new_coords]
-	move_animation(location.get_pos())
+	new_position = location.get_pos()
+	velocity = (location.get_pos() - get_pos()).normalized() * 4
+	self.animation_state = STATES.moving
 	
-func move_animation(new_position):
-	var increment = (new_position - get_pos()).normalized()
-	while(!(new_position - get_pos()).length() < 1.0):
-		print(get_pos() + increment)
-		set_pos(get_pos() + increment)
-	set_pos(new_position)
+
+func move_animation(delta):
+	var old_pos = get_parent().get_pos()
+	move(velocity) 
 	
+
+func _fixed_process(delta):
+	if self.animation_state == STATES.moving:
+		var difference = (new_position - get_pos()).length()
+		if (difference < 6.0):
+			self.animation_state = STATES.default
+			set_pos(new_position)
+			emit_signal("turn_finished")
+		else:
+			move_animation(delta)
+			
+
+func get_movement_value():
+	return type.movement_value
 
 
 #called at the start of enemy turn
@@ -69,7 +93,9 @@ func turn_update():
 		emit_signal("broke_defenses")
 		delete_self()
 	else:
+		print("turn updating")
 		if get_parent().pieces.has(coords + type.movement_value):
+			print("obstructing")
 			#if a player piece, move it first
 			var obstructing_piece = get_parent().pieces[coords + type.movement_value]
 			if obstructing_piece.side == "PLAYER":
@@ -77,5 +103,5 @@ func turn_update():
 				
 		#now if the space in front is free, move it
 		if !get_parent().pieces.has(coords + type.movement_value):
-			move(coords, coords + type.movement_value)
+			move_to(coords, coords + type.movement_value)
 		

@@ -1,8 +1,13 @@
-[gd_scene load_steps=5 format=1]
+[gd_scene load_steps=6 format=1]
 
 [ext_resource path="res://Piece.gd" type="Script" id=1]
 [ext_resource path="res://Assets/berserker_piece.png" type="Texture" id=2]
 [ext_resource path="res://ClickArea.gd" type="Script" id=3]
+
+[sub_resource type="ConvexPolygonShape2D" id=2]
+
+custom_solver_bias = 0.0
+points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 
@@ -12,6 +17,9 @@ points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
 [node name="Piece" type="KinematicBody2D"]
 
 input/pickable = true
+shapes/0/shape = SubResource( 2 )
+shapes/0/transform = Matrix32( 0.45, 0, 0, 0.45, 0, 3.13676 )
+shapes/0/trigger = false
 collision/layers = 1
 collision/mask = 1
 collision/margin = 0.08
@@ -21,6 +29,14 @@ script/script = ExtResource( 1 )
 
 transform/pos = Vector2( 0, -4 )
 texture = ExtResource( 2 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+
+transform/pos = Vector2( 0, 3.13676 )
+transform/scale = Vector2( 0.45, 0.45 )
+shape = SubResource( 2 )
+trigger = false
+_update_shape_index = 0
 
 [node name="ClickArea" type="Area2D" parent="."]
 
