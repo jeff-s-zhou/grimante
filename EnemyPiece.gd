@@ -6,7 +6,9 @@ extends KinematicBody2D
 # var b="textvar"
 
 const STATES = {"default":0, "moving":1}
+const MOVE_SPEED = 4
 var animation_state = STATES.default
+var action_highlighted = false
 var velocity
 var new_position
 
@@ -22,11 +24,18 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	set_fixed_process(true)
+	get_node("ClickArea").connect("mouse_enter", self, "hover_highlight")
+	get_node("ClickArea").connect("mouse_exit", self, "hover_unhighlight")
 
 func initialize(type):
+	set_z(-1)
 	add_to_group("enemy_pieces")
+	#set_opacity(0.0)
 	self.type = type
 	set_hp(type.max_hp)
+	
+func animate_summon():
+	get_node("AnimationPlayer").play("summon")
 	
 func set_hp(hp):
 	if hp <= 0:
@@ -46,16 +55,37 @@ func attacked(damage):
 	
 func set_coords(coords):
 	self.coords = coords
+	
+func hover_highlight():
+	if self.action_highlighted:
+		get_node("Sprite").play("attack_range_hover")
+	
+func hover_unhighlight():
+	if self.action_highlighted:
+		get_node("Sprite").play("attack_range")
 
 #when another unit is able to move to this location, it calls this function
 func movement_highlight():
-	pass
+	self.action_highlighted = true
+	get_node("Sprite").play("attack_range")
 	
 func unhighlight():
-	pass
+	self.action_highlighted = false
+	get_node("Sprite").play("default")
 	
 func attack_highlight():
-	pass
+	get_node("Sprite").play("attack_range")
+	
+func push(distance):
+	if get_parent().locations.has(self.coords + distance):
+		#if there's something in front, push that
+		if get_parent().pieces.has(self.coords + distance):
+			get_parent().pieces[self.coords + distance].push(distance)
+			
+		move_to(self.coords, self.coords + distance)
+		set_coords(self.coords + distance)
+	else:
+		delete_self()
 	
 	
 func move_to(old_coords, new_coords):
@@ -63,7 +93,7 @@ func move_to(old_coords, new_coords):
 	get_parent().move_piece(old_coords, new_coords)
 	var location = get_parent().locations[new_coords]
 	new_position = location.get_pos()
-	velocity = (location.get_pos() - get_pos()).normalized() * 4
+	velocity = (location.get_pos() - get_pos()).normalized() * MOVE_SPEED
 	self.animation_state = STATES.moving
 	
 
@@ -93,9 +123,7 @@ func turn_update():
 		emit_signal("broke_defenses")
 		delete_self()
 	else:
-		print("turn updating")
 		if get_parent().pieces.has(coords + type.movement_value):
-			print("obstructing")
 			#if a player piece, move it first
 			var obstructing_piece = get_parent().pieces[coords + type.movement_value]
 			if obstructing_piece.side == "PLAYER":

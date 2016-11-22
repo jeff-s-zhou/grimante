@@ -1,5 +1,5 @@
 
-extends Node
+extends "PlayerPieceType.gd"
 
 # member variables here, example:
 # var a=2
@@ -7,20 +7,21 @@ extends Node
 
 const texture_path = "res://Assets/berserker_piece.png"
 
-const DAMAGE = 2
+const DAMAGE = 3
 const AOE_DAMAGE = 2
 
-const STATES = {"default":0, "jumping":1, "moving":2, "landing":3}
+const STATES = {"default":0, "moving":1, "jumping":2}
 
 var animation_state = STATES.default
 var velocity
-var jump_up_position
-var jump_down_position
 var new_position
 
-const JUMP_HEIGHT = Vector2(0, -40)
-const JUMP_VELOCITY = Vector2(0, -2)
-const LAND_VELOCITY = Vector2(0, 8)
+const UNIT_TYPE = "Berserker"
+
+const DESCRIPTION = """Armor: 2\n
+Movement: 2 range leap\n
+Attack: Leap Strike. Leap to a tile within movement range. If there is an enemy on the tile, deal 3 damage. If the enemy is not killed by the attack, return to your original tile. Otherwise, move to the tile.\n
+Passive: Ground Slam. Moving to a tile deals 2 damage in a 1-range AoE around your destination. Will KO light armor allies."""
 
 signal animation_finished
 
@@ -34,79 +35,98 @@ func display_action_range(coords, grid):
 	var neighbors = grid.get_radial_neighbors(coords)
 	for neighbor in neighbors:
 		neighbor.movement_highlight()
-	
-func move_to(old_coords, new_coords, grid):
+
+
+func move_to(old_coords, new_coords, grid, speed=4):
 	var location = grid.locations[new_coords]
-	jump_up_position = get_parent().get_pos() + JUMP_HEIGHT
 	new_position = location.get_pos()
-	jump_down_position = new_position + JUMP_HEIGHT
+	velocity = (location.get_pos() - get_parent().get_pos()).normalized() * speed
+	self.animation_state = STATES.moving
+
+
+func jump_to(old_coords, new_coords, grid):
+	var location = grid.locations[new_coords]
+	new_position = location.get_pos()
 	velocity = (location.get_pos() - get_parent().get_pos()).normalized() * 4
+	get_node("AnimationPlayer").play("jump")
+	yield( get_node("AnimationPlayer"), "finished" )
 	self.animation_state = STATES.jumping
 	
 	
 func _fixed_process(delta):
-	if self.animation_state == STATES.jumping:
-		var difference = (jump_up_position -  get_parent().get_pos()).length()
-		if (difference < 3.0):
-			self.animation_state = STATES.moving
-			get_parent().set_pos(jump_up_position)
-		else:
-			get_parent().move(JUMP_VELOCITY)
-	
 	if self.animation_state == STATES.moving:
-		var difference = (jump_down_position - get_parent().get_pos()).length()
-		if (difference < 6.0):
-			self.animation_state = STATES.landing
-			get_parent().set_pos(jump_down_position)
-		else:
-			get_parent().move(velocity) 
-			
-	if self.animation_state == STATES.landing:
 		var difference = (new_position - get_parent().get_pos()).length()
 		if (difference < 3.0):
 			self.animation_state = STATES.default
 			get_parent().set_pos(new_position)
 			emit_signal("animation_finished")
 		else:
-			get_parent().move(LAND_VELOCITY)
+			get_parent().move(velocity)
+			
+	if self.animation_state == STATES.jumping:
+		var difference = (new_position - get_parent().get_pos()).length()
+		get_node("AnimationPlayer").play("float")
+		if (difference < 3.0):
+			get_node("AnimationPlayer").play("smash")
+			self.animation_state = STATES.default
+			get_parent().set_pos(new_position)
+			emit_signal("animation_finished")
+		else:
+			get_parent().move(velocity)
 
 
 func act(old_coords, new_coords, grid):
 	#returns whether the act was successfully committed
 	var committed = false
+	
+	#if the unit doesn't actually move
+	if old_coords == new_coords:
+		return committed
+	
 	if _is_within_range(old_coords, new_coords, grid):
 		if grid.pieces.has(new_coords): #if there's a piece in the new coord
 			if grid.pieces[new_coords].side == "ENEMY":
 				committed = true
-				grid.pieces[new_coords].attacked(DAMAGE)
 				smash_attack(old_coords, new_coords, grid)
-			else:
-				move_to(old_coords, old_coords, grid)
 
 		else: #else move to the location
 			committed = true
-			smash_attack(old_coords, new_coords, grid)
-			
-	else:
-		move_to(old_coords, old_coords, grid)
+			smash_move(old_coords, new_coords, grid)
 
 	grid.reset_highlighting()
 	return committed
-	
+
+
 func smash_attack(old_coords, new_coords, grid):
-	var neighbors = []
-	
-	
-	#check if we killed the unit, if so, move there
-	if !grid.pieces.has(new_coords):
-		move_to(old_coords, new_coords, grid)
-		neighbors = grid.get_neighbors(new_coords)
+	if grid.pieces[new_coords].hp - DAMAGE <= 0:
+		jump_to(old_coords, new_coords, grid)
+		yield(self, "animation_finished")
+		grid.pieces[new_coords].attacked(DAMAGE)
+		var neighbors = grid.get_neighbors(new_coords)
+		smash(neighbors)
 		get_parent().set_coords(new_coords)
+		placed()
+		
+	#else leap back
 	else:
-		move_to(old_coords, old_coords, grid)
-		neighbors = grid.get_neighbors(old_coords)
-	
-	#deal aoe damage to wherever you land
+		jump_to(old_coords, new_coords, grid)
+		yield(self, "animation_finished")
+		grid.pieces[new_coords].attacked(DAMAGE)
+		jump_to(new_coords, old_coords, grid)
+		yield(self, "animation_finished")
+		placed()
+
+
+func smash_move(old_coords, new_coords, grid):
+	jump_to(old_coords, new_coords, grid)
+	yield(self, "animation_finished")
+	var neighbors = grid.get_neighbors(new_coords)
+	smash(neighbors)
+	get_parent().set_coords(new_coords)
+	placed()
+
+
+func smash(neighbors):
 	for neighbor in neighbors:
 		if neighbor.has_method("attacked"):
 			neighbor.attacked(AOE_DAMAGE)

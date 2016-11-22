@@ -7,11 +7,14 @@ extends KinematicBody2D
 
 var States = {"LOCKED":0, "DEFAULT":1, "CLICKED": 2, "PLACED":3}
 
-var state = States.DEFAULT
+var state = States.PLACED
 var coords
 var side = "PLAYER"
 
+const SHOVE_SPEED = 4
+
 signal invalid_move
+signal description_data(unit_name, description)
 
 var type
 
@@ -19,19 +22,27 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	
-	get_node("ClickArea").connect("mouse_enter", self, "display_action_range")
-	get_node("ClickArea").connect("mouse_exit", self, "undisplay_action_range")
+	get_node("ClickArea").connect("mouse_enter", self, "hovered")
+	get_node("ClickArea").connect("mouse_exit", self, "unhovered")
 	set_process_input(true)
+	
+func is_placed():
+	return self.state == States.PLACED
 
+func delete_self():
+	get_parent().pieces.erase(self.coords)
+	remove_from_group("player_pieces")
+	self.queue_free()
 
 func initialize(type):
+	set_z(0)
 	add_to_group("player_pieces")
 	self.type = type
 	add_child(type)
-	var texture = load(type.texture_path)
-	get_node("Sprite").set_texture(texture)
+	get_node("PlaceholderSprite").set_opacity(0.0)
 	
 func turn_update():
+	self.type.turn_update()
 	self.state = States.DEFAULT
 	
 func set_coords(coords):
@@ -68,18 +79,29 @@ func input(event):
 
 
 #called when hovered over during player turn		
-func display_action_range():
+func hovered():
+	emit_signal("description_data", self.type.UNIT_TYPE, self.type.DESCRIPTION)
 	if self.state == States.DEFAULT or self.state == States.CLICKED:
+		type.hover_highlight()
 		type.display_action_range(self.coords, get_parent())
 
 
 #only undisplay if the unit isn't selected
-func undisplay_action_range():
+func unhovered():
+	if self.state != States.PLACED:
+		type.hover_unhighlight()
 	if self.state != States.CLICKED:
 		get_parent().reset_highlighting()
 
 
 func push(distance):
-	type.move_to(self.coords, self.coords + distance, get_parent())
-	set_coords(self.coords + distance)
+	if get_parent().locations.has(self.coords + distance):
+		#if there's something in front, push that
+		if get_parent().pieces.has(self.coords + distance):
+			get_parent().pieces[self.coords + distance].push(distance)
+		
+		type.move_to(self.coords, self.coords + distance, get_parent(), SHOVE_SPEED)
+		set_coords(self.coords + distance)
+	else:
+		delete_self()
 	

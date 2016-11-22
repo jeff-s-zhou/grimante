@@ -1,0 +1,83 @@
+[gd_scene load_steps=10 format=1]
+
+[ext_resource path="res://UI/PhaseShifter.gd" type="Script" id=1]
+[ext_resource path="res://Assets/screen.png" type="Texture" id=2]
+[ext_resource path="res://UI/PhaseSlider.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Assets/player_phase.png" type="Texture" id=4]
+[ext_resource path="res://Assets/enemy_phase.png" type="Texture" id=5]
+
+[sub_resource type="CanvasItemShader" id=1]
+
+_code = { "fragment":"uniform texture vignette;\nfloat radius = 0.0015;\nvec3 col = vec3(0);\n\ncol+= texscreen(SCREEN_UV+vec2(-radius,-radius));\ncol+= texscreen(SCREEN_UV+vec2(0,-radius));\ncol+= texscreen(SCREEN_UV+vec2(radius,-radius));\n\ncol+= texscreen(SCREEN_UV+vec2(-radius,0));\ncol+= texscreen(SCREEN_UV+vec2(0,0));\ncol+= texscreen(SCREEN_UV+vec2(radius,0));\n\n\ncol+= texscreen(SCREEN_UV+vec2(-radius,radius));\ncol+= texscreen(SCREEN_UV+vec2(0,radius));\ncol+= texscreen(SCREEN_UV+vec2(radius,radius));\n\ncol/=9.0;\nCOLOR.rgb=col;", "fragment_ofs":0, "light":"", "light_ofs":0, "vertex":"", "vertex_ofs":0 }
+
+[sub_resource type="CanvasItemMaterial" id=2]
+
+shader/shader = SubResource( 1 )
+shader/shading_mode = 0
+shader_param/vignette = ExtResource( 2 )
+
+[sub_resource type="Animation" id=3]
+
+resource/name = "blur"
+length = 1.8
+loop = false
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("TextureFrame:visibility/opacity")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = { "times":FloatArray( 0, 0.4, 1.4, 1.8 ), "transitions":FloatArray( 1, 1, 1, 1 ), "update":0, "values":[ 0.0, 1.0, 1.0, 0.0 ] }
+tracks/1/type = "value"
+tracks/1/path = NodePath("Text:visibility/opacity")
+tracks/1/interp = 1
+tracks/1/imported = false
+tracks/1/keys = { "times":FloatArray( 0, 0.4, 1.4, 1.8 ), "transitions":FloatArray( 1, 1, 1, 1 ), "update":0, "values":[ 0.0, 1.0, 1.0, 0.0 ] }
+
+[sub_resource type="SpriteFrames" id=4]
+
+animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"player_phase", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"enemy_phase", "speed":5.0 } ]
+
+[node name="PhaseShifter" type="Node2D"]
+
+script/script = ExtResource( 1 )
+
+[node name="TextureFrame" type="TextureFrame" parent="."]
+
+visibility/opacity = 0.0
+material/material = SubResource( 2 )
+anchor/right = 1
+anchor/bottom = 1
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = -1336.0
+margin/bottom = -896.0
+texture = ExtResource( 2 )
+stretch_mode = 0
+
+[node name="PhaseSlider" parent="." instance=ExtResource( 3 )]
+
+[node name="PhaseSlider 2" parent="." instance=ExtResource( 3 )]
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+playback/process_mode = 1
+playback/default_blend_time = 0.0
+root/root = NodePath("..")
+anims/blur = SubResource( 3 )
+playback/active = true
+playback/speed = 1.0
+blend_times = [  ]
+autoplay = ""
+
+[node name="Text" type="AnimatedSprite" parent="."]
+
+visibility/opacity = 0.0
+transform/pos = Vector2( 716.508, 486.023 )
+frames = SubResource( 4 )
+animation = "enemy_phase"
+
+

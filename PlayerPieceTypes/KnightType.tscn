@@ -1,15 +1,15 @@
 [gd_scene load_steps=6 format=1]
 
-[ext_resource path="res://PlayerPieceTypes/CavalierType.gd" type="Script" id=1]
-[ext_resource path="res://Assets/cavalier_piece.png" type="Texture" id=2]
-[ext_resource path="res://Assets/cavalier_piece_light.png" type="Texture" id=3]
-[ext_resource path="res://Assets/cavalier_piece_sepia.png" type="Texture" id=4]
+[ext_resource path="res://PlayerPieceTypes/KnightType.gd" type="Script" id=1]
+[ext_resource path="res://Assets/knight_piece.png" type="Texture" id=2]
+[ext_resource path="res://Assets/knight_piece_light.png" type="Texture" id=3]
+[ext_resource path="res://Assets/knight_piece_sepia.png" type="Texture" id=4]
 
 [sub_resource type="SpriteFrames" id=1]
 
 animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"hover_highlight", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"cooldown", "speed":5.0 } ]
 
-[node name="CavalierType" type="Node2D"]
+[node name="KnightType" type="Node2D"]
 
 transform/pos = Vector2( 0, -4 )
 script/script = ExtResource( 1 )

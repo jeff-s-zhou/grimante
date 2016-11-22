@@ -1,5 +1,5 @@
 
-extends Node
+extends "PlayerPieceType.gd"
 
 # member variables here, example:
 # var a=2
@@ -15,11 +15,24 @@ var new_position
 
 signal animation_finished
 
+const UNIT_TYPE = "Archer"
+
+const DESCRIPTION = """	Armor: 1\n
+Movement: 1 range step\n
+Attack: Snipe. Attack the first enemy in a line for 2 damage. Can target "diagonally". \n
+Attack: Lob. The Archer can target any enemy unit on the map outside of its Snipe range, dealing 1 damage. \n
+Passive: Assist Shot. If an ally attacks a target that can be Sniped, the archer will follow up the attack with a Snipe. """
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	set_fixed_process(true)
 	
+func move_to(old_coords, new_coords, grid, speed=4):
+	var location = grid.locations[new_coords]
+	new_position = location.get_pos()
+	velocity = (location.get_pos() - get_parent().get_pos()).normalized() * speed
+	self.animation_state = STATES.moving
 
 #parameters to use for get_node("Grid").get_neighbors
 func display_action_range(coords, grid):
@@ -34,14 +47,6 @@ func display_action_range(coords, grid):
 	var diagonal_attack_neighbors = grid.get_diagonal_neighbors(coords, [1, 8])
 	for neighbor in diagonal_attack_neighbors:
 		neighbor.attack_highlight()
-	
-
-
-func move_to(old_coords, new_coords, grid):
-	var location = grid.locations[new_coords]
-	new_position = location.get_pos()
-	velocity = (location.get_pos() - get_parent().get_pos()).normalized() * 6
-	self.animation_state = STATES.moving
 
 
 func _fixed_process(delta):
@@ -58,6 +63,10 @@ func _fixed_process(delta):
 func act(old_coords, new_coords, grid):
 	#returns whether the act was successfully committed
 	var committed = false
+	
+	if old_coords == new_coords:
+		return committed
+	
 	#if the tile selected is within movement range
 	if _is_within_movement_range(old_coords, new_coords, grid):
 		if grid.pieces.has(new_coords): 
@@ -70,8 +79,7 @@ func act(old_coords, new_coords, grid):
 	elif _is_within_attack_range(old_coords, new_coords, grid):
 		ranged_attack(old_coords, new_coords, grid)
 		committed = true
-	else:
-		move_to(old_coords, old_coords, grid)
+		
 	grid.reset_highlighting()
 	return committed
 
@@ -79,6 +87,7 @@ func act(old_coords, new_coords, grid):
 func regular_move(old_coords, new_coords, grid):
 	move_to(old_coords, new_coords, grid)
 	yield(self, "animation_finished")
+	placed()
 	get_parent().set_coords(new_coords)
 	
 	
@@ -91,7 +100,8 @@ func ranged_attack(old_coords, new_coords, grid):
 		units_travelled += 1
 		current_coords += increment
 		if (grid.pieces.has(current_coords)):
-			grid.pieces[current_coords].attacked(4)
+			if (grid.pieces[current_coords].side == "ENEMY"):
+				grid.pieces[current_coords].attacked(4)
 			break
 		
 	

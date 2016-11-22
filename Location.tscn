@@ -1,12 +1,18 @@
-[gd_scene load_steps=4 format=1]
+[gd_scene load_steps=7 format=1]
 
 [ext_resource path="res://Location.gd" type="Script" id=1]
-[ext_resource path="res://Assets/location_prototype2.png" type="Texture" id=2]
+[ext_resource path="res://Assets/location.png" type="Texture" id=2]
+[ext_resource path="res://Assets/location_red.png" type="Texture" id=3]
+[ext_resource path="res://Assets/location_blue.png" type="Texture" id=4]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 
 custom_solver_bias = 0.0
 points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
+
+[sub_resource type="SpriteFrames" id=2]
+
+animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"attack_hover", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"movement_hover", "speed":5.0 } ]
 
 [node name="Location" type="Area2D"]
 
@@ -27,8 +33,9 @@ shape = SubResource( 1 )
 trigger = false
 _update_shape_index = 0
 
-[node name="Sprite" type="Sprite" parent="."]
+[node name="Sprite" type="AnimatedSprite" parent="."]
 
-texture = ExtResource( 2 )
+frames = SubResource( 2 )
+animation = "default"
 
 

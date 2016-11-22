@@ -4,6 +4,7 @@
 
 [node name="Menu" type="Node2D"]
 
+z/z = 100
 script/script = ExtResource( 1 )
 
 

@@ -17,12 +17,12 @@ var pieces = {}
 const _GRID_X_OFFSET = -400
 const _GRID_Y_OFFSET = -400
 
-const TILE_X_OFFSET = 8
-const TILE_Y_OFFSET = 32
+const TILE_X_OFFSET = 5
+const TILE_Y_OFFSET = 29
 
 const _Z_PIECE_OFFSET = Vector2(0, -0) #this is to offset for the pseudo-3d vertical distance of pieces
 
-const _LOCATION_Y_OFFSETS = [0, 1, 1, 2, 2, 3, 3, 4, 4]
+const _LOCATION_Y_OFFSETS = [0, 0, 1, 1, 2, 2, 3, 3, 4]
 
 var current_location
 
@@ -36,8 +36,8 @@ func _ready():
 		var offset = 0
 		var column_count = 8
 		if i % 2 == 1:
-			offset = 55
-			column_count = 7
+			offset = -52
+			column_count = 9
 		for j in range(0, column_count):
 			var location1 = location.instance()
 			var tile_x_spacing = location1.get_size().width + TILE_X_OFFSET
@@ -164,7 +164,7 @@ func get_top_of_column(column):
 func get_bottom_of_column(column):
 	var column_count = 8
 	if column % 2 == 1:
-		column_count = 7
+		column_count = 9
 			
 	return Vector2(column, _LOCATION_Y_OFFSETS[column] + column_count - 1)
 
