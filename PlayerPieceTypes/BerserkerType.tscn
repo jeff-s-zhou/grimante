@@ -2,12 +2,12 @@
 
 [ext_resource path="res://PlayerPieceTypes/BerserkerType.gd" type="Script" id=1]
 [ext_resource path="res://Assets/berserker_piece.png" type="Texture" id=2]
-[ext_resource path="res://Assets/berserker_piece_sepia.png" type="Texture" id=3]
-[ext_resource path="res://Assets/berserker_piece_light.png" type="Texture" id=4]
+[ext_resource path="res://Assets/berserker_piece_light.png" type="Texture" id=3]
+[ext_resource path="res://Assets/berserker_piece_sepia.png" type="Texture" id=4]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"cooldown", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"hover_highlight", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"hover_highlight", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"cooldown", "speed":5.0 } ]
 
 [sub_resource type="Animation" id=2]
 
@@ -51,7 +51,7 @@ tracks/0/type = "value"
 tracks/0/path = NodePath("AnimatedSprite:transform/pos")
 tracks/0/interp = 1
 tracks/0/imported = false
-tracks/0/keys = { "times":FloatArray( 0, 0.2 ), "transitions":FloatArray( 1, 1 ), "update":0, "values":[ Vector2( 0, -83.894 ), Vector2( 0, 0 ) ] }
+tracks/0/keys = { "times":FloatArray( 0, 0.2 ), "transitions":FloatArray( 1, 1 ), "update":0, "values":[ Vector2( 0, -80 ), Vector2( 0, 0 ) ] }
 tracks/1/type = "value"
 tracks/1/path = NodePath("AnimatedSprite:transform/rot")
 tracks/1/interp = 1

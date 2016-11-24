@@ -20,20 +20,47 @@ var side = "ENEMY"
 signal broke_defenses
 signal turn_finished
 
+signal pre_damage
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	set_fixed_process(true)
+	get_node("ClickArea").set_monitorable(false)
 	get_node("ClickArea").connect("mouse_enter", self, "hover_highlight")
 	get_node("ClickArea").connect("mouse_exit", self, "hover_unhighlight")
+	get_node("CollisionArea").connect("area_enter", self, "area_entered")
 
 func initialize(type):
-	set_z(-1)
+	set_z(-2)
 	add_to_group("enemy_pieces")
 	#set_opacity(0.0)
 	self.type = type
+	add_child(type)
+	self.type.set_z(-1)
 	set_hp(type.max_hp)
 	
+func hover_highlight():
+	if self.action_highlighted:
+		type.get_node("AnimatedSprite").play("attack_range_hover")
+	
+func hover_unhighlight():
+	if self.action_highlighted:
+		type.get_node("AnimatedSprite").play("attack_range")
+
+#when another unit is able to move to this location, it calls this function
+func movement_highlight():
+	self.action_highlighted = true
+	type.get_node("AnimatedSprite").play("attack_range")
+	
+func unhighlight():
+	self.action_highlighted = false
+	type.get_node("AnimatedSprite").play("default")
+	
+func attack_highlight():
+	type.get_node("AnimatedSprite").play("attack_range")
+
+
 func animate_summon():
 	get_node("AnimationPlayer").play("summon")
 	
@@ -50,31 +77,12 @@ func delete_self():
 	
 	
 func attacked(damage):
+	emit_signal("pre_damage")
 	set_hp(self.hp - damage)
 	
 	
 func set_coords(coords):
 	self.coords = coords
-	
-func hover_highlight():
-	if self.action_highlighted:
-		get_node("Sprite").play("attack_range_hover")
-	
-func hover_unhighlight():
-	if self.action_highlighted:
-		get_node("Sprite").play("attack_range")
-
-#when another unit is able to move to this location, it calls this function
-func movement_highlight():
-	self.action_highlighted = true
-	get_node("Sprite").play("attack_range")
-	
-func unhighlight():
-	self.action_highlighted = false
-	get_node("Sprite").play("default")
-	
-func attack_highlight():
-	get_node("Sprite").play("attack_range")
 	
 func push(distance):
 	if get_parent().locations.has(self.coords + distance):
@@ -132,4 +140,8 @@ func turn_update():
 		#now if the space in front is free, move it
 		if !get_parent().pieces.has(coords + type.movement_value):
 			move_to(coords, coords + type.movement_value)
+			
+			
+func area_entered(area):
+	print("enemy area entered")
 		

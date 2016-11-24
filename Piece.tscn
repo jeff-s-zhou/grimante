@@ -17,9 +17,6 @@ points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
 [node name="Piece" type="KinematicBody2D"]
 
 input/pickable = true
-shapes/0/shape = SubResource( 1 )
-shapes/0/transform = Matrix32( 0.45, 0, 0, 0.45, 0, 3.13676 )
-shapes/0/trigger = false
 collision/layers = 1
 collision/mask = 1
 collision/margin = 0.08
@@ -30,10 +27,21 @@ script/script = ExtResource( 1 )
 transform/pos = Vector2( 0, -4 )
 texture = ExtResource( 2 )
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionArea" type="Area2D" parent="."]
 
-transform/pos = Vector2( 0, 3.13676 )
-transform/scale = Vector2( 0.45, 0.45 )
+input/pickable = true
+shapes/0/shape = SubResource( 1 )
+shapes/0/transform = Matrix32( 0.430486, 0, 0, 0.430486, 0, 0.126506 )
+shapes/0/trigger = false
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea"]
+
+transform/pos = Vector2( 0, 0.126506 )
+transform/scale = Vector2( 0.430486, 0.430486 )
 shape = SubResource( 1 )
 trigger = false
 _update_shape_index = 0
@@ -42,7 +50,7 @@ _update_shape_index = 0
 
 input/pickable = true
 shapes/0/shape = SubResource( 2 )
-shapes/0/transform = Matrix32( 0.4939, 0, 0, 0.545168, 0, -4.61417 )
+shapes/0/transform = Matrix32( 0.471718, 0, 0, 0.520683, 0, -2.41054 )
 shapes/0/trigger = false
 gravity_vec = Vector2( 0, 1 )
 gravity = 98.0
@@ -52,8 +60,8 @@ script/script = ExtResource( 3 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ClickArea"]
 
-transform/pos = Vector2( 0, -4.61417 )
-transform/scale = Vector2( 0.4939, 0.545168 )
+transform/pos = Vector2( 0, -2.41054 )
+transform/scale = Vector2( 0.471718, 0.520683 )
 shape = SubResource( 2 )
 trigger = false
 _update_shape_index = 0

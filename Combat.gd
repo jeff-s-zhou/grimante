@@ -24,6 +24,8 @@ signal enemy_turn_finished
 
 var _ENEMY_TYPES = preload("res://ENEMY_TYPES.gd").new()
 
+var archer
+
 func _ready():
 
 	# Called every time the node is added to the scene.
@@ -44,7 +46,7 @@ func _ready():
 	initialize_piece(cavalier_type, 6)
 	
 	var archer_type = ArcherType.instance()
-	initialize_piece(archer_type, 5)
+	self.archer = initialize_piece(archer_type, 5)
 	
 	var knight_type = KnightType.instance()
 	initialize_piece(knight_type, 4)
@@ -60,9 +62,10 @@ func initialize_piece(type, column):
 	var piece = Piece.instance()
 	piece.connect("invalid_move", self, "handle_invalid_move")
 	piece.connect("description_data", self, "display_description")
-	piece.initialize(type)
+	piece.initialize(type, get_node("CursorArea"))
 	var position = get_node("Grid").get_bottom_of_column(column)
 	get_node("Grid").add_piece(position, piece)
+	return piece
 	
 	
 func end_turn():
@@ -128,6 +131,8 @@ func deploy_wave():
 			var enemy_piece = EnemyPiece.instance()
 			enemy_piece.connect("broke_defenses", self, "damage_defenses")
 			enemy_piece.connect("turn_finished", self, "track_turn_finished")
+			enemy_piece.connect("pre_damage", self.archer, "covering_fire")
+			
 			enemy_piece.initialize(enemy_piece_type)
 			#TODO: push enemies in front away when you deploy more than 1 in same column
 			var position = get_node("Grid").get_top_of_column(column)

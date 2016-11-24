@@ -79,10 +79,6 @@ func act(old_coords, new_coords, grid):
 	#returns whether the act was successfully committed
 	var committed = false
 	
-	#if the unit doesn't actually move
-	if old_coords == new_coords:
-		return committed
-	
 	if _is_within_range(old_coords, new_coords, grid):
 		if grid.pieces.has(new_coords): #if there's a piece in the new coord
 			if grid.pieces[new_coords].side == "ENEMY":
@@ -92,8 +88,6 @@ func act(old_coords, new_coords, grid):
 		else: #else move to the location
 			committed = true
 			smash_move(old_coords, new_coords, grid)
-
-	grid.reset_highlighting()
 	return committed
 
 

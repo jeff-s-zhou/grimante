@@ -1,20 +1,12 @@
-[gd_scene load_steps=11 format=1]
+[gd_scene load_steps=6 format=1]
 
 [ext_resource path="res://EnemyPiece.gd" type="Script" id=1]
-[ext_resource path="res://Assets/tactics_piece_prototype2_light.png" type="Texture" id=2]
-[ext_resource path="res://Assets/tactics_piece_prototype2_red.png" type="Texture" id=3]
-[ext_resource path="res://Assets/tactics_piece_prototype2_lightred.png" type="Texture" id=4]
-[ext_resource path="res://Assets/tactics_piece_prototype2.png" type="Texture" id=5]
-[ext_resource path="res://Assets/enemy_health.fnt" type="BitmapFont" id=6]
+[ext_resource path="res://Assets/enemy_health.fnt" type="BitmapFont" id=2]
 
-[sub_resource type="ConvexPolygonShape2D" id=1]
+[sub_resource type="ConvexPolygonShape2D" id=2]
 
 custom_solver_bias = 0.0
 points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
-
-[sub_resource type="SpriteFrames" id=2]
-
-animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"hover", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"attack_range", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"attack_range_hover", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"default", "speed":5.0 } ]
 
 [sub_resource type="ConvexPolygonShape2D" id=3]
 
@@ -37,24 +29,28 @@ tracks/0/keys = { "times":FloatArray( 0, 1 ), "transitions":FloatArray( 1, 1 ), 
 
 visibility/opacity = 0.0
 input/pickable = true
-shapes/0/shape = SubResource( 1 )
-shapes/0/transform = Matrix32( 0.45, 0, 0, 0.45, 0, 1.68491 )
-shapes/0/trigger = false
 collision/layers = 1
 collision/mask = 1
 collision/margin = 0.08
 script/script = ExtResource( 1 )
 
-[node name="Sprite" type="AnimatedSprite" parent="."]
+[node name="CollisionArea" type="Area2D" parent="."]
 
-frames = SubResource( 2 )
-animation = "default"
+visibility/visible = false
+input/pickable = true
+shapes/0/shape = SubResource( 2 )
+shapes/0/transform = Matrix32( 0.45, 0, 0, 0.45, 0, 1.68491 )
+shapes/0/trigger = false
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CollisionArea"]
 
 transform/pos = Vector2( 0, 1.68491 )
 transform/scale = Vector2( 0.45, 0.45 )
-shape = SubResource( 1 )
+shape = SubResource( 2 )
 trigger = false
 _update_shape_index = 0
 
@@ -62,7 +58,7 @@ _update_shape_index = 0
 
 input/pickable = true
 shapes/0/shape = SubResource( 3 )
-shapes/0/transform = Matrix32( 0.514008, 0, 0, 0.566978, 0, 0 )
+shapes/0/transform = Matrix32( 0.480031, 0, 0, 0.538866, 0, -0.973763 )
 shapes/0/trigger = false
 gravity_vec = Vector2( 0, 1 )
 gravity = 98.0
@@ -71,7 +67,8 @@ angular_damp = 1.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="ClickArea"]
 
-transform/scale = Vector2( 0.514008, 0.566978 )
+transform/pos = Vector2( 0, -0.973763 )
+transform/scale = Vector2( 0.480031, 0.538866 )
 shape = SubResource( 3 )
 trigger = false
 _update_shape_index = 0
@@ -86,7 +83,7 @@ margin/left = -6.0
 margin/top = 13.0
 margin/right = 25.0
 margin/bottom = 39.0
-custom_fonts/font = ExtResource( 6 )
+custom_fonts/font = ExtResource( 2 )
 text = "7"
 percent_visible = 1.0
 lines_skipped = 0

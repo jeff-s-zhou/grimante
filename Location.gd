@@ -15,6 +15,7 @@ func _ready():
 	get_node("Sprite").set_self_opacity(0.6)
 	connect("mouse_enter", self, "_mouse_entered")
 	connect("mouse_exit", self, "_mouse_exited")
+	set_monitorable(false)
 	set_z(-3)
 	
 func set_coords(coords):

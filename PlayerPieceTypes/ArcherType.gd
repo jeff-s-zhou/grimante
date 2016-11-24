@@ -61,27 +61,26 @@ func _fixed_process(delta):
 
 
 func act(old_coords, new_coords, grid):
-	#returns whether the act was successfully committed
-	var committed = false
-	
-	if old_coords == new_coords:
-		return committed
-	
+
 	#if the tile selected is within movement range
 	if _is_within_movement_range(old_coords, new_coords, grid):
 		if grid.pieces.has(new_coords): 
-			pass
+			return false
 		else: 
-			committed = true
 			regular_move(old_coords, new_coords, grid)
+			return true
 	
 	#elif the tile selected is within attack range
 	elif _is_within_attack_range(old_coords, new_coords, grid):
 		ranged_attack(old_coords, new_coords, grid)
-		committed = true
-		
-	grid.reset_highlighting()
-	return committed
+		return true
+
+	return false
+
+
+func assist_attack(old_coords, new_coords, grid):
+	if _is_within_attack_range(old_coords, new_coords, grid):
+		ranged_attack(old_coords, new_coords, grid)
 
 
 func regular_move(old_coords, new_coords, grid):
@@ -103,8 +102,6 @@ func ranged_attack(old_coords, new_coords, grid):
 			if (grid.pieces[current_coords].side == "ENEMY"):
 				grid.pieces[current_coords].attacked(4)
 			break
-		
-	
 
 
 

@@ -1,8 +1,9 @@
-[gd_scene load_steps=4 format=1]
+[gd_scene load_steps=5 format=1]
 
 [ext_resource path="res://Combat.gd" type="Script" id=1]
 [ext_resource path="res://Grid.tscn" type="PackedScene" id=2]
 [ext_resource path="res://UI/PhaseShifter.tscn" type="PackedScene" id=3]
+[ext_resource path="res://CursorArea.tscn" type="PackedScene" id=4]
 
 [node name="Combat" type="Node2D"]
 
@@ -60,5 +61,9 @@ lines_skipped = 0
 max_lines_visible = -1
 
 [node name="PhaseShifter" parent="." instance=ExtResource( 3 )]
+
+[node name="CursorArea" parent="." instance=ExtResource( 4 )]
+
+transform/pos = Vector2( 689.785, 442.598 )
 
 

@@ -1,16 +1,20 @@
 
-extends Node2D
+extends Area2D
 
 # member variables here, example:
 # var a=2
 # var b="textvar"
 
-var LEVELS = preload("res://LEVELS.gd").new()
-
+var po
 
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("/root/global").goto_scene("res://Combat.tscn", {"level":LEVELS.Level1})
+	set_process_input(true)
+	
+	
+func _input(ev):
+   if (ev.type==InputEvent.MOUSE_MOTION):
+       set_pos(ev.pos)
 
 

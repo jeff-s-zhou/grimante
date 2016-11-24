@@ -30,7 +30,19 @@ func move_to(old_coords, new_coords, grid, speed=6):
 	new_position = location.get_pos()
 	velocity = (location.get_pos() - get_parent().get_pos()).normalized() * speed
 	self.animation_state = STATES.moving
-
+	
+func animate_attack(attack_coords, grid, speed=6):
+	var location = grid.locations[attack_coords]
+	new_position = location.get_pos() - ((location.get_pos() - get_parent().get_pos()) / 2)
+	velocity = (location.get_pos() - get_parent().get_pos()).normalized() * speed
+	self.animation_state = STATES.moving
+	
+func animate_attack_end(original_coords, grid, speed=6):
+	var location = grid.locations[original_coords]
+	new_position = location.get_pos()
+	velocity = (location.get_pos() - get_parent().get_pos()).normalized() * speed
+	self.animation_state = STATES.moving
+	
 
 #parameters to use for get_node("Grid").get_neighbors
 func display_action_range(coords, grid):
@@ -52,21 +64,19 @@ func _fixed_process(delta):
 
 func act(old_coords, new_coords, grid):
 	#returns whether the act was successfully committed
-	var committed = false
-	
-	if old_coords == new_coords:
-		return committed
-	
+
 	if _is_within_range(old_coords, new_coords, grid):
-		if grid.pieces.has(new_coords): #if there's a piece in the new coord
-				if grid.pieces[new_coords].side == "ENEMY":
-					committed = true
-					charge_move(old_coords, new_coords, grid, true)
+		#if there's a piece in the new coord
+		if grid.pieces.has(new_coords) \
+		and grid.pieces[new_coords].side == "ENEMY":
+			if _is_within_range(old_coords, new_coords, grid, [1, 2]): #but it's not adjacent
+				return false
+			charge_move(old_coords, new_coords, grid, true)
+			return true
 		else: #else move to the location
-			committed = true
 			charge_move(old_coords, new_coords, grid)
-	grid.reset_highlighting()
-	return committed
+			return true
+	return false
 
 
 func charge_move(old_coords, new_coords, grid, attack=false):
@@ -92,15 +102,19 @@ func charge_move(old_coords, new_coords, grid, attack=false):
 			
 		tiles_passed += 1
 		current_coords = current_coords + increment
+		
 	if attack and grid.pieces.has(new_coords) and grid.pieces[new_coords].side == "ENEMY":
+		animate_attack(new_coords, grid)
+		yield(self, "animation_finished")
 		grid.pieces[new_coords].attacked(tiles_passed)
+		animate_attack_end(target_coords, grid)
 	
 	placed()
-
+	
 
 	
-func _is_within_range(old_coords, new_coords, grid):
-	var neighbors = grid.get_neighbors(old_coords, [1, 11])
+func _is_within_range(old_coords, new_coords, grid, action_range=[1, 11]):
+	var neighbors = grid.get_neighbors(old_coords, action_range)
 	var neighbor_coords = []
 	for neighbor in neighbors:
 		neighbor_coords.append(neighbor.coords)
