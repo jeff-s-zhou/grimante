@@ -12,17 +12,15 @@ var state = STATES.player_turn
 var enemy_waves = []
 
 const Piece = preload("res://Piece.tscn") 
-const BerserkerType = preload("res://PlayerPieceTypes/BerserkerType.tscn")
-const CavalierType = preload("res://PlayerPieceTypes/CavalierType.tscn")
-const ArcherType = preload("res://PlayerPieceTypes/ArcherType.tscn")
-const KnightType = preload("res://PlayerPieceTypes/KnightType.tscn")
+const BerserkerPiece = preload("res://PlayerPieces/BerserkerPiece.tscn")
+const CavalierPiece = preload("res://PlayerPieces/CavalierPiece.tscn")
+const ArcherPiece = preload("res://PlayerPieces/ArcherPiece.tscn")
+const KnightPiece = preload("res://PlayerPieces/KnightPiece.tscn")
 
 const EnemyPiece = preload("res://EnemyPiece.tscn")
-const GruntType = preload("res://EnemyPieceTypes/GruntType.tscn")
+const GruntType = preload("res://EnemyPieces/GruntPiece.tscn")
 
 signal enemy_turn_finished
-
-var _ENEMY_TYPES = preload("res://ENEMY_TYPES.gd").new()
 
 var archer
 
@@ -39,17 +37,17 @@ func _ready():
 	get_node("Button").set_disabled(true)
 	
 	
-	var berserker_type = BerserkerType.instance()
-	initialize_piece(berserker_type, 3)
+	var berserker_piece = BerserkerPiece.instance()
+	initialize_piece(berserker_piece, 3)
 	
-	var cavalier_type = CavalierType.instance()
-	initialize_piece(cavalier_type, 6)
+	var cavalier_piece = CavalierPiece.instance()
+	initialize_piece(cavalier_piece, 6)
+#	
+	var archer_piece = ArcherPiece.instance()
+	initialize_piece(archer_piece, 4)
 	
-	var archer_type = ArcherType.instance()
-	self.archer = initialize_piece(archer_type, 5)
-	
-	var knight_type = KnightType.instance()
-	initialize_piece(knight_type, 4)
+	var knight_piece = KnightPiece.instance()
+	initialize_piece(knight_piece, 5)
 	
 	self.enemy_waves = get_node("/root/global").get_param("level")
 	deploy_wave()
@@ -58,14 +56,12 @@ func _ready():
 	
 	get_node("DefenseBar").set_value(100.0)
 	
-func initialize_piece(type, column):
-	var piece = Piece.instance()
+func initialize_piece(piece, column):
 	piece.connect("invalid_move", self, "handle_invalid_move")
 	piece.connect("description_data", self, "display_description")
-	piece.initialize(type, get_node("CursorArea"))
+	piece.initialize(get_node("CursorArea"))
 	var position = get_node("Grid").get_bottom_of_column(column)
 	get_node("Grid").add_piece(position, piece)
-	return piece
 	
 	
 func end_turn():
@@ -158,7 +154,7 @@ func enemy_win():
 	
 func damage_defenses():
 	var old_defenses = get_node("DefenseBar").get_value()
-	get_node("DefenseBar").set_value(old_defenses - 10)
+	get_node("DefenseBar").set_value(old_defenses - 25)
 	
 func track_turn_finished():
 	emit_signal("enemy_turn_finished")

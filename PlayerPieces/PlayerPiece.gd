@@ -1,4 +1,3 @@
-
 extends KinematicBody2D
 
 # member variables here, example:
@@ -16,20 +15,12 @@ const SHOVE_SPEED = 4
 
 signal invalid_move
 signal description_data(unit_name, description)
-
-var type
+signal placed
 
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	
-	get_node("ClickArea").connect("mouse_enter", self, "hovered")
-	get_node("ClickArea").connect("mouse_exit", self, "unhovered")
-	get_node("ClickArea").set_monitorable(false)
-	get_node("CollisionArea").connect("area_enter", self, "area_entered")
-	
-	set_process_input(true)
-	set_fixed_process(true)
+	pass
 	
 func is_placed():
 	return self.state == States.PLACED
@@ -39,23 +30,32 @@ func delete_self():
 	remove_from_group("player_pieces")
 	self.queue_free()
 
-func initialize(type, cursor_area):
+func initialize(cursor_area):
 	self.cursor_area = cursor_area
 	set_z(0)
 	add_to_group("player_pieces")
-	self.type = type
-	add_child(type)
-	get_node("PlaceholderSprite").set_opacity(0.0)
 	
 func turn_update():
-	self.type.turn_update()
 	self.state = States.DEFAULT
+	get_node("AnimatedSprite").play("default")
 	if(get_node("ClickArea").overlaps_area(self.cursor_area)):
 		self.hovered()
 	
 func set_coords(coords):
 	get_parent().move_piece(self.coords, coords)
 	self.coords = coords
+
+func animate_move_to_pos(position, speed):
+	var distance = get_pos().distance_to(position)
+	var speed = 300
+	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").start()
+	
+
+func animate_move(new_coords, speed=200):
+	var location = get_parent().locations[new_coords]
+	var new_position = location.get_pos()
+	animate_move_to_pos(new_position, speed)
 
 #when another unit is able to move to this location, it calls this function
 func movement_highlight():
@@ -66,10 +66,6 @@ func attack_highlight():
 	
 func unhighlight():
 	pass
-	
-func _fixed_process(delta):
-	if(is_colliding()):
-		print("is colliding!")
 
 func input_event(viewport, event, shape_idx):
 	if event.type == InputEvent.MOUSE_BUTTON \
@@ -89,30 +85,34 @@ func input(event):
 		var dropped_location = get_parent().current_location
 		if dropped_location != null and dropped_location.coords != self.coords: 
 			#if act is valid and ends the unit's turn, set state to placed
-			if type.act(self.coords, dropped_location.coords, get_parent()):
+			if act(dropped_location.coords):
 				self.state = States.PLACED
 				get_parent().reset_highlighting()
 			else:
 				get_parent().reset_highlighting()
 				emit_signal("invalid_move")
 				self.state = States.DEFAULT
-
+				
+				
+func act(new_coords):
+	return false
 
 #called when hovered over during player turn		
 func hovered():
-	emit_signal("description_data", self.type.UNIT_TYPE, self.type.DESCRIPTION)
 	if self.state == States.DEFAULT or self.state == States.CLICKED:
-		type.hover_highlight()
-		type.display_action_range(self.coords, get_parent())
+		hover_highlight()
+		display_action_range()
+		
+func display_action_range():
+	pass
 
 
 #only undisplay if the unit isn't selected
 func unhovered():
 	if self.state != States.PLACED:
-		type.hover_unhighlight()
+		hover_unhighlight()
 	if self.state != States.CLICKED:
 		get_parent().reset_highlighting()
-
 
 func push(distance):
 	if get_parent().locations.has(self.coords + distance):
@@ -120,12 +120,20 @@ func push(distance):
 		if get_parent().pieces.has(self.coords + distance):
 			get_parent().pieces[self.coords + distance].push(distance)
 		
-		type.animate_move(self.coords, self.coords + distance, get_parent(), SHOVE_SPEED)
+		animate_move(self.coords + distance)
 		set_coords(self.coords + distance)
 	else:
 		delete_self()
-
-	
+		
 func area_entered(area):
-	#print(area.get_name())
 	print("player piece area entered!")
+
+func hover_highlight():
+	get_node("AnimatedSprite").play("hover_highlight")
+	
+func hover_unhighlight():
+	get_node("AnimatedSprite").play("default")
+
+func placed():
+	get_node("AnimatedSprite").play("cooldown")
+	emit_signal("placed")

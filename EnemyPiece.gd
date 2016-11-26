@@ -91,13 +91,12 @@ func push(distance):
 			get_parent().pieces[self.coords + distance].push(distance)
 			
 		move_to(self.coords, self.coords + distance)
-		set_coords(self.coords + distance)
 	else:
 		delete_self()
 	
 	
 func move_to(old_coords, new_coords):
-	self.coords = new_coords
+	set_coords(new_coords)
 	get_parent().move_piece(old_coords, new_coords)
 	var location = get_parent().locations[new_coords]
 	new_position = location.get_pos()

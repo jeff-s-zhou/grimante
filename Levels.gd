@@ -1,5 +1,5 @@
 
-const Grunt = preload("res://EnemyPieceTypes/GruntType.tscn")
+const Grunt = preload("res://EnemyPieces/GruntPiece.tscn")
 
 var Level1 = [
 {4: make(Grunt, 4)},

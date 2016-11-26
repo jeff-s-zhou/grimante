@@ -66,4 +66,11 @@ max_lines_visible = -1
 
 transform/pos = Vector2( 689.785, 442.598 )
 
+[node name="Tween" type="Tween" parent="."]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
+
 

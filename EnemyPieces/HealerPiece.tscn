@@ -1,6 +1,7 @@
 [gd_scene load_steps=2 format=1]
 
-[ext_resource path="res://EnemyPieceTypes/HealerType.gd" type="Script" id=1]
+[ext_resource path="res://EnemyPieceTypes/HealerPiece.gd" type="Script" id=1]
+
 
 [node name="HealerType" type="Node2D"]
 
