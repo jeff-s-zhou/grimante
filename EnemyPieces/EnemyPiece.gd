@@ -122,8 +122,9 @@ func push(distance):
 			get_parent().pieces[self.coords + distance].push(distance)
 			
 		animate_move(self.coords + distance)
-		yield(get_node("Tween"), "tween_complete")
 		set_coords(self.coords + distance)
+		yield(get_node("Tween"), "tween_complete")
+		
 	else:
 		delete_self()
 	
@@ -153,8 +154,7 @@ func turn_update():
 		if get_parent().pieces.has(coords + movement_value):
 			#if a player piece, move it first
 			var obstructing_piece = get_parent().pieces[coords + movement_value]
-			if obstructing_piece.side == "PLAYER":
-				obstructing_piece.push(movement_value)
+			obstructing_piece.push(movement_value)
 				
 		#now if the space in front is free, move it
 		if !get_parent().pieces.has(coords + movement_value):
