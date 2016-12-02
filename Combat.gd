@@ -11,14 +11,12 @@ const STATES = {"player_turn":0, "enemy_turn":1, "transitioning":2, "enemy_deplo
 var state = STATES.player_turn
 var enemy_waves = []
 
-const Piece = preload("res://Piece.tscn") 
 const BerserkerPiece = preload("res://PlayerPieces/BerserkerPiece.tscn")
 const CavalierPiece = preload("res://PlayerPieces/CavalierPiece.tscn")
 const ArcherPiece = preload("res://PlayerPieces/ArcherPiece.tscn")
 const KnightPiece = preload("res://PlayerPieces/KnightPiece.tscn")
 
-const EnemyPiece = preload("res://EnemyPiece.tscn")
-const GruntType = preload("res://EnemyPieces/GruntPiece.tscn")
+const GruntPiece = preload("res://EnemyPieces/GruntPiece.tscn")
 
 signal enemy_turn_finished
 
@@ -28,49 +26,55 @@ func _ready():
 
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Grid").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height/2 + 40))
-	
-	set_z(2)
+	get_node("Grid").set_pos(Vector2((get_viewport_rect().size.width - 220)/2, get_viewport_rect().size.height/2 + 40))
 	
 	get_node("Button").connect("pressed", self, "end_turn")
 	
 	get_node("Button").set_disabled(true)
 	
-	
 	var berserker_piece = BerserkerPiece.instance()
 	initialize_piece(berserker_piece, 3)
 	
 	var cavalier_piece = CavalierPiece.instance()
-	initialize_piece(cavalier_piece, 6)
+	initialize_piece(cavalier_piece, 4)
 #	
 	var archer_piece = ArcherPiece.instance()
-	initialize_piece(archer_piece, 4)
+	initialize_piece(archer_piece, 6)
 	
 	var knight_piece = KnightPiece.instance()
 	initialize_piece(knight_piece, 5)
 	
 	self.enemy_waves = get_node("/root/global").get_param("level")
-	deploy_wave()
+	get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.size()))
+	
+	#we store the initial wave count as the first value in the array
+	var initial_waves = self.enemy_waves[0]
+	self.enemy_waves.pop_front()
+	for i in range(0, initial_waves):
+		deploy_wave()
+	
 	
 	set_process(true)
 	
-	get_node("DefenseBar").set_value(100.0)
 	
 func initialize_piece(piece, column):
 	piece.connect("invalid_move", self, "handle_invalid_move")
 	piece.connect("description_data", self, "display_description")
+	piece.connect("shake", self, "screen_shake")
 	piece.initialize(get_node("CursorArea"))
 	var position = get_node("Grid").get_bottom_of_column(column)
 	get_node("Grid").add_piece(position, piece)
 	
 	
 func end_turn():
+	
 	self.state = STATES.transitioning
 	get_node("Button").set_disabled(true)
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 		player_piece.state = player_piece.States.PLACED
 	get_node("PhaseShifter").enemy_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
+	get_node("ComboSystem").player_turn_ended()
 	self.state = STATES.enemy_turn
 	
 func _process(delta):
@@ -78,9 +82,6 @@ func _process(delta):
 	if enemy_pieces.size() == 0 and self.enemy_waves.size() == 0:
 		player_win()
 		
-	if get_node("DefenseBar").get_value() == 0.0:
-		enemy_win()
-	
 	if self.state == STATES.player_turn:
 		
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
@@ -97,7 +98,7 @@ func _process(delta):
 		self.state = STATES.transitioning
 		if(get_tree().get_nodes_in_group("enemy_pieces").size() > 0):
 			yield(self, "enemy_turn_finished")
-		self.state = STATES.enemy_deploying	
+		self.state = STATES.enemy_deploying
 		
 	elif self.state == STATES.enemy_deploying:
 		deploy_wave()
@@ -111,6 +112,25 @@ func _process(delta):
 			player_piece.turn_update()
 		self.state = STATES.player_turn
 		get_node("Button").set_disabled(false)
+		
+func enemy_phase():
+	enemy_pieces.sort_custom(self, "_sort_by_y_axis") #ensures the pieces in front move first
+	for enemy_piece in enemy_pieces:
+		enemy_piece.turn_update()
+		if(get_tree().get_nodes_in_group("enemy_pieces").size() > 0):
+			yield(self, "enemy_turn_finished")
+
+		deploy_wave()
+
+		get_node("PhaseShifter").player_phase_animation()
+		yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
+		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
+			player_piece.turn_update()
+		self.state = STATES.player_turn
+		get_node("Button").set_disabled(false)
+		
+func screen_shake():
+	get_node("ShakeCamera").shake(0.5, 30, 4)
 
 
 func _sort_by_y_axis(enemy_piece1, enemy_piece2):
@@ -123,13 +143,10 @@ func deploy_wave():
 		var wave = self.enemy_waves[0]
 		self.enemy_waves.pop_front()
 		for column in wave.keys():
-			var enemy_piece_type = wave[column]
-			var enemy_piece = EnemyPiece.instance()
+			var enemy_piece = wave[column]
 			enemy_piece.connect("broke_defenses", self, "damage_defenses")
 			enemy_piece.connect("turn_finished", self, "track_turn_finished")
-			enemy_piece.connect("pre_damage", self.archer, "covering_fire")
-			
-			enemy_piece.initialize(enemy_piece_type)
+
 			#TODO: push enemies in front away when you deploy more than 1 in same column
 			var position = get_node("Grid").get_top_of_column(column)
 			
@@ -141,6 +158,7 @@ func deploy_wave():
 			self.state = STATES.transitioning
 			enemy_piece.animate_summon()
 			yield(enemy_piece.get_node("AnimationPlayer"), "finished" )
+			get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.size()))
 			self.state = STATES.player_refresh
 				
 	else:
@@ -153,8 +171,7 @@ func enemy_win():
 	get_node("/root/global").goto_scene("res://LoseScreen.tscn")
 	
 func damage_defenses():
-	var old_defenses = get_node("DefenseBar").get_value()
-	get_node("DefenseBar").set_value(old_defenses - 25)
+	enemy_win()
 	
 func track_turn_finished():
 	emit_signal("enemy_turn_finished")

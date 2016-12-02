@@ -11,11 +11,14 @@ var coords
 var side = "PLAYER"
 var cursor_area
 
+var mid_animation = false
+
 const SHOVE_SPEED = 4
 
 signal invalid_move
 signal description_data(unit_name, description)
 signal placed
+signal shake
 
 func _ready():
 	# Called every time the node is added to the scene.
@@ -32,7 +35,7 @@ func delete_self():
 
 func initialize(cursor_area):
 	self.cursor_area = cursor_area
-	set_z(0)
+	set_z(-1)
 	add_to_group("player_pieces")
 	
 func turn_update():
@@ -47,12 +50,12 @@ func set_coords(coords):
 
 func animate_move_to_pos(position, speed):
 	var distance = get_pos().distance_to(position)
-	var speed = 300
 	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	
 
 func animate_move(new_coords, speed=200):
+	self.mid_animation = true
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	animate_move_to_pos(new_position, speed)
@@ -86,6 +89,9 @@ func input(event):
 		if dropped_location != null and dropped_location.coords != self.coords: 
 			#if act is valid and ends the unit's turn, set state to placed
 			if act(dropped_location.coords):
+				#TODO: I think this is still shitty logic maybe
+				if(self.mid_animation): #if animating, waiting for animation to finish
+					yield(self, "placed")
 				self.state = States.PLACED
 				get_parent().reset_highlighting()
 			else:
@@ -119,7 +125,6 @@ func push(distance):
 		#if there's something in front, push that
 		if get_parent().pieces.has(self.coords + distance):
 			get_parent().pieces[self.coords + distance].push(distance)
-		
 		animate_move(self.coords + distance)
 		set_coords(self.coords + distance)
 	else:
@@ -135,5 +140,6 @@ func hover_unhighlight():
 	get_node("AnimatedSprite").play("default")
 
 func placed():
+	self.mid_animation = false
 	get_node("AnimatedSprite").play("cooldown")
 	emit_signal("placed")

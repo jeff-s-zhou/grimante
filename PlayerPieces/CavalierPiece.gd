@@ -35,6 +35,9 @@ func animate_attack_end(original_coords):
 	animate_move_to_pos(new_position, 300)
 
 
+#func get_action_range()
+
+
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
 	var neighbors = get_parent().get_neighbors(self.coords, [1, 11])
@@ -52,7 +55,6 @@ func act(new_coords):
 			if _is_within_range(new_coords, [1, 2]): #but it's not adjacent
 				return false
 			charge_move(new_coords, true)
-			print ("doing stuff after")
 			return true
 		else: #else move to the location
 			charge_move(new_coords)
@@ -61,6 +63,7 @@ func act(new_coords):
 
 
 func charge_move(new_coords, attack=false):
+	set_z(2)
 	var difference = new_coords - self.coords
 	var increment = get_parent().hex_normalize(difference)
 	var target_coords = new_coords
@@ -71,6 +74,7 @@ func charge_move(new_coords, attack=false):
 	
 	animate_move(target_coords, 300)
 	yield(get_node("Tween"), "tween_complete")
+	set_z(-1)
 	
 	
 	var current_coords = self.coords + increment
@@ -87,6 +91,7 @@ func charge_move(new_coords, attack=false):
 	if attack and get_parent().pieces.has(new_coords) and get_parent().pieces[new_coords].side == "ENEMY":
 		animate_attack(new_coords)
 		yield(get_node("Tween"), "tween_complete")
+		get_node("SamplePlayer2D").play("hit")
 		get_parent().pieces[new_coords].attacked(tiles_passed)
 		animate_attack_end(target_coords)
 	

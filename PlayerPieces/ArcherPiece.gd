@@ -48,22 +48,20 @@ func act(new_coords):
 		if get_parent().pieces.has(new_coords): 
 			return false
 		else: 
-			regular_move(new_coords)
+			animate_move(new_coords)
+			yield(get_node("Tween"), "tween_complete")
+			set_coords(new_coords)
+			placed()
 			return true
 	
 	#elif the tile selected is within attack range
 	elif _is_within_attack_range(new_coords):
 		ranged_attack(new_coords)
+		placed()
 		return true
 
 	return false
 
-
-func regular_move(new_coords):
-	animate_move(new_coords)
-	yield(get_node("Tween"), "tween_complete")
-	placed()
-	set_coords(new_coords)
 	
 	
 func ranged_attack(new_coords):

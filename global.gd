@@ -8,8 +8,6 @@ extends Node
 var current_scene = null
 var _params = null
 
-var animation_locked = false
-
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
