@@ -46,7 +46,7 @@ func act(new_coords):
 		animate_move(new_coords, 150)
 		yield(get_node("Tween"), "tween_complete")
 		set_coords(new_coords)
-		animate_placed()
+		placed()
 		return true
 	elif _is_within_shove_range(new_coords):
 		shove(new_coords)
@@ -62,6 +62,6 @@ func shove(new_coords):
 	get_parent().pieces[new_coords].push(increment)
 	yield(get_node("Tween"), "tween_complete")
 	set_coords(new_coords)
-	animate_placed()
+	placed()
 	
 

@@ -82,9 +82,7 @@ func end_turn():
 	self.state = STATES.transitioning
 	get_node("Button").set_disabled(true)
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
-		
-		player_piece.state = player_piece.States.PLACED
-		player_piece.animate_placed()
+		player_piece.placed()
 	get_node("PhaseShifter").enemy_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	get_node("ComboSystem").player_turn_ended()

@@ -11,14 +11,14 @@ var coords
 var side = "PLAYER"
 var cursor_area
 
-var mid_animation = false
-
 const SHOVE_SPEED = 4
 
 signal invalid_move
 signal description_data(unit_name, description)
-signal placed
+signal animation_done
 signal shake
+
+var mid_animation = false #to handle the bug of the clickarea not moving until everything's done
 
 func _ready():
 	# Called every time the node is added to the scene.
@@ -56,13 +56,13 @@ func set_coords(coords):
 	self.coords = coords
 
 func animate_move_to_pos(position, speed):
+	self.mid_animation = true
 	var distance = get_pos().distance_to(position)
 	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	
 
 func animate_move(new_coords, speed=200):
-	self.mid_animation = true
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	animate_move_to_pos(new_position, speed)
@@ -103,12 +103,8 @@ func input(event):
 		#if act is valid and ends the unit's turn, set state to placed
 		if dropped_location != null and dropped_location.coords != self.coords and act(dropped_location.coords): 
 			#TODO: I think this is still shitty logic maybe
-			get_parent().focused = null
 			get_parent().reset_highlighting()
-			if(self.mid_animation): #if animating, waiting for animation to finish
-				yield(self, "placed")
-			self.state = States.PLACED
-				
+		#catches the false case of act, which won't jump to the yield return
 		else:
 			get_parent().focused = null
 			get_parent().reset_highlighting()
@@ -119,6 +115,11 @@ func input(event):
 func act(new_coords):
 	return false
 
+func placed():
+	self.mid_animation = false
+	self.state = States.PLACED
+	get_parent().focused = null
+	get_node("AnimatedSprite").play("cooldown")
 
 
 func unhovered():
@@ -140,11 +141,12 @@ func hovered():
 		print("calling the other hover")
 	else:
 		if self.state == States.DEFAULT or self.state == States.CLICKED:
-			if !self.mid_animation:
+			if self.mid_animation == false: #to handle the bug of the clickarea not moving until everything's done
 				hover_highlight()
 				display_action_range()
 			else:
 				print("met3")
+
 		else:
 			print("met2")
 
@@ -159,6 +161,7 @@ func push(distance):
 			get_parent().pieces[self.coords + distance].push(distance)
 		animate_move(self.coords + distance)
 		set_coords(self.coords + distance)
+		self.mid_animation = false
 	else:
 		delete_self()
 		
@@ -171,7 +174,3 @@ func hover_highlight():
 func hover_unhighlight():
 	get_node("AnimatedSprite").play("default")
 
-func animate_placed():
-	self.mid_animation = false
-	get_node("AnimatedSprite").play("cooldown")
-	emit_signal("placed")

@@ -102,7 +102,7 @@ func charge_move(new_coords, attack=false):
 		charge_attack(new_coords, new_coords + increment, tiles_passed)
 	else:
 		set_coords(new_coords)
-		animate_placed()
+		placed()
 
 
 
@@ -113,6 +113,6 @@ func charge_attack(position_coords, attack_coords, tiles_passed):
 	get_parent().pieces[attack_coords].attacked(tiles_passed)
 	animate_attack_end(position_coords)
 	set_coords(position_coords)
-	animate_placed()
+	placed()
 
 

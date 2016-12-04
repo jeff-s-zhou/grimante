@@ -87,7 +87,8 @@ func smash_attack(new_coords):
 		var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 		smash(smash_range)
 		set_coords(new_coords)
-		animate_placed()
+		set_z(-1)
+		placed()
 		
 	#else leap back
 	else:
@@ -96,7 +97,8 @@ func smash_attack(new_coords):
 		get_parent().pieces[new_coords].attacked(DAMAGE)
 		jump_to(self.coords)
 		yield(self, "movement_animation_finished")
-		animate_placed()
+		set_z(-1)
+		placed()
 
 
 func smash_move(new_coords):
@@ -105,7 +107,8 @@ func smash_move(new_coords):
 	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 	smash(smash_range)
 	set_coords(new_coords)
-	animate_placed()
+	set_z(-1)
+	placed()
 
 
 func smash(smash_range):
@@ -113,9 +116,6 @@ func smash(smash_range):
 		get_parent().pieces[coords].attacked(AOE_DAMAGE)
 
 
-func placed():
-	set_z(-1)
-	.placed()
 
 
 

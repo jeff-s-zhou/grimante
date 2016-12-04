@@ -47,13 +47,13 @@ func act(new_coords):
 		animate_move(new_coords)
 		yield(get_node("Tween"), "tween_complete")
 		set_coords(new_coords)
-		animate_placed()
+		placed()
 		return true
 
 	#elif the tile selected is within attack range
 	elif _is_within_attack_range(new_coords):
 		ranged_attack(new_coords)
-		animate_placed()
+		placed()
 		return true
 
 	return false
