@@ -14,21 +14,24 @@ const DESCRIPTION = ""
 
 signal movement_animation_finished
 
-func _ready():
-	# Called every time the node is added to the scene.
-	# Initialization here
+func get_attack_range():
+	return get_parent().get_radial_range(self.coords, [1, 3], "ENEMY")
 	
-	get_node("ClickArea").connect("mouse_enter", self, "hovered")
-	get_node("ClickArea").connect("mouse_exit", self, "unhovered")
-	get_node("ClickArea").set_monitorable(false)
-	set_process_input(true)
-
+func get_movement_range():
+	return get_parent().get_radial_range(self.coords)
 
 #parameters to use for get_node("Grid").get_neighbors
 func display_action_range():
-	var neighbors = get_parent().get_radial_neighbors(self.coords)
-	for neighbor in neighbors:
-		neighbor.movement_highlight()
+	var action_range = get_attack_range() + get_movement_range()
+	for coords in action_range:
+		get_parent().get_at_location(coords).movement_highlight()
+
+
+func _is_within_attack_range(new_coords):
+	return new_coords in get_attack_range()
+	
+func _is_within_movement_range(new_coords):
+	return new_coords in get_movement_range()
 
 func animate_smash():
 	get_node("AnimationPlayer").play("smash")
@@ -48,26 +51,30 @@ func jump_to(new_coords, speed=4):
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
-	var speed = 400
+	var speed = 350
 	var time = distance/speed
-	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), new_position, time, Tween.TRANS_SINE, Tween.EASE_IN)
+	
 	get_node("AnimationPlayer").play("jump")
-	yield( get_node("AnimationPlayer"), "finished" )
-	get_node("AnimationPlayer").play("float")
-	get_node("Tween").interpolate_callback(self, time - 0.2, "animate_smash")
+	
+#	get_node("Timer").set_wait_time(1)
+#	get_node("Timer").start()
+#	yield(get_node("Timer"), "timeout")
+	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), new_position, time, Tween.TRANS_SINE, Tween.EASE_IN)
+	get_node("Tween").interpolate_callback(self, time + 0.2, "animate_smash")
 	get_node("Tween").start()
+	yield( get_node("AnimationPlayer"), "finished" )
 	
+	get_node("AnimationPlayer").play("float")
 	
-func act(new_coords):
-	if _is_within_range(new_coords):
-		if get_parent().pieces.has(new_coords): #if there's a piece in the new coord
-			if get_parent().pieces[new_coords].side == "ENEMY":
-				smash_attack(new_coords)
-				return true
 
-		else: #else move to the location
-			smash_move(new_coords)
-			return true
+func act(new_coords):
+	if _is_within_attack_range(new_coords):
+		print("is within attack range")
+		smash_attack(new_coords)
+		return true
+	elif _is_within_movement_range(new_coords):
+		smash_move(new_coords)
+		return true
 	return false
 
 
@@ -76,10 +83,11 @@ func smash_attack(new_coords):
 		jump_to(new_coords)
 		yield(self, "movement_animation_finished")
 		get_parent().pieces[new_coords].smash_killed(DAMAGE)
-		var neighbors = get_parent().get_neighbors(new_coords)
-		smash(neighbors)
+		print("should be smash killing")
+		var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
+		smash(smash_range)
 		set_coords(new_coords)
-		placed()
+		animate_placed()
 		
 	#else leap back
 	else:
@@ -88,38 +96,29 @@ func smash_attack(new_coords):
 		get_parent().pieces[new_coords].attacked(DAMAGE)
 		jump_to(self.coords)
 		yield(self, "movement_animation_finished")
-		placed()
+		animate_placed()
 
 
 func smash_move(new_coords):
 	jump_to(new_coords)
 	yield(self, "movement_animation_finished")
-	var neighbors = get_parent().get_neighbors(new_coords)
-	smash(neighbors)
+	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
+	smash(smash_range)
 	set_coords(new_coords)
-	placed()
+	animate_placed()
 
 
-func smash(neighbors):
-	for neighbor in neighbors:
-		if neighbor.has_method("attacked"):
-			neighbor.attacked(AOE_DAMAGE)
-			
+func smash(smash_range):
+	for coords in smash_range:
+		get_parent().pieces[coords].attacked(AOE_DAMAGE)
+
+
 func placed():
 	set_z(-1)
 	.placed()
 
 
-func _is_within_range(new_coords):
-	var neighbors = get_parent().get_radial_neighbors(self.coords)
-	var neighbor_coords = []
-	for neighbor in neighbors:
-		neighbor_coords.append(neighbor.coords)
-	if new_coords in neighbor_coords:
-		return true
-	else:
-		return false
-	
+
 
 
 

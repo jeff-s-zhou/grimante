@@ -27,7 +27,6 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	set_fixed_process(true)
-	get_node("ClickArea").set_monitorable(false)
 	get_node("ClickArea").connect("mouse_enter", self, "hover_highlight")
 	get_node("ClickArea").connect("mouse_exit", self, "hover_unhighlight")
 	get_node("Physicals/AnimatedSprite").set_z(-2)

@@ -26,6 +26,8 @@ const _LOCATION_Y_OFFSETS = [0, 0, 1, 1, 2, 2, 3, 3, 4]
 
 var current_location
 
+var focused = null
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
@@ -36,7 +38,7 @@ func _ready():
 		var offset = 0
 		var column_count = 8
 		if i % 2 == 1:
-			offset = -52
+			offset = -50
 			column_count = 9
 		for j in range(0, column_count):
 			var location1 = location.instance()
@@ -54,7 +56,10 @@ func _ready():
 #so we know what location the player is currently hovering over
 func set_current_location(location):
 	self.current_location = location
-	
+
+func set_focused(focused):
+	self.focused = focused
+
 func add_piece(coords, piece):
 	pieces[coords] = piece
 	piece.coords = coords
@@ -67,6 +72,12 @@ func move_piece(old_coords, new_coords):
 	var piece = pieces[old_coords]
 	pieces.erase(old_coords)
 	pieces[new_coords] = piece
+
+#only returns a free location
+func get__free_location_at(coords):
+	if pieces.has(coords):
+		return null
+	return locations[coords]
 	
 
 #will return a piece if there is a piece, otherwise the location
@@ -85,9 +96,10 @@ func reset_highlighting():
 	for piece in pieces.values():
 		piece.unhighlight()
 
+
 #direction goes from 0-5, clockwise from top
 #magnitude is 1 indexed
-func get_neighbors(coords, magnitude_range=[1, 2], direction_range=[0, 6]):
+func get_range(coords, magnitude_range=[1,2], side=null, collision_check=false, direction_range=[0, 6]):
 	var return_set = [] #make this a dict?
 	var change_vector = Vector2(0, 0)
 	for direction in range(direction_range[0], direction_range[1]):
@@ -106,14 +118,20 @@ func get_neighbors(coords, magnitude_range=[1, 2], direction_range=[0, 6]):
 			
 		for i in range(magnitude_range[0], magnitude_range[1]):
 			var new_coords = coords + i * change_vector
-			var neighbor = get_at_location(new_coords)
-			if neighbor:
-				return_set.append(neighbor)
-			
+			if side:
+				if pieces.has(new_coords) and pieces[new_coords].side == side:
+					return_set.append(new_coords)
+					if collision_check: #if we check for collisions, return the first in any direction
+						break
+
+			elif locations.has(new_coords) and !pieces.has(new_coords): #only return empty locations
+				return_set.append(new_coords)
+
+
 	return return_set
 
 #gets the "diagonal" neighbors in the six directions
-func get_diagonal_neighbors(coords, magnitude_range=[1, 2], direction_range=[0, 6]):
+func get_diagonal_range(coords, magnitude_range=[1, 2], side=null, collision_check=false, direction_range=[0, 6]):
 	var return_set = [] #make this a dict?
 	var change_vector = Vector2(0, 0)
 	for direction in range(direction_range[0], direction_range[1]):
@@ -132,19 +150,30 @@ func get_diagonal_neighbors(coords, magnitude_range=[1, 2], direction_range=[0, 
 			
 		for i in range(magnitude_range[0], magnitude_range[1]):
 			var new_coords = coords + i * change_vector
-			var neighbor = get_at_location(new_coords)
-			if neighbor:
-				return_set.append(neighbor)
+			if side:
+				if pieces.has(new_coords) and pieces[new_coords].side == side:
+					return_set.append(new_coords)
+					if collision_check: #if we check for collisions, return the first in any direction
+						break
+
+			elif locations.has(new_coords) and !pieces.has(new_coords): 
+				return_set.append(new_coords)
 			
 	return return_set
 
 #calls both get_neighbors and get_diagonal_neighbors to provide a radial
 #TODO: broken with a radius 3 because hexagons. fix in case I ever need
-func get_radial_neighbors(coords, radial_range=[1, 3]):
+func get_radial_range(coords, radial_range=[1, 3], side=null, collision_check=false):
 	var diagonal_radial_range = [radial_range[0], radial_range[1] - 1]
-	return get_neighbors(coords, radial_range) + get_diagonal_neighbors(coords, diagonal_radial_range)
+	return get_range(coords, radial_range, side, collision_check) \
+	+ get_diagonal_range(coords, diagonal_radial_range, side, collision_check)
 
-
+#helper function to get list of coords from a list of locations and/or pieces
+static func get_coord_list(grid_items):
+	var return_list = []
+	for grid_item in grid_items:
+		return_list.append(grid_item.location)
+	return return_list
 	
 static func hex_normalize(vector):
 	if(vector.x == 0 or vector.y == 0):

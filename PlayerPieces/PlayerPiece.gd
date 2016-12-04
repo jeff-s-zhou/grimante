@@ -23,7 +23,12 @@ signal shake
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	pass
+	get_node("ClickArea").connect("mouse_enter", self, "hovered")
+	get_node("ClickArea").connect("mouse_exit", self, "unhovered")
+	get_node("ClickArea").set_monitorable(false)
+	set_process_input(true)
+	set_process(true)
+
 	
 func is_placed():
 	return self.state == States.PLACED
@@ -38,11 +43,13 @@ func initialize(cursor_area):
 	set_z(-1)
 	add_to_group("player_pieces")
 	
+	
 func turn_update():
 	self.state = States.DEFAULT
 	get_node("AnimatedSprite").play("default")
 	if(get_node("ClickArea").overlaps_area(self.cursor_area)):
 		self.hovered()
+
 	
 func set_coords(coords):
 	get_parent().move_piece(self.coords, coords)
@@ -59,66 +66,91 @@ func animate_move(new_coords, speed=200):
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	animate_move_to_pos(new_position, speed)
-
-#when another unit is able to move to this location, it calls this function
-func movement_highlight():
-	pass
 	
 func attack_highlight():
 	pass
 	
+func assist_highlight():
+	print("TODO: implement assist highlighting")
+	
 func unhighlight():
 	pass
 
+#called when an event happens inside the click area hitput
 func input_event(viewport, event, shape_idx):
+
 	if event.type == InputEvent.MOUSE_BUTTON \
-	and event.button_index == BUTTON_LEFT and event.pressed and self.state != States.PLACED:
+	and event.button_index == BUTTON_LEFT \
+	and event.pressed \
+	and self.state != States.PLACED:
+		get_parent().focused = self
 		self.state = States.CLICKED
 		
 	if event.type == InputEvent.MOUSE_BUTTON \
-	and event.button_index == BUTTON_LEFT and !event.pressed and self.state != States.PLACED:
+	and event.button_index == BUTTON_LEFT \
+	and !event.pressed \
+	and self.state != States.PLACED:
 		self.state = States.DEFAULT
 
-
-func input(event):
+#processes all events generally
+#handles the click release outside of the clickarea
+func input(event): 
 	if self.state == States.CLICKED \
 	and event.type == InputEvent.MOUSE_BUTTON \
 	and event.button_index == BUTTON_LEFT \
 	and (!event.pressed):
 		var dropped_location = get_parent().current_location
-		if dropped_location != null and dropped_location.coords != self.coords: 
-			#if act is valid and ends the unit's turn, set state to placed
-			if act(dropped_location.coords):
-				#TODO: I think this is still shitty logic maybe
-				if(self.mid_animation): #if animating, waiting for animation to finish
-					yield(self, "placed")
-				self.state = States.PLACED
-				get_parent().reset_highlighting()
-			else:
-				get_parent().reset_highlighting()
-				emit_signal("invalid_move")
-				self.state = States.DEFAULT
+		#if act is valid and ends the unit's turn, set state to placed
+		if dropped_location != null and dropped_location.coords != self.coords and act(dropped_location.coords): 
+			#TODO: I think this is still shitty logic maybe
+			get_parent().focused = null
+			get_parent().reset_highlighting()
+			if(self.mid_animation): #if animating, waiting for animation to finish
+				yield(self, "placed")
+			self.state = States.PLACED
 				
-				
+		else:
+			get_parent().focused = null
+			get_parent().reset_highlighting()
+			emit_signal("invalid_move")
+			self.state = States.DEFAULT
+
+
 func act(new_coords):
 	return false
 
+
+
+func unhovered():
+	if self.state != States.CLICKED: #only undisplay if the unit isn't selected
+		#reset assist highlighting if other piece is focused atm
+		if get_parent().focused != null and get_parent().focused != self: 
+			print("calling the other hover")
+		else:
+			get_parent().reset_highlighting()
+	if self.state != States.PLACED: #if it's placed, don't reset to default sprite
+		hover_unhighlight()
+	
+
+
 #called when hovered over during player turn		
 func hovered():
-	if self.state == States.DEFAULT or self.state == States.CLICKED:
-		hover_highlight()
-		display_action_range()
-		
+	#if another piece is currently focused, do assist highlighting
+	if get_parent().focused != null and get_parent().focused != self:
+		print("calling the other hover")
+	else:
+		if self.state == States.DEFAULT or self.state == States.CLICKED:
+			if !self.mid_animation:
+				hover_highlight()
+				display_action_range()
+			else:
+				print("met3")
+		else:
+			print("met2")
+
 func display_action_range():
 	pass
 
-
-#only undisplay if the unit isn't selected
-func unhovered():
-	if self.state != States.PLACED:
-		hover_unhighlight()
-	if self.state != States.CLICKED:
-		get_parent().reset_highlighting()
 
 func push(distance):
 	if get_parent().locations.has(self.coords + distance):
@@ -139,7 +171,7 @@ func hover_highlight():
 func hover_unhighlight():
 	get_node("AnimatedSprite").play("default")
 
-func placed():
+func animate_placed():
 	self.mid_animation = false
 	get_node("AnimatedSprite").play("cooldown")
 	emit_signal("placed")

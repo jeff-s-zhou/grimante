@@ -2,13 +2,13 @@
 
 [ext_resource path="res://PlayerPieces/KnightPiece.gd" type="Script" id=1]
 [ext_resource path="res://Assets/knight_piece.png" type="Texture" id=2]
-[ext_resource path="res://Assets/knight_piece_light.png" type="Texture" id=3]
-[ext_resource path="res://Assets/knight_piece_sepia.png" type="Texture" id=4]
+[ext_resource path="res://Assets/knight_piece_sepia.png" type="Texture" id=3]
+[ext_resource path="res://Assets/knight_piece_light.png" type="Texture" id=4]
 [ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=5]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"hover_highlight", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"cooldown", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"cooldown", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"hover_highlight", "speed":5.0 } ]
 
 [node name="KnightType" type="KinematicBody2D"]
 

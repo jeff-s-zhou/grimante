@@ -2,7 +2,7 @@
 const Grunt = preload("res://EnemyPieces/GruntPiece.tscn")
 const Healer = preload("res://EnemyPieces/HealerPiece.tscn")
 
-var Level1 = [3, 
+var Level1 = [3,
 {3: make(Grunt, 4), 4: make(Grunt, 3), 5: make(Grunt, 3)},
 {3: make(Grunt, 4), 4: make(Grunt, 3), 5: make(Grunt, 3)},
 {3: make(Grunt, 4), 4: make(Grunt, 3), 5: make(Grunt, 3)},

@@ -18,46 +18,42 @@ signal animation_finished
 const UNIT_TYPE = "Archer"
 
 const DESCRIPTION = ""
+	
+func get_attack_range():
+	var attack_range = get_parent().get_range(self.coords, [2, 11], "ENEMY", true)
+	var attack_range_diagonal = get_parent().get_diagonal_range(self.coords, [1, 8], "ENEMY", true)
+	return attack_range + attack_range_diagonal
 
-func _ready():
-	# Called every time the node is added to the scene.
-	# Initialization here
-	get_node("ClickArea").connect("mouse_enter", self, "hovered")
-	get_node("ClickArea").connect("mouse_exit", self, "unhovered")
-	get_node("ClickArea").set_monitorable(false)
-	set_process_input(true)
+func get_movement_range():
+	return get_parent().get_range(self.coords)
+
 
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
-	var movement_neighbors = get_parent().get_neighbors(self.coords)
-	for neighbor in movement_neighbors:
-		neighbor.movement_highlight()
-	
-	var attack_neighbors = get_parent().get_neighbors(self.coords, [2, 11])
-	for neighbor in attack_neighbors:
-		neighbor.attack_highlight()
+	var action_range = get_attack_range() + get_movement_range()
+	for coords in action_range:
+		get_parent().get_at_location(coords).movement_highlight()
 		
-	var diagonal_attack_neighbors = get_parent().get_diagonal_neighbors(self.coords, [1, 8])
-	for neighbor in diagonal_attack_neighbors:
-		neighbor.attack_highlight()
+func _is_within_movement_range(new_coords):
+	return new_coords in get_movement_range()
+
+func _is_within_attack_range(new_coords):
+	return new_coords in get_attack_range()
+
 
 func act(new_coords):
-
 	#if the tile selected is within movement range
 	if _is_within_movement_range(new_coords):
-		if get_parent().pieces.has(new_coords): 
-			return false
-		else: 
-			animate_move(new_coords)
-			yield(get_node("Tween"), "tween_complete")
-			set_coords(new_coords)
-			placed()
-			return true
-	
+		animate_move(new_coords)
+		yield(get_node("Tween"), "tween_complete")
+		set_coords(new_coords)
+		animate_placed()
+		return true
+
 	#elif the tile selected is within attack range
 	elif _is_within_attack_range(new_coords):
 		ranged_attack(new_coords)
-		placed()
+		animate_placed()
 		return true
 
 	return false
@@ -65,44 +61,4 @@ func act(new_coords):
 	
 	
 func ranged_attack(new_coords):
-	var difference = new_coords - self.coords
-	var increment = get_parent().hex_normalize(difference)
-	var current_coords = self.coords
-	var units_travelled = 0
-	while(units_travelled < 12):
-		units_travelled += 1
-		current_coords += increment
-		if (get_parent().pieces.has(current_coords)):
-			if (get_parent().pieces[current_coords].side == "ENEMY"):
-				get_parent().pieces[current_coords].attacked(4)
-			break
-
-
-
-func _is_within_movement_range(new_coords):
-	var neighbor_coords = []
-	var movement_neighbors = get_parent().get_neighbors(self.coords)
-	for neighbor in movement_neighbors:
-		neighbor_coords.append(neighbor.coords)
-		
-	if new_coords in neighbor_coords:
-		return true
-	else:
-		return false
-
-
-func _is_within_attack_range(new_coords):
-	var neighbor_coords = []
-	var attack_neighbors = get_parent().get_neighbors(self.coords, [2, 11])
-	for neighbor in attack_neighbors:
-		neighbor_coords.append(neighbor.coords)
-		
-	var diagonal_attack_neighbors = get_parent().get_diagonal_neighbors(self.coords, [1, 9])
-	for neighbor in diagonal_attack_neighbors:
-		neighbor_coords.append(neighbor.coords)
-
-	if new_coords in neighbor_coords:
-		return true
-	else:
-		return false
-	
+	get_parent().pieces[new_coords].attacked(4)
