@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=1]
+[gd_scene load_steps=17 format=1]
 
 [ext_resource path="res://Combat.gd" type="Script" id=1]
 [ext_resource path="res://Grid.tscn" type="PackedScene" id=2]
@@ -14,6 +14,7 @@
 [ext_resource path="res://ShakeCamera.tscn" type="PackedScene" id=12]
 [ext_resource path="res://UI/InvalidMoveIndicator.tscn" type="PackedScene" id=13]
 [ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=14]
+[ext_resource path="res://UI/TutorialTooltip.tscn" type="PackedScene" id=15]
 
 [sub_resource type="SampleLibrary" id=1]
 
@@ -95,5 +96,10 @@ default/filter/gain = 1.0
 default/reverb_room = 2
 default/reverb_send = 0.0
 default/chorus_send = 0.0
+
+[node name="TutorialTooltip" parent="." instance=ExtResource( 15 )]
+
+visibility/visible = false
+transform/pos = Vector2( 587.859, 372.311 )
 
 

@@ -7,19 +7,13 @@ extends Node2D
 
 
 
-const STATES = {"player_turn":0, "enemy_turn":1, "transitioning":2, "game_start":3}
+const STATES = {"player_turn":0, "enemy_turn":1, "transitioning":2, "game_start":3, "instruction":4}
 var state = STATES.game_start
 var enemy_waves = []
 
-const BerserkerPiece = preload("res://PlayerPieces/BerserkerPiece.tscn")
-const CavalierPiece = preload("res://PlayerPieces/CavalierPiece.tscn")
-const ArcherPiece = preload("res://PlayerPieces/ArcherPiece.tscn")
-const KnightPiece = preload("res://PlayerPieces/KnightPiece.tscn")
-
-const GruntPiece = preload("res://EnemyPieces/GruntPiece.tscn")
-
 signal enemy_turn_finished
 signal wave_deployed
+signal next_pressed
 
 var archer
 
@@ -32,28 +26,23 @@ func _ready():
 	get_node("Button").connect("pressed", self, "end_turn")
 	
 	get_node("Button").set_disabled(true)
+
 	
-	var berserker_piece = BerserkerPiece.instance()
-	initialize_piece(berserker_piece, 3)
+	var level = get_node("/root/global").get_param("level")
+	var allies = level["allies"]
+	for column in allies.keys():
+		initialize_piece(allies[column], column)
+		
+	self.enemy_waves = level["enemies"]
 	
-	var cavalier_piece = CavalierPiece.instance()
-	initialize_piece(cavalier_piece, 4)
-#	
-	var archer_piece = ArcherPiece.instance()
-	initialize_piece(archer_piece, 6)
-	
-	var knight_piece = KnightPiece.instance()
-	initialize_piece(knight_piece, 5)
-	
-	self.enemy_waves = get_node("/root/global").get_param("level")
+	self.instructions = level["instructions"]
 	
 	#we store the initial wave count as the first value in the array
-	var initial_waves = self.enemy_waves[0]
-	self.enemy_waves.pop_front()
+	var initial_deploy_count = level["initial_deploy_count"]
 	
 	get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.size()))
 	
-	for i in range(0, initial_waves):
+	for i in range(0, initial_deploy_count):
 		if self.enemy_waves.size() > 0:
 			deploy_wave()
 			yield(self, "wave_deployed")
@@ -115,18 +104,37 @@ func enemy_phase(enemy_pieces):
 
 	if(get_tree().get_nodes_in_group("enemy_pieces").size() > 0):
 		yield(self, "enemy_turn_finished")
-	print("calling deploy_wave from enemy_phase")
-	if self.enemy_waves.size() > 0:
-			deploy_wave()
-			yield(self, "wave_deployed")
+
+	deploy_wave()
+	yield(self, "wave_deployed")
 	
 	get_node("PhaseShifter").player_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 		player_piece.turn_update()
-	
+		
+	handle_instructions()
+	yield(self, "next_pressed")
+
 	self.state = STATES.player_turn
 	get_node("Button").set_disabled(false)
+		
+func handle_instructions():
+	if (self.instructions.size() > 0):
+		var instruction = self.instructions[0]
+		self.instructions.pop_front()
+		var info_text = instructions["info_text"]
+		var objective_text = instructions["objective_text"]
+		var tooltip_text = instructions["tooltip_text"]
+		
+		#if there's no instruction text in the first place, piss off
+		if !info_text and !objective_text:
+			emit_signal("next_pressed")
+			return
+			
+		
+	else:
+		emit_signal("next_pressed")
 
 
 
@@ -140,27 +148,27 @@ func _sort_by_y_axis(enemy_piece1, enemy_piece2):
 		return false
 		
 func deploy_wave():
-
-	var wave = self.enemy_waves[0]
-	self.enemy_waves.pop_front()
-	for column in wave.keys():
-		var enemy_piece = wave[column]
-		enemy_piece.connect("broke_defenses", self, "damage_defenses")
-		enemy_piece.connect("turn_finished", self, "track_turn_finished")
-
-		#TODO: push enemies in front away when you deploy more than 1 in same column
-		var position = get_node("Grid").get_top_of_column(column)
-		
-		#push any player pieces if they're on the spawn point
-		if(get_node("Grid").pieces.has(position)):
-			get_node("Grid").pieces[position].push(enemy_piece.get_movement_value())
-		get_node("Grid").add_piece(position, enemy_piece)
-		
-		enemy_piece.animate_summon()
-		yield(enemy_piece.get_node("AnimationPlayer"), "finished" )
-		get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.size()))
-
-	emit_signal("wave_deployed")
+	if self.enemy_waves.size() > 0:
+		var wave = self.enemy_waves[0]
+		self.enemy_waves.pop_front()
+		for column in wave.keys():
+			var enemy_piece = wave[column]
+			enemy_piece.connect("broke_defenses", self, "damage_defenses")
+			enemy_piece.connect("turn_finished", self, "track_turn_finished")
+	
+			#TODO: push enemies in front away when you deploy more than 1 in same column
+			var position = get_node("Grid").get_top_of_column(column)
+			
+			#push any player pieces if they're on the spawn point
+			if(get_node("Grid").pieces.has(position)):
+				get_node("Grid").pieces[position].push(enemy_piece.get_movement_value())
+			get_node("Grid").add_piece(position, enemy_piece)
+			
+			enemy_piece.animate_summon()
+			yield(enemy_piece.get_node("AnimationPlayer"), "finished" )
+			get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.size()))
+	
+		emit_signal("wave_deployed")
 
 func player_win():
 	get_node("/root/global").goto_scene("res://WinScreen.tscn")

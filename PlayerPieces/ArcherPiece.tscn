@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=1]
+[gd_scene load_steps=10 format=1]
 
 [ext_resource path="res://PlayerPieces/ArcherPiece.gd" type="Script" id=1]
 [ext_resource path="res://Assets/archer_piece.png" type="Texture" id=2]
@@ -6,6 +6,7 @@
 [ext_resource path="res://Assets/archer_piece_light.png" type="Texture" id=4]
 [ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=6]
+[ext_resource path="res://PlayerPieces/ArcherArrow.tscn" type="PackedScene" id=7]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -54,5 +55,10 @@ default/filter/gain = 1.0
 default/reverb_room = 2
 default/reverb_send = 0.0
 default/chorus_send = 0.0
+
+[node name="ArcherArrow" parent="." instance=ExtResource( 7 )]
+
+visibility/opacity = 0.0
+transform/pos = Vector2( 0, -10 )
 
 

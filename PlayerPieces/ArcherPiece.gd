@@ -53,6 +53,7 @@ func act(new_coords):
 	#elif the tile selected is within attack range
 	elif _is_within_attack_range(new_coords):
 		ranged_attack(new_coords)
+		yield(self, "animation_finished")
 		placed()
 		return true
 
@@ -61,4 +62,29 @@ func act(new_coords):
 	
 	
 func ranged_attack(new_coords):
+	var location = get_parent().locations[new_coords]
+	var new_position = location.get_pos()
+	var angle = get_pos().angle_to_point(new_position)
+	
+	var arrow = get_node("ArcherArrow")
+	arrow.set_rot(angle)
+	var distance = get_pos().distance_to(new_position)
+	var speed = 400
+	var time = distance/speed
+	
+	get_node("Tween").interpolate_property(arrow, "visibility/opacity", 0, 1, 0.6, Tween.TRANS_SINE, Tween.EASE_IN)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	var offset = Vector2(0, -10)
+	var new_arrow_pos = (location.get_pos() - get_pos()) + offset
+	get_node("Tween").interpolate_property(arrow, "transform/pos", arrow.get_pos(), new_arrow_pos, time, Tween.TRANS_BACK, Tween.EASE_IN)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	arrow.set_opacity(0)
+	arrow.set_pos(offset)
 	get_parent().pieces[new_coords].attacked(4)
+	emit_signal("animation_finished")
+
+#override so that when pushed, it dies
+func push(distance):
+	delete_self()

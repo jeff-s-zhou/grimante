@@ -66,6 +66,16 @@ func jump_to(new_coords, speed=4):
 	
 	get_node("AnimationPlayer").play("float")
 	
+func jump_back(new_coords):
+	set_z(2)
+	self.mid_animation = true
+	var location = get_parent().locations[new_coords]
+	var new_position = location.get_pos()
+	var time = 0.8
+	get_node("AnimationPlayer").play("jump_back")
+	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), new_position, time, Tween.TRANS_SINE, Tween.EASE_IN)
+	
+	
 
 func act(new_coords):
 	if _is_within_attack_range(new_coords):
@@ -95,8 +105,8 @@ func smash_attack(new_coords):
 		jump_to(new_coords)
 		yield(self, "movement_animation_finished")
 		get_parent().pieces[new_coords].attacked(DAMAGE)
-		jump_to(self.coords)
-		yield(self, "movement_animation_finished")
+		jump_back(self.coords)
+		yield( get_node("AnimationPlayer"), "finished" )
 		set_z(-1)
 		placed()
 
