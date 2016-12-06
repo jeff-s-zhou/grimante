@@ -9,9 +9,9 @@ var animation_state = ANIMATION_STATES.default
 
 const UNIT_TYPE = "Knight"
 const DESCRIPTION = """Armor: 2
-Movement: Rush - Can move to any empty tile along a straight line path.\n
-Attack: Joust. Targeting an enemy unit at the end of your Rush deals 1 damage for every tile travelled. Applies Knockback.\n
-Passive: Trample. Moving through an enemy unit deals 1 damage to it."""
+Movement: 1 range step
+Attack: Shove. 1 range, pushes target back and also pushes targets behind them. Can push friendly units and not KO them.
+"""
 	
 func get_movement_range():
 	return get_parent().get_range(self.coords)
@@ -59,7 +59,7 @@ func shove(new_coords):
 	var difference = new_coords - self.coords
 	var increment = get_parent().hex_normalize(difference)
 	animate_move(new_coords)
-	get_parent().pieces[new_coords].push(increment)
+	get_parent().pieces[new_coords].push(increment, true)
 	yield(get_node("Tween"), "tween_complete")
 	set_coords(new_coords)
 	placed()

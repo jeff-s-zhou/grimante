@@ -51,6 +51,11 @@ func _ready():
 			var location_y_coord = _LOCATION_Y_OFFSETS[i] + j
 			locations[Vector2(i, location_y_coord)] = location1
 			location1.set_coords(Vector2(i, location_y_coord))
+			
+func debug():
+	for key in self.locations.keys():
+		self.locations[key].debug()
+	
 
 
 #so we know what location the player is currently hovering over
@@ -118,11 +123,18 @@ func get_range(coords, magnitude_range=[1,2], side=null, collision_check=false, 
 			
 		for i in range(magnitude_range[0], magnitude_range[1]):
 			var new_coords = coords + i * change_vector
-			if side:
+			if collision_check:
+				if pieces.has(new_coords):
+						if pieces[new_coords].side == side:
+							print("appended here")
+							return_set.append(new_coords)
+						else:
+							print("caught the friendly")
+						break #break regardless on first collision
+	
+			elif side:
 				if pieces.has(new_coords) and pieces[new_coords].side == side:
 					return_set.append(new_coords)
-					if collision_check: #if we check for collisions, return the first in any direction
-						break
 
 			elif locations.has(new_coords) and !pieces.has(new_coords): #only return empty locations
 				return_set.append(new_coords)

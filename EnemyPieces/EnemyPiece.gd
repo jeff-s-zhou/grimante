@@ -5,18 +5,22 @@ extends KinematicBody2D
 # var a=2
 # var b="textvar"
 
-const STATES = {"default":0, "moving":1}
-const MOVE_SPEED = 4
-var animation_state = STATES.default
 var action_highlighted = false
-var velocity
-var new_position
 var movement_value = Vector2(0, 1)
+var mid_animation = false
 
 var coords #enemies move automatically each turn a certain number of spaces forward
 var hp
 var type
 var side = "ENEMY"
+
+var hover_description = ""
+var unit_name = ""
+
+var reinforced_hp = 0
+
+signal description_data(name, description)
+signal hide_description
 
 signal broke_defenses
 signal turn_finished
@@ -35,11 +39,14 @@ func _ready():
 	add_to_group("enemy_pieces")
 	
 func hover_highlight():
+	emit_signal("description_data", self.unit_name, self.hover_description)
 	if self.action_highlighted:
 		get_node("Physicals/AnimatedSprite").play("attack_range_hover")
 		get_node("Physicals/HealthDisplay/AnimatedSprite").play("attack_range_hover")
+
 	
 func hover_unhighlight():
+	emit_signal("hide_description")
 	if self.action_highlighted:
 		get_node("Physicals/AnimatedSprite").play("attack_range")
 		get_node("Physicals/HealthDisplay/AnimatedSprite").play("attack_range")
@@ -73,17 +80,17 @@ func set_hp(hp):
 	
 func delete_self():
 	get_parent().pieces.erase(self.coords)
-	remove_from_group("enemy_pieces")
-	get_node("/root/Combat/ComboSystem").increase_combo()
 	yield(get_node("Tween"), "tween_complete")
+	get_node("/root/Combat/ComboSystem").increase_combo()
+	remove_from_group("enemy_pieces")
 	self.queue_free()
 	
 	
 func attacked(damage):
+	mid_animation = true
 	get_node("AnimationPlayer").play("FlickerAnimation")
 	set_hp(self.hp - damage)
 	yield( get_node("AnimationPlayer"), "finished" )
-
 	var text = get_node("Flyover/FlyoverText")
 	text.set_pos(Vector2(-25, 16))
 	text.set_opacity(1.0)
@@ -92,10 +99,13 @@ func attacked(damage):
 	get_node("Tween").interpolate_property(text, "rect/pos", text.get_pos(), destination, 1.3, Tween.TRANS_EXPO, Tween.EASE_OUT_IN)
 	get_node("Tween").interpolate_property(text, "visibility/opacity", 1, 0, 1.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	mid_animation = false
 
 
 #for the berserker's smash kill which should instantly remove
 func smash_killed(damage):
+	mid_animation = true
 	set_hp(self.hp - damage)
 	get_node("Physicals").set_opacity(0)
 	var text = get_node("Flyover/FlyoverText")
@@ -106,6 +116,8 @@ func smash_killed(damage):
 	get_node("Tween").interpolate_property(text, "rect/pos", text.get_pos(), destination, 1.5, Tween.TRANS_EXPO, Tween.EASE_OUT_IN)
 	get_node("Tween").interpolate_property(text, "visibility/opacity", 1, 0, 1.5, Tween.TRANS_QUINT, Tween.EASE_IN)
 	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	mid_animation = false
 	
 	
 	
@@ -113,8 +125,9 @@ func smash_killed(damage):
 func set_coords(coords):
 	get_parent().move_piece(self.coords, coords)
 	self.coords = coords
-	
-func push(distance):
+
+
+func push(distance, is_knight=false):
 	if get_parent().locations.has(self.coords + distance):
 		#if there's something in front, push that
 		if get_parent().pieces.has(self.coords + distance):

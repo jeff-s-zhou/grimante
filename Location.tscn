@@ -1,9 +1,10 @@
-[gd_scene load_steps=7 format=1]
+[gd_scene load_steps=8 format=1]
 
 [ext_resource path="res://Location.gd" type="Script" id=1]
 [ext_resource path="res://Assets/location.png" type="Texture" id=2]
 [ext_resource path="res://Assets/location_blue.png" type="Texture" id=3]
 [ext_resource path="res://Assets/location_red.png" type="Texture" id=4]
+[ext_resource path="res://Assets/enemy_health.fnt" type="BitmapFont" id=5]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 
@@ -37,5 +38,21 @@ _update_shape_index = 0
 
 frames = SubResource( 2 )
 animation = "default"
+
+[node name="Label" type="Label" parent="."]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = -19.0
+margin/top = -11.0
+margin/right = 33.0
+margin/bottom = 13.0
+custom_fonts/font = ExtResource( 5 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
 
 

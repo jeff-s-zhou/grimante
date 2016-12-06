@@ -18,6 +18,9 @@ func _ready():
 	set_monitorable(false)
 	set_z(-3)
 	
+func debug():
+	get_node("Label").set_text(str(coords.x) + "," + str(coords.y))
+	
 func set_coords(coords):
 	self.coords = coords
 

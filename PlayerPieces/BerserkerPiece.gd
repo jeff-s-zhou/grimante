@@ -10,7 +10,10 @@ var animation_state = ANIMATION_STATES.default
 
 const UNIT_TYPE = "Berserker"
 
-const DESCRIPTION = ""
+const DESCRIPTION = """Armor: 1
+Movement: 2 range leap
+Attack: Leap Strike. Leap to a tile. If there is an enemy on the tile, deal 3 damage. If the enemy is killed by the attack, move to that tile. Otherwise, return to your original tile.
+Passive: Ground Slam. Moving to a tile deals 2 damage in a 1-range AoE around your destination."""
 
 signal movement_animation_finished
 
@@ -93,7 +96,6 @@ func smash_attack(new_coords):
 		jump_to(new_coords)
 		yield(self, "movement_animation_finished")
 		get_parent().pieces[new_coords].smash_killed(DAMAGE)
-		print("should be smash killing")
 		var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 		smash(smash_range)
 		set_coords(new_coords)

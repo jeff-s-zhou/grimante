@@ -35,7 +35,7 @@ animation = "default"
 
 [node name="HealthDisplay" parent="Physicals" instance=ExtResource( 6 )]
 
-transform/pos = Vector2( 0, 26 )
+transform/pos = Vector2( 0, 30 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 

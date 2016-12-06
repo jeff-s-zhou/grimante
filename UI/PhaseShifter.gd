@@ -26,6 +26,7 @@ func player_phase_animation():
 	get_node("Text").play("player_phase")
 	
 	get_node("AnimationPlayer").play("blur")
+
 	
 func enemy_phase_animation():
 	get_node("PhaseSlider").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height/2 + 50))

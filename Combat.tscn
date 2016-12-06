@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=1]
+[gd_scene load_steps=19 format=1]
 
 [ext_resource path="res://Combat.gd" type="Script" id=1]
 [ext_resource path="res://Grid.tscn" type="PackedScene" id=2]
@@ -14,7 +14,9 @@
 [ext_resource path="res://ShakeCamera.tscn" type="PackedScene" id=12]
 [ext_resource path="res://UI/InvalidMoveIndicator.tscn" type="PackedScene" id=13]
 [ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=14]
-[ext_resource path="res://UI/TutorialTooltip.tscn" type="PackedScene" id=15]
+[ext_resource path="res://UI/TutorialPopup.tscn" type="PackedScene" id=15]
+[ext_resource path="res://UI/TutorialTooltip.tscn" type="PackedScene" id=16]
+[ext_resource path="res://UI/SidebarTooltip.tscn" type="PackedScene" id=17]
 
 [sub_resource type="SampleLibrary" id=1]
 
@@ -97,9 +99,31 @@ default/reverb_room = 2
 default/reverb_send = 0.0
 default/chorus_send = 0.0
 
-[node name="TutorialTooltip" parent="." instance=ExtResource( 15 )]
+[node name="TutorialPopup" parent="." instance=ExtResource( 15 )]
+
+visibility/opacity = 0.0
+
+[node name="TutorialTooltip" parent="." instance=ExtResource( 16 )]
 
 visibility/visible = false
-transform/pos = Vector2( 587.859, 372.311 )
+
+[node name="SidebarTooltip" parent="." instance=ExtResource( 17 )]
+
+visibility/visible = false
+transform/pos = Vector2( 1103, 380 )
+
+[node name="Timer" type="Timer" parent="."]
+
+process_mode = 1
+wait_time = 1.0
+one_shot = false
+autostart = false
+
+[node name="Timer2" type="Timer" parent="."]
+
+process_mode = 1
+wait_time = 1.0
+one_shot = false
+autostart = false
 
 

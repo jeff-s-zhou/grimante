@@ -17,7 +17,9 @@ signal animation_finished
 
 const UNIT_TYPE = "Archer"
 
-const DESCRIPTION = ""
+const DESCRIPTION = """Armor: 0
+Movement: 1 range step
+Attack: Snipe. Attack the first enemy in a line for 3 damage. Can target diagonally. """
 	
 func get_attack_range():
 	var attack_range = get_parent().get_range(self.coords, [2, 11], "ENEMY", true)
@@ -86,5 +88,8 @@ func ranged_attack(new_coords):
 	emit_signal("animation_finished")
 
 #override so that when pushed, it dies
-func push(distance):
-	delete_self()
+func push(distance, is_knight=false):
+	if(is_knight):
+		.push(distance)
+	else:
+		delete_self()

@@ -10,11 +10,13 @@ var state = States.PLACED
 var coords
 var side = "PLAYER"
 var cursor_area
+var name = ""
 
 const SHOVE_SPEED = 4
 
 signal invalid_move
 signal description_data(unit_name, description)
+signal hide_description
 signal animation_done
 signal shake
 
@@ -61,6 +63,10 @@ func animate_move_to_pos(position, speed):
 	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	
+func animate_summon():
+	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").start()
+	
 
 func animate_move(new_coords, speed=200):
 	var location = get_parent().locations[new_coords]
@@ -71,10 +77,10 @@ func attack_highlight():
 	pass
 	
 func assist_highlight():
-	print("TODO: implement assist highlighting")
+	get_node("AnimatedSprite").play("hover_highlight")
 	
 func unhighlight():
-	pass
+	get_node("AnimatedSprite").play("default")
 
 #called when an event happens inside the click area hitput
 func input_event(viewport, event, shape_idx):
@@ -123,6 +129,7 @@ func placed():
 
 
 func unhovered():
+	emit_signal("hide_description")
 	if self.state != States.CLICKED: #only undisplay if the unit isn't selected
 		#reset assist highlighting if other piece is focused atm
 		if get_parent().focused != null and get_parent().focused != self: 
@@ -136,13 +143,15 @@ func unhovered():
 
 #called when hovered over during player turn		
 func hovered():
+	emit_signal("description_data", self.UNIT_TYPE, self.DESCRIPTION)
+	
 	#if another piece is currently focused, do assist highlighting
 	if get_parent().focused != null and get_parent().focused != self:
 		print("calling the other hover")
 	else:
 		if self.state == States.DEFAULT or self.state == States.CLICKED:
 			if self.mid_animation == false: #to handle the bug of the clickarea not moving until everything's done
-				hover_highlight()
+				#hover_highlight()
 				display_action_range()
 			else:
 				print("met3")
@@ -154,7 +163,7 @@ func display_action_range():
 	pass
 
 
-func push(distance):
+func push(distance, is_knight=false):
 	if get_parent().locations.has(self.coords + distance):
 		#if there's something in front, push that
 		if get_parent().pieces.has(self.coords + distance):

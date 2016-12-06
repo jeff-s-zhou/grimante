@@ -1,10 +1,10 @@
-[gd_scene load_steps=10 format=1]
+[gd_scene load_steps=12 format=1]
 
 [ext_resource path="res://UI/PhaseShifter.gd" type="Script" id=1]
 [ext_resource path="res://Assets/screen.png" type="Texture" id=2]
 [ext_resource path="res://UI/PhaseSlider.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Assets/player_phase.png" type="Texture" id=4]
-[ext_resource path="res://Assets/enemy_phase.png" type="Texture" id=5]
+[ext_resource path="res://Assets/enemy_phase.png" type="Texture" id=4]
+[ext_resource path="res://Assets/player_phase.png" type="Texture" id=5]
 
 [sub_resource type="CanvasItemShader" id=1]
 
@@ -33,9 +33,33 @@ tracks/1/interp = 1
 tracks/1/imported = false
 tracks/1/keys = { "times":FloatArray( 0, 0.4, 1.4, 1.8 ), "transitions":FloatArray( 1, 1, 1, 1 ), "update":0, "values":[ 0.0, 1.0, 1.0, 0.0 ] }
 
-[sub_resource type="SpriteFrames" id=4]
+[sub_resource type="Animation" id=4]
 
-animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"player_phase", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"enemy_phase", "speed":5.0 } ]
+resource/name = "end_blur"
+length = 0.4
+loop = false
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("TextureFrame:visibility/opacity")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = { "times":FloatArray( 0, 0.4 ), "transitions":FloatArray( 1, 1 ), "update":0, "values":[ 1.0, 0.0 ] }
+
+[sub_resource type="Animation" id=5]
+
+resource/name = "start_blur"
+length = 0.4
+loop = false
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("TextureFrame:visibility/opacity")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = { "times":FloatArray( 0, 0.4 ), "transitions":FloatArray( 1, 1 ), "update":0, "values":[ 0.0, 1.0 ] }
+
+[sub_resource type="SpriteFrames" id=6]
+
+animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"enemy_phase", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"player_phase", "speed":5.0 } ]
 
 [node name="PhaseShifter" type="Node2D"]
 
@@ -68,6 +92,8 @@ playback/process_mode = 1
 playback/default_blend_time = 0.0
 root/root = NodePath("..")
 anims/blur = SubResource( 3 )
+anims/end_blur = SubResource( 4 )
+anims/start_blur = SubResource( 5 )
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
@@ -77,7 +103,7 @@ autoplay = ""
 
 visibility/opacity = 0.0
 transform/pos = Vector2( 716.508, 486.023 )
-frames = SubResource( 4 )
+frames = SubResource( 6 )
 animation = "enemy_phase"
 
 

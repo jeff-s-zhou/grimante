@@ -10,73 +10,106 @@ extends Node2D
 const STATES = {"player_turn":0, "enemy_turn":1, "transitioning":2, "game_start":3, "instruction":4}
 var state = STATES.game_start
 var enemy_waves = []
+var instructions = []
+var reinforcements = {}
+var turn_count = 0
+var level = null
+var next_level = null
 
 signal enemy_turn_finished
 signal wave_deployed
 signal next_pressed
+signal reinforced
 
 var archer
 
 func _ready():
-
+	set_process(true)
+	set_process_input(true)
+	
+	get_node("Timer").set_active(false)
 	# Called every time the node is added to the scene.
 	# Initialization here
 	get_node("Grid").set_pos(Vector2((get_viewport_rect().size.width - 220)/2, get_viewport_rect().size.height/2 + 40))
 	
+	get_node("Grid").debug()
+	
+	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("Button").connect("pressed", self, "end_turn")
 	
 	get_node("Button").set_disabled(true)
+	
+	get_node("ComboSystem/ComboPointsLabel").set_opacity(0)
+	get_node("WavesDisplay/WavesLabel").set_opacity(0)
 
 	
-	var level = get_node("/root/global").get_param("level")
+	level = get_node("/root/global").get_param("level")
 	var allies = level["allies"]
 	for column in allies.keys():
 		initialize_piece(allies[column], column)
 		
 	self.enemy_waves = level["enemies"]
-	
+	self.reinforcements = level["reinforcements"]
 	self.instructions = level["instructions"]
+	self.next_level = level["next_level"]
 	
 	#we store the initial wave count as the first value in the array
 	var initial_deploy_count = level["initial_deploy_count"]
 	
-	get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.size()))
+	
 	
 	for i in range(0, initial_deploy_count):
 		if self.enemy_waves.size() > 0:
 			deploy_wave()
 			yield(self, "wave_deployed")
+			
+	get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.size()))
+	get_node("WavesDisplay/WavesLabel").set_opacity(1)
+	get_node("ComboSystem/ComboPointsLabel").set_opacity(1)
 
 	get_node("PhaseShifter").player_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
-	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
-		player_piece.turn_update()
+	player_phase_start()
 	
-	self.state = STATES.player_turn
-	get_node("Button").set_disabled(false)
-	set_process(true)
 	
 	
 func initialize_piece(piece, column):
+	piece.set_opacity(0)
 	piece.connect("invalid_move", self, "handle_invalid_move")
 	piece.connect("description_data", self, "display_description")
 	piece.connect("shake", self, "screen_shake")
 	piece.initialize(get_node("CursorArea"))
 	var position = get_node("Grid").get_bottom_of_column(column)
 	get_node("Grid").add_piece(position, piece)
+	piece.animate_summon()
 	
 	
 func end_turn():
 	
 	self.state = STATES.transitioning
+	get_node("Timer2").set_wait_time(0.2)
+	get_node("Timer2").start()
+	yield(get_node("Timer2"), "timeout")
+	
 	get_node("Button").set_disabled(true)
+	get_node("TutorialTooltip").reset()
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 		player_piece.placed()
 	get_node("PhaseShifter").enemy_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	get_node("ComboSystem").player_turn_ended()
 	self.state = STATES.enemy_turn
-	
+
+func _input(event):
+	if event.type == InputEvent.KEY:
+		if event.scancode == KEY_SPACE && !event.pressed:
+        	get_node("SidebarTooltip").hide()
+		elif event.scancode == KEY_SPACE && event.pressed:
+			get_node("SidebarTooltip").show()
+		elif event.scancode == KEY_N && event.pressed:
+			if(self.next_level != null):
+				get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.next_level})
+
 func _process(delta):
 	var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
 	if enemy_pieces.size() == 0 and self.enemy_waves.size() == 0:
@@ -87,7 +120,19 @@ func _process(delta):
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			if !player_piece.is_placed():
 				return
-		end_turn()
+				
+		if !get_node("Timer").is_active():
+			get_node("Timer").set_active(true)
+			get_node("Timer").set_wait_time(0.6)
+			get_node("Timer").start()
+			
+		elif get_node("Timer").get_time_left() <= 0.1:
+			for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
+				if enemy_piece.mid_animation:
+					return
+			get_node("Timer").set_active(false)
+			end_turn()
+			
 		
 	elif self.state == STATES.enemy_turn:
 		enemy_phase(enemy_pieces)
@@ -98,45 +143,106 @@ func _process(delta):
 		
 		
 func enemy_phase(enemy_pieces):
+	
 	enemy_pieces.sort_custom(self, "_sort_by_y_axis") #ensures the pieces in front move first
 	for enemy_piece in enemy_pieces:
 		enemy_piece.turn_update()
 
 	if(get_tree().get_nodes_in_group("enemy_pieces").size() > 0):
 		yield(self, "enemy_turn_finished")
-
-	deploy_wave()
-	yield(self, "wave_deployed")
+	if self.enemy_waves.size() > 0:
+		deploy_wave()
+		yield(self, "wave_deployed")
+	
+	get_node("Timer2").set_wait_time(0.8)
+	get_node("Timer2").start()
+	yield(get_node("Timer2"), "timeout")
 	
 	get_node("PhaseShifter").player_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
+	
+	player_phase_start()
+	
+
+func player_phase_start():
+	self.turn_count += 1
+	if self.reinforcements.has(self.turn_count):
+		reinforce()
+		yield(self, "reinforced")
+	if (self.instructions.size() > 0):
+		handle_instructions()
+		yield(self, "next_pressed")
+	
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 		player_piece.turn_update()
-		
-	handle_instructions()
-	yield(self, "next_pressed")
 
 	self.state = STATES.player_turn
 	get_node("Button").set_disabled(false)
+	
+func reinforce():
+	var reinforcement_wave = self.reinforcements[self.turn_count]
+	for key in reinforcement_wave.keys():
+		var piece = reinforcement_wave[key]
+		initialize_piece(piece, key)
 		
+		#wait for summon animation to finish before summoning another
+		yield(piece.get_node("Tween"), "tween_complete")
+	emit_signal("reinforced")
+
 func handle_instructions():
-	if (self.instructions.size() > 0):
-		var instruction = self.instructions[0]
-		self.instructions.pop_front()
-		var info_text = instructions["info_text"]
-		var objective_text = instructions["objective_text"]
-		var tooltip_text = instructions["tooltip_text"]
-		
-		#if there's no instruction text in the first place, piss off
-		if !info_text and !objective_text:
-			emit_signal("next_pressed")
-			return
-			
-		
-	else:
+	get_node("Timer2").set_wait_time(0.3)
+	get_node("Timer2").start()
+	yield(get_node("Timer2"), "timeout")
+	
+	var instruction = self.instructions[0]
+	self.instructions.pop_front()
+	var tip_text = instruction["tip_text"]
+	var objective_text = instruction["objective_text"]
+	
+	#if there's no instruction text in the first place, piss off
+	if !tip_text and !objective_text:
 		emit_signal("next_pressed")
-
-
+		return
+		
+	var popup = get_node("TutorialPopup")
+	popup.set_text(tip_text, objective_text)
+		
+	get_node("PhaseShifter/AnimationPlayer").play("start_blur")
+	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
+	
+	
+	get_node("Tween").interpolate_property(popup, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_SINE, Tween.EASE_IN)
+	
+	var end_pos = popup.get_pos() + Vector2(0, get_viewport_rect().size.height/2 + 100)
+	get_node("Tween").interpolate_property(popup, "transform/pos",popup.get_pos(), end_pos, 1, Tween.TRANS_BACK, Tween.EASE_OUT)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	popup.transition_in()
+	yield(popup, "done")
+	
+	yield(popup, "next")
+	popup.transition_out()
+	get_node("Tween").interpolate_property(popup, "visibility/opacity", 1, 0, 1, Tween.TRANS_SINE, Tween.EASE_IN)
+	
+	var end_pos = Vector2((get_viewport_rect().size.width)/2, -100)
+	get_node("Tween").interpolate_property(popup, "transform/pos", popup.get_pos(), end_pos, 1, Tween.TRANS_BACK, Tween.EASE_IN)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	get_node("PhaseShifter/AnimationPlayer").play("end_blur")
+	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
+	print("emitting signal next pressed")
+	emit_signal("next_pressed")
+	
+	
+	
+	var arrow_coords = instruction["arrow_coords"]
+	
+	if arrow_coords != null:
+		var new_pos = (get_node("Grid").locations[arrow_coords]).get_global_pos()
+		print(new_pos)
+		get_node("TutorialTooltip").set_pos(new_pos)
+		get_node("TutorialTooltip").set_tooltip(instruction["tooltip"])
+		get_node("TutorialTooltip").show()
 
 func screen_shake():
 	get_node("ShakeCamera").shake(0.5, 30, 4)
@@ -148,33 +254,36 @@ func _sort_by_y_axis(enemy_piece1, enemy_piece2):
 		return false
 		
 func deploy_wave():
-	if self.enemy_waves.size() > 0:
-		var wave = self.enemy_waves[0]
-		self.enemy_waves.pop_front()
-		for column in wave.keys():
-			var enemy_piece = wave[column]
-			enemy_piece.connect("broke_defenses", self, "damage_defenses")
-			enemy_piece.connect("turn_finished", self, "track_turn_finished")
-	
-			#TODO: push enemies in front away when you deploy more than 1 in same column
-			var position = get_node("Grid").get_top_of_column(column)
-			
-			#push any player pieces if they're on the spawn point
-			if(get_node("Grid").pieces.has(position)):
-				get_node("Grid").pieces[position].push(enemy_piece.get_movement_value())
-			get_node("Grid").add_piece(position, enemy_piece)
-			
-			enemy_piece.animate_summon()
-			yield(enemy_piece.get_node("AnimationPlayer"), "finished" )
-			get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.size()))
-	
-		emit_signal("wave_deployed")
+	var wave = self.enemy_waves[0]
+	self.enemy_waves.pop_front()
+	for key in wave.keys():
+		var enemy_piece = wave[key]
+		enemy_piece.connect("broke_defenses", self, "damage_defenses")
+		enemy_piece.connect("turn_finished", self, "track_turn_finished")
+		enemy_piece.connect("description_data", self, "display_description")
+
+		var position
+		if typeof(key) == TYPE_INT:
+			position = get_node("Grid").get_top_of_column(key)
+		else:
+			position = key #that way when we need to we can specify by coordinates
+		
+		#push any player pieces if they're on the spawn point
+		if(get_node("Grid").pieces.has(position)):
+			get_node("Grid").pieces[position].push(enemy_piece.get_movement_value())
+		get_node("Grid").add_piece(position, enemy_piece)
+		
+		enemy_piece.animate_summon()
+		yield(enemy_piece.get_node("AnimationPlayer"), "finished" )
+		get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.size()))
+
+	emit_signal("wave_deployed")
 
 func player_win():
-	get_node("/root/global").goto_scene("res://WinScreen.tscn")
+	get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.next_level})
 	
 func enemy_win():
-	get_node("/root/global").goto_scene("res://LoseScreen.tscn")
+	get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level":self.level})
 	
 func damage_defenses():
 	enemy_win()
@@ -187,7 +296,6 @@ func handle_invalid_move():
 	get_node("InvalidMoveIndicator/AnimationPlayer").play("flash")
 	
 func display_description(name, text):
-	pass
-	
+	get_node("SidebarTooltip").set(name, text)
 
 
