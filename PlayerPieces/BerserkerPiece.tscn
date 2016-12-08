@@ -1,14 +1,15 @@
 [gd_scene load_steps=16 format=1]
 
 [ext_resource path="res://PlayerPieces/BerserkerPiece.gd" type="Script" id=1]
-[ext_resource path="res://Assets/berserker_piece.png" type="Texture" id=2]
-[ext_resource path="res://Assets/berserker_piece_sepia.png" type="Texture" id=3]
-[ext_resource path="res://Assets/berserker_piece_light.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Allies/berserker_piece.png" type="Texture" id=2]
+[ext_resource path="res://Assets/Allies/berserker_piece_sepia.png" type="Texture" id=3]
+[ext_resource path="res://Assets/Allies/berserker_piece_light.png" type="Texture" id=4]
 [ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Assets/processed_sounds/explode.smp" type="Sample" id=6]
 [ext_resource path="res://Assets/processed_sounds/explode2.smp" type="Sample" id=7]
 [ext_resource path="res://Assets/processed_sounds/explode3.smp" type="Sample" id=8]
 [ext_resource path="res://Assets/processed_sounds/explodemini.smp" type="Sample" id=9]
+
 
 [sub_resource type="SpriteFrames" id=1]
 

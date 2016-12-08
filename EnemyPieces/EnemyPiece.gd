@@ -80,7 +80,9 @@ func set_hp(hp):
 	
 func delete_self():
 	get_parent().pieces.erase(self.coords)
-	yield(get_node("Tween"), "tween_complete")
+	if(get_node("Tween").is_active()):
+		yield(get_node("Tween"), "tween_complete")
+	
 	get_node("/root/Combat/ComboSystem").increase_combo()
 	remove_from_group("enemy_pieces")
 	self.queue_free()
@@ -91,8 +93,20 @@ func attacked(damage):
 	get_node("AnimationPlayer").play("FlickerAnimation")
 	set_hp(self.hp - damage)
 	yield( get_node("AnimationPlayer"), "finished" )
+	damaged_helper(damage)
+
+
+#for the berserker's smash kill which should instantly remove
+func smash_killed(damage):
+	mid_animation = true
+	set_hp(self.hp - damage)
+	get_node("Physicals").set_opacity(0)
+	damaged_helper(damage)
+
+
+func damaged_helper(damage):
 	var text = get_node("Flyover/FlyoverText")
-	text.set_pos(Vector2(-25, 16))
+	text.set_pos(Vector2(-25, 16)) #original position of flyover text
 	text.set_opacity(1.0)
 	text.set_text("-" + str(damage))
 	var destination = text.get_pos() - Vector2(0, 200)
@@ -101,27 +115,8 @@ func attacked(damage):
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	mid_animation = false
+	
 
-
-#for the berserker's smash kill which should instantly remove
-func smash_killed(damage):
-	mid_animation = true
-	set_hp(self.hp - damage)
-	get_node("Physicals").set_opacity(0)
-	var text = get_node("Flyover/FlyoverText")
-	text.set_pos(Vector2(-25, 16))
-	text.set_opacity(1.0)
-	text.set_text("-" + str(damage))
-	var destination = text.get_pos() - Vector2(0, 150)
-	get_node("Tween").interpolate_property(text, "rect/pos", text.get_pos(), destination, 1.5, Tween.TRANS_EXPO, Tween.EASE_OUT_IN)
-	get_node("Tween").interpolate_property(text, "visibility/opacity", 1, 0, 1.5, Tween.TRANS_QUINT, Tween.EASE_IN)
-	get_node("Tween").start()
-	yield(get_node("Tween"), "tween_complete")
-	mid_animation = false
-	
-	
-	
-	
 func set_coords(coords):
 	get_parent().move_piece(self.coords, coords)
 	self.coords = coords
@@ -138,6 +133,9 @@ func push(distance, is_knight=false):
 		yield(get_node("Tween"), "tween_complete")
 		
 	else:
+		#needed because delete self catches a "yield" for tween player
+		get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
+		get_node("Tween").start()
 		delete_self()
 	
 

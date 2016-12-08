@@ -41,8 +41,6 @@ func animate_smash():
 	#get_node("Tween").interpolate_callback(self, 0.1, "play_smash_sound")
 	yield( get_node("AnimationPlayer"), "finished" )
 	emit_signal("shake")
-	
-	
 	emit_signal("movement_animation_finished")
 
 func play_smash_sound():
@@ -58,10 +56,7 @@ func jump_to(new_coords, speed=4):
 	var time = distance/speed
 	
 	get_node("AnimationPlayer").play("jump")
-	
-#	get_node("Timer").set_wait_time(1)
-#	get_node("Timer").start()
-#	yield(get_node("Timer"), "timeout")
+
 	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), new_position, time, Tween.TRANS_SINE, Tween.EASE_IN)
 	get_node("Tween").interpolate_callback(self, time + 0.2, "animate_smash")
 	get_node("Tween").start()

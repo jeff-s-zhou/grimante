@@ -2,21 +2,26 @@
 
 [ext_resource path="res://Combat.gd" type="Script" id=1]
 [ext_resource path="res://Grid.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Assets/sidebar.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/sidebar.png" type="Texture" id=3]
 [ext_resource path="res://UI/PhaseShifter.tscn" type="PackedScene" id=4]
 [ext_resource path="res://CursorArea.tscn" type="PackedScene" id=5]
-[ext_resource path="res://ComboSystem.tscn" type="PackedScene" id=6]
+[ext_resource path="res://UI/ComboSystem.tscn" type="PackedScene" id=6]
 [ext_resource path="res://UI/WavesDisplay.tscn" type="PackedScene" id=7]
-[ext_resource path="res://Assets/turn_button.png" type="Texture" id=8]
-[ext_resource path="res://Assets/turn_button_pressed.png" type="Texture" id=9]
-[ext_resource path="res://Assets/turn_button_hovered.png" type="Texture" id=10]
-[ext_resource path="res://Assets/turn_button_greyed.png" type="Texture" id=11]
-[ext_resource path="res://ShakeCamera.tscn" type="PackedScene" id=12]
+[ext_resource path="res://Assets/UI/turn_button.png" type="Texture" id=8]
+[ext_resource path="res://Assets/UI/turn_button_pressed.png" type="Texture" id=9]
+[ext_resource path="res://Assets/UI/turn_button_hovered.png" type="Texture" id=10]
+[ext_resource path="res://Assets/UI/turn_button_greyed.png" type="Texture" id=11]
+[ext_resource path="res://UI/ShakeCamera.tscn" type="PackedScene" id=12]
 [ext_resource path="res://UI/InvalidMoveIndicator.tscn" type="PackedScene" id=13]
 [ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=14]
 [ext_resource path="res://UI/TutorialPopup.tscn" type="PackedScene" id=15]
 [ext_resource path="res://UI/TutorialTooltip.tscn" type="PackedScene" id=16]
 [ext_resource path="res://UI/SidebarTooltip.tscn" type="PackedScene" id=17]
+
+
+
+
+
 
 [sub_resource type="SampleLibrary" id=1]
 

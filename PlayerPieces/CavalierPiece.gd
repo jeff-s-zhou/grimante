@@ -27,12 +27,7 @@ func animate_attack(attack_coords):
 	
 	var difference = (location.get_pos() - get_parent().locations[decremented_coords].get_pos())/2
 	var new_position = location.get_pos() - difference
-	var distance = get_pos().distance_to(new_position)
-	var speed = 450
-	var time = distance/speed
-	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), new_position, time, Tween.TRANS_SINE, Tween.EASE_IN)
-	#get_node("Tween").interpolate_callback(self, time - 0.1, "play_hit_sound")
-	get_node("Tween").start()
+	animate_move_to_pos(new_position, 450, Tween.TRANS_SINE, Tween.EASE_IN)
 	
 func play_hit_sound():
 	get_node("SamplePlayer2D").play("hit")
@@ -84,7 +79,7 @@ func act(new_coords):
 	elif _is_within_movement_range(new_coords):
 		charge_move(new_coords)
 		return true
-		
+
 	return false
 	
 func decrement_one(new_coords):
@@ -120,6 +115,8 @@ func charge_move(new_coords, attack=false):
 	if attack:
 		charge_attack(new_coords, new_coords + increment, tiles_passed)
 	else:
+		print("set coords for cavalier")
+		print(new_coords)
 		set_coords(new_coords)
 		placed()
 
@@ -128,6 +125,8 @@ func charge_move(new_coords, attack=false):
 func charge_attack(position_coords, attack_coords, tiles_passed):
 	get_parent().pieces[attack_coords].attacked(tiles_passed)
 	animate_attack_end(position_coords)
+	print("set coords for cavalier")
+	print(position_coords)
 	set_coords(position_coords)
 	placed()
 

@@ -1,11 +1,12 @@
 [gd_scene load_steps=9 format=1]
 
 [ext_resource path="res://PlayerPieces/CavalierPiece.gd" type="Script" id=1]
-[ext_resource path="res://Assets/cavalier_piece.png" type="Texture" id=2]
-[ext_resource path="res://Assets/cavalier_piece_sepia.png" type="Texture" id=3]
-[ext_resource path="res://Assets/cavalier_piece_light.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Allies/cavalier_piece.png" type="Texture" id=2]
+[ext_resource path="res://Assets/Allies/cavalier_piece_sepia.png" type="Texture" id=3]
+[ext_resource path="res://Assets/Allies/cavalier_piece_light.png" type="Texture" id=4]
 [ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Assets/processed_sounds/hit.smp" type="Sample" id=6]
+
 
 [sub_resource type="SpriteFrames" id=1]
 

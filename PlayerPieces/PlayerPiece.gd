@@ -4,7 +4,7 @@ extends KinematicBody2D
 # var a=2
 # var b="textvar"
 
-var States = {"LOCKED":0, "DEFAULT":1, "CLICKED": 2, "PLACED":3}
+var States = {"LOCKED":0, "DEFAULT":1, "CLICKED": 2, "PLACED":3, "SELECTED":4}
 
 var state = States.PLACED
 var coords
@@ -57,21 +57,21 @@ func set_coords(coords):
 	get_parent().move_piece(self.coords, coords)
 	self.coords = coords
 
-func animate_move_to_pos(position, speed):
-	self.mid_animation = true
-	var distance = get_pos().distance_to(position)
-	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	get_node("Tween").start()
 	
 func animate_summon():
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	
+func animate_move_to_pos(position, speed, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
+	self.mid_animation = true
+	var distance = get_pos().distance_to(position)
+	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
+	get_node("Tween").start()
 
-func animate_move(new_coords, speed=200):
+func animate_move(new_coords, speed=200, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
-	animate_move_to_pos(new_position, speed)
+	animate_move_to_pos(new_position, speed, trans_type, ease_type)
 	
 func attack_highlight():
 	pass
@@ -80,7 +80,10 @@ func assist_highlight():
 	get_node("AnimatedSprite").play("hover_highlight")
 	
 func unhighlight():
-	get_node("AnimatedSprite").play("default")
+	if(self.state != States.PLACED):
+		get_node("AnimatedSprite").play("default")
+	else:
+		get_node("AnimatedSprite").play("cooldown")
 
 #called when an event happens inside the click area hitput
 func input_event(viewport, event, shape_idx):

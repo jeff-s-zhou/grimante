@@ -14,12 +14,14 @@ var instructions = []
 var reinforcements = {}
 var turn_count = 0
 var level = null
+var reload_level = null
 var next_level = null
 
 signal enemy_turn_finished
 signal wave_deployed
 signal next_pressed
 signal reinforced
+signal done_initializing
 
 var archer
 
@@ -44,18 +46,27 @@ func _ready():
 
 	
 	level = get_node("/root/global").get_param("level")
-	var allies = level["allies"]
+
+	var temp_allies = {}
+	soft_copy_dict(level["allies"], temp_allies)
+	var allies = temp_allies
 	for column in allies.keys():
 		initialize_piece(allies[column], column)
-		
-	self.enemy_waves = level["enemies"]
+	
+	var temp_enemies = []
+	soft_copy_array(level["enemies"], temp_enemies)
+	self.enemy_waves = temp_enemies
+	
 	self.reinforcements = level["reinforcements"]
-	self.instructions = level["instructions"]
+	
+	var temp_instructions = []
+	soft_copy_array(level["instructions"], temp_instructions)
+	self.instructions = temp_instructions
+	
 	self.next_level = level["next_level"]
 	
 	#we store the initial wave count as the first value in the array
 	var initial_deploy_count = level["initial_deploy_count"]
-	
 	
 	
 	for i in range(0, initial_deploy_count):
@@ -70,18 +81,28 @@ func _ready():
 	get_node("PhaseShifter").player_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	player_phase_start()
-	
-	
+
+func soft_copy_dict(source, target):
+    for k in source.keys():
+        target[k] = source[k]
+
+func soft_copy_array(source, target):
+	for item in source:
+		target.push_back(item)
+
 	
 func initialize_piece(piece, column):
-	piece.set_opacity(0)
-	piece.connect("invalid_move", self, "handle_invalid_move")
-	piece.connect("description_data", self, "display_description")
-	piece.connect("shake", self, "screen_shake")
-	piece.initialize(get_node("CursorArea"))
+	var new_piece = piece.instance()
+	new_piece.set_opacity(0)
+	new_piece.connect("invalid_move", self, "handle_invalid_move")
+	new_piece.connect("description_data", self, "display_description")
+	new_piece.connect("shake", self, "screen_shake")
+	new_piece.initialize(get_node("CursorArea"))
 	var position = get_node("Grid").get_bottom_of_column(column)
-	get_node("Grid").add_piece(position, piece)
-	piece.animate_summon()
+	get_node("Grid").add_piece(position, new_piece)
+	new_piece.animate_summon()
+	yield(new_piece.get_node("Tween"), "tween_complete")
+	emit_signal("done_initializing")
 	
 	
 func end_turn():
@@ -111,6 +132,7 @@ func _input(event):
 				get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.next_level})
 
 func _process(delta):
+	
 	var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
 	if enemy_pieces.size() == 0 and self.enemy_waves.size() == 0:
 		player_win()
@@ -147,7 +169,8 @@ func enemy_phase(enemy_pieces):
 	enemy_pieces.sort_custom(self, "_sort_by_y_axis") #ensures the pieces in front move first
 	for enemy_piece in enemy_pieces:
 		enemy_piece.turn_update()
-
+	
+	#if there are enemy pieces, wait for them to finish
 	if(get_tree().get_nodes_in_group("enemy_pieces").size() > 0):
 		yield(self, "enemy_turn_finished")
 	if self.enemy_waves.size() > 0:
@@ -157,6 +180,9 @@ func enemy_phase(enemy_pieces):
 	get_node("Timer2").set_wait_time(0.8)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
+	
+	if get_tree().get_nodes_in_group("player_pieces").size() == 0:
+		enemy_win()
 	
 	get_node("PhaseShifter").player_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
@@ -182,11 +208,9 @@ func player_phase_start():
 func reinforce():
 	var reinforcement_wave = self.reinforcements[self.turn_count]
 	for key in reinforcement_wave.keys():
-		var piece = reinforcement_wave[key]
-		initialize_piece(piece, key)
-		
-		#wait for summon animation to finish before summoning another
-		yield(piece.get_node("Tween"), "tween_complete")
+		var prototype = reinforcement_wave[key]
+		initialize_piece(prototype, key)
+		yield(self, "done_initializing")
 	emit_signal("reinforced")
 
 func handle_instructions():
@@ -198,7 +222,6 @@ func handle_instructions():
 	self.instructions.pop_front()
 	var tip_text = instruction["tip_text"]
 	var objective_text = instruction["objective_text"]
-	
 	#if there's no instruction text in the first place, piss off
 	if !tip_text and !objective_text:
 		emit_signal("next_pressed")
@@ -230,7 +253,6 @@ func handle_instructions():
 	yield(get_node("Tween"), "tween_complete")
 	get_node("PhaseShifter/AnimationPlayer").play("end_blur")
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
-	print("emitting signal next pressed")
 	emit_signal("next_pressed")
 	
 	
@@ -239,7 +261,6 @@ func handle_instructions():
 	
 	if arrow_coords != null:
 		var new_pos = (get_node("Grid").locations[arrow_coords]).get_global_pos()
-		print(new_pos)
 		get_node("TutorialTooltip").set_pos(new_pos)
 		get_node("TutorialTooltip").set_tooltip(instruction["tooltip"])
 		get_node("TutorialTooltip").show()
@@ -257,7 +278,12 @@ func deploy_wave():
 	var wave = self.enemy_waves[0]
 	self.enemy_waves.pop_front()
 	for key in wave.keys():
-		var enemy_piece = wave[key]
+		
+		var prototype_parts = wave[key]
+		var prototype = prototype_parts["prototype"]
+		var health = prototype_parts["health"]
+		var enemy_piece = prototype.instance()
+		enemy_piece.initialize(health)
 		enemy_piece.connect("broke_defenses", self, "damage_defenses")
 		enemy_piece.connect("turn_finished", self, "track_turn_finished")
 		enemy_piece.connect("description_data", self, "display_description")

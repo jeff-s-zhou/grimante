@@ -9,9 +9,8 @@ const Archer = preload("res://PlayerPieces/ArcherPiece.tscn")
 const Knight = preload("res://PlayerPieces/KnightPiece.tscn")
 
 func make(prototype, health):
-	var piece = prototype.instance()
-	piece.initialize(health)
-	return piece
+	return {"prototype": prototype, "health": health}
+	
 	
 func make_tip(tip_text, objective_text, arrow_coords, tooltip):
 	return {"tip_text":tip_text, "objective_text": objective_text, "arrow_coords": arrow_coords, "tooltip": tooltip}
@@ -19,7 +18,7 @@ func make_tip(tip_text, objective_text, arrow_coords, tooltip):
 
 #LEVEL 5
 
-var level5_allies = {3: Berserker.instance(), 5: Knight.instance(), 4:Cavalier.instance(), 6:Archer.instance()}
+var level5_allies = {3: Berserker, 5: Knight, 4:Cavalier, 6:Archer}
 
 var level5_enemies = [
 	{2: make(Grunt, 5), 4: make(Grunt, 5), 6:make(Grunt, 3), 7:make(Grunt, 4)},
@@ -41,7 +40,7 @@ var Level5 = {"allies": level5_allies, "enemies":level5_enemies, "initial_deploy
 "instructions":level5_instructions, "reinforcements": {}, "next_level":null}
 	
 #LEVEL 4
-var level4_allies = {3: Berserker.instance(), 4: Cavalier.instance()}
+var level4_allies = {3: Berserker, 4: Cavalier}
 var level4_enemies = [
 {Vector2(7, 7): make(Grunt, 4)},
 {Vector2(3, 4): make(Grunt, 3), Vector2(4, 4): make(Grunt, 4), Vector2(5, 5):make(Grunt, 2)},
@@ -59,14 +58,14 @@ make_tip("The Archer's ranged attack hits the first target in a line, and can ta
 make_tip("The Archer has 0 Armor, so if it gets pushed it's KOed.", "Win?", null, ""),
 ]
 
-var level4_reinforcements = {3:{7: Archer.instance()}}
+var level4_reinforcements = {3:{7: Archer}}
 
 var Level4 = {"allies": level4_allies, "enemies":level4_enemies, "initial_deploy_count":4,
 "instructions":level4_instructions, "reinforcements": level4_reinforcements, "next_level":Level5}
 
 
 #LEVEL 3
-var level3_allies = {3: Berserker.instance()}
+var level3_allies = {3: Berserker}
 var level3_enemies = [
 {Vector2(4, 4) : make(Grunt, 2)},
 {Vector2(3, 5) : make(Grunt, 1), Vector2(4, 5) :make(Grunt, 8)},
@@ -78,14 +77,14 @@ var level3_instructions = [
 make_tip("If you need a refresher on a Unit, hold spacebar over a Unit for a summary.", "Smash!", Vector2(4, 8), ""),
 make_tip("Enemies will push Friendly Units forward. If a Friendly Unit is pushed off the map, it is KOed.", \
 "Don't let the Berserker get KOed.", null, ""),
-make_tip("You lose if all Friendly Units are KOed or an exits from the bottom of the map.", "Don't lose.", null, "")
+make_tip("You LOSE if an enemy exits from the bottom of the map or all Friendly Units are KOed.", "Don't lose.", null, "")
 ]
 
 var Level3 = {"allies": level3_allies, "enemies":level3_enemies, "initial_deploy_count":5,
 "instructions":level3_instructions, "reinforcements": {}, "next_level":Level4}
 
 #LEVEL 2
-var level2_allies = {4: Cavalier.instance()}
+var level2_allies = {4: Cavalier}
 var level2_enemies = [
 {Vector2(4, 6): make(Grunt, 6), Vector2(4, 5): make(Grunt, 2), Vector2(4,4): make(Grunt, 2), Vector2(4, 3): make(Grunt, 2)},
 {2: make(Grunt, 2), 3:make(Grunt, 2)},
@@ -104,7 +103,7 @@ var Level2 = {"allies": level2_allies, "enemies":level2_enemies, "initial_deploy
 
 
 #LEVEL 1
-var level1_allies = {4: Berserker.instance()}
+var level1_allies = {4: Berserker}
 
 var level1_enemies = [
 { Vector2(4, 4): make(Grunt, 6), 1: make(Grunt, 2), Vector2(1, 1): make(Grunt, 2)},

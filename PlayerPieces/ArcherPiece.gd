@@ -19,7 +19,7 @@ const UNIT_TYPE = "Archer"
 
 const DESCRIPTION = """Armor: 0
 Movement: 1 range step
-Attack: Snipe. Attack the first enemy in a line for 3 damage. Can target diagonally. """
+Attack: Snipe. Attack the first enemy in a line for 4 damage. Can target diagonally. """
 	
 func get_attack_range():
 	var attack_range = get_parent().get_range(self.coords, [2, 11], "ENEMY", true)
