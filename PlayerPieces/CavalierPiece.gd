@@ -74,13 +74,11 @@ func act(new_coords):
 	if _is_within_attack_range(new_coords):
 		var decremented_coords = decrement_one(new_coords)
 		charge_move(decremented_coords, true)
-		return true
 		
 	elif _is_within_movement_range(new_coords):
 		charge_move(new_coords)
-		return true
-
-	return false
+	else:
+		invalid_move()
 	
 func decrement_one(new_coords):
 	var difference = new_coords - self.coords

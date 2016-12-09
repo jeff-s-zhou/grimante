@@ -20,6 +20,8 @@ signal hide_description
 signal animation_done
 signal shake
 
+signal targeted
+
 var mid_animation = false #to handle the bug of the clickarea not moving until everything's done
 
 func _ready():
@@ -87,56 +89,49 @@ func unhighlight():
 
 #called when an event happens inside the click area hitput
 func input_event(viewport, event, shape_idx):
+	if event.is_action("select") and event.is_pressed():
+		if get_parent().selected == null and self.state != States.PLACED:
+			print("caught click in player piece")
+			get_parent().selected = self
+			self.state = States.CLICKED
+			hovered()
+		elif get_parent().selected != self:
+			get_parent().set_target(self)
 
-	if event.type == InputEvent.MOUSE_BUTTON \
-	and event.button_index == BUTTON_LEFT \
-	and event.pressed \
-	and self.state != States.PLACED:
-		get_parent().focused = self
-		self.state = States.CLICKED
 		
-	if event.type == InputEvent.MOUSE_BUTTON \
-	and event.button_index == BUTTON_LEFT \
-	and !event.pressed \
-	and self.state != States.PLACED:
+func deselect():
+	if self.state != States.PLACED:
 		self.state = States.DEFAULT
-
-#processes all events generally
-#handles the click release outside of the clickarea
-func input(event): 
-	if self.state == States.CLICKED \
-	and event.type == InputEvent.MOUSE_BUTTON \
-	and event.button_index == BUTTON_LEFT \
-	and (!event.pressed):
-		var dropped_location = get_parent().current_location
-		#if act is valid and ends the unit's turn, set state to placed
-		if dropped_location != null and dropped_location.coords != self.coords and act(dropped_location.coords): 
-			#TODO: I think this is still shitty logic maybe
-			get_parent().reset_highlighting()
-		#catches the false case of act, which won't jump to the yield return
-		else:
-			get_parent().focused = null
-			get_parent().reset_highlighting()
-			emit_signal("invalid_move")
-			self.state = States.DEFAULT
+		hover_unhighlight()
+		
 
 
-func act(new_coords):
-	return false
+func select_action_target(target):
+	if target.coords == self.coords:
+		invalid_move()
+	else:
+		act(target.coords)
+		
+func invalid_move():
+	get_parent().reset_highlighting()
+	emit_signal("invalid_move")
+	self.state = States.DEFAULT
+	get_parent().selected = null
 
 func placed():
+	get_parent().reset_highlighting()
 	self.mid_animation = false
 	self.state = States.PLACED
-	get_parent().focused = null
+	get_parent().selected = null
 	get_node("AnimatedSprite").play("cooldown")
 
 
 func unhovered():
 	emit_signal("hide_description")
 	if self.state != States.CLICKED: #only undisplay if the unit isn't selected
-		#reset assist highlighting if other piece is focused atm
-		if get_parent().focused != null and get_parent().focused != self: 
-			print("calling the other hover")
+		#reset assist highlighting if other piece is selected atm
+		if get_parent().selected != null and get_parent().selected != self: 
+			print("calling the other unhover")
 		else:
 			get_parent().reset_highlighting()
 	if self.state != States.PLACED: #if it's placed, don't reset to default sprite
@@ -148,11 +143,12 @@ func unhovered():
 func hovered():
 	emit_signal("description_data", self.UNIT_TYPE, self.DESCRIPTION)
 	
-	#if another piece is currently focused, do assist highlighting
-	if get_parent().focused != null and get_parent().focused != self:
+	#if another piece is currently selected, do assist highlighting
+	if get_parent().selected != null and get_parent().selected != self:
 		print("calling the other hover")
 	else:
 		if self.state == States.DEFAULT or self.state == States.CLICKED:
+			hover_highlight()
 			if self.mid_animation == false: #to handle the bug of the clickarea not moving until everything's done
 				#hover_highlight()
 				display_action_range()
@@ -162,8 +158,6 @@ func hovered():
 		else:
 			print("met2")
 
-func display_action_range():
-	pass
 
 
 func push(distance, is_knight=false):
@@ -176,6 +170,13 @@ func push(distance, is_knight=false):
 		self.mid_animation = false
 	else:
 		delete_self()
+
+
+func act(new_coords):
+	return false
+
+func display_action_range():
+	pass
 		
 func area_entered(area):
 	print("player piece area entered!")

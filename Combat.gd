@@ -122,6 +122,14 @@ func end_turn():
 	self.state = STATES.enemy_turn
 
 func _input(event):
+	if event.type == InputEvent.MOUSE_BUTTON \
+	and event.button_index == BUTTON_RIGHT \
+	and event.pressed :
+		if get_node("Grid").selected:
+			get_node("Grid").selected.deselect()
+			get_node("Grid").selected = null
+			get_node("Grid").reset_highlighting()
+	
 	if event.type == InputEvent.KEY:
 		if event.scancode == KEY_SPACE && !event.pressed:
         	get_node("SidebarTooltip").hide()

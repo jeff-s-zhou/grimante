@@ -79,11 +79,10 @@ func act(new_coords):
 	if _is_within_attack_range(new_coords):
 		print("is within attack range")
 		smash_attack(new_coords)
-		return true
 	elif _is_within_movement_range(new_coords):
 		smash_move(new_coords)
-		return true
-	return false
+	else:
+		invalid_move()
 
 
 func smash_attack(new_coords):

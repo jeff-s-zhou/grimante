@@ -7,7 +7,7 @@ extends Area2D
 
 var coords
 
-signal location_is(location)
+signal is_targeted(location)
 
 func _ready():
 	# Called every time the node is added to the scene.
@@ -15,7 +15,7 @@ func _ready():
 	get_node("Sprite").set_self_opacity(0.6)
 	connect("mouse_enter", self, "_mouse_entered")
 	connect("mouse_exit", self, "_mouse_exited")
-	set_monitorable(false)
+	set_process_input(true)
 	set_z(-3)
 	
 func debug():
@@ -36,7 +36,6 @@ func unhighlight():
 	external_set_opacity(0.6)
 	
 func _mouse_entered():
-	emit_signal("location_is", self)
 	get_node("Sprite").set_self_opacity(1.0)
 
 func _mouse_exited():
@@ -44,6 +43,12 @@ func _mouse_exited():
 	#emit_signal("location_is", null)
 	get_node("Sprite").set_self_opacity(0.6)
 	
+func _input_event(viewport, event, shape_idx):
+	if event.is_action("select") and event.is_pressed():
+		print("caught click in location")
+		get_parent().set_target(self)
+
+
 func external_set_opacity(value=1.0):
 	get_node("Sprite").set_self_opacity(value)
 	

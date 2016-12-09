@@ -3,24 +3,23 @@
 [ext_resource path="res://EnemyPieces/FortifierPiece.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Enemies/harpy_piece.png" type="Texture" id=2]
 [ext_resource path="res://Assets/Enemies/harpy_piece_light.png" type="Texture" id=3]
-[ext_resource path="res://Assets/Enemies/harpy_piece_red.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Enemies/harpy_piece_light_red.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Enemies/harpy_piece_light_red.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Enemies/harpy_piece_red.png" type="Texture" id=5]
 [ext_resource path="res://EnemyPieces/HealthDisplay.tscn" type="PackedScene" id=6]
 [ext_resource path="res://EnemyPieces/FlickerAnimation.tres" type="Animation" id=7]
 [ext_resource path="res://EnemyPieces/SummonAnimation.tres" type="Animation" id=8]
 [ext_resource path="res://EnemyPieces/Flyover.tscn" type="PackedScene" id=9]
-[ext_resource path="res://EnemyPieces/EnemyClickArea.tscn" type="PackedScene" id=10]
-
+[ext_resource path="res://EnemyPieces/EnemyCollisionShape2D.tscn" type="PackedScene" id=10]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"hover", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"attack_range", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"attack_range_hover", "speed":5.0 }, { "frames":[ ExtResource( 2 ), ExtResource( 4 ) ], "loop":true, "name":"damaged", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"hover", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"attack_range_hover", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"attack_range", "speed":5.0 }, { "frames":[ ExtResource( 2 ), ExtResource( 5 ) ], "loop":true, "name":"damaged", "speed":5.0 } ]
 
 [node name="FortifierType" type="KinematicBody2D"]
 
 visibility/opacity = 0.0
 transform/pos = Vector2( 0, -4 )
-input/pickable = false
+input/pickable = true
 collision/layers = 1
 collision/mask = 1
 collision/margin = 0.08
@@ -58,6 +57,6 @@ playback/active = false
 playback/repeat = false
 playback/speed = 1.0
 
-[node name="ClickArea" parent="." instance=ExtResource( 10 )]
+[node name="CollisionShape2D" parent="." instance=ExtResource( 10 )]
 
 

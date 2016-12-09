@@ -13,7 +13,3 @@ func _ready():
 #
 func _input_event(viewport, event, shape_idx):
 	get_parent().input_event(viewport, event, shape_idx)
-
-		
-func _input(event):
-	get_parent().input(event)

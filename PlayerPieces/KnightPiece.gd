@@ -47,12 +47,10 @@ func act(new_coords):
 		yield(get_node("Tween"), "tween_complete")
 		set_coords(new_coords)
 		placed()
-		return true
 	elif _is_within_shove_range(new_coords):
 		shove(new_coords)
-		return true
-
-	return false
+	else:
+		invalid_move()
 
 
 func shove(new_coords):

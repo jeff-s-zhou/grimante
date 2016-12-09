@@ -24,15 +24,13 @@ const _Z_PIECE_OFFSET = Vector2(0, -0) #this is to offset for the pseudo-3d vert
 
 const _LOCATION_Y_OFFSETS = [0, 0, 1, 1, 2, 2, 3, 3, 4]
 
-var current_location
-
-var focused = null
+var selected = null
 
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	var location = load("res://Location.tscn")
-	
+
 	# place location tiles
 	for i in range(0, 9):
 		var offset = 0
@@ -45,7 +43,6 @@ func _ready():
 			var tile_x_spacing = location1.get_size().width + TILE_X_OFFSET
 			var tile_y_spacing = location1.get_size().height + TILE_Y_OFFSET
 			location1.set_pos(Vector2(_GRID_X_OFFSET + tile_x_spacing * i, _GRID_Y_OFFSET + offset + (tile_y_spacing * j)))
-			location1.connect("location_is", self, "set_current_location")
 			add_child(location1)
 			
 			var location_y_coord = _LOCATION_Y_OFFSETS[i] + j
@@ -56,17 +53,14 @@ func debug():
 	for key in self.locations.keys():
 		self.locations[key].debug()
 	
-
-
-#so we know what location the player is currently hovering over
-func set_current_location(location):
-	self.current_location = location
-
-func set_focused(focused):
-	self.focused = focused
+#so we know what target
+func set_target(target):
+	if self.selected != null:
+		self.selected.select_action_target(target)
 
 func add_piece(coords, piece):
 	pieces[coords] = piece
+	locations[coords].set_pickable(false)
 	piece.coords = coords
 	var location = locations[coords]
 	piece.set_pos(location.get_pos() + _Z_PIECE_OFFSET)
@@ -74,9 +68,11 @@ func add_piece(coords, piece):
 
 #moves the piece's location on grid. doesn't actually physically move the sprite
 func move_piece(old_coords, new_coords):
+	locations[old_coords].set_pickable(true)
 	var piece = pieces[old_coords]
 	pieces.erase(old_coords)
 	pieces[new_coords] = piece
+	locations[new_coords].set_pickable(false)
 
 #only returns a free location
 func get__free_location_at(coords):
@@ -126,10 +122,7 @@ func get_range(coords, magnitude_range=[1,2], side=null, collision_check=false, 
 			if collision_check:
 				if pieces.has(new_coords):
 						if pieces[new_coords].side == side:
-							print("appended here")
 							return_set.append(new_coords)
-						else:
-							print("caught the friendly")
 						break #break regardless on first collision
 	
 			elif side:

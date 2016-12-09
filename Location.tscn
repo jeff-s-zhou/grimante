@@ -2,11 +2,9 @@
 
 [ext_resource path="res://Location.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/location.png" type="Texture" id=2]
-[ext_resource path="res://Assets/UI/location_blue.png" type="Texture" id=3]
-[ext_resource path="res://Assets/UI/location_red.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/location_red.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/location_blue.png" type="Texture" id=4]
 [ext_resource path="res://Assets/processed_fonts/enemy_health.fnt" type="BitmapFont" id=5]
-
-
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 
@@ -15,13 +13,14 @@ points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
 
 [sub_resource type="SpriteFrames" id=2]
 
-animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"movement_hover", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"attack_hover", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"attack_hover", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"movement_hover", "speed":5.0 } ]
 
 [node name="Location" type="Area2D"]
 
+z/z = -3
 input/pickable = true
 shapes/0/shape = SubResource( 1 )
-shapes/0/transform = Matrix32( 0.569907, 0, 0, 0.569907, 0, 0 )
+shapes/0/transform = Matrix32( 0.5, 0, 0, 0.5, 0, 0 )
 shapes/0/trigger = false
 gravity_vec = Vector2( 0, 1 )
 gravity = 98.0
@@ -31,7 +30,7 @@ script/script = ExtResource( 1 )
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 
-transform/scale = Vector2( 0.569907, 0.569907 )
+transform/scale = Vector2( 0.5, 0.5 )
 shape = SubResource( 1 )
 trigger = false
 _update_shape_index = 0

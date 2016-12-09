@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=1]
+
+[sub_resource type="ConvexPolygonShape2D" id=1]
+
+custom_solver_bias = 0.0
+points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
+
+[node name="CollisionShape2D" type="CollisionShape2D"]
+
+transform/pos = Vector2( 0, -0.973763 )
+transform/scale = Vector2( 0.480031, 0.538866 )
+shape = SubResource( 1 )
+trigger = false
+_update_shape_index = 0
+
+
