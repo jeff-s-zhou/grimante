@@ -15,10 +15,10 @@ func make(prototype, health):
 func make_tip(tip_text, objective_text, arrow_coords, tooltip):
 	return {"tip_text":tip_text, "objective_text": objective_text, "arrow_coords": arrow_coords, "tooltip": tooltip}
 	
-var sandbox_allies = {4: Berserker, 5: Cavalier}
+var sandbox_allies = {3: Knight, 4: Berserker, 5: Cavalier, 7: Archer}
 
 var sandbox_enemies = [
-{2: make(Grunt, 5), 4: make(Grunt, 5), 6:make(Grunt, 3), 7:make(Grunt, 4)},
+{3: make(Grunt, 5), 4: make(Grunt, 5), 5:make(Grunt, 3), 7:make(Grunt, 4)},
 ]
 
 var Sandbox_Level = {"allies": sandbox_allies, "enemies":sandbox_enemies, "initial_deploy_count":3,

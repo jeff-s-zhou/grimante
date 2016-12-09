@@ -31,20 +31,20 @@ signal pre_damage
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	set_process_input(true)
-	connect("mouse_enter", self, "hover_highlight")
-	connect("mouse_exit", self, "hover_unhighlight")
+	get_node("ClickArea").connect("mouse_enter", self, "hover_highlight")
+	get_node("ClickArea").connect("mouse_exit", self, "hover_unhighlight")
 	get_node("Physicals/AnimatedSprite").set_z(-2)
 	get_node("Physicals/HealthDisplay").set_z(0)
 	get_node("Flyover").set_z(1)
 	add_to_group("enemy_pieces")
-	set_opacity(0)
+	#set_opacity(0)
 	
-func _input_event(viewport, event, shape_idx):
-	if event.is_action("select") and event.is_pressed():
-		print("handling input event for enemy")
-		get_parent().set_target(self)
-	
+func input_event(viewport, event, shape_idx):
+	if event.is_action("select"):
+		if event.is_pressed():
+			print("handling input event for enemy")
+			get_parent().set_target(self)
+		
 func hover_highlight():
 	print("highlighting")
 	emit_signal("description_data", self.unit_name, self.hover_description)

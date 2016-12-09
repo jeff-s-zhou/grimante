@@ -117,22 +117,7 @@ func get_range(coords, magnitude_range=[1,2], side=null, collision_check=false, 
 		elif direction == 5:
 			change_vector = Vector2(-1, -1)
 			
-		for i in range(magnitude_range[0], magnitude_range[1]):
-			var new_coords = coords + i * change_vector
-			if collision_check:
-				if pieces.has(new_coords):
-						if pieces[new_coords].side == side:
-							return_set.append(new_coords)
-						break #break regardless on first collision
-	
-			elif side:
-				if pieces.has(new_coords) and pieces[new_coords].side == side:
-					return_set.append(new_coords)
-
-			elif locations.has(new_coords) and !pieces.has(new_coords): #only return empty locations
-				return_set.append(new_coords)
-
-
+		get_range_helper(return_set, change_vector, coords, magnitude_range, side, collision_check)
 	return return_set
 
 #gets the "diagonal" neighbors in the six directions
@@ -152,19 +137,25 @@ func get_diagonal_range(coords, magnitude_range=[1, 2], side=null, collision_che
 			change_vector = Vector2(-2, -1)
 		elif direction == 5:
 			change_vector = Vector2(-1, -2)
-			
-		for i in range(magnitude_range[0], magnitude_range[1]):
+
+		get_range_helper(return_set, change_vector, coords, magnitude_range, side, collision_check)
+	return return_set
+	
+func get_range_helper(return_set, change_vector, coords, magnitude_range, side, collision_check):
+	for i in range(magnitude_range[0], magnitude_range[1]):
 			var new_coords = coords + i * change_vector
-			if side:
+			if collision_check:
+				if pieces.has(new_coords):
+					if pieces[new_coords].side == side:
+						return_set.append(new_coords)
+					break #break regardless on first collision
+	
+			elif side:
 				if pieces.has(new_coords) and pieces[new_coords].side == side:
 					return_set.append(new_coords)
-					if collision_check: #if we check for collisions, return the first in any direction
-						break
 
-			elif locations.has(new_coords) and !pieces.has(new_coords): 
+			elif locations.has(new_coords) and !pieces.has(new_coords): #only return empty locations
 				return_set.append(new_coords)
-			
-	return return_set
 
 #calls both get_neighbors and get_diagonal_neighbors to provide a radial
 #TODO: broken with a radius 3 because hexagons. fix in case I ever need

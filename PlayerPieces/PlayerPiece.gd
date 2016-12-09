@@ -29,7 +29,6 @@ func _ready():
 	# Initialization here
 	get_node("ClickArea").connect("mouse_enter", self, "hovered")
 	get_node("ClickArea").connect("mouse_exit", self, "unhovered")
-	get_node("ClickArea").set_monitorable(false)
 	set_process_input(true)
 	set_process(true)
 
@@ -47,19 +46,17 @@ func initialize(cursor_area):
 	set_z(-1)
 	add_to_group("player_pieces")
 	
-	
 func turn_update():
 	self.state = States.DEFAULT
 	get_node("AnimatedSprite").play("default")
 	if(get_node("ClickArea").overlaps_area(self.cursor_area)):
 		self.hovered()
 
-	
 func set_coords(coords):
 	get_parent().move_piece(self.coords, coords)
 	self.coords = coords
 
-	
+#ANIMATION FUNCTIONS
 func animate_summon():
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
@@ -86,45 +83,10 @@ func unhighlight():
 		get_node("AnimatedSprite").play("default")
 	else:
 		get_node("AnimatedSprite").play("cooldown")
-
-#called when an event happens inside the click area hitput
-func input_event(viewport, event, shape_idx):
-	if event.is_action("select") and event.is_pressed():
-		if get_parent().selected == null and self.state != States.PLACED:
-			print("caught click in player piece")
-			get_parent().selected = self
-			self.state = States.CLICKED
-			hovered()
-		elif get_parent().selected != self:
-			get_parent().set_target(self)
-
 		
-func deselect():
-	if self.state != States.PLACED:
-		self.state = States.DEFAULT
-		hover_unhighlight()
-		
-
-
-func select_action_target(target):
-	if target.coords == self.coords:
-		invalid_move()
-	else:
-		act(target.coords)
-		
-func invalid_move():
-	get_parent().reset_highlighting()
-	emit_signal("invalid_move")
-	self.state = States.DEFAULT
-	get_parent().selected = null
-
-func placed():
-	get_parent().reset_highlighting()
-	self.mid_animation = false
-	self.state = States.PLACED
-	get_parent().selected = null
-	get_node("AnimatedSprite").play("cooldown")
-
+func hover_highlight():
+	get_node("AnimatedSprite").play("hover_highlight")
+	
 
 func unhovered():
 	emit_signal("hide_description")
@@ -134,10 +96,7 @@ func unhovered():
 			print("calling the other unhover")
 		else:
 			get_parent().reset_highlighting()
-	if self.state != States.PLACED: #if it's placed, don't reset to default sprite
-		hover_unhighlight()
-	
-
+	unhighlight()
 
 #called when hovered over during player turn		
 func hovered():
@@ -148,16 +107,49 @@ func hovered():
 		print("calling the other hover")
 	else:
 		if self.state == States.DEFAULT or self.state == States.CLICKED:
-			hover_highlight()
 			if self.mid_animation == false: #to handle the bug of the clickarea not moving until everything's done
-				#hover_highlight()
+				hover_highlight()
 				display_action_range()
 			else:
 				print("met3")
-
 		else:
 			print("met2")
 
+
+#called when an event happens inside the click area hitput
+func input_event(viewport, event, shape_idx):
+	if event.is_action("select") and event.is_pressed():
+		if get_parent().selected == null and self.state != States.PLACED:
+			get_parent().selected = self
+			self.state = States.CLICKED
+			hovered()
+		elif get_parent().selected != self: #if not selected, then some piece is trying to act on this one
+			get_parent().set_target(self)
+
+
+func deselect():
+	self.state = States.DEFAULT
+
+func select_action_target(target):
+	
+	if target.coords == self.coords:
+		invalid_move()
+	else:
+		act(target.coords)
+
+#helper function for act
+func invalid_move():
+	emit_signal("invalid_move")
+	self.state = States.DEFAULT
+	get_parent().selected = null
+
+#helper function for act
+func placed():
+	get_parent().reset_highlighting()
+	self.mid_animation = false
+	self.state = States.PLACED
+	get_parent().selected = null
+	get_node("AnimatedSprite").play("cooldown")
 
 
 func push(distance, is_knight=false):
@@ -172,18 +164,9 @@ func push(distance, is_knight=false):
 		delete_self()
 
 
+#OVERRIDEN FUNCTIONS
 func act(new_coords):
 	return false
 
 func display_action_range():
 	pass
-		
-func area_entered(area):
-	print("player piece area entered!")
-
-func hover_highlight():
-	get_node("AnimatedSprite").play("hover_highlight")
-	
-func hover_unhighlight():
-	get_node("AnimatedSprite").play("default")
-
