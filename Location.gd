@@ -12,7 +12,7 @@ signal is_targeted(location)
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Sprite").set_self_opacity(0.6)
+	get_node("Sprite").set_self_opacity(0.4)
 	connect("mouse_enter", self, "_mouse_entered")
 	connect("mouse_exit", self, "_mouse_exited")
 	set_process_input(true)
@@ -31,21 +31,27 @@ func movement_highlight():
 func attack_highlight():
 	get_node("Sprite").play("attack_hover")
 	
-func unhighlight():
+func reset_highlight():
 	get_node("Sprite").play("default")
-	external_set_opacity(0.6)
+	external_set_opacity(0.4)
 	
 func _mouse_entered():
 	get_node("Sprite").set_self_opacity(1.0)
+	get_node("Timer").set_wait_time(0.05)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
+	if get_parent().selected != null:
+		get_parent().selected.predict(self.coords)
 
 func _mouse_exited():
 	#get_parent().current_location = null
 	#emit_signal("location_is", null)
-	get_node("Sprite").set_self_opacity(0.6)
+	get_node("Sprite").set_self_opacity(0.4)
+	if get_parent().selected != null:
+		get_parent().reset_prediction()
 	
 func _input_event(viewport, event, shape_idx):
 	if event.is_action("select") and event.is_pressed():
-		print("caught click in location")
 		get_parent().set_target(self)
 
 

@@ -46,29 +46,52 @@ func input_event(viewport, event, shape_idx):
 			get_parent().set_target(self)
 		
 func hover_highlight():
+	get_node("Timer").set_wait_time(0.03)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
 	print("highlighting")
 	emit_signal("description_data", self.unit_name, self.hover_description)
 	if self.action_highlighted:
-		get_node("Physicals/AnimatedSprite").play("attack_range_hover")
-		get_node("Physicals/HealthDisplay/AnimatedSprite").play("attack_range_hover")
+		
+		get_node("Physicals/LightenLayer").show()
+		get_node("Physicals/HealthDisplay/LightenLayer").show()
+		if get_parent().selected != null:
+			get_parent().selected.predict(self.coords)
 
 	
 func hover_unhighlight():
 	emit_signal("hide_description")
 	if self.action_highlighted:
-		get_node("Physicals/AnimatedSprite").play("attack_range")
-		get_node("Physicals/HealthDisplay/AnimatedSprite").play("attack_range")
+		get_node("Physicals/LightenLayer").hide()
+		get_node("Physicals/HealthDisplay/LightenLayer").hide()
+		if get_parent().selected != null:
+			get_parent().reset_prediction()
 
 #when another unit is able to move to this location, it calls this function
 func movement_highlight():
 	self.action_highlighted = true
 	get_node("Physicals/AnimatedSprite").play("attack_range")
 	get_node("Physicals/HealthDisplay/AnimatedSprite").play("attack_range")
-	
-func unhighlight():
+
+#called from grid to reset highlighting over the whole board
+func reset_highlight():
 	self.action_highlighted = false
+	get_node("Physicals/LightenLayer").hide()
+	get_node("Physicals/HealthDisplay/LightenLayer").hide()
+	
+	get_node("Physicals/AnimatedSprite").show()
+	get_node("Physicals/HealthDisplay/AnimatedSprite").show()
+	get_node("Physicals/PredictionLayer").hide()
+	get_node("Physicals/HealthDisplay/PredictionLayer").hide()
+	
 	get_node("Physicals/AnimatedSprite").play("default")
 	get_node("Physicals/HealthDisplay/AnimatedSprite").play("default")
+	
+func reset_prediction_highlight():
+	get_node("Physicals/AnimatedSprite").show()
+	get_node("Physicals/HealthDisplay/AnimatedSprite").show()
+	get_node("Physicals/PredictionLayer").hide()
+	get_node("Physicals/HealthDisplay/PredictionLayer").hide()
 	
 func attack_highlight():
 	get_node("Physicals/AnimatedSprite").play("attack_range")
@@ -77,52 +100,81 @@ func attack_highlight():
 
 func animate_summon():
 	get_node("AnimationPlayer").play("SummonAnimation")
+
 	
-func set_hp(hp):
-	if hp <= 0:
-		self.hp = 0
-		delete_self()
-	else:
-		self.hp = hp
-	get_node("Physicals/HealthDisplay/Label").set_text(str(self.hp))
-	
-func delete_self():
-	get_parent().pieces.erase(self.coords)
-	if(get_node("Tween").is_active()):
-		yield(get_node("Tween"), "tween_complete")
-	
-	get_node("/root/Combat/ComboSystem").increase_combo()
-	remove_from_group("enemy_pieces")
-	self.queue_free()
-	
-	
+func will_die_to(damage):
+	return (self.hp - damage) <= 0
+
+
+func predict(damage, is_passive_damage=false):
+	if is_passive_damage:
+		get_node("Physicals/AnimatedSprite").hide()
+		get_node("Physicals/PredictionLayer").show()
+		get_node("Physicals/HealthDisplay/AnimatedSprite").hide()
+		get_node("Physicals/HealthDisplay/PredictionLayer").show()
+
+
 func attacked(damage):
 	mid_animation = true
 	get_node("AnimationPlayer").play("FlickerAnimation")
-	set_hp(self.hp - damage)
 	yield( get_node("AnimationPlayer"), "finished" )
-	damaged_helper(damage)
+	take_damage(damage)
 
 
 #for the berserker's smash kill which should instantly remove
 func smash_killed(damage):
 	mid_animation = true
-	set_hp(self.hp - damage)
 	get_node("Physicals").set_opacity(0)
-	damaged_helper(damage)
+	take_damage(damage)
+	
+func set_hp(hp):
+	self.hp = hp
+	get_node("Physicals/HealthDisplay/Label").set_text(str(self.hp))
+	
+	
+func heal(amount):
+	modify_hp(amount)
+
+func take_damage(amount):
+	modify_hp(amount * -1)
+
+func modify_hp(amount):
+	mid_animation = true
+	
+	set_hp(max(0, self.hp + amount))
+	flyover_helper(amount)
+	
+	if self.hp <= 0:
+		delete_self()
 
 
-func damaged_helper(damage):
+func flyover_helper(value):
 	var text = get_node("Flyover/FlyoverText")
-	text.set_pos(Vector2(-25, 16)) #original position of flyover text
+	var value_text = str(value)
+	if value > 0:
+		value_text = "+" + value_text
+		text.set("custom_colors/font_color", Color(0,1,0))
 	text.set_opacity(1.0)
-	text.set_text("-" + str(damage))
+	text.set_text(value_text)
 	var destination = text.get_pos() - Vector2(0, 200)
 	get_node("Tween").interpolate_property(text, "rect/pos", text.get_pos(), destination, 1.3, Tween.TRANS_EXPO, Tween.EASE_OUT_IN)
-	get_node("Tween").interpolate_property(text, "visibility/opacity", 1, 0, 1.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").interpolate_property(text, "visibility/opacity", 1, 0, 1.3, Tween.TRANS_EXPO, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
+	text.set_pos(Vector2(-25, 16)) #original position of flyover text
+	text.set("custom_colors/font_color", Color(1,1,1))
 	mid_animation = false
+
+
+func delete_self():
+	get_parent().remove_piece(self.coords)
+	if(get_node("Tween").is_active()):
+		print("yielding to tweening")
+		yield(get_node("Tween"), "tween_complete")
+	
+	get_node("/root/Combat/ComboSystem").increase_combo()
+	remove_from_group("enemy_pieces")
+	self.queue_free()
 	
 
 func set_coords(coords):
@@ -153,7 +205,7 @@ func animate_move_to_pos(position, speed):
 	get_node("Tween").start()
 	
 
-func animate_move(new_coords, speed=200):
+func animate_move(new_coords, speed=250):
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	animate_move_to_pos(new_position, speed)

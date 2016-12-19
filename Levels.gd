@@ -7,6 +7,7 @@ const Berserker = preload("res://PlayerPieces/BerserkerPiece.tscn")
 const Cavalier = preload("res://PlayerPieces/CavalierPiece.tscn")
 const Archer = preload("res://PlayerPieces/ArcherPiece.tscn")
 const Knight = preload("res://PlayerPieces/KnightPiece.tscn")
+const Assassin = preload("res://PlayerPieces/AssassinPiece.tscn")
 
 func make(prototype, health):
 	return {"prototype": prototype, "health": health}
@@ -15,10 +16,10 @@ func make(prototype, health):
 func make_tip(tip_text, objective_text, arrow_coords, tooltip):
 	return {"tip_text":tip_text, "objective_text": objective_text, "arrow_coords": arrow_coords, "tooltip": tooltip}
 	
-var sandbox_allies = {3: Knight, 4: Berserker, 5: Cavalier, 7: Archer}
+var sandbox_allies = {2: Assassin, 3: Cavalier, 4: Archer}
 
 var sandbox_enemies = [
-{3: make(Grunt, 5), 4: make(Grunt, 5), 5:make(Grunt, 3), 7:make(Grunt, 4)},
+{Vector2(3, 2): make(Grunt, 5), 4: make(Fortifier, 5), Vector2(5, 3):make(Fortifier, 3)},
 ]
 
 var Sandbox_Level = {"allies": sandbox_allies, "enemies":sandbox_enemies, "initial_deploy_count":3,
@@ -26,7 +27,7 @@ var Sandbox_Level = {"allies": sandbox_allies, "enemies":sandbox_enemies, "initi
 
 #LEVEL 5
 
-var level5_allies = {3: Berserker, 5: Knight, 4:Cavalier, 6:Archer}
+var level5_allies = {3: Cavalier, 5: Knight, 4:Berserker, 6:Archer}
 
 var level5_enemies = [
 	{2: make(Grunt, 5), 4: make(Grunt, 5), 6:make(Grunt, 3), 7:make(Grunt, 4)},

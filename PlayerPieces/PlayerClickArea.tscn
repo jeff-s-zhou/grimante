@@ -9,8 +9,8 @@ points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
 
 [node name="ClickArea" type="Area2D"]
 
-transform/pos = Vector2( 0, 0.903461 )
-transform/scale = Vector2( 1, 0.971767 )
+transform/pos = Vector2( 0, -2 )
+transform/scale = Vector2( 1.10606, 1.07483 )
 input/pickable = true
 shapes/0/shape = SubResource( 1 )
 shapes/0/transform = Matrix32( 0.471718, 0, 0, 0.520683, 0, -2.41054 )

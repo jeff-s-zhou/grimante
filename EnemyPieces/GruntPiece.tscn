@@ -2,9 +2,9 @@
 
 [ext_resource path="res://EnemyPieces/GruntPiece.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Enemies/grunt_piece.png" type="Texture" id=2]
-[ext_resource path="res://Assets/Enemies/grunt_piece_light.png" type="Texture" id=3]
-[ext_resource path="res://Assets/Enemies/grunt_piece_light_red.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Enemies/grunt_piece_red.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Enemies/grunt_piece_red.png" type="Texture" id=3]
+[ext_resource path="res://EnemyPieces/EnemyLightenLayer.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Assets/Enemies/grunt_piece_yellow.png" type="Texture" id=5]
 [ext_resource path="res://EnemyPieces/HealthDisplay.tscn" type="PackedScene" id=6]
 [ext_resource path="res://EnemyPieces/FlickerAnimation.tres" type="Animation" id=7]
 [ext_resource path="res://EnemyPieces/SummonAnimation.tres" type="Animation" id=8]
@@ -13,7 +13,7 @@
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"hover", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"attack_range_hover", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"attack_range", "speed":5.0 }, { "frames":[ ExtResource( 2 ), ExtResource( 5 ) ], "loop":true, "name":"damaged", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"attack_range", "speed":5.0 }, { "frames":[ ExtResource( 2 ), ExtResource( 3 ) ], "loop":true, "name":"damaged", "speed":5.0 } ]
 
 [node name="GruntPiece" type="KinematicBody2D"]
 
@@ -29,17 +29,19 @@ script/script = ExtResource( 1 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="Physicals"]
 
-transform/pos = Vector2( 0, -4 )
 frames = SubResource( 1 )
-animation = "damaged"
+animation = "default"
+
+[node name="LightenLayer" parent="Physicals" instance=ExtResource( 4 )]
+
+transform/pos = Vector2( 0, 0 )
+
+[node name="PredictionLayer" type="Sprite" parent="Physicals"]
+
+visibility/visible = false
+texture = ExtResource( 5 )
 
 [node name="HealthDisplay" parent="Physicals" instance=ExtResource( 6 )]
-
-transform/pos = Vector2( 0, 30 )
-
-[node name="AnimatedSprite" parent="Physicals/HealthDisplay"]
-
-animation = "damaged"
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
@@ -85,5 +87,11 @@ playback/speed = 1.0
 
 [node name="ClickArea" parent="." instance=ExtResource( 10 )]
 
+[node name="Timer" type="Timer" parent="."]
 
-[editable path="Physicals/HealthDisplay"]
+process_mode = 1
+wait_time = 1.0
+one_shot = false
+autostart = false
+
+

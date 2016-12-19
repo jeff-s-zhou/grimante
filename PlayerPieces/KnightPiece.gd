@@ -43,11 +43,14 @@ func _is_within_movement_range(new_coords):
 
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
-		animate_move(new_coords, 150)
+		animate_move(new_coords)
 		yield(get_node("Tween"), "tween_complete")
 		set_coords(new_coords)
 		placed()
 	elif _is_within_shove_range(new_coords):
+		var false_or_yield = get_node("/root/Combat").handle_archer_ultimate(new_coords)
+		if (false_or_yield):
+			yield(get_node("/root/Combat"), "archer_ultimate_handled")
 		shove(new_coords)
 	else:
 		invalid_move()
@@ -62,4 +65,5 @@ func shove(new_coords):
 	set_coords(new_coords)
 	placed()
 	
-
+func cast_ultimate():
+	pass

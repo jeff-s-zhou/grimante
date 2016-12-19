@@ -42,9 +42,11 @@ tracks/0/type = "value"
 tracks/0/path = NodePath("AnimatedSprite:frame")
 tracks/0/interp = 1
 tracks/0/imported = false
-tracks/0/keys = { "times":FloatArray( 0, 0.0100459, 0.6, 1.2 ), "transitions":FloatArray( 1, 1, 1, 1 ), "update":0, "values":[ 0, 0, 26, 0 ] }
+tracks/0/keys = { "times":FloatArray( 0, 0.6, 1.2 ), "transitions":FloatArray( 1, 1, 1 ), "update":0, "values":[ 0, 26, 0 ] }
 
 [node name="BlueGlow" type="Node2D"]
+
+transform/pos = Vector2( 0, -4 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 

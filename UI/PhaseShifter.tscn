@@ -6,8 +6,6 @@
 [ext_resource path="res://Assets/UI/enemy_phase.png" type="Texture" id=4]
 [ext_resource path="res://Assets/UI/player_phase.png" type="Texture" id=5]
 
-
-
 [sub_resource type="CanvasItemShader" id=1]
 
 _code = { "fragment":"uniform texture vignette;\nfloat radius = 0.0015;\nvec3 col = vec3(0);\n\ncol+= texscreen(SCREEN_UV+vec2(-radius,-radius));\ncol+= texscreen(SCREEN_UV+vec2(0,-radius));\ncol+= texscreen(SCREEN_UV+vec2(radius,-radius));\n\ncol+= texscreen(SCREEN_UV+vec2(-radius,0));\ncol+= texscreen(SCREEN_UV+vec2(0,0));\ncol+= texscreen(SCREEN_UV+vec2(radius,0));\n\n\ncol+= texscreen(SCREEN_UV+vec2(-radius,radius));\ncol+= texscreen(SCREEN_UV+vec2(0,radius));\ncol+= texscreen(SCREEN_UV+vec2(radius,radius));\n\ncol/=9.0;\nCOLOR.rgb=col;", "fragment_ofs":0, "light":"", "light_ofs":0, "vertex":"", "vertex_ofs":0 }

@@ -14,11 +14,13 @@ var pieces = {}
 
 #in order, (0, 8), (1, 8), (1, 9), (2, 9), (2, 10), (3, 10), (3, 11), (4, 11), (4, 12)
 
-const _GRID_X_OFFSET = -400
-const _GRID_Y_OFFSET = -400
+const _GRID_X_OFFSET = 0
+const _GRID_Y_OFFSET = 0
 
-const TILE_X_OFFSET = 5
-const TILE_Y_OFFSET = 29
+const TILE_X_OFFSET = 4
+#const TILE_X_OFFSET = -8
+const TILE_Y_OFFSET = 28
+#const TILE_Y_OFFSET = 16
 
 const _Z_PIECE_OFFSET = Vector2(0, -0) #this is to offset for the pseudo-3d vertical distance of pieces
 
@@ -36,7 +38,8 @@ func _ready():
 		var offset = 0
 		var column_count = 8
 		if i % 2 == 1:
-			offset = -50
+			offset = -55
+			#offset = -44
 			column_count = 9
 		for j in range(0, column_count):
 			var location1 = location.instance()
@@ -48,7 +51,8 @@ func _ready():
 			var location_y_coord = _LOCATION_Y_OFFSETS[i] + j
 			locations[Vector2(i, location_y_coord)] = location1
 			location1.set_coords(Vector2(i, location_y_coord))
-			
+
+
 func debug():
 	for key in self.locations.keys():
 		self.locations[key].debug()
@@ -65,6 +69,10 @@ func add_piece(coords, piece):
 	var location = locations[coords]
 	piece.set_pos(location.get_pos() + _Z_PIECE_OFFSET)
 	add_child(piece)
+	
+func remove_piece(coords):
+	self.pieces.erase(coords)
+	locations[coords].set_pickable(true)
 
 #moves the piece's location on grid. doesn't actually physically move the sprite
 func move_piece(old_coords, new_coords):
@@ -93,9 +101,14 @@ func get_at_location(coords):
 #done once a piece is moved by the player	
 func reset_highlighting():
 	for location in locations.values():
-		location.unhighlight()
+		location.reset_highlight()
 	for piece in pieces.values():
-		piece.unhighlight()
+		piece.reset_highlight()
+
+#called when moved off of a tile while a player unit is selected
+func reset_prediction():
+	for piece in pieces.values():
+		piece.reset_prediction_highlight()
 
 
 #direction goes from 0-5, clockwise from top
@@ -163,6 +176,43 @@ func get_radial_range(coords, radial_range=[1, 3], side=null, collision_check=fa
 	var diagonal_radial_range = [radial_range[0], radial_range[1] - 1]
 	return get_range(coords, radial_range, side, collision_check) \
 	+ get_diagonal_range(coords, diagonal_radial_range, side, collision_check)
+	
+	
+class PathedCoords:
+	var steps = 0
+	var coords = null
+	var previous = null
+	func _init(coords, steps, previous):
+		self.steps = steps
+		self.coords = coords
+		self.previous = previous
+
+
+#get a range if the unit were to take steps and avoid collisions
+func get_pathed_range(coords, steps):
+	var return_range = {}
+	var explored_range = [PathedCoords.new(coords, 0, null) ]
+	while explored_range.size() > 0:
+		var current_pathed_coords = explored_range[0]
+		explored_range.pop_front()
+		if current_pathed_coords.steps < steps:
+			var neighbors = get_pathed_range_helper(current_pathed_coords, return_range)
+			for neighbor_pathed_coords in neighbors:
+				if !return_range.has(neighbor_pathed_coords.coords):
+					return_range[neighbor_pathed_coords.coords] = neighbor_pathed_coords
+					explored_range.append(neighbor_pathed_coords)
+			
+	return return_range
+
+		
+#return all immediate neighbors as PathedCoords
+func get_pathed_range_helper(pathed_coords, return_range):
+	var return_list = []
+	var neighbor_range = get_range(pathed_coords.coords)
+	for coords in neighbor_range:
+		return_list.append(PathedCoords.new(coords, pathed_coords.steps + 1, pathed_coords))
+	return return_list
+
 
 #helper function to get list of coords from a list of locations and/or pieces
 static func get_coord_list(grid_items):

@@ -52,7 +52,7 @@ func jump_to(new_coords, speed=4):
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
-	var speed = 350
+	var speed = 400
 	var time = distance/speed
 	
 	get_node("AnimationPlayer").play("jump")
@@ -77,7 +77,9 @@ func jump_back(new_coords):
 
 func act(new_coords):
 	if _is_within_attack_range(new_coords):
-		print("is within attack range")
+		var false_or_yield = get_node("/root/Combat").handle_archer_ultimate(new_coords)
+		if (false_or_yield):
+			yield(get_node("/root/Combat"), "archer_ultimate_handled")
 		smash_attack(new_coords)
 	elif _is_within_movement_range(new_coords):
 		smash_move(new_coords)
@@ -86,7 +88,7 @@ func act(new_coords):
 
 
 func smash_attack(new_coords):
-	if get_parent().pieces[new_coords].hp - DAMAGE <= 0:
+	if get_parent().pieces[new_coords].will_die_to(DAMAGE):
 		jump_to(new_coords)
 		yield(self, "movement_animation_finished")
 		get_parent().pieces[new_coords].smash_killed(DAMAGE)
@@ -107,6 +109,7 @@ func smash_attack(new_coords):
 		placed()
 
 
+
 func smash_move(new_coords):
 	jump_to(new_coords)
 	yield(self, "movement_animation_finished")
@@ -122,9 +125,31 @@ func smash(smash_range):
 		get_parent().pieces[coords].attacked(AOE_DAMAGE)
 
 
+func predict(new_coords):
+	if _is_within_attack_range(new_coords):
+		predict_smash_attack(new_coords)
+	elif _is_within_movement_range(new_coords):
+		predict_smash_move(new_coords)
 
 
+func predict_smash_attack(new_coords):
+	if get_parent().pieces[new_coords].hp - DAMAGE <= 0:
+		get_parent().pieces[new_coords].predict(DAMAGE)
+		var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
+		predict_smash(smash_range)
+	else:
+		get_parent().pieces[new_coords].predict(DAMAGE)
 
+func predict_smash_move(new_coords):
+	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
+	predict_smash(smash_range)
+
+func predict_smash(smash_range):
+	for coords in smash_range:
+		get_parent().pieces[coords].predict(AOE_DAMAGE, true)
+
+func cast_ultimate():
+	pass
 
 
 

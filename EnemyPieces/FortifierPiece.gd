@@ -16,5 +16,5 @@ func delete_self():
 	var neighbor_coords_range = get_parent().get_range(self.coords, [1,2], "ENEMY")
 	for coords in neighbor_coords_range:
 		var neighbor = get_parent().pieces[coords]
-		neighbor.set_hp(neighbor.hp + 1)
+		neighbor.heal(1)
 	.delete_self()

@@ -12,6 +12,8 @@ var animation_state = ANIMATION_STATES.default
 
 signal cavalier_animation_finished
 
+const TRAMPLE_DAMAGE = 2
+
 const UNIT_TYPE = "Cavalier"
 const DESCRIPTION = """Armor: 1
 Movement: Can move to any empty tile along a straight line.
@@ -27,7 +29,7 @@ func animate_attack(attack_coords):
 	
 	var difference = (location.get_pos() - get_parent().locations[decremented_coords].get_pos())/2
 	var new_position = location.get_pos() - difference
-	animate_move_to_pos(new_position, 450, Tween.TRANS_SINE, Tween.EASE_IN)
+	animate_move_to_pos(new_position, 500, Tween.TRANS_SINE, Tween.EASE_IN)
 	
 func play_hit_sound():
 	get_node("SamplePlayer2D").play("hit")
@@ -72,6 +74,9 @@ func act(new_coords):
 	#returns whether the act was successfully committed
 	
 	if _is_within_attack_range(new_coords):
+		var false_or_yield = get_node("/root/Combat").handle_archer_ultimate(new_coords)
+		if (false_or_yield):
+			yield(get_node("/root/Combat"), "archer_ultimate_handled")
 		var decremented_coords = decrement_one(new_coords)
 		charge_move(decremented_coords, true)
 		
@@ -94,7 +99,7 @@ func charge_move(new_coords, attack=false):
 		animate_attack(new_coords + increment)
 		
 	else:
-		animate_move(new_coords, 350)
+		animate_move(new_coords, 450)
 	yield(get_node("Tween"), "tween_complete")
 	set_z(-1)
 
@@ -104,7 +109,7 @@ func charge_move(new_coords, attack=false):
 	#deal damage to every tile you passed over
 	while(current_coords != new_coords):
 		if get_parent().pieces.has(current_coords) and get_parent().pieces[current_coords].side == "ENEMY":
-			get_parent().pieces[current_coords].attacked(2)
+			get_parent().pieces[current_coords].attacked(TRAMPLE_DAMAGE)
 			
 		tiles_passed += 1
 		current_coords = current_coords + increment
@@ -119,7 +124,6 @@ func charge_move(new_coords, attack=false):
 		placed()
 
 
-
 func charge_attack(position_coords, attack_coords, tiles_passed):
 	get_parent().pieces[attack_coords].attacked(tiles_passed)
 	animate_attack_end(position_coords)
@@ -127,5 +131,40 @@ func charge_attack(position_coords, attack_coords, tiles_passed):
 	print(position_coords)
 	set_coords(position_coords)
 	placed()
+	
+		
+func predict(new_coords):
+	if _is_within_attack_range(new_coords):
+		var decremented_coords = decrement_one(new_coords)
+		predict_charge_move(decremented_coords, true)
+		
+	elif _is_within_movement_range(new_coords):
+		predict_charge_move(new_coords)
 
 
+func predict_charge_move(new_coords, attack=false):
+	var difference = new_coords - self.coords
+	var increment = get_parent().hex_normalize(difference)
+	var current_coords = self.coords + increment
+	
+	var tiles_passed = 1
+	#deal damage to every tile you passed over
+	while(current_coords != new_coords):
+		if get_parent().pieces.has(current_coords) and get_parent().pieces[current_coords].side == "ENEMY":
+			get_parent().pieces[current_coords].predict(TRAMPLE_DAMAGE, true)
+		tiles_passed += 1
+		current_coords = current_coords + increment
+
+	if attack:
+		get_parent().pieces[new_coords + increment].predict(tiles_passed)
+
+
+func placed():
+	get_parent().reset_highlighting()
+	self.mid_animation = false
+	self.state = States.PLACED
+	get_parent().selected = null
+	get_node("AnimatedSprite").play("cooldown")
+
+func cast_ultimate():
+	pass

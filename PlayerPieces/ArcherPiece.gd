@@ -10,10 +10,16 @@ const texture_path = "res://Assets/archer_piece.png"
 var ANIMATION_STATES = {"default":0, "moving":1}
 var animation_state = ANIMATION_STATES.default
 
+const SHOOT_DAMAGE = 3
+
 var velocity
 var new_position
 
+var pathed_range
+
 signal animation_finished
+
+signal overwatch_attack_finished
 
 const UNIT_TYPE = "Archer"
 
@@ -27,11 +33,21 @@ func get_attack_range():
 	return attack_range + attack_range_diagonal
 
 func get_movement_range():
-	return get_parent().get_range(self.coords)
+	self.pathed_range = get_parent().get_pathed_range(self.coords, 2)
+	return self.pathed_range.keys()
+	
+func get_step_shot_coords(coords):
+	var step_shot_range = get_parent().get_range(coords, [1, 11], "ENEMY", true, [0, 1])
+	if step_shot_range.size() > 0:
+		return step_shot_range[0]
+	else:
+		return null
 
 
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
+	if self.ultimate_flag:
+		return
 	var action_range = get_attack_range() + get_movement_range()
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
@@ -45,10 +61,17 @@ func _is_within_attack_range(new_coords):
 
 func act(new_coords):
 	#if the tile selected is within movement range
-	if _is_within_movement_range(new_coords):
-		animate_move(new_coords)
-		yield(get_node("Tween"), "tween_complete")
+	if self.ultimate_flag:
+		invalid_move()
+	
+	elif _is_within_movement_range(new_coords):
+		animate_stepped_move(new_coords, self.pathed_range, 350)
+		yield(self, "stepped_move_completed")
 		set_coords(new_coords)
+		var coords = get_step_shot_coords(self.coords)
+		if coords != null:
+			ranged_attack(coords)
+			yield(self, "animation_finished")
 		placed()
 
 	#elif the tile selected is within attack range
@@ -61,8 +84,8 @@ func act(new_coords):
 		invalid_move()
 
 	
-	
 func ranged_attack(new_coords):
+	self.mid_animation = true
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var angle = get_pos().angle_to_point(new_position)
@@ -70,7 +93,7 @@ func ranged_attack(new_coords):
 	var arrow = get_node("ArcherArrow")
 	arrow.set_rot(angle)
 	var distance = get_pos().distance_to(new_position)
-	var speed = 400
+	var speed = 450
 	var time = distance/speed
 	
 	get_node("Tween").interpolate_property(arrow, "visibility/opacity", 0, 1, 0.6, Tween.TRANS_SINE, Tween.EASE_IN)
@@ -83,8 +106,51 @@ func ranged_attack(new_coords):
 	yield(get_node("Tween"), "tween_complete")
 	arrow.set_opacity(0)
 	arrow.set_pos(offset)
-	get_parent().pieces[new_coords].attacked(4)
+	get_parent().pieces[new_coords].attacked(SHOOT_DAMAGE)
 	emit_signal("animation_finished")
+	self.mid_animation = false
+
+
+func predict(new_coords):
+	if self.ultimate_flag:
+		return
+	
+	elif _is_within_movement_range(new_coords):
+		var coords = get_step_shot_coords(new_coords)
+		if coords != null:
+			predict_ranged_attack(coords)
+
+	#elif the tile selected is within attack range
+	elif _is_within_attack_range(new_coords):
+		predict_ranged_attack(new_coords)
+
+
+func predict_ranged_attack(new_coords):
+	get_parent().pieces[new_coords].predict(SHOOT_DAMAGE)
+	
+func cast_ultimate():
+	self.set_cooldown(2)
+	print("casting ultimate")
+	#first reset the highlighting on the parent nodes. Then call the new highlighting
+	self.ultimate_flag = true
+	display_overwatch()
+	get_parent().reset_highlighting()
+	get_node("BlueGlow").hide()
+	get_parent().selected = null
+	
+func trigger_ultimate(attack_coords):
+	if _is_within_attack_range(attack_coords):
+		ranged_attack(attack_coords)
+		yield(self, "animation_finished")
+		get_node("Timer").set_wait_time(1.0)
+		get_node("Timer").start()
+		yield(get_node("Timer"), "timeout")
+		emit_signal("overwatch_attack_finished")
+	else:
+		emit_signal("overwatch_attack_finished")
+	
+func display_overwatch():
+	pass
 
 #override so that when pushed, it dies
 func push(distance, is_knight=false):

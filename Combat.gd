@@ -23,7 +23,9 @@ signal next_pressed
 signal reinforced
 signal done_initializing
 
-var archer
+signal archer_ultimate_handled
+
+var archer = null
 
 func _ready():
 	set_process(true)
@@ -32,7 +34,7 @@ func _ready():
 	get_node("Timer").set_active(false)
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Grid").set_pos(Vector2((get_viewport_rect().size.width - 220)/2, get_viewport_rect().size.height/2 + 40))
+	get_node("Grid").set_pos(Vector2(200, 150))
 	
 	get_node("Grid").debug()
 	
@@ -93,9 +95,12 @@ func soft_copy_array(source, target):
 	
 func initialize_piece(piece, column):
 	var new_piece = piece.instance()
+	if new_piece.UNIT_TYPE == "Archer":
+		self.archer = new_piece
 	new_piece.set_opacity(0)
 	new_piece.connect("invalid_move", self, "handle_invalid_move")
 	new_piece.connect("description_data", self, "display_description")
+	new_piece.connect("pre_attack", self, "handle_archer_ultimate")
 	new_piece.connect("shake", self, "screen_shake")
 	new_piece.initialize(get_node("CursorArea"))
 	var position = get_node("Grid").get_bottom_of_column(column)
@@ -122,22 +127,29 @@ func end_turn():
 	self.state = STATES.enemy_turn
 
 func _input(event):
-	if event.type == InputEvent.MOUSE_BUTTON \
-	and event.button_index == BUTTON_RIGHT \
-	and event.pressed :
+	if event.is_action("deselect") and event.is_pressed(): 
 		if get_node("Grid").selected:
 			get_node("Grid").selected.deselect()
 			get_node("Grid").selected = null
 			get_node("Grid").reset_highlighting()
 	
-	if event.type == InputEvent.KEY:
-		if event.scancode == KEY_SPACE && !event.pressed:
-        	get_node("SidebarTooltip").hide()
-		elif event.scancode == KEY_SPACE && event.pressed:
+	elif event.is_action("detailed_description"):
+		if event.is_pressed():
 			get_node("SidebarTooltip").show()
-		elif event.scancode == KEY_N && event.pressed:
-			if(self.next_level != null):
-				get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.next_level})
+		else:
+			get_node("SidebarTooltip").hide()
+			
+	elif event.is_action("debug_level_skip") and event.is_pressed():
+		if(self.next_level != null):
+			get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.next_level})
+	
+	elif event.is_action("toggle_fullscreen") and event.is_pressed():
+		if OS.is_window_fullscreen():
+			OS.set_window_fullscreen(false)
+			OS.set_window_maximized(true)
+		else:
+			OS.set_window_maximized(false)
+			OS.set_window_fullscreen(true)
 
 func _process(delta):
 	
@@ -328,6 +340,15 @@ func track_turn_finished():
 func handle_invalid_move():
 	get_node("SamplePlayer").play("error")
 	get_node("InvalidMoveIndicator/AnimationPlayer").play("flash")
+	
+func handle_archer_ultimate(attack_coords):
+	if self.archer != null and self.archer.ultimate_flag:
+		self.archer.trigger_ultimate(attack_coords)
+		yield(self.archer, "overwatch_attack_finished")
+		emit_signal("archer_ultimate_handled")
+		return true
+	else:
+		return false
 	
 func display_description(name, text):
 	get_node("SidebarTooltip").set(name, text)
