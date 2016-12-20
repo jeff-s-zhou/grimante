@@ -42,14 +42,12 @@ func _ready():
 func input_event(viewport, event, shape_idx):
 	if event.is_action("select"):
 		if event.is_pressed():
-			print("handling input event for enemy")
 			get_parent().set_target(self)
 		
 func hover_highlight():
 	get_node("Timer").set_wait_time(0.03)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
-	print("highlighting")
 	emit_signal("description_data", self.unit_name, self.hover_description)
 	if self.action_highlighted:
 		
@@ -169,7 +167,6 @@ func flyover_helper(value):
 func delete_self():
 	get_parent().remove_piece(self.coords)
 	if(get_node("Tween").is_active()):
-		print("yielding to tweening")
 		yield(get_node("Tween"), "tween_complete")
 	
 	get_node("/root/Combat/ComboSystem").increase_combo()
