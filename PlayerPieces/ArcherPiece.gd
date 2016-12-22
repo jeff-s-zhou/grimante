@@ -19,8 +19,6 @@ var pathed_range
 
 signal animation_finished
 
-signal overwatch_attack_finished
-
 const UNIT_TYPE = "Archer"
 
 const DESCRIPTION = """Armor: 0
@@ -65,27 +63,30 @@ func act(new_coords):
 		invalid_move()
 	
 	elif _is_within_movement_range(new_coords):
-		animate_stepped_move(new_coords, self.pathed_range, 350)
-		yield(self, "stepped_move_completed")
+		var args = [self.coords, new_coords, self.pathed_range, 350]
+		get_node("/root/AnimationQueue").enqueue(self, "animate_stepped_move", true, args)
 		set_coords(new_coords)
 		var coords = get_step_shot_coords(self.coords)
 		if coords != null:
 			ranged_attack(coords)
-			yield(self, "animation_finished")
 		placed()
 
 	#elif the tile selected is within attack range
 	elif _is_within_attack_range(new_coords):
 		ranged_attack(new_coords)
-		yield(self, "animation_finished")
 		placed()
 		
 	else:
 		invalid_move()
 
-	
 func ranged_attack(new_coords):
-	self.mid_animation = true
+	print("calling ranged attack")
+	get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [new_coords])
+	get_parent().pieces[new_coords].attacked(SHOOT_DAMAGE)
+
+
+func animate_ranged_attack(new_coords):
+	print("animating ranged attack")
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var angle = get_pos().angle_to_point(new_position)
@@ -93,7 +94,7 @@ func ranged_attack(new_coords):
 	var arrow = get_node("ArcherArrow")
 	arrow.set_rot(angle)
 	var distance = get_pos().distance_to(new_position)
-	var speed = 450
+	var speed = 400
 	var time = distance/speed
 	
 	get_node("Tween").interpolate_property(arrow, "visibility/opacity", 0, 1, 0.6, Tween.TRANS_SINE, Tween.EASE_IN)
@@ -106,9 +107,7 @@ func ranged_attack(new_coords):
 	yield(get_node("Tween"), "tween_complete")
 	arrow.set_opacity(0)
 	arrow.set_pos(offset)
-	get_parent().pieces[new_coords].attacked(SHOOT_DAMAGE)
-	emit_signal("animation_finished")
-	self.mid_animation = false
+	emit_signal("animation_done")
 
 
 func predict(new_coords):
@@ -140,14 +139,8 @@ func cast_ultimate():
 	
 func trigger_ultimate(attack_coords):
 	if _is_within_attack_range(attack_coords):
-		ranged_attack(attack_coords)
-		yield(self, "animation_finished")
-		get_node("Timer").set_wait_time(1.0)
-		get_node("Timer").start()
-		yield(get_node("Timer"), "timeout")
-		emit_signal("overwatch_attack_finished")
-	else:
-		emit_signal("overwatch_attack_finished")
+		get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [attack_coords])
+		get_parent().pieces[attack_coords].nonlethal_attacked(SHOOT_DAMAGE)
 	
 func display_overwatch():
 	pass

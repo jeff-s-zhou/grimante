@@ -36,50 +36,56 @@ func _is_within_attack_range(new_coords):
 func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
 
-func animate_smash():
-	get_node("AnimationPlayer").play("smash")
-	#get_node("Tween").interpolate_callback(self, 0.1, "play_smash_sound")
-	yield( get_node("AnimationPlayer"), "finished" )
-	emit_signal("shake")
-	emit_signal("movement_animation_finished")
-
 func play_smash_sound():
 	get_node("SamplePlayer2D").play("explode3")
 
 func jump_to(new_coords, speed=4):
 	set_z(2)
-	self.mid_animation = true
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
 	var speed = 400
 	var time = distance/speed
-	
-	get_node("AnimationPlayer").play("jump")
 
-	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), new_position, time, Tween.TRANS_SINE, Tween.EASE_IN)
-	get_node("Tween").interpolate_callback(self, time + 0.2, "animate_smash")
-	get_node("Tween").start()
-	yield( get_node("AnimationPlayer"), "finished" )
+	var old_height = Vector2(0, -4)
+	var new_height = Vector2(0, -150)
+	get_node("Tween2").interpolate_property(get_node("AnimatedSprite"), "transform/pos", \
+		get_node("AnimatedSprite").get_pos(), new_height, time/2, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+	get_node("Tween2").start()
+	yield(get_node("Tween2"), "tween_complete")
+	get_node("Tween2").interpolate_property(get_node("AnimatedSprite"), "transform/pos", \
+		get_node("AnimatedSprite").get_pos(), old_height, time/2, Tween.TRANS_CUBIC, Tween.EASE_IN)
+	yield(get_node("Tween2"), "tween_complete")
+	set_z(-1)
+	emit_signal("shake")
+	emit_signal("animation_done")
 	
-	get_node("AnimationPlayer").play("float")
+func animate_smash():
+	get_node("AnimationPlayer").play("smash")
+	#get_node("Tween").interpolate_callback(self, 0.1, "play_smash_sound")
+	yield( get_node("AnimationPlayer"), "finished" )
+	emit_signal("shake")
+	#emit_signal("movement_animation_finished")
+	emit_signal("animation_done")
+	set_z(-1)
+	
 	
 func jump_back(new_coords):
 	set_z(2)
-	self.mid_animation = true
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var time = 0.8
 	get_node("AnimationPlayer").play("jump_back")
 	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), new_position, time, Tween.TRANS_SINE, Tween.EASE_IN)
+	yield( get_node("AnimationPlayer"), "finished" )
+	emit_signal("animation_done")
+	set_z(-1)
 	
 	
 
 func act(new_coords):
 	if _is_within_attack_range(new_coords):
-		var false_or_yield = get_node("/root/Combat").handle_archer_ultimate(new_coords)
-		if (false_or_yield):
-			yield(get_node("/root/Combat"), "archer_ultimate_handled")
+		get_node("/root/Combat").handle_archer_ultimate(new_coords)
 		smash_attack(new_coords)
 	elif _is_within_movement_range(new_coords):
 		smash_move(new_coords)
@@ -89,34 +95,33 @@ func act(new_coords):
 
 func smash_attack(new_coords):
 	if get_parent().pieces[new_coords].will_die_to(DAMAGE):
-		jump_to(new_coords)
-		yield(self, "movement_animation_finished")
+		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [new_coords, 400, false])
+		get_node("/root/AnimationQueue").enqueue(self, "jump_to", true, [new_coords])
+		
 		get_parent().pieces[new_coords].smash_killed(DAMAGE)
 		var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 		smash(smash_range)
 		set_coords(new_coords)
-		set_z(-1)
 		placed()
 		
 	#else leap back
 	else:
-		jump_to(new_coords)
-		yield(self, "movement_animation_finished")
+		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [new_coords, 400, false])
+		get_node("/root/AnimationQueue").enqueue(self, "jump_to", true, [new_coords])
+		
 		get_parent().pieces[new_coords].attacked(DAMAGE)
-		jump_back(self.coords)
-		yield( get_node("AnimationPlayer"), "finished" )
-		set_z(-1)
+		get_node("/root/AnimationQueue").enqueue(self, "jump_back", true, [self.coords])
 		placed()
 
 
 
 func smash_move(new_coords):
-	jump_to(new_coords)
-	yield(self, "movement_animation_finished")
+	get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [new_coords, 400, false])
+	get_node("/root/AnimationQueue").enqueue(self, "jump_to", true, [new_coords])
+	
 	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 	smash(smash_range)
 	set_coords(new_coords)
-	set_z(-1)
 	placed()
 
 

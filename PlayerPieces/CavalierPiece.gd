@@ -22,22 +22,23 @@ Attack: Charge. Run in a straight line, hitting the first enemy in the line for 
 """
 
 func animate_attack(attack_coords):
-	self.mid_animation = true
 	print("animating attack")
 	var location = get_parent().locations[attack_coords]
 	var decremented_coords = decrement_one(attack_coords)
 	
 	var difference = (location.get_pos() - get_parent().locations[decremented_coords].get_pos())/2
 	var new_position = location.get_pos() - difference
-	animate_move_to_pos(new_position, 500, Tween.TRANS_SINE, Tween.EASE_IN)
+	animate_move_to_pos(new_position, 500, true, Tween.TRANS_SINE, Tween.EASE_IN)
+
 	
 func play_hit_sound():
 	get_node("SamplePlayer2D").play("hit")
-	
+
+
 func animate_attack_end(original_coords):
 	var location = get_parent().locations[original_coords]
 	var new_position = location.get_pos()
-	animate_move_to_pos(new_position, 300)
+	animate_move_to_pos(new_position, 300, true)
 
 
 func get_movement_range():
@@ -65,74 +66,97 @@ func display_action_range():
 func _is_within_attack_range(new_coords):
 	var attack_range = get_attack_range()
 	return new_coords in attack_range
-	
+
+
 func _is_within_movement_range(new_coords):
 	var movement_range = get_movement_range()
 	return new_coords in movement_range
+
 
 func act(new_coords):
 	#returns whether the act was successfully committed
 	
 	if _is_within_attack_range(new_coords):
-		var false_or_yield = get_node("/root/Combat").handle_archer_ultimate(new_coords)
-		if (false_or_yield):
-			yield(get_node("/root/Combat"), "archer_ultimate_handled")
-		var decremented_coords = decrement_one(new_coords)
-		charge_move(decremented_coords, true)
+		get_node("/root/Combat").handle_archer_ultimate(new_coords)
+		charge_attack(new_coords)
 		
 	elif _is_within_movement_range(new_coords):
-		charge_move(new_coords)
+		trample(new_coords)
 	else:
 		invalid_move()
+
+
+func trample(new_coords):
+	var difference = new_coords - self.coords
+	var increment = get_parent().hex_normalize(difference)
+	var current_coords = self.coords
 	
+	var was_hopping = false
+	while current_coords != new_coords:
+		current_coords = current_coords + increment
+		if get_parent().pieces.has(current_coords) and get_parent().pieces[current_coords].side == "ENEMY":
+			was_hopping = true
+			get_parent().pieces[current_coords].attacked(TRAMPLE_DAMAGE)
+			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [current_coords, 250, false])
+			get_node("/root/AnimationQueue").enqueue(self, "animate_hop", true, [current_coords - increment, current_coords])
+			
+		else:
+			if was_hopping:
+				#hop down
+				get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [current_coords, 250, false])
+				get_node("/root/AnimationQueue").enqueue(self, "animate_hop", true, [current_coords - increment, current_coords, true])
+				was_hopping = false
+			else:
+				get_node("/root/AnimationQueue").enqueue(self, "animate_move", true, [current_coords, 350])
+
+	set_coords(new_coords)
+	placed()
+
+
+func animate_hop(old_coords, new_coords, down=false):
+	set_z(2)
+	var old_location = get_parent().locations[old_coords]
+	var location = get_parent().locations[new_coords]
+	var new_position = location.get_pos()
+	var distance = old_location.get_pos().distance_to(new_position)
+	var time = distance/250
+	print(time)
+	var old_position = Vector2(0, -15)
+	if down:
+		old_position = Vector2(0, -4)
+	var new_position = Vector2(0, -60)
+	
+	get_node("Tween2").interpolate_property(get_node("AnimatedSprite"), "transform/pos", \
+		get_node("AnimatedSprite").get_pos(), new_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+	get_node("Tween2").start()
+	yield(get_node("Tween2"), "tween_complete")
+	
+	get_node("Tween2").interpolate_property(get_node("AnimatedSprite"), "transform/pos", \
+		get_node("AnimatedSprite").get_pos(), old_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_IN)
+	get_node("Tween2").start()
+	yield(get_node("Tween2"), "tween_complete")
+	if(down):
+		set_z(-1)
+	emit_signal("animation_done")
+
+
 func decrement_one(new_coords):
 	var difference = new_coords - self.coords
 	var increment = get_parent().hex_normalize(difference)
 	return new_coords - increment
 
 
-func charge_move(new_coords, attack=false):
-	set_z(2)
+func charge_attack(new_coords, attack=false):
 	var difference = new_coords - self.coords
 	var increment = get_parent().hex_normalize(difference)
-	if(attack):
-		animate_attack(new_coords + increment)
-		
-	else:
-		animate_move(new_coords, 450)
-	yield(get_node("Tween"), "tween_complete")
-	set_z(-1)
-
-	var current_coords = self.coords + increment
-	
-	var tiles_passed = 1
-	#deal damage to every tile you passed over
-	while(current_coords != new_coords):
-		if get_parent().pieces.has(current_coords) and get_parent().pieces[current_coords].side == "ENEMY":
-			get_parent().pieces[current_coords].attacked(TRAMPLE_DAMAGE)
-			
-		tiles_passed += 1
-		current_coords = current_coords + increment
-
-
-	if attack:
-		charge_attack(new_coords, new_coords + increment, tiles_passed)
-	else:
-		print("set coords for cavalier")
-		print(new_coords)
-		set_coords(new_coords)
-		placed()
-
-
-func charge_attack(position_coords, attack_coords, tiles_passed):
-	get_parent().pieces[attack_coords].attacked(tiles_passed)
-	animate_attack_end(position_coords)
-	print("set coords for cavalier")
-	print(position_coords)
+	get_node("/root/AnimationQueue").enqueue(self, "animate_attack", true, [new_coords])
+	get_parent().pieces[new_coords].attacked(difference.length() - 1)
+	var position_coords = decrement_one(new_coords)
+	get_node("/root/AnimationQueue").enqueue(self, "animate_attack_end", true, [position_coords])
 	set_coords(position_coords)
 	placed()
 	
-		
+
 func predict(new_coords):
 	if _is_within_attack_range(new_coords):
 		var decremented_coords = decrement_one(new_coords)
@@ -157,14 +181,6 @@ func predict_charge_move(new_coords, attack=false):
 
 	if attack:
 		get_parent().pieces[new_coords + increment].predict(tiles_passed)
-
-
-func placed():
-	get_parent().reset_highlighting()
-	self.mid_animation = false
-	self.state = States.PLACED
-	get_parent().selected = null
-	get_node("AnimatedSprite").play("cooldown")
 
 func cast_ultimate():
 	pass

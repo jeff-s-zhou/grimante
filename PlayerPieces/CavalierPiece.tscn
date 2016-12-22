@@ -50,6 +50,13 @@ playback/active = false
 playback/repeat = false
 playback/speed = 1.0
 
+[node name="Tween2" type="Tween" parent="."]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
+
 [node name="SamplePlayer2D" type="SamplePlayer2D" parent="."]
 
 params/volume_db = 0.0

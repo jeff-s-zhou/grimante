@@ -48,6 +48,10 @@ func is_placed():
 func delete_self():
 	get_parent().remove_piece(self.coords)
 	remove_from_group("player_pieces")
+	get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
+	
+	
+func animate_delete_self():
 	self.queue_free()
 
 func initialize(cursor_area):
@@ -74,30 +78,39 @@ func animate_summon():
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	
-func animate_move_to_pos(position, speed, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
-	self.mid_animation = true
+func animate_move_to_pos(position, speed, blocking=false, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
 	var distance = get_pos().distance_to(position)
 	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
 	get_node("Tween").start()
+	if blocking:
+		yield(get_node("Tween"), "tween_complete")
+		emit_signal("animation_done")
+	
 
-func animate_move(new_coords, speed=250, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
+func animate_move(new_coords, speed=250, blocking=true, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	animate_move_to_pos(new_position, speed, trans_type, ease_type)
+	if(blocking):
+		yield(get_node("Tween"), "tween_complete")
+		emit_signal("animation_done")
+
 
 #move from tile to tile
-func animate_stepped_move(new_coords, pathed_range, speed=250, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
+func animate_stepped_move(old_coords, new_coords, pathed_range, speed=250, blocking=true, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
 	var path = []
 	var current_pathed_coords = pathed_range[new_coords]
-	while(current_pathed_coords.coords != self.coords):
+	while(current_pathed_coords.coords != old_coords):
 		path.push_front(current_pathed_coords.coords)
 		current_pathed_coords = current_pathed_coords.previous
-		
 	for coords in path:
-		animate_move(coords, speed, trans_type, ease_type)
+		var location = get_parent().locations[coords]
+		var new_position = location.get_pos()
+		animate_move_to_pos(new_position, speed, trans_type, ease_type)
 		yield(get_node("Tween"), "tween_complete")
-		
-	emit_signal("stepped_move_completed")
+
+	if blocking:
+		emit_signal("animation_done")
 	
 func attack_highlight():
 	pass
@@ -113,8 +126,8 @@ func reset_highlight():
 	if(self.state != States.PLACED):
 		get_node("AnimatedSprite").play("default")
 		get_node("LightenLayer").hide()
-	else:
-		get_node("AnimatedSprite").play("cooldown")
+#	else:
+#		get_node("AnimatedSprite").play("cooldown")
 
 func reset_prediction_highlight():
 	pass
@@ -190,29 +203,39 @@ func invalid_move():
 	get_parent().selected = null
 
 #helper function for act
+
 func placed():
+	get_node("/root/AnimationQueue").enqueue(self, "animate_placed", false)
+	self.ultimate_flag = false
+	self.state = States.PLACED
+	get_parent().selected = null
+
+func animate_placed():
 	if(self.cooldown > 0):
 		self.cooldown -= 1
 		get_node("Cooldown").show()
 		get_node("Cooldown/Label").set_text(str(self.cooldown))
-	get_parent().reset_highlighting()
-	self.ultimate_flag = false
-	self.mid_animation = false
-	get_node("BlueGlow").hide()
-	self.state = States.PLACED
-	get_parent().selected = null
 	get_node("AnimatedSprite").play("cooldown")
 
 
 func push(distance, is_knight=false):
 	if get_parent().locations.has(self.coords + distance):
+		var distance_length = distance.length()
+		var collide_range = get_parent().get_range(self.coords, [1, distance_length + 1], "ANY", true, [3, 4])
 		#if there's something in front, push that
-		if get_parent().pieces.has(self.coords + distance):
-			get_parent().pieces[self.coords + distance].push(distance)
-		animate_move(self.coords + distance)
+		if collide_range.size() > 0:
+			var collide_coords = collide_range[0]
+			var location = get_parent().locations[collide_coords]
+			var collide_pos = location.get_pos() + Vector2(0, -93) #offset it so that it "taps" it
+			var new_distance = (self.coords + distance) - collide_coords + Vector2(0, 1)
+			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos_standalone", true, [collide_pos, 250])
+			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance])
+			get_parent().pieces[collide_coords].push(new_distance)
+		else:
+			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance])
 		set_coords(self.coords + distance)
-		self.mid_animation = false
 	else:
+		#TODO: move to last square before falling off the map
 		delete_self()
 
 

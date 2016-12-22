@@ -7,19 +7,23 @@ var processing_queue = []
 
 var lock = Mutex.new()
 
+signal animations_finished
+
 func _ready():
 	set_process(true)
-	print(lock)
 
 func enqueue(node, func_ref, does_yield, args=[]):
-	self.lock.try_lock()
+	print("enqueuing: " + func_ref)
+	self.lock.lock()
 	self.queue.append({"node":node, "func_ref":func_ref, "does_yield":does_yield, "args":args})
 	self.lock.unlock()
+	
+func is_busy():
+	return self.queue != [] or self.mid_processing
 
 
 func _process(delta):
 	while self.queue != [] and !self.mid_processing:
-		print("met this conditional")
 		self.lock.try_lock()
 		self.processing_queue = self.queue
 		self.queue = []
@@ -35,11 +39,32 @@ func process_animations():
 		var node = animation_action["node"]
 		var does_yield = animation_action["does_yield"]
 		var func_ref = animation_action["func_ref"]
+		print("processing animation")
+		print(func_ref)
 		var args = animation_action["args"]
 		if args == []:
 			node.call(func_ref)
 		else:
-			node.call(func_ref, args)
+			#GIVE ME FUCKING SPREAD SYNTAX AAAAAAAAAGGGGGGGGHHHHHHHH
+			if args.size() == 1:
+				node.call(func_ref, args[0])
+			elif args.size() == 2:
+				node.call(func_ref, args[0], args[1])
+			elif args.size() == 3:
+				node.call(func_ref, args[0], args[1], args[2])
+			elif args.size() == 4:
+				node.call(func_ref, args[0], args[1], args[2], args[3])
+			elif args.size() == 5:
+				node.call(func_ref, args[0], args[1], args[2], args[3], args[4])
+			elif args.size() == 6:
+				node.call(func_ref, args[0], args[1], args[2], args[3], args[4], args[5])
+			elif args.size() == 7:
+				node.call(func_ref, args[0], args[1], args[2], args[3], args[4], args[5], args[6])
+			else:
+				print("Error: EXCEEDED MAX NUMBER OF ARGUMENTS IN AnimationQueue")
 		if does_yield:
 			yield(node, "animation_done")
 	self.mid_processing = false
+	
+	if self.queue == [] and self.processing_queue == []:
+		emit_signal("animations_finished")

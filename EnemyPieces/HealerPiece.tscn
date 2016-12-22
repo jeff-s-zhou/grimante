@@ -10,6 +10,8 @@
 [ext_resource path="res://EnemyPieces/EnemyClickArea.tscn" type="PackedScene" id=8]
 [ext_resource path="res://EnemyPieces/Flyover.tscn" type="PackedScene" id=9]
 
+
+
 [sub_resource type="GDScript" id=1]
 
 script/source = "\nextends \"EnemyPiece.gd\"\n\n# member variables here, example:\n# var a=2\n# var b=\"textvar\"\n\nvar max_hp = 5\n\t\nfunc initialize(max_hp):\n\tset_hp(max_hp)\n\tself.movement_value = Vector2(0, 1)\n\t\nfunc turn_update():\n\t.turn_update()\n\n\n"

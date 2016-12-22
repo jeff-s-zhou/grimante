@@ -14,8 +14,11 @@ const BEHIND = Vector2(0, -1)
 
 var kill_streak = 0
 
+var pathed_range
+
 func get_movement_range():
-	return get_parent().get_range(self.coords)
+	self.pathed_range = get_parent().get_pathed_range(self.coords, 1)
+	return self.pathed_range.keys()
 	
 func get_attack_range():
 	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, 3], "ENEMY")
@@ -26,7 +29,7 @@ func get_attack_range():
 			
 	return attack_range
 
-	
+
 func animate_backstab(new_coords):
 	self.mid_animation = true
 	var location = get_parent().locations[new_coords]
@@ -49,14 +52,12 @@ func _is_within_movement_range(new_coords):
 
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
-		animate_move(new_coords, 350)
-		yield(get_node("Tween"), "tween_complete")
+		var args = [self.coords, new_coords, self.pathed_range, 350]
+		get_node("/root/AnimationQueue").enqueue(self, "animate_stepped_move", true, args)
 		set_coords(new_coords)
 		placed()
 	elif _is_within_attack_range(new_coords):
-		var false_or_yield = get_node("/root/Combat").handle_archer_ultimate(new_coords)
-		if (false_or_yield):
-			yield(get_node("/root/Combat"), "archer_ultimate_handled")
+		get_node("/root/Combat").handle_archer_ultimate(new_coords)
 		attack(new_coords)
 	else:
 		invalid_move()
@@ -64,7 +65,7 @@ func act(new_coords):
 
 func attack(new_coords):
 	animate_backstab(new_coords + BEHIND)
-	#yield(get_node("AnimationPlayer"), "finished")
+	#TODO: yield to AnimationQueue call
 	if get_parent().pieces[new_coords].will_die_to(BACKSTAB_DAMAGE):
 		self.kill_streak += 1
 	get_parent().pieces[new_coords].attacked(BACKSTAB_DAMAGE)

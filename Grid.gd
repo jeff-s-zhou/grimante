@@ -19,7 +19,7 @@ const _GRID_Y_OFFSET = 0
 
 const TILE_X_OFFSET = 4
 #const TILE_X_OFFSET = -8
-const TILE_Y_OFFSET = 28
+const TILE_Y_OFFSET = 29
 #const TILE_Y_OFFSET = 16
 
 const _Z_PIECE_OFFSET = Vector2(0, -0) #this is to offset for the pseudo-3d vertical distance of pieces
@@ -38,7 +38,7 @@ func _ready():
 		var offset = 0
 		var column_count = 8
 		if i % 2 == 1:
-			offset = -55
+			offset = -56
 			#offset = -44
 			column_count = 9
 		for j in range(0, column_count):
@@ -71,6 +71,7 @@ func add_piece(coords, piece):
 	add_child(piece)
 	
 func remove_piece(coords):
+	self.pieces[coords].set_pickable(false)
 	self.pieces.erase(coords)
 	locations[coords].set_pickable(true)
 
@@ -133,6 +134,7 @@ func get_range(coords, magnitude_range=[1,2], side=null, collision_check=false, 
 		get_range_helper(return_set, change_vector, coords, magnitude_range, side, collision_check)
 	return return_set
 
+
 #gets the "diagonal" neighbors in the six directions
 func get_diagonal_range(coords, magnitude_range=[1, 2], side=null, collision_check=false, direction_range=[0, 6]):
 	var return_set = [] #make this a dict?
@@ -153,13 +155,18 @@ func get_diagonal_range(coords, magnitude_range=[1, 2], side=null, collision_che
 
 		get_range_helper(return_set, change_vector, coords, magnitude_range, side, collision_check)
 	return return_set
-	
+
+
 func get_range_helper(return_set, change_vector, coords, magnitude_range, side, collision_check):
 	for i in range(magnitude_range[0], magnitude_range[1]):
 			var new_coords = coords + i * change_vector
 			if collision_check:
 				if pieces.has(new_coords):
-					if pieces[new_coords].side == side:
+					if side == "ANY":
+						print("caught any check")
+						return_set.append(new_coords)
+					
+					elif pieces[new_coords].side == side:
 						return_set.append(new_coords)
 					break #break regardless on first collision
 	
@@ -229,6 +236,10 @@ static func hex_normalize(vector):
 		if(vector.y < vector.x):
 			lowest_denominator = abs(vector.y)
 		return Vector2(vector.x/lowest_denominator, vector.y/lowest_denominator)
+		
+static func hex_length(start_coords, end_coords):
+	var difference = end_coords - start_coords
+	return difference/hex_normalize(difference)
 
 #utility function for enemy unit deployment
 func get_top_of_column(column):

@@ -23,8 +23,6 @@ signal next_pressed
 signal reinforced
 signal done_initializing
 
-signal archer_ultimate_handled
-
 var archer = null
 
 func _ready():
@@ -34,7 +32,7 @@ func _ready():
 	get_node("Timer").set_active(false)
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Grid").set_pos(Vector2(200, 150))
+	get_node("Grid").set_pos(Vector2(200, 140))
 	
 	get_node("Grid").debug()
 	
@@ -113,9 +111,13 @@ func initialize_piece(piece, column):
 func end_turn():
 	
 	self.state = STATES.transitioning
-	get_node("Timer2").set_wait_time(0.2)
-	get_node("Timer2").start()
-	yield(get_node("Timer2"), "timeout")
+	
+	if get_node("/root/AnimationQueue").is_busy():
+		yield(get_node("/root/AnimationQueue"), "animations_finished")
+	else:
+		get_node("Timer2").set_wait_time(0.2)
+		get_node("Timer2").start()
+		yield(get_node("Timer2"), "timeout")
 	
 	get_node("Button").set_disabled(true)
 	get_node("TutorialTooltip").reset()
@@ -165,12 +167,18 @@ func _process(delta):
 				
 		if !get_node("Timer").is_active():
 			get_node("Timer").set_active(true)
-			get_node("Timer").set_wait_time(0.6)
+			get_node("Timer").set_wait_time(0.4)
 			get_node("Timer").start()
 			
 		elif get_node("Timer").get_time_left() <= 0.1:
+			
+			#make sure the animation queue is clear
+			if get_node("/root/AnimationQueue").is_busy():
+				return
+				
+			#make sure trailing, non-sequential animations are done like flyover text
 			for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
-				if enemy_piece.mid_animation:
+				if enemy_piece.mid_trailing_animation:
 					return
 			get_node("Timer").set_active(false)
 			end_turn()
@@ -192,7 +200,8 @@ func enemy_phase(enemy_pieces):
 	
 	#if there are enemy pieces, wait for them to finish
 	if(get_tree().get_nodes_in_group("enemy_pieces").size() > 0):
-		yield(self, "enemy_turn_finished")
+		yield(get_node("/root/AnimationQueue"), "animations_finished")
+
 	if self.enemy_waves.size() > 0:
 		deploy_wave()
 		yield(self, "wave_deployed")
@@ -305,7 +314,6 @@ func deploy_wave():
 		var enemy_piece = prototype.instance()
 		enemy_piece.initialize(health)
 		enemy_piece.connect("broke_defenses", self, "damage_defenses")
-		enemy_piece.connect("turn_finished", self, "track_turn_finished")
 		enemy_piece.connect("description_data", self, "display_description")
 
 		var position
@@ -333,9 +341,7 @@ func enemy_win():
 	
 func damage_defenses():
 	enemy_win()
-	
-func track_turn_finished():
-	emit_signal("enemy_turn_finished")
+
 	
 func handle_invalid_move():
 	get_node("SamplePlayer").play("error")
@@ -344,11 +350,6 @@ func handle_invalid_move():
 func handle_archer_ultimate(attack_coords):
 	if self.archer != null and self.archer.ultimate_flag:
 		self.archer.trigger_ultimate(attack_coords)
-		yield(self.archer, "overwatch_attack_finished")
-		emit_signal("archer_ultimate_handled")
-		return true
-	else:
-		return false
 	
 func display_description(name, text):
 	get_node("SidebarTooltip").set(name, text)

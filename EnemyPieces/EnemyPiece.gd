@@ -7,12 +7,14 @@ extends KinematicBody2D
 
 var action_highlighted = false
 var movement_value = Vector2(0, 1)
-var mid_animation = false
+var mid_trailing_animation = false
 
 var coords #enemies move automatically each turn a certain number of spaces forward
 var hp
 var type
 var side = "ENEMY"
+
+const flyover_prototype = preload("res://enemyPieces/Flyover.tscn")
 
 var hover_description = ""
 var unit_name = ""
@@ -23,9 +25,8 @@ signal description_data(name, description)
 signal hide_description
 
 signal broke_defenses
-signal turn_finished
 
-signal pre_damage
+signal animation_done
 
 
 func _ready():
@@ -35,7 +36,6 @@ func _ready():
 	get_node("ClickArea").connect("mouse_exit", self, "hover_unhighlight")
 	get_node("Physicals/AnimatedSprite").set_z(-2)
 	get_node("Physicals/HealthDisplay").set_z(0)
-	get_node("Flyover").set_z(1)
 	add_to_group("enemy_pieces")
 	#set_opacity(0)
 	
@@ -110,44 +110,53 @@ func predict(damage, is_passive_damage=false):
 		get_node("Physicals/PredictionLayer").show()
 		get_node("Physicals/HealthDisplay/AnimatedSprite").hide()
 		get_node("Physicals/HealthDisplay/PredictionLayer").show()
-
-
-func attacked(damage):
-	mid_animation = true
-	get_node("AnimationPlayer").play("FlickerAnimation")
-	yield( get_node("AnimationPlayer"), "finished" )
-	take_damage(damage)
-
+	
 
 #for the berserker's smash kill which should instantly remove
 func smash_killed(damage):
-	mid_animation = true
+	get_node("/root/AnimationQueue").enqueue(self, "animate_smash_killed", false)
+	attacked(damage)
+
+
+func animate_smash_killed():
 	get_node("Physicals").set_opacity(0)
-	take_damage(damage)
+	
 	
 func set_hp(hp):
 	self.hp = hp
 	get_node("Physicals/HealthDisplay/Label").set_text(str(self.hp))
-	
-	
+
 func heal(amount):
 	modify_hp(amount)
 
-func take_damage(amount):
+func attacked(amount):
 	modify_hp(amount * -1)
 
+#always leaves them with 1 hp
+func nonlethal_attacked(amount):
+	var amount = amount * -1
+	self.hp = (max(1, self.hp + amount))
+	get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [self.hp, amount])
+
 func modify_hp(amount):
-	mid_animation = true
-	
-	set_hp(max(0, self.hp + amount))
-	flyover_helper(amount)
-	
+	self.hp = (max(0, self.hp + amount))
+	get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [self.hp, amount])
 	if self.hp <= 0:
 		delete_self()
 
 
-func flyover_helper(value):
-	var text = get_node("Flyover/FlyoverText")
+func animate_set_hp(hp, value):
+	self.mid_trailing_animation = true
+	if value < 0:
+		get_node("AnimationPlayer").play("FlickerAnimation")
+		yield( get_node("AnimationPlayer"), "finished" )
+
+	get_node("Physicals/HealthDisplay/Label").set_text(str(hp))
+	
+	var flyover = self.flyover_prototype.instance()
+	flyover.set_z(1)
+	add_child(flyover)
+	var text = flyover.get_node("FlyoverText")
 	var value_text = str(value)
 	if value > 0:
 		value_text = "+" + value_text
@@ -159,18 +168,20 @@ func flyover_helper(value):
 	get_node("Tween").interpolate_property(text, "visibility/opacity", 1, 0, 1.3, Tween.TRANS_EXPO, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
-	text.set_pos(Vector2(-25, 16)) #original position of flyover text
-	text.set("custom_colors/font_color", Color(1,1,1))
-	mid_animation = false
+	remove_child(flyover)
+	self.mid_trailing_animation = false
+	
+	if hp == 0:
+		animate_delete_self()
 
 
 func delete_self():
 	get_parent().remove_piece(self.coords)
-	if(get_node("Tween").is_active()):
-		yield(get_node("Tween"), "tween_complete")
-	
-	get_node("/root/Combat/ComboSystem").increase_combo()
 	remove_from_group("enemy_pieces")
+
+
+func animate_delete_self():
+	get_node("/root/Combat/ComboSystem").increase_combo()
 	self.queue_free()
 	
 
@@ -181,31 +192,45 @@ func set_coords(coords):
 
 func push(distance, is_knight=false):
 	if get_parent().locations.has(self.coords + distance):
+		var distance_length = distance.length()
+		var collide_range = get_parent().get_range(self.coords, [1, distance_length + 1], "ANY", true, [3, 4])
 		#if there's something in front, push that
-		if get_parent().pieces.has(self.coords + distance):
-			get_parent().pieces[self.coords + distance].push(distance)
-			
-		animate_move(self.coords + distance)
+		if collide_range.size() > 0:
+			var collide_coords = collide_range[0]
+			var location = get_parent().locations[collide_coords]
+			var collide_pos = location.get_pos() + Vector2(0, -93) #offset it so that it "taps" it
+			var new_distance = (self.coords + distance) - collide_coords + Vector2(0, 1)
+			print("new_distance is" + str(new_distance))
+			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos_standalone", true, [collide_pos, 250])
+			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance])
+			get_parent().pieces[collide_coords].push(new_distance)
+		else:
+			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance])
 		set_coords(self.coords + distance)
-		yield(get_node("Tween"), "tween_complete")
-		
 	else:
-		#needed because delete self catches a "yield" for tween player
-		get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
-		get_node("Tween").start()
+		#TODO: move to last square before falling off the map
 		delete_self()
-	
 
-func animate_move_to_pos(position, speed):
+
+func animate_move_to_pos(position, speed, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
 	var distance = get_pos().distance_to(position)
-	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
 	get_node("Tween").start()
+
+
+#emits its own animation_done signal
+func animate_move_to_pos_standalone(position, speed, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
+	animate_move_to_pos(position, speed, trans_type, ease_type)
+	yield(get_node("Tween"), "tween_complete")
+	emit_signal("animation_done")
 	
 
-func animate_move(new_coords, speed=250):
+func animate_move(new_coords, speed=250, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
-	animate_move_to_pos(new_position, speed)
+	animate_move_to_pos(new_position, speed, trans_type, ease_type)
+	yield(get_node("Tween"), "tween_complete")
+	emit_signal("animation_done")
 
 
 func get_movement_value():
@@ -218,15 +243,5 @@ func turn_update():
 		emit_signal("broke_defenses")
 		delete_self()
 	else:
-		if get_parent().pieces.has(coords + movement_value):
-			#if a player piece, move it first
-			var obstructing_piece = get_parent().pieces[coords + movement_value]
-			obstructing_piece.push(movement_value)
-				
-		#now if the space in front is free, move it
-		if !get_parent().pieces.has(coords + movement_value):
-			animate_move(coords + movement_value)
-			set_coords(coords + movement_value)
-			yield(get_node("Tween"), "tween_complete")
-			emit_signal("turn_finished")
-			
+		#TODO: refactor all this
+		self.push(movement_value)
