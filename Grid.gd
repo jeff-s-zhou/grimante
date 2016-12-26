@@ -237,9 +237,9 @@ static func hex_normalize(vector):
 			lowest_denominator = abs(vector.y)
 		return Vector2(vector.x/lowest_denominator, vector.y/lowest_denominator)
 		
-static func hex_length(start_coords, end_coords):
-	var difference = end_coords - start_coords
-	return difference/hex_normalize(difference)
+static func hex_length(vector):
+	return vector.length()/hex_normalize(vector).length()
+
 
 #utility function for enemy unit deployment
 func get_top_of_column(column):

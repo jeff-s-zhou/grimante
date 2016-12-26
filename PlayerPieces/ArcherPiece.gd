@@ -151,3 +151,4 @@ func push(distance, is_knight=false):
 		.push(distance)
 	else:
 		delete_self()
+		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)

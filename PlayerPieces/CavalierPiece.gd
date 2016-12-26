@@ -26,9 +26,11 @@ func animate_attack(attack_coords):
 	var location = get_parent().locations[attack_coords]
 	var decremented_coords = decrement_one(attack_coords)
 	
-	var difference = (location.get_pos() - get_parent().locations[decremented_coords].get_pos())/2
+	var difference = 2 * (location.get_pos() - get_parent().locations[decremented_coords].get_pos())/3
 	var new_position = location.get_pos() - difference
 	animate_move_to_pos(new_position, 500, true, Tween.TRANS_SINE, Tween.EASE_IN)
+	yield(get_node("Tween"), "tween_complete")
+	emit_signal("shake")
 
 	
 func play_hit_sound():
@@ -148,9 +150,9 @@ func decrement_one(new_coords):
 
 func charge_attack(new_coords, attack=false):
 	var difference = new_coords - self.coords
-	var increment = get_parent().hex_normalize(difference)
+	var tiles_travelled = get_parent().hex_length(difference) - 1
 	get_node("/root/AnimationQueue").enqueue(self, "animate_attack", true, [new_coords])
-	get_parent().pieces[new_coords].attacked(difference.length() - 1)
+	get_parent().pieces[new_coords].attacked(tiles_travelled)
 	var position_coords = decrement_one(new_coords)
 	get_node("/root/AnimationQueue").enqueue(self, "animate_attack_end", true, [position_coords])
 	set_coords(position_coords)

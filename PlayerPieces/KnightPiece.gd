@@ -62,5 +62,10 @@ func shove(new_coords):
 	set_coords(new_coords)
 	placed()
 	
+func predict(new_coords):
+	if _is_within_shove_range(new_coords):
+		pass
+		#get_parent().pieces[new_coords].predict(BACKSTAB_DAMAGE)
+	
 func cast_ultimate():
 	pass

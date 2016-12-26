@@ -13,8 +13,9 @@ func initialize(max_hp):
 	self.movement_value = Vector2(0, 1)
 	
 func delete_self():
+	.delete_self()
 	var neighbor_coords_range = get_parent().get_range(self.coords, [1,2], "ENEMY")
 	for coords in neighbor_coords_range:
 		var neighbor = get_parent().pieces[coords]
 		neighbor.heal(1)
-	.delete_self()
+	

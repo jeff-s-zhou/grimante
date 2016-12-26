@@ -34,7 +34,7 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(200, 140))
 	
-	get_node("Grid").debug()
+	#get_node("Grid").debug()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("Button").connect("pressed", self, "end_turn")
@@ -328,15 +328,28 @@ func deploy_wave():
 		get_node("Grid").add_piece(position, enemy_piece)
 		
 		enemy_piece.animate_summon()
-		yield(enemy_piece.get_node("AnimationPlayer"), "finished" )
+		yield(enemy_piece.get_node("Tween"), "tween_complete" )
 		get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.size()))
 
 	emit_signal("wave_deployed")
 
 func player_win():
+	set_process(false)
+	if get_node("/root/AnimationQueue").is_busy():
+		yield(get_node("/root/AnimationQueue"), "animations_finished")
+	get_node("Timer2").set_wait_time(3.0)
+	get_node("Timer2").start()
+	print("started timer")
+	yield(get_node("Timer2"), "timeout")
+	print("at the end of the player win timer")
 	get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.next_level})
 	
 func enemy_win():
+	if get_node("/root/AnimationQueue").is_busy():
+		yield(get_node("/root/AnimationQueue"), "animations_finished")
+	get_node("Timer2").set_wait_time(3.0)
+	get_node("Timer2").start()
+	yield(get_node("Timer2"), "timeout")
 	get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level":self.level})
 	
 func damage_defenses():

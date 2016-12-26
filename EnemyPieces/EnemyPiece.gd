@@ -1,5 +1,5 @@
 
-extends KinematicBody2D
+extends "res://Piece.gd"
 
 # member variables here, example:
 # var a=2
@@ -14,7 +14,7 @@ var hp
 var type
 var side = "ENEMY"
 
-const flyover_prototype = preload("res://enemyPieces/Flyover.tscn")
+const flyover_prototype = preload("res://EnemyPieces/Flyover.tscn")
 
 var hover_description = ""
 var unit_name = ""
@@ -94,10 +94,6 @@ func reset_prediction_highlight():
 func attack_highlight():
 	get_node("Physicals/AnimatedSprite").play("attack_range")
 	get_node("Physicals/HealthDisplay/AnimatedSprite").play("attack_range")
-
-
-func animate_summon():
-	get_node("AnimationPlayer").play("SummonAnimation")
 
 	
 func will_die_to(damage):
@@ -188,50 +184,7 @@ func animate_delete_self():
 func set_coords(coords):
 	get_parent().move_piece(self.coords, coords)
 	self.coords = coords
-
-
-func push(distance, is_knight=false):
-	if get_parent().locations.has(self.coords + distance):
-		var distance_length = distance.length()
-		var collide_range = get_parent().get_range(self.coords, [1, distance_length + 1], "ANY", true, [3, 4])
-		#if there's something in front, push that
-		if collide_range.size() > 0:
-			var collide_coords = collide_range[0]
-			var location = get_parent().locations[collide_coords]
-			var collide_pos = location.get_pos() + Vector2(0, -93) #offset it so that it "taps" it
-			var new_distance = (self.coords + distance) - collide_coords + Vector2(0, 1)
-			print("new_distance is" + str(new_distance))
-			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos_standalone", true, [collide_pos, 250])
-			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance])
-			get_parent().pieces[collide_coords].push(new_distance)
-		else:
-			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance])
-		set_coords(self.coords + distance)
-	else:
-		#TODO: move to last square before falling off the map
-		delete_self()
-
-
-func animate_move_to_pos(position, speed, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
-	var distance = get_pos().distance_to(position)
-	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
-	get_node("Tween").start()
-
-
-#emits its own animation_done signal
-func animate_move_to_pos_standalone(position, speed, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
-	animate_move_to_pos(position, speed, trans_type, ease_type)
-	yield(get_node("Tween"), "tween_complete")
-	emit_signal("animation_done")
 	
-
-func animate_move(new_coords, speed=250, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
-	var location = get_parent().locations[new_coords]
-	var new_position = location.get_pos()
-	animate_move_to_pos(new_position, speed, trans_type, ease_type)
-	yield(get_node("Tween"), "tween_complete")
-	emit_signal("animation_done")
-
 
 func get_movement_value():
 	return self.movement_value
@@ -242,6 +195,7 @@ func turn_update():
 	if !get_parent().locations.has(coords + movement_value):
 		emit_signal("broke_defenses")
 		delete_self()
+		animate_delete_self()
 	else:
 		#TODO: refactor all this
 		self.push(movement_value)
