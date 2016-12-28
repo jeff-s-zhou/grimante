@@ -1,18 +1,19 @@
-[gd_scene load_steps=13 format=1]
+[gd_scene load_steps=14 format=1]
 
 [ext_resource path="res://PlayerPieces/AssassinPiece.gd" type="Script" id=1]
 [ext_resource path="res://PlayerPieces/BlueGlow.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Assets/Allies/assassin_piece.png" type="Texture" id=3]
-[ext_resource path="res://Assets/Allies/assassin_piece_green.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Allies/assassin_piece_sepia.png" type="Texture" id=4]
 [ext_resource path="res://Assets/Allies/assassin_piece_red.png" type="Texture" id=5]
-[ext_resource path="res://Assets/Allies/assassin_piece_sepia.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Allies/assassin_piece_green.png" type="Texture" id=6]
 [ext_resource path="res://PlayerPieces/LightenLayer.tscn" type="PackedScene" id=7]
 [ext_resource path="res://PlayerPieces/Cooldown.tscn" type="PackedScene" id=8]
-[ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=9]
+[ext_resource path="res://PlayerPieces/ChargeBar.tscn" type="PackedScene" id=9]
+[ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=10]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"assist", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"hurt", "speed":5.0 }, { "frames":[ ExtResource( 6 ) ], "loop":true, "name":"cooldown", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"cooldown", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"hurt", "speed":5.0 }, { "frames":[ ExtResource( 6 ) ], "loop":true, "name":"assist", "speed":5.0 } ]
 
 [sub_resource type="Animation" id=2]
 
@@ -50,7 +51,11 @@ animation = "default"
 
 [node name="Cooldown" parent="." instance=ExtResource( 8 )]
 
-[node name="ClickArea" parent="." instance=ExtResource( 9 )]
+[node name="ChargeBar" parent="." instance=ExtResource( 9 )]
+
+transform/pos = Vector2( 35.9243, -10.1785 )
+
+[node name="ClickArea" parent="." instance=ExtResource( 10 )]
 
 [node name="Tween" type="Tween" parent="."]
 

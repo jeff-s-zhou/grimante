@@ -90,6 +90,8 @@ func animate_stepped_move(old_coords, new_coords, pathed_range, speed=250, block
 
 	if blocking:
 		emit_signal("animation_done")
+
+
 	
 func attack_highlight():
 	pass
@@ -116,8 +118,12 @@ func reset_prediction_highlight():
 
 #called on mouse entering the ClickArea
 func hover_highlight():
+	print("hovering highlighting")
 	if(self.state != States.PLACED):
+		print("isn't placed")
 		get_node("LightenLayer").show()
+	else:
+		print("is placed")
 
 
 #called on mouse exiting the ClickArea

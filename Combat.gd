@@ -24,6 +24,7 @@ signal reinforced
 signal done_initializing
 
 var archer = null
+var assassin = null
 
 func _ready():
 	set_process(true)
@@ -95,6 +96,8 @@ func initialize_piece(piece, column):
 	var new_piece = piece.instance()
 	if new_piece.UNIT_TYPE == "Archer":
 		self.archer = new_piece
+	elif new_piece.UNIT_TYPE == "Assassin":
+		self.assassin = new_piece
 	new_piece.set_opacity(0)
 	new_piece.connect("invalid_move", self, "handle_invalid_move")
 	new_piece.connect("description_data", self, "display_description")
@@ -363,6 +366,10 @@ func handle_invalid_move():
 func handle_archer_ultimate(attack_coords):
 	if self.archer != null and self.archer.ultimate_flag:
 		self.archer.trigger_ultimate(attack_coords)
+		
+func handle_assassin_passive(attack_coords):
+	if self.assassin != null:
+		self.assassin.trigger_passive(attack_coords)
 	
 func display_description(name, text):
 	get_node("SidebarTooltip").set(name, text)

@@ -89,6 +89,7 @@ func act(new_coords):
 	if _is_within_attack_range(new_coords):
 		get_node("/root/Combat").handle_archer_ultimate(new_coords)
 		smash_attack(new_coords)
+		get_node("/root/Combat").handle_assassin_passive(new_coords)
 	elif _is_within_movement_range(new_coords):
 		smash_move(new_coords)
 	else:

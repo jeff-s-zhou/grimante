@@ -49,6 +49,7 @@ func act(new_coords):
 	elif _is_within_shove_range(new_coords):
 		get_node("/root/Combat").handle_archer_ultimate(new_coords)
 		shove(new_coords)
+		get_node("/root/Combat").handle_assassin_passive(new_coords)
 	else:
 		invalid_move()
 

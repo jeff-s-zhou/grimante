@@ -38,7 +38,7 @@ func push(distance, is_knight=false):
 			var collide_pos = location.get_pos() + Vector2(0, -93) #offset it so that it "taps" it
 			var new_distance = (self.coords + distance) - collide_coords + Vector2(0, 1)
 			print("new_distance is" + str(new_distance))
-			get_node("/root/AnimationQueue").enqueue(self, "animate_move", true, [collide_pos, 250])
+			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 250, true])
 			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance, 250, false])
 			get_parent().pieces[collide_coords].push(new_distance)
 		else:
