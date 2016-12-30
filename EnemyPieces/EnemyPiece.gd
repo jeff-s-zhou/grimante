@@ -12,7 +12,7 @@ var mid_trailing_animation = false
 var coords #enemies move automatically each turn a certain number of spaces forward
 var hp
 var type
-var side = "ENEMY"
+
 
 const flyover_prototype = preload("res://EnemyPieces/Flyover.tscn")
 
@@ -37,6 +37,7 @@ func _ready():
 	get_node("Physicals/AnimatedSprite").set_z(-2)
 	get_node("Physicals/HealthDisplay").set_z(0)
 	add_to_group("enemy_pieces")
+	self.side = "ENEMY"
 	#set_opacity(0)
 	
 func input_event(viewport, event, shape_idx):
@@ -129,9 +130,10 @@ func attacked(amount):
 	modify_hp(amount * -1)
 
 #always leaves them with 1 hp
-func nonlethal_attacked(amount):
-	var amount = amount * -1
+func nonlethal_attacked(damage):
+	var amount = damage * -1
 	self.hp = (max(1, self.hp + amount))
+	print("nonlethal_attacked, hp: " + str(self.hp) + ", amount: " + str(amount))
 	get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [self.hp, amount])
 
 func modify_hp(amount):
@@ -143,9 +145,14 @@ func modify_hp(amount):
 
 func animate_set_hp(hp, value):
 	self.mid_trailing_animation = true
-	if value < 0:
-		get_node("AnimationPlayer").play("FlickerAnimation")
-		yield( get_node("AnimationPlayer"), "finished" )
+#	var timer = Timer.new()
+#	add_child(timer)
+	get_node("AnimationPlayer").play("FlickerAnimation")
+	
+#	timer.set_wait_time(1.0)
+#	timer.start()
+#	yield(timer, "timeout")
+#	remove_child(timer)
 
 	get_node("Physicals/HealthDisplay/Label").set_text(str(hp))
 	
@@ -160,11 +167,14 @@ func animate_set_hp(hp, value):
 	text.set_opacity(1.0)
 	text.set_text(value_text)
 	var destination = text.get_pos() - Vector2(0, 200)
-	get_node("Tween").interpolate_property(text, "rect/pos", text.get_pos(), destination, 1.3, Tween.TRANS_EXPO, Tween.EASE_OUT_IN)
-	get_node("Tween").interpolate_property(text, "visibility/opacity", 1, 0, 1.3, Tween.TRANS_EXPO, Tween.EASE_IN)
-	get_node("Tween").start()
-	yield(get_node("Tween"), "tween_complete")
+	var tween = Tween.new()
+	add_child(tween)
+	tween.interpolate_property(text, "rect/pos", text.get_pos(), destination, 1.3, Tween.TRANS_EXPO, Tween.EASE_OUT_IN)
+	tween.interpolate_property(text, "visibility/opacity", 1, 0, 1.3, Tween.TRANS_EXPO, Tween.EASE_IN)
+	tween.start()
+	yield(tween, "tween_complete") #this is the problem line...fuuuuck
 	remove_child(flyover)
+	remove_child(tween)
 	self.mid_trailing_animation = false
 	
 	if hp == 0:

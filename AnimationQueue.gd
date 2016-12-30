@@ -12,10 +12,10 @@ signal animations_finished
 func _ready():
 	set_process(true)
 
-func enqueue(node, func_ref, does_yield, args=[]):
+func enqueue(node, func_ref, blocking, args=[]):
 	print("enqueuing: " + func_ref)
 	self.lock.lock()
-	self.queue.append({"node":node, "func_ref":func_ref, "does_yield":does_yield, "args":args})
+	self.queue.append({"node":node, "func_ref":func_ref, "blocking":blocking, "args":args})
 	self.lock.unlock()
 	
 func is_busy():
@@ -37,7 +37,7 @@ func process_animations():
 		var animation_action = self.processing_queue[0]
 		self.processing_queue.pop_front()
 		var node = animation_action["node"]
-		var does_yield = animation_action["does_yield"]
+		var blocking = animation_action["blocking"]
 		var func_ref = animation_action["func_ref"]
 		print("processing animation")
 		print(func_ref)
@@ -62,9 +62,14 @@ func process_animations():
 				node.call(func_ref, args[0], args[1], args[2], args[3], args[4], args[5], args[6])
 			else:
 				print("Error: EXCEEDED MAX NUMBER OF ARGUMENTS IN AnimationQueue")
-		if does_yield:
+		if blocking:
 			yield(node, "animation_done")
 	self.mid_processing = false
 	
 	if self.queue == [] and self.processing_queue == []:
 		emit_signal("animations_finished")
+
+	
+#	if self.queue == [] and self.processing_queue == []:
+#		yield(node, "strict_animation_done")
+#		emit_signal("animations_finished")

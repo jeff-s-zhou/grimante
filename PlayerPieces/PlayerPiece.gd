@@ -8,7 +8,6 @@ var States = {"LOCKED":0, "DEFAULT":1, "CLICKED": 2, "PLACED":3, "SELECTED":4}
 
 var state = States.PLACED
 var coords
-var side = "PLAYER"
 var cursor_area
 var name = ""
 var cooldown = 0
@@ -37,6 +36,7 @@ func _ready():
 	get_node("ClickArea").connect("mouse_exit", self, "unhovered")
 	set_process_input(true)
 	set_process(true)
+	self.side = "PLAYER"
 	
 func set_cooldown(cooldown):
 	self.cooldown = cooldown + 1 #offset for the first countdown tick

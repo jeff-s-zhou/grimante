@@ -44,8 +44,8 @@ func jump_to(new_coords, speed=4):
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
-	var speed = 350
-	var time = distance/speed
+	var speed = 350 #scale this to the distance travelled? loool
+	var time = distance/speed #just make this a proportion of the distance?
 
 	var old_height = Vector2(0, -4)
 	var new_height = Vector2(0, (-2 * distance/3))
@@ -68,7 +68,7 @@ func jump_back(new_coords):
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
-	var speed = 300
+	var speed = 250
 	var time = distance/speed
 
 	var old_height = Vector2(0, -4)

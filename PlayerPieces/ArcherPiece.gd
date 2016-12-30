@@ -10,7 +10,7 @@ const texture_path = "res://Assets/archer_piece.png"
 var ANIMATION_STATES = {"default":0, "moving":1}
 var animation_state = ANIMATION_STATES.default
 
-const SHOOT_DAMAGE = 3
+var SHOOT_DAMAGE = 3
 
 var velocity
 var new_position
@@ -108,6 +108,7 @@ func animate_ranged_attack(new_coords):
 	yield(get_node("Tween"), "tween_complete")
 	arrow.set_opacity(0)
 	arrow.set_pos(offset)
+	
 	emit_signal("animation_done")
 
 
@@ -141,7 +142,7 @@ func cast_ultimate():
 func trigger_ultimate(attack_coords):
 	if _is_within_attack_range(attack_coords):
 		get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [attack_coords])
-		get_parent().pieces[attack_coords].nonlethal_attacked(SHOOT_DAMAGE)
+		get_parent().pieces[attack_coords].nonlethal_attacked(3)
 	
 func display_overwatch():
 	pass

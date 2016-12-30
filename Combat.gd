@@ -342,9 +342,7 @@ func player_win():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 	get_node("Timer2").set_wait_time(3.0)
 	get_node("Timer2").start()
-	print("started timer")
 	yield(get_node("Timer2"), "timeout")
-	print("at the end of the player win timer")
 	get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.next_level})
 	
 func enemy_win():

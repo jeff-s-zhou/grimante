@@ -4,6 +4,7 @@ extends KinematicBody2D
 # var a = 2
 # var b = "textvar"
 
+var side = null
 
 func animate_summon():
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
@@ -26,9 +27,13 @@ func animate_move(new_coords, speed=250, blocking=true, trans_type=Tween.TRANS_L
 		yield(get_node("Tween"), "tween_complete")
 		emit_signal("animation_done")
 
-
-func push(distance, is_knight=false):
-	if get_parent().locations.has(self.coords + distance):
+#the unit that calls this moves too, as part of the act of pushing
+func push(distance, side=null):
+	if dies_to_collision(side): #check if they're going to die from collision
+		delete_self()
+		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
+	
+	elif get_parent().locations.has(self.coords + distance):
 		var distance_length = distance.length()
 		var collide_range = get_parent().get_range(self.coords, [1, distance_length + 1], "ANY", true, [3, 4])
 		#if there's something in front, push that
@@ -40,7 +45,7 @@ func push(distance, is_knight=false):
 			print("new_distance is" + str(new_distance))
 			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 250, true])
 			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance, 250, false])
-			get_parent().pieces[collide_coords].push(new_distance)
+			get_parent().pieces[collide_coords].push(new_distance, self.side)
 		else:
 			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance, 250, false])
 		set_coords(self.coords + distance)
@@ -48,3 +53,7 @@ func push(distance, is_knight=false):
 		#TODO: move to last square before falling off the map
 		delete_self()
 		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
+		
+func dies_to_collision(side_of_pusher):
+	return false
+	

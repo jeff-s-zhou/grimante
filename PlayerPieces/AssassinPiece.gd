@@ -74,17 +74,18 @@ func act(new_coords):
 func attack(new_coords):
 	animate_backstab(new_coords + BEHIND)
 	#TODO: yield to AnimationQueue call
-	if get_parent().pieces[new_coords].will_die_to(self.backstab_damage):
-		set_charge(get_charge() + 1)
-	elif self.ultimate_flag:
-		self.ultimate_flag = false #if it doesn't kill the piece, the ultimate is done
 	get_parent().pieces[new_coords].attacked(self.backstab_damage)
 	set_coords(new_coords + BEHIND)
-	if !self.ultimate_flag:
-		placed()
+	if self.ultimate_flag:
+		if get_parent().pieces.has(new_coords): #if it didn't kill
+			soft_placed() 
+
 	else:
-		get_parent().selected = null
-		
+		if !get_parent().pieces.has(new_coords): #if it did kill
+			set_charge(get_charge() + 1)
+		placed()
+
+
 func get_charge():
 	return get_node("ChargeBar").charge
 
@@ -96,28 +97,45 @@ func predict(new_coords):
 		get_parent().pieces[new_coords].predict(self.backstab_damage)
 
 func cast_ultimate():
-	if get_charge() == 3:
-		self.ultimate_flag = true
-		self.backstab_damage = ULTIMATE_BACKSTAB_DAMAGE
-		get_parent().reset_highlighting()
-		display_action_range()
-		set_charge(0)
+#	if get_charge() == 3:
+	self.ultimate_flag = true
+	self.backstab_damage = ULTIMATE_BACKSTAB_DAMAGE
+	get_parent().reset_highlighting()
+	display_action_range()
+	set_charge(0)
 	
 func placed():
 	self.backstab_damage = REGULAR_BACKSTAB_DAMAGE
 	.placed()
 	
+#same as regular placed() except doesn't reset the ultimate_flag
+func soft_placed(): 
+	get_node("/root/AnimationQueue").enqueue(self, "animate_placed", false)
+	self.state = States.PLACED
+	get_parent().selected = null
+
+
+#resets the assassin to be able to act again
+func unplaced():
+	self.state = States.DEFAULT
+	self.backstab_damage = ULTIMATE_BACKSTAB_DAMAGE
+	get_node("AnimatedSprite").play("default")
+
+
 func trigger_passive(attack_coords):
 	if _is_within_passive_range(attack_coords):
 		get_node("/root/AnimationQueue").enqueue(self, "animate_passive", true, [attack_coords])
 		get_parent().pieces[attack_coords].attacked(PASSIVE_DAMAGE)
+		if self.ultimate_flag:
+			unplaced()
 		get_node("/root/AnimationQueue").enqueue(self, "animate_passive_end", true, [self.coords])
+
 
 func animate_passive(attack_coords):
 	var location = get_parent().locations[attack_coords]
 	var difference = 2 * (location.get_pos() - get_pos())/3
 	var new_position = location.get_pos() - difference
-	animate_move_to_pos(new_position, 50, true, Tween.TRANS_SINE, Tween.EASE_IN)
+	animate_move_to_pos(new_position, 450, true, Tween.TRANS_SINE, Tween.EASE_IN)
 
 func animate_passive_end(original_coords):
 	var location = get_parent().locations[original_coords]

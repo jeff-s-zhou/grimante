@@ -30,7 +30,7 @@ script/script = ExtResource( 1 )
 [node name="AnimatedSprite" type="AnimatedSprite" parent="Physicals"]
 
 frames = SubResource( 1 )
-animation = "default"
+animation = "damaged"
 
 [node name="LightenLayer" parent="Physicals" instance=ExtResource( 4 )]
 
