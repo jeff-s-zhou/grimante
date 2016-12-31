@@ -15,7 +15,9 @@ Movement: 2 range leap
 Attack: Leap Strike. Leap to a tile. If there is an enemy on the tile, deal 3 damage. If the enemy is killed by the attack, move to that tile. Otherwise, return to your original tile.
 Passive: Ground Slam. Moving to a tile deals 2 damage in a 1-range AoE around your destination."""
 
-signal movement_animation_finished
+
+func _ready():
+	self.armor = 1
 
 func get_attack_range():
 	return get_parent().get_radial_range(self.coords, [1, 3], "ENEMY")

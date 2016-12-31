@@ -25,6 +25,10 @@ const DESCRIPTION = """Armor: 0
 Movement: 1 range step
 Attack: Snipe. Attack the first enemy in a line for 4 damage. Can target diagonally. """
 	
+	
+func _ready():
+	self.armor = 0
+
 func get_attack_range():
 	var attack_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", true)
 	var attack_range_diagonal = get_parent().get_diagonal_range(self.coords, [1, 8], "ENEMY", true)
@@ -146,11 +150,3 @@ func trigger_ultimate(attack_coords):
 	
 func display_overwatch():
 	pass
-
-#override so that when pushed, it dies
-func push(distance, is_knight=false):
-	if(is_knight):
-		.push(distance)
-	else:
-		delete_self()
-		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)

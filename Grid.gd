@@ -133,7 +133,21 @@ func get_range(coords, magnitude_range=[1,2], side=null, collision_check=false, 
 			
 		get_range_helper(return_set, change_vector, coords, magnitude_range, side, collision_check)
 	return return_set
-
+	
+	
+func get_direction_from_vector(vector):
+	if vector == Vector2(0, -1):
+		return 0
+	elif vector == Vector2(1, 0):
+		return 1
+	elif vector == Vector2(1, 1):
+		return 2
+	elif vector == Vector2(0, 1):
+		return 3
+	elif vector == Vector2(-1, -0):
+		return 4
+	elif vector == Vector2(-1, -1):
+		return 5
 
 #gets the "diagonal" neighbors in the six directions
 func get_diagonal_range(coords, magnitude_range=[1, 2], side=null, collision_check=false, direction_range=[0, 6]):

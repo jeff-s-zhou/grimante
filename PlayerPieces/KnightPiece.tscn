@@ -1,18 +1,19 @@
-[gd_scene load_steps=11 format=1]
+[gd_scene load_steps=12 format=1]
 
 [ext_resource path="res://PlayerPieces/KnightPiece.gd" type="Script" id=1]
 [ext_resource path="res://PlayerPieces/BlueGlow.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Assets/Allies/knight_piece.png" type="Texture" id=3]
-[ext_resource path="res://Assets/Allies/knight_piece_green.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Allies/knight_piece_red.png" type="Texture" id=5]
-[ext_resource path="res://Assets/Allies/knight_piece_sepia.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Allies/knight_piece_sepia.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Allies/knight_piece_green.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Allies/knight_piece_red.png" type="Texture" id=6]
 [ext_resource path="res://PlayerPieces/LightenLayer.tscn" type="PackedScene" id=7]
 [ext_resource path="res://PlayerPieces/Cooldown.tscn" type="PackedScene" id=8]
 [ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Effects/RainParticles.tscn" type="PackedScene" id=10]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"assist", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"hurt", "speed":5.0 }, { "frames":[ ExtResource( 6 ) ], "loop":true, "name":"cooldown", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"cooldown", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"assist", "speed":5.0 }, { "frames":[ ExtResource( 6 ) ], "loop":true, "name":"hurt", "speed":5.0 } ]
 
 [node name="KnightType" type="KinematicBody2D"]
 
@@ -51,5 +52,9 @@ process_mode = 1
 wait_time = 1.0
 one_shot = false
 autostart = false
+
+[node name="RainParticles" parent="." instance=ExtResource( 10 )]
+
+transform/pos = Vector2( 0, -60 )
 
 

@@ -12,6 +12,7 @@ var cursor_area
 var name = ""
 var cooldown = 0
 var ultimate_flag = false
+var armor = 0
 
 const SHOVE_SPEED = 4
 
@@ -147,11 +148,6 @@ func hovered():
 	emit_signal("description_data", self.UNIT_TYPE, self.DESCRIPTION)
 	if get_parent().selected == null and self.state != States.PLACED:
 		display_action_range()
-#	elif get_parent().selected == self:
-#		if self.mid_animation == false: #to handle the bug of the clickarea not moving until everything's done
-#			hover_highlight()
-#		else:
-#			print("caught the click area bug")
 
 
 
@@ -202,6 +198,11 @@ func animate_placed():
 		get_node("Cooldown/Label").set_text(str(self.cooldown))
 	get_node("AnimatedSprite").play("cooldown")
 
+func dies_to_collision(side_of_pusher):
+	print(side_of_pusher != null)
+	print(side_of_pusher != self.side)
+	print(self.armor == 0)
+	return side_of_pusher != null and side_of_pusher != self.side and self.armor == 0 #if there's a pusher and not on the same side
 
 #OVERRIDEN FUNCTIONS
 func act(new_coords):
@@ -212,4 +213,6 @@ func display_action_range():
 	
 func cast_ultimate():
 	pass
+
+
 

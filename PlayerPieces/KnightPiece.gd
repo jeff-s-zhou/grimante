@@ -13,6 +13,10 @@ Movement: 1 range step
 Attack: Shove. 1 range, pushes target back and also pushes targets behind them. Can push friendly units and not KO them.
 """
 	
+func _ready():
+	self.armor = 1
+
+
 func get_movement_range():
 	return get_parent().get_range(self.coords)
 	
@@ -48,21 +52,14 @@ func act(new_coords):
 		placed()
 	elif _is_within_shove_range(new_coords):
 		get_node("/root/Combat").handle_archer_ultimate(new_coords)
-		shove(new_coords)
+		var distance = new_coords - self.coords
+		push(distance)
+		placed()
 		get_node("/root/Combat").handle_assassin_passive(new_coords)
 	else:
 		invalid_move()
 
 
-func shove(new_coords):
-	var difference = new_coords - self.coords
-	var increment = get_parent().hex_normalize(difference)
-	animate_move(new_coords)
-	get_parent().pieces[new_coords].push(increment, true)
-	yield(get_node("Tween"), "tween_complete")
-	set_coords(new_coords)
-	placed()
-	
 func predict(new_coords):
 	if _is_within_shove_range(new_coords):
 		pass

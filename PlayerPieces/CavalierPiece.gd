@@ -1,16 +1,8 @@
 
 extends "PlayerPiece.gd"
-#extends KinematicBody2D
-# member variables here, example:
-# var a=2
-# var b="textvar"
-
-const texture_path = "res://Assets/cavalier_piece.png"
 
 var ANIMATION_STATES = {"default":0, "moving":1}
 var animation_state = ANIMATION_STATES.default
-
-signal cavalier_animation_finished
 
 const TRAMPLE_DAMAGE = 2
 
@@ -20,6 +12,9 @@ Movement: Can move to any empty tile along a straight line.
 Passive: Trample. Moving through an enemy unit deals 2 damage to it.
 Attack: Charge. Run in a straight line, hitting the first enemy in the line for damage equal to the number of tiles travelled.
 """
+
+func _ready():
+	self.armor = 1
 
 func animate_attack(attack_coords):
 	print("animating attack")

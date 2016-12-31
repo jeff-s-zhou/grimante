@@ -19,6 +19,9 @@ var passive_damage = PASSIVE_DAMAGE
 
 var pathed_range
 
+func _ready():
+	self.armor = 0
+
 func get_movement_range():
 	self.pathed_range = get_parent().get_pathed_range(self.coords, 1)
 	return self.pathed_range.keys()
