@@ -11,16 +11,21 @@ const UNIT_TYPE = "Stormdancer"
 const DESCRIPTION = """
 """
 
+const DEFAULT_BOLT_DAMAGE = 1
+
+var bolt_damage = DEFAULT_BOLT_DAMAGE
+
 func _ready():
 	self.armor = 0
 
 
 func get_attack_range():
-	return get_parent().get_radial_range(self.coords, [1, 3], "ENEMY")
+	return get_parent().get_all_range("ENEMY")
 
 
 func get_movement_range():
 	return get_parent().get_radial_range(self.coords)
+
 
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
@@ -54,7 +59,7 @@ func act(new_coords):
 
 
 func lightning_attack(attack_coords):
-	pass
+	get_parent().pieces[attack_coords].attacked(self.bolt_damage)
 
 
 func shunpo(new_coords):

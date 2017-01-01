@@ -199,6 +199,14 @@ func get_radial_range(coords, radial_range=[1, 3], side=null, collision_check=fa
 	+ get_diagonal_range(coords, diagonal_radial_range, side, collision_check)
 	
 	
+#return all pieces on the board of a specified type
+func get_all_range(side=null):
+	var return_set = []
+	for coords in self.pieces:
+		if self.pieces[coords].side == side:
+			return_set.append(coords)
+	return return_set
+	
 class PathedCoords:
 	var steps = 0
 	var coords = null

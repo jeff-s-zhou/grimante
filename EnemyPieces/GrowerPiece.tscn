@@ -3,7 +3,7 @@
 [ext_resource path="res://EnemyPieces/GrowerPiece.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Enemies/gross_piece.png" type="Texture" id=2]
 [ext_resource path="res://Assets/Enemies/gross_piece_red.png" type="Texture" id=3]
-[ext_resource path="res://EnemyPieces/EnemyLightenLayer.tscn" type="PackedScene" id=4]
+[ext_resource path="res://EnemyPieces/EnemyOverlayLayers.tscn" type="PackedScene" id=4]
 [ext_resource path="res://EnemyPieces/HealthDisplay.tscn" type="PackedScene" id=5]
 [ext_resource path="res://EnemyPieces/FlickerAnimation.tres" type="Animation" id=6]
 [ext_resource path="res://EnemyPieces/SummonAnimation.tres" type="Animation" id=7]
@@ -30,7 +30,7 @@ script/script = ExtResource( 1 )
 frames = SubResource( 1 )
 animation = "damaged"
 
-[node name="LightenLayer" parent="Physicals" instance=ExtResource( 4 )]
+[node name="EnemyOverlays" parent="Physicals" instance=ExtResource( 4 )]
 
 [node name="HealthDisplay" parent="Physicals" instance=ExtResource( 5 )]
 

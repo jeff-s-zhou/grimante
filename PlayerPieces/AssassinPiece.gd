@@ -39,10 +39,27 @@ func get_passive_range():
 	return get_parent().get_radial_range(self.coords, [1, 2], "ENEMY")
 
 
-func animate_backstab(new_coords):
-	var location = get_parent().locations[new_coords]
+func animate_backstab(attack_coords):
+	var position_coords = attack_coords + BEHIND
+
+	get_node("Tween 2").interpolate_property(self, "visibility/opacity", 1, 0, 0.7, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").interpolate_property(get_node("AssassinFade"), "visibility/opacity", 0, 1, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
+	yield(get_node("Tween 2"), "tween_complete")
+	var location = get_parent().locations[position_coords]
 	var new_position = location.get_pos()
 	set_pos(new_position)
+	
+	var attack_location = get_parent().locations[attack_coords]
+	var difference = 2 * (attack_location.get_pos() - get_pos())/3
+	var attack_position = attack_location.get_pos() - difference
+	
+	get_node("Tween 2").interpolate_property(self, "visibility/opacity", 0, 1, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").interpolate_property(get_node("AssassinFade"), "visibility/opacity", 1, 0, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").start()
+	animate_move_to_pos(attack_position, 200, true, Tween.TRANS_SINE, Tween.EASE_IN)
+
 
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
@@ -69,15 +86,17 @@ func act(new_coords):
 		placed()
 	elif _is_within_attack_range(new_coords):
 		get_node("/root/Combat").handle_archer_ultimate(new_coords)
-		attack(new_coords)
+		backstab(new_coords)
 	else:
 		invalid_move()
 
 
-func attack(new_coords):
-	animate_backstab(new_coords + BEHIND)
+func backstab(new_coords):
+	get_node("/root/AnimationQueue").enqueue(self, "animate_backstab", true, [new_coords])
 	#TODO: yield to AnimationQueue call
 	get_parent().pieces[new_coords].attacked(self.backstab_damage)
+	var return_position = get_parent().locations[new_coords + BEHIND].get_pos()
+	get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [return_position, 200, true])
 	set_coords(new_coords + BEHIND)
 	if self.ultimate_flag:
 		if get_parent().pieces.has(new_coords): #if it didn't kill

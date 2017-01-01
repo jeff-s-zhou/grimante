@@ -41,6 +41,9 @@ func _ready():
 	
 func set_cooldown(cooldown):
 	self.cooldown = cooldown + 1 #offset for the first countdown tick
+	
+func set_mid_animation(flag):
+	self.mid_animation = flag
 
 	
 func is_placed():

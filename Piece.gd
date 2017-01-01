@@ -15,14 +15,16 @@ func animate_move_to_pos(position, speed, blocking=false, trans_type=Tween.TRANS
 	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
 	get_node("Tween").start()
 	if blocking:
+		print("blocking move_to_pos")
 		yield(get_node("Tween"), "tween_complete")
+		print("move_to_pos done")
 		emit_signal("animation_done")
 	
 
 func animate_move(new_coords, speed=250, blocking=true, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
-	animate_move_to_pos(new_position, speed, trans_type, ease_type)
+	animate_move_to_pos(new_position, speed, false, trans_type, ease_type)
 	if(blocking):
 		yield(get_node("Tween"), "tween_complete")
 		emit_signal("animation_done")

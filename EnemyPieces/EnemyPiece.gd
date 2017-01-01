@@ -13,6 +13,8 @@ var coords #enemies move automatically each turn a certain number of spaces forw
 var hp
 var type
 
+var prediction_flyover = null
+
 
 const flyover_prototype = preload("res://EnemyPieces/Flyover.tscn")
 
@@ -51,9 +53,8 @@ func hover_highlight():
 	yield(get_node("Timer"), "timeout")
 	emit_signal("description_data", self.unit_name, self.hover_description)
 	if self.action_highlighted:
-		
-		get_node("Physicals/LightenLayer").show()
-		get_node("Physicals/HealthDisplay/LightenLayer").show()
+		get_node("Physicals/EnemyOverlays/White").show()
+		get_node("Physicals/HealthDisplay/WhiteLayer").show()
 		if get_parent().selected != null:
 			get_parent().selected.predict(self.coords)
 
@@ -61,52 +62,82 @@ func hover_highlight():
 func hover_unhighlight():
 	emit_signal("hide_description")
 	if self.action_highlighted:
-		get_node("Physicals/LightenLayer").hide()
-		get_node("Physicals/HealthDisplay/LightenLayer").hide()
+		get_node("Physicals/EnemyOverlays/White").hide()
+		get_node("Physicals/HealthDisplay/WhiteLayer").hide()
 		if get_parent().selected != null:
 			get_parent().reset_prediction()
 
 #when another unit is able to move to this location, it calls this function
 func movement_highlight():
 	self.action_highlighted = true
-	get_node("Physicals/AnimatedSprite").play("attack_range")
-	get_node("Physicals/HealthDisplay/AnimatedSprite").play("attack_range")
+	get_node("Physicals/EnemyOverlays/Red").show()
+	get_node("Physicals/HealthDisplay/RedLayer").show()
 
 #called from grid to reset highlighting over the whole board
 func reset_highlight():
 	self.action_highlighted = false
-	get_node("Physicals/LightenLayer").hide()
-	get_node("Physicals/HealthDisplay/LightenLayer").hide()
+	get_node("Physicals/EnemyOverlays/White").hide()
+	get_node("Physicals/HealthDisplay/WhiteLayer").hide()
 	
-	get_node("Physicals/AnimatedSprite").show()
-	get_node("Physicals/HealthDisplay/AnimatedSprite").show()
-	get_node("Physicals/PredictionLayer").hide()
-	get_node("Physicals/HealthDisplay/PredictionLayer").hide()
+	get_node("Physicals/EnemyOverlays/Orange").hide()
+	get_node("Physicals/HealthDisplay/OrangeLayer").hide()
 	
-	get_node("Physicals/AnimatedSprite").play("default")
-	get_node("Physicals/HealthDisplay/AnimatedSprite").play("default")
+	if self.prediction_flyover != null:
+		remove_child(self.prediction_flyover)
 	
+	get_node("Physicals/EnemyOverlays/Red").hide()
+	get_node("Physicals/HealthDisplay/RedLayer").hide()
+
+
 func reset_prediction_highlight():
-	get_node("Physicals/AnimatedSprite").show()
-	get_node("Physicals/HealthDisplay/AnimatedSprite").show()
-	get_node("Physicals/PredictionLayer").hide()
-	get_node("Physicals/HealthDisplay/PredictionLayer").hide()
-	
+	get_node("Physicals/EnemyOverlays/Orange").hide()
+	get_node("Physicals/HealthDisplay/OrangeLayer").hide()
+	if self.prediction_flyover != null:
+		remove_child(self.prediction_flyover)
+
+
 func attack_highlight():
-	get_node("Physicals/AnimatedSprite").play("attack_range")
-	get_node("Physicals/HealthDisplay/AnimatedSprite").play("attack_range")
+	get_node("Physicals/EnemyOverlays/Red").show()
+	get_node("Physicals/HealthDisplay/RedLayer").show()
 
 	
 func will_die_to(damage):
 	return (self.hp - damage) <= 0
 
+func animate_predict_hp(hp, value, color):
+	self.mid_trailing_animation = true
+	get_node("Physicals/HealthDisplay/AnimationPlayer").play("HealthFlicker")
+	yield(get_node("Physicals/HealthDisplay/AnimationPlayer"), "finished")
+	get_node("Physicals/HealthDisplay/Label").set_text(str(hp))
+	get_node("Physicals/HealthDisplay/Label").show()
+	prediction_flyover = self.flyover_prototype.instance()
+	prediction_flyover.set_z(1)
+	add_child(prediction_flyover)
+	var text = prediction_flyover.get_node("FlyoverText")
+	var value_text = str(value)
+	text.set("custom_colors/font_color", color)
+	if value > 0:
+		value_text = "+" + value_text
+		text.set("custom_colors/font_color", Color(0,1,0))
+	text.set_opacity(1.0)
+	text.set_text(value_text)
+	var destination = text.get_pos() - Vector2(0, 85)
+	var tween = Tween.new()
+	add_child(tween)
+	
+	tween.interpolate_property(text, "rect/pos", text.get_pos(), destination, 2.5, Tween.TRANS_EXPO, Tween.EASE_OUT)
+	tween.start()
+	yield(tween, "tween_complete") #this is the problem line...fuuuuck
+	remove_child(tween)
+	self.mid_trailing_animation = false
 
 func predict(damage, is_passive_damage=false):
+	var color = Color(1, 0.2, 0.2)
 	if is_passive_damage:
-		get_node("Physicals/AnimatedSprite").hide()
-		get_node("Physicals/PredictionLayer").show()
-		get_node("Physicals/HealthDisplay/AnimatedSprite").hide()
-		get_node("Physicals/HealthDisplay/PredictionLayer").show()
+		color = Color(1, 0.65, 0.0)
+		get_node("Physicals/EnemyOverlays/Orange").show()
+		get_node("Physicals/HealthDisplay/OrangeLayer").show()
+	get_node("/root/AnimationQueue").enqueue(self, "animate_predict_hp", false, [self.hp - damage, -1 * damage, color])
 	
 
 #for the berserker's smash kill which should instantly remove

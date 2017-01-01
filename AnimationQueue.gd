@@ -42,6 +42,8 @@ func process_animations():
 		print("processing animation")
 		print(func_ref)
 		var args = animation_action["args"]
+		if node.has_method("set_mid_animation"):
+			node.set_mid_animation(true)
 		if args == []:
 			node.call(func_ref)
 		else:
@@ -64,6 +66,8 @@ func process_animations():
 				print("Error: EXCEEDED MAX NUMBER OF ARGUMENTS IN AnimationQueue")
 		if blocking:
 			yield(node, "animation_done")
+		if node.has_method("set_mid_animation"):
+			node.set_mid_animation(false)
 	self.mid_processing = false
 	
 	if self.queue == [] and self.processing_queue == []:
