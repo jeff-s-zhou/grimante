@@ -105,7 +105,7 @@ func trample(new_coords):
 				get_node("/root/AnimationQueue").enqueue(self, "animate_hop", true, [current_coords - increment, current_coords, true])
 				was_hopping = false
 			else:
-				get_node("/root/AnimationQueue").enqueue(self, "animate_move", true, [current_coords, 350])
+				get_node("/root/AnimationQueue").enqueue(self, "animate_move", true, [current_coords, 400])
 
 	set_coords(new_coords)
 	placed()

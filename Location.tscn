@@ -1,10 +1,12 @@
-[gd_scene load_steps=8 format=1]
+[gd_scene load_steps=11 format=1]
 
 [ext_resource path="res://Location.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/location.png" type="Texture" id=2]
-[ext_resource path="res://Assets/UI/location_red.png" type="Texture" id=3]
-[ext_resource path="res://Assets/UI/location_blue.png" type="Texture" id=4]
-[ext_resource path="res://Assets/processed_fonts/enemy_health.fnt" type="BitmapFont" id=5]
+[ext_resource path="res://Assets/UI/location_blue.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/location_red.png" type="Texture" id=4]
+[ext_resource path="res://Effects/RainParticles.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Assets/processed_fonts/enemy_health.fnt" type="BitmapFont" id=6]
+[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=7]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 
@@ -13,7 +15,11 @@ points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
 
 [sub_resource type="SpriteFrames" id=2]
 
-animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"attack_hover", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"movement_hover", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"movement_hover", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"attack_hover", "speed":5.0 } ]
+
+[sub_resource type="SampleLibrary" id=3]
+
+samples/tile_hover = { "db":0.0, "pitch":0.5, "sample":ExtResource( 7 ) }
 
 [node name="Location" type="Area2D"]
 
@@ -40,6 +46,12 @@ _update_shape_index = 0
 frames = SubResource( 2 )
 animation = "default"
 
+[node name="RainParticles" parent="." instance=ExtResource( 5 )]
+
+visibility/visible = false
+visibility/opacity = 0.0
+transform/pos = Vector2( 0, -55 )
+
 [node name="Label" type="Label" parent="."]
 
 focus/ignore_mouse = true
@@ -50,7 +62,7 @@ margin/left = -19.0
 margin/top = -11.0
 margin/right = 33.0
 margin/bottom = 13.0
-custom_fonts/font = ExtResource( 5 )
+custom_fonts/font = ExtResource( 6 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 percent_visible = 1.0
 lines_skipped = 0
@@ -62,5 +74,23 @@ process_mode = 1
 wait_time = 1.0
 one_shot = false
 autostart = false
+
+[node name="Tween" type="Tween" parent="."]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
+
+[node name="SamplePlayer2D" type="SamplePlayer2D" parent="."]
+
+params/volume_db = -20.0
+params/pitch_scale = 1.0
+params/attenuation/min_distance = 1.0
+params/attenuation/max_distance = 2048.0
+params/attenuation/distance_exp = 1.0
+config/polyphony = 1
+config/samples = SubResource( 3 )
+config/pitch_random = 0.0
 
 

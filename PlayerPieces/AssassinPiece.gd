@@ -6,15 +6,14 @@ extends "PlayerPiece.gd"
 
 var ANIMATION_STATES = {"default":0, "moving":1}
 var animation_state = ANIMATION_STATES.default
-const REGULAR_BACKSTAB_DAMAGE = 1
-const ULTIMATE_BACKSTAB_DAMAGE = 2
+const BACKSTAB_DAMAGE = 2
 const PASSIVE_DAMAGE = 1
 const UNIT_TYPE = "Assassin"
 const DESCRIPTION = """
 """
 const BEHIND = Vector2(0, -1)
 
-var backstab_damage = REGULAR_BACKSTAB_DAMAGE
+var backstab_damage = BACKSTAB_DAMAGE
 var passive_damage = PASSIVE_DAMAGE
 
 var pathed_range
@@ -121,13 +120,11 @@ func predict(new_coords):
 func cast_ultimate():
 #	if get_charge() == 3:
 	self.ultimate_flag = true
-	self.backstab_damage = ULTIMATE_BACKSTAB_DAMAGE
 	get_parent().reset_highlighting()
 	display_action_range()
 	set_charge(0)
 	
 func placed():
-	self.backstab_damage = REGULAR_BACKSTAB_DAMAGE
 	.placed()
 	
 #same as regular placed() except doesn't reset the ultimate_flag
@@ -140,7 +137,6 @@ func soft_placed():
 #resets the assassin to be able to act again
 func unplaced():
 	self.state = States.DEFAULT
-	self.backstab_damage = ULTIMATE_BACKSTAB_DAMAGE
 	get_node("AnimatedSprite").play("default")
 
 

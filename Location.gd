@@ -7,6 +7,8 @@ extends Area2D
 
 var coords
 
+var raining = false
+
 signal is_targeted(location)
 
 func _ready():
@@ -17,12 +19,25 @@ func _ready():
 	connect("mouse_exit", self, "_mouse_exited")
 	set_process_input(true)
 	set_z(-3)
+	get_node("RainParticles").set_z(4)
 	
 func debug():
 	get_node("Label").set_text(str(coords.x) + "," + str(coords.y))
 	
 func set_coords(coords):
 	self.coords = coords
+	
+func set_rain(flag):
+	self.raining = flag
+	if flag:
+		get_node("/root/AnimationQueue").enqueue(self, "animate_set_rain", false)
+	else:
+		get_node("RainParticles").hide()
+		
+func animate_set_rain():
+	get_node("RainParticles").show()
+	get_node("Tween").interpolate_property(get_node("RainParticles"), "visibility/opacity", 0, 1, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").start()
 
 #when another unit is able to move to this location, it calls this function
 func movement_highlight():
@@ -36,6 +51,7 @@ func reset_highlight():
 	external_set_opacity(0.4)
 	
 func _mouse_entered():
+	get_node("SamplePlayer2D").play("tile_hover")
 	get_node("Sprite").set_self_opacity(1.0)
 	get_node("Timer").set_wait_time(0.05)
 	get_node("Timer").start()

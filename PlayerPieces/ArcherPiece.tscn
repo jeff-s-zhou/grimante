@@ -1,24 +1,28 @@
-[gd_scene load_steps=14 format=1]
+[gd_scene load_steps=15 format=1]
 
 [ext_resource path="res://PlayerPieces/ArcherPiece.gd" type="Script" id=1]
 [ext_resource path="res://PlayerPieces/BlueGlow.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Assets/Allies/archer_piece_sepia.png" type="Texture" id=3]
-[ext_resource path="res://Assets/Allies/archer_piece_green.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Allies/archer_piece_red.png" type="Texture" id=5]
-[ext_resource path="res://Assets/Allies/archer_piece.png" type="Texture" id=6]
-[ext_resource path="res://PlayerPieces/LightenLayer.tscn" type="PackedScene" id=7]
-[ext_resource path="res://PlayerPieces/Cooldown.tscn" type="PackedScene" id=8]
-[ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=9]
-[ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=10]
-[ext_resource path="res://PlayerPieces/ArcherArrow.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Assets/Allies/archer_piece.png" type="Texture" id=3]
+[ext_resource path="res://Assets/Allies/archer_piece_red.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Allies/archer_piece_sepia.png" type="Texture" id=5]
+[ext_resource path="res://PlayerPieces/OverlayLayers.tscn" type="PackedScene" id=6]
+[ext_resource path="res://PlayerPieces/Cooldown.tscn" type="PackedScene" id=7]
+[ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=9]
+[ext_resource path="res://PlayerPieces/ArcherArrow.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=11]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"cooldown", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"assist", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"hurt", "speed":5.0 }, { "frames":[ ExtResource( 6 ) ], "loop":true, "name":"default", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"hurt", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"cooldown", "speed":5.0 } ]
 
 [sub_resource type="SampleLibrary" id=2]
 
-samples/error = { "db":0.0, "pitch":1.0, "sample":ExtResource( 10 ) }
+samples/error = { "db":0.0, "pitch":1.0, "sample":ExtResource( 9 ) }
+
+[sub_resource type="SampleLibrary" id=3]
+
+samples/tile_hover = { "db":0.0, "pitch":0.7, "sample":ExtResource( 11 ) }
 
 [node name="ArcherType" type="KinematicBody2D"]
 
@@ -38,11 +42,11 @@ transform/pos = Vector2( 0, -4 )
 frames = SubResource( 1 )
 animation = "default"
 
-[node name="LightenLayer" parent="." instance=ExtResource( 7 )]
+[node name="OverlayLayers" parent="." instance=ExtResource( 6 )]
 
-[node name="Cooldown" parent="." instance=ExtResource( 8 )]
+[node name="Cooldown" parent="." instance=ExtResource( 7 )]
 
-[node name="ClickArea" parent="." instance=ExtResource( 9 )]
+[node name="ClickArea" parent="." instance=ExtResource( 8 )]
 
 [node name="Tween" type="Tween" parent="."]
 
@@ -68,7 +72,7 @@ default/reverb_room = 2
 default/reverb_send = 0.0
 default/chorus_send = 0.0
 
-[node name="ArcherArrow" parent="." instance=ExtResource( 11 )]
+[node name="ArcherArrow" parent="." instance=ExtResource( 10 )]
 
 visibility/opacity = 0.0
 transform/pos = Vector2( 0, -10 )
@@ -79,5 +83,16 @@ process_mode = 1
 wait_time = 1.0
 one_shot = false
 autostart = false
+
+[node name="SamplePlayer2D" type="SamplePlayer2D" parent="."]
+
+params/volume_db = 0.0
+params/pitch_scale = 1.0
+params/attenuation/min_distance = 1.0
+params/attenuation/max_distance = 2048.0
+params/attenuation/distance_exp = 1.0
+config/polyphony = 1
+config/samples = SubResource( 3 )
+config/pitch_random = 0.0
 
 

@@ -101,16 +101,16 @@ func attack_highlight():
 	pass
 	
 func assist_highlight():
-	get_node("AnimatedSprite").play("assist")
-	
-func assist_hover_highlight():
-	get_node("AnimatedSprite").play("assist_light")
+	get_node("OverlayLayers/Green").show()
+
 
 #called when the whole board's highlighting is reset
 func reset_highlight():
+	get_node("OverlayLayers/White").hide()
+	get_node("OverlayLayers/Green").hide()
 	if(self.state != States.PLACED):
 		get_node("AnimatedSprite").play("default")
-		get_node("LightenLayer").hide()
+		
 #	else:
 #		get_node("AnimatedSprite").play("cooldown")
 
@@ -122,10 +122,10 @@ func reset_prediction_highlight():
 
 #called on mouse entering the ClickArea
 func hover_highlight():
-	print("hovering highlighting")
+	
 	if(self.state != States.PLACED):
-		print("isn't placed")
-		get_node("LightenLayer").show()
+		get_node("SamplePlayer2D").play("tile_hover")
+		get_node("OverlayLayers/White").show()
 	else:
 		print("is placed")
 
@@ -133,7 +133,7 @@ func hover_highlight():
 #called on mouse exiting the ClickArea
 func unhovered():
 	emit_signal("hide_description")
-	get_node("LightenLayer").hide()
+	get_node("OverlayLayers/White").hide()
 	if get_parent().selected == null:
 		get_parent().reset_highlighting()
 #		
@@ -158,10 +158,11 @@ func hovered():
 func input_event(viewport, event, shape_idx):
 	if event.is_action("select") and event.is_pressed():
 		if get_parent().selected == null and self.state != States.PLACED:
+			get_node("SamplePlayer2D").play("light_switch_019")
 			get_parent().selected = self
 			self.state = States.CLICKED
 			get_node("BlueGlow").show()
-			hovered()
+			#hovered()
 		else: #if not selected, then some piece is trying to act on this one
 			get_parent().set_target(self)
 

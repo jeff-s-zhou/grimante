@@ -49,7 +49,7 @@ func push(distance, side=null):
 			var collide_coords = collide_range[0]
 			print(collide_coords)
 			var location = get_parent().locations[collide_coords]
-			var difference = (location.get_pos() - get_pos())/3
+			var difference = (location.get_pos() - get_pos())/4
 			print(difference)
 			var collide_pos = get_pos() + difference #offset it so that it "taps" it #TODO fix this
 			var new_distance = (self.coords + distance) - collide_coords + get_parent().hex_normalize(distance)

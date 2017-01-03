@@ -35,7 +35,7 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(200, 140))
 	
-	get_node("Grid").debug()
+	#get_node("Grid").debug()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("Button").connect("pressed", self, "end_turn")
@@ -44,6 +44,8 @@ func _ready():
 	
 	get_node("ComboSystem/ComboPointsLabel").set_opacity(0)
 	get_node("WavesDisplay/WavesLabel").set_opacity(0)
+	
+	get_node("LivesSystem").set_lives(3)
 
 	
 	level = get_node("/root/global").get_param("level")
@@ -354,7 +356,9 @@ func enemy_win():
 	get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level":self.level})
 	
 func damage_defenses():
-	enemy_win()
+	get_node("LivesSystem").lose_lives(1)
+	if get_node("LivesSystem").lives == 0:
+		enemy_win()
 
 	
 func handle_invalid_move():

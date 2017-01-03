@@ -46,11 +46,14 @@ func jump_to(new_coords, speed=4):
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
-	var speed = 350 #scale this to the distance travelled? loool
-	var time = distance/speed #just make this a proportion of the distance?
+	var speed = 300
+	var time = (2 * distance) / (speed  * distance/100 ) 
+#	print(time)
+#	time = (distance) / (speed) 
+#	print(time)
 
 	var old_height = Vector2(0, -4)
-	var new_height = Vector2(0, (-2 * distance/3))
+	var new_height = Vector2(0, (-3 * distance/4))
 	get_node("Tween2").interpolate_property(get_node("AnimatedSprite"), "transform/pos", \
 		get_node("AnimatedSprite").get_pos(), new_height, time/2, Tween.TRANS_CUBIC, Tween.EASE_OUT)
 	get_node("Tween2").start()
@@ -70,11 +73,11 @@ func jump_back(new_coords):
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
-	var speed = 250
+	var speed = 300
 	var time = distance/speed
 
 	var old_height = Vector2(0, -4)
-	var new_height = Vector2(0, (-1 * distance/3))
+	var new_height = Vector2(0, (-1 * distance/2))
 	get_node("Tween2").interpolate_property(get_node("AnimatedSprite"), "transform/pos", \
 		get_node("AnimatedSprite").get_pos(), new_height, time/2, Tween.TRANS_QUAD, Tween.EASE_OUT)
 	get_node("Tween2").start()

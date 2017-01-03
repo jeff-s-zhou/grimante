@@ -1,21 +1,22 @@
-[gd_scene load_steps=19 format=1]
+[gd_scene load_steps=20 format=1]
 
 [ext_resource path="res://Combat.gd" type="Script" id=1]
 [ext_resource path="res://Grid.tscn" type="PackedScene" id=2]
 [ext_resource path="res://CursorArea.tscn" type="PackedScene" id=3]
 [ext_resource path="res://UI/ComboSystem.tscn" type="PackedScene" id=4]
-[ext_resource path="res://UI/WavesDisplay.tscn" type="PackedScene" id=5]
-[ext_resource path="res://Assets/UI/turn_button.png" type="Texture" id=6]
-[ext_resource path="res://Assets/UI/turn_button_pressed.png" type="Texture" id=7]
-[ext_resource path="res://Assets/UI/turn_button_hovered.png" type="Texture" id=8]
-[ext_resource path="res://Assets/UI/turn_button_greyed.png" type="Texture" id=9]
-[ext_resource path="res://UI/PhaseShifter.tscn" type="PackedScene" id=10]
-[ext_resource path="res://UI/ShakeCamera.tscn" type="PackedScene" id=11]
-[ext_resource path="res://UI/InvalidMoveIndicator.tscn" type="PackedScene" id=12]
-[ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=13]
-[ext_resource path="res://UI/TutorialPopup.tscn" type="PackedScene" id=14]
-[ext_resource path="res://UI/TutorialTooltip.tscn" type="PackedScene" id=15]
-[ext_resource path="res://UI/SidebarTooltip.tscn" type="PackedScene" id=16]
+[ext_resource path="res://UI/LivesSystem.tscn" type="PackedScene" id=5]
+[ext_resource path="res://UI/WavesDisplay.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Assets/UI/turn_button.png" type="Texture" id=7]
+[ext_resource path="res://Assets/UI/turn_button_pressed.png" type="Texture" id=8]
+[ext_resource path="res://Assets/UI/turn_button_hovered.png" type="Texture" id=9]
+[ext_resource path="res://Assets/UI/turn_button_greyed.png" type="Texture" id=10]
+[ext_resource path="res://UI/PhaseShifter.tscn" type="PackedScene" id=11]
+[ext_resource path="res://UI/ShakeCamera.tscn" type="PackedScene" id=12]
+[ext_resource path="res://UI/InvalidMoveIndicator.tscn" type="PackedScene" id=13]
+[ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=14]
+[ext_resource path="res://UI/TutorialPopup.tscn" type="PackedScene" id=15]
+[ext_resource path="res://UI/TutorialTooltip.tscn" type="PackedScene" id=16]
+[ext_resource path="res://UI/SidebarTooltip.tscn" type="PackedScene" id=17]
 
 [sub_resource type="StyleBoxFlat" id=1]
 
@@ -32,7 +33,7 @@ draw_bg = true
 
 [sub_resource type="SampleLibrary" id=2]
 
-samples/error = { "db":0.0, "pitch":1.0, "sample":ExtResource( 13 ) }
+samples/error = { "db":0.0, "pitch":1.0, "sample":ExtResource( 14 ) }
 
 [node name="Combat" type="Node2D"]
 
@@ -66,9 +67,13 @@ custom_styles/panel = SubResource( 1 )
 
 [node name="ComboSystem" parent="." instance=ExtResource( 4 )]
 
-transform/pos = Vector2( 1270.14, 120 )
+transform/pos = Vector2( 1270, 120 )
 
-[node name="WavesDisplay" parent="." instance=ExtResource( 5 )]
+[node name="LivesSystem" parent="." instance=ExtResource( 5 )]
+
+transform/pos = Vector2( 1270, 490 )
+
+[node name="WavesDisplay" parent="." instance=ExtResource( 6 )]
 
 transform/pos = Vector2( 1270.14, 290 )
 
@@ -85,19 +90,19 @@ margin/bottom = 985.0
 toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
-textures/normal = ExtResource( 6 )
-textures/pressed = ExtResource( 7 )
-textures/hover = ExtResource( 8 )
-textures/disabled = ExtResource( 9 )
+textures/normal = ExtResource( 7 )
+textures/pressed = ExtResource( 8 )
+textures/hover = ExtResource( 9 )
+textures/disabled = ExtResource( 10 )
 
-[node name="PhaseShifter" parent="." instance=ExtResource( 10 )]
+[node name="PhaseShifter" parent="." instance=ExtResource( 11 )]
 
-[node name="ShakeCamera" parent="." instance=ExtResource( 11 )]
+[node name="ShakeCamera" parent="." instance=ExtResource( 12 )]
 
 transform/pos = Vector2( 802, 541 )
 current = true
 
-[node name="InvalidMoveIndicator" parent="." instance=ExtResource( 12 )]
+[node name="InvalidMoveIndicator" parent="." instance=ExtResource( 13 )]
 
 transform/pos = Vector2( 1270.14, 835.128 )
 
@@ -118,15 +123,15 @@ default/reverb_room = 2
 default/reverb_send = 0.0
 default/chorus_send = 0.0
 
-[node name="TutorialPopup" parent="." instance=ExtResource( 14 )]
+[node name="TutorialPopup" parent="." instance=ExtResource( 15 )]
 
 visibility/opacity = 0.0
 
-[node name="TutorialTooltip" parent="." instance=ExtResource( 15 )]
+[node name="TutorialTooltip" parent="." instance=ExtResource( 16 )]
 
 visibility/visible = false
 
-[node name="SidebarTooltip" parent="." instance=ExtResource( 16 )]
+[node name="SidebarTooltip" parent="." instance=ExtResource( 17 )]
 
 visibility/visible = false
 transform/pos = Vector2( 1103, 380 )

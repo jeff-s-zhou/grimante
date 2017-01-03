@@ -18,6 +18,9 @@ var bolt_damage = DEFAULT_BOLT_DAMAGE
 func _ready():
 	self.armor = 0
 
+func set_coords(coords):
+	get_parent().locations[coords].set_rain(true)
+	.set_coords(coords)
 
 func get_attack_range():
 	return get_parent().get_all_range("ENEMY")
@@ -63,7 +66,18 @@ func lightning_attack(attack_coords):
 
 
 func shunpo(new_coords):
-	pass
+	get_node("/root/AnimationQueue").enqueue(self, "animate_shunpo", true, [new_coords])
+	set_coords(new_coords)
+	
+func animate_shunpo(new_coords):
+	get_node("AnimationPlayer").play("ShunpoOut")
+	yield(get_node("AnimationPlayer"), "finished")
+	var location = get_parent().locations[new_coords]
+	var new_position = location.get_pos()
+	set_pos(new_position)
+	get_node("AnimationPlayer").play("ShunpoIn")
+	yield(get_node("AnimationPlayer"), "finished")
+	emit_signal("animation_done")
 
 
 func predict(new_coords):

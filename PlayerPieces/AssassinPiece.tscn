@@ -1,20 +1,20 @@
-[gd_scene load_steps=15 format=1]
+[gd_scene load_steps=16 format=1]
 
 [ext_resource path="res://PlayerPieces/AssassinPiece.gd" type="Script" id=1]
 [ext_resource path="res://PlayerPieces/BlueGlow.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Assets/Allies/assassin_piece.png" type="Texture" id=3]
-[ext_resource path="res://Assets/Allies/assassin_piece_sepia.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Allies/assassin_piece_green.png" type="Texture" id=5]
-[ext_resource path="res://Assets/Allies/assassin_piece_red.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Allies/assassin_piece_red.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Allies/assassin_piece_sepia.png" type="Texture" id=5]
+[ext_resource path="res://PlayerPieces/OverlayLayers.tscn" type="PackedScene" id=6]
 [ext_resource path="res://Assets/effects/assassin_fade.png" type="Texture" id=7]
-[ext_resource path="res://PlayerPieces/LightenLayer.tscn" type="PackedScene" id=8]
-[ext_resource path="res://PlayerPieces/Cooldown.tscn" type="PackedScene" id=9]
-[ext_resource path="res://PlayerPieces/ChargeBar.tscn" type="PackedScene" id=10]
-[ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=11]
+[ext_resource path="res://PlayerPieces/Cooldown.tscn" type="PackedScene" id=8]
+[ext_resource path="res://PlayerPieces/ChargeBar.tscn" type="PackedScene" id=9]
+[ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=11]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"cooldown", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"assist", "speed":5.0 }, { "frames":[ ExtResource( 6 ) ], "loop":true, "name":"hurt", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"hurt", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"cooldown", "speed":5.0 } ]
 
 [sub_resource type="Animation" id=2]
 
@@ -29,6 +29,10 @@ resource/name = "FlickerOut"
 length = 1.0
 loop = false
 step = 0.1
+
+[sub_resource type="SampleLibrary" id=4]
+
+samples/tile_hover = { "db":0.0, "pitch":0.7, "sample":ExtResource( 11 ) }
 
 [node name="AssassinPiece" type="KinematicBody2D"]
 
@@ -48,21 +52,21 @@ transform/pos = Vector2( 0, -4 )
 frames = SubResource( 1 )
 animation = "default"
 
+[node name="OverlayLayers" parent="." instance=ExtResource( 6 )]
+
 [node name="AssassinFade" type="Sprite" parent="."]
 
 visibility/opacity = 0.0
 transform/pos = Vector2( 0, -4 )
 texture = ExtResource( 7 )
 
-[node name="LightenLayer" parent="." instance=ExtResource( 8 )]
+[node name="Cooldown" parent="." instance=ExtResource( 8 )]
 
-[node name="Cooldown" parent="." instance=ExtResource( 9 )]
-
-[node name="ChargeBar" parent="." instance=ExtResource( 10 )]
+[node name="ChargeBar" parent="." instance=ExtResource( 9 )]
 
 transform/pos = Vector2( 35.9243, -10.1785 )
 
-[node name="ClickArea" parent="." instance=ExtResource( 11 )]
+[node name="ClickArea" parent="." instance=ExtResource( 10 )]
 
 [node name="Tween" type="Tween" parent="."]
 
@@ -96,5 +100,16 @@ playback/process_mode = 1
 playback/active = false
 playback/repeat = false
 playback/speed = 1.0
+
+[node name="SamplePlayer2D" type="SamplePlayer2D" parent="."]
+
+params/volume_db = 0.0
+params/pitch_scale = 1.0
+params/attenuation/min_distance = 1.0
+params/attenuation/max_distance = 2048.0
+params/attenuation/distance_exp = 1.0
+config/polyphony = 1
+config/samples = SubResource( 4 )
+config/pitch_random = 0.0
 
 

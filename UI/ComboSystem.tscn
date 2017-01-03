@@ -4,8 +4,6 @@
 [ext_resource path="res://Assets/processed_fonts/ui_small_header.fnt" type="BitmapFont" id=2]
 [ext_resource path="res://Assets/processed_fonts/ui_large_text.fnt" type="BitmapFont" id=3]
 
-
-
 [node name="ComboSystem" type="Node2D"]
 
 script/script = ExtResource( 1 )

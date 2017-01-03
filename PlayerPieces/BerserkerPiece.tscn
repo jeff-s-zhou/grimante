@@ -3,21 +3,21 @@
 [ext_resource path="res://PlayerPieces/BerserkerPiece.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Allies/piece_shadow.png" type="Texture" id=2]
 [ext_resource path="res://PlayerPieces/BlueGlow.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Assets/Allies/berserker_piece_sepia.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Allies/berserker_piece_green.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Allies/berserker_piece.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Allies/berserker_piece_sepia.png" type="Texture" id=5]
 [ext_resource path="res://Assets/Allies/berserker_piece_red.png" type="Texture" id=6]
-[ext_resource path="res://Assets/Allies/berserker_piece.png" type="Texture" id=7]
-[ext_resource path="res://PlayerPieces/LightenLayer.tscn" type="PackedScene" id=8]
-[ext_resource path="res://PlayerPieces/Cooldown.tscn" type="PackedScene" id=9]
-[ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=10]
-[ext_resource path="res://Assets/processed_sounds/explode.smp" type="Sample" id=11]
-[ext_resource path="res://Assets/processed_sounds/explode2.smp" type="Sample" id=12]
-[ext_resource path="res://Assets/processed_sounds/explode3.smp" type="Sample" id=13]
-[ext_resource path="res://Assets/processed_sounds/explodemini.smp" type="Sample" id=14]
+[ext_resource path="res://PlayerPieces/OverlayLayers.tscn" type="PackedScene" id=7]
+[ext_resource path="res://PlayerPieces/Cooldown.tscn" type="PackedScene" id=8]
+[ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Assets/processed_sounds/explode3.smp" type="Sample" id=10]
+[ext_resource path="res://Assets/processed_sounds/generalclick10.smp" type="Sample" id=11]
+[ext_resource path="res://Assets/processed_sounds/generalclick16.smp" type="Sample" id=12]
+[ext_resource path="res://Assets/processed_sounds/light_switch_019.smp" type="Sample" id=13]
+[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=14]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"cooldown", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"assist", "speed":5.0 }, { "frames":[ ExtResource( 6 ) ], "loop":true, "name":"hurt", "speed":5.0 }, { "frames":[ ExtResource( 7 ) ], "loop":true, "name":"default", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"cooldown", "speed":5.0 }, { "frames":[ ExtResource( 6 ) ], "loop":true, "name":"hurt", "speed":5.0 } ]
 
 [sub_resource type="Animation" id=2]
 
@@ -117,10 +117,11 @@ tracks/4/keys = { "times":FloatArray( 0, 0.2 ), "transitions":FloatArray( 1, 1 )
 
 [sub_resource type="SampleLibrary" id=6]
 
-samples/explode = { "db":0.0, "pitch":1.0, "sample":ExtResource( 11 ) }
-samples/explode2 = { "db":0.0, "pitch":1.0, "sample":ExtResource( 12 ) }
-samples/explode3 = { "db":0.0, "pitch":1.0, "sample":ExtResource( 13 ) }
-samples/explodemini = { "db":0.0, "pitch":1.0, "sample":ExtResource( 14 ) }
+samples/explode3 = { "db":-5.0, "pitch":1.0, "sample":ExtResource( 10 ) }
+samples/generalclick10 = { "db":0.01, "pitch":1.0, "sample":ExtResource( 11 ) }
+samples/generalclick16 = { "db":0.0, "pitch":1.0, "sample":ExtResource( 12 ) }
+samples/light_switch_019 = { "db":24.0, "pitch":0.5, "sample":ExtResource( 13 ) }
+samples/tile_hover = { "db":0.0, "pitch":0.7, "sample":ExtResource( 14 ) }
 
 [node name="BerserkerType" type="KinematicBody2D"]
 
@@ -148,9 +149,9 @@ transform/pos = Vector2( 0, -4 )
 frames = SubResource( 1 )
 animation = "default"
 
-[node name="LightenLayer" parent="." instance=ExtResource( 8 )]
+[node name="OverlayLayers" parent="." instance=ExtResource( 7 )]
 
-[node name="Cooldown" parent="." instance=ExtResource( 9 )]
+[node name="Cooldown" parent="." instance=ExtResource( 8 )]
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
@@ -166,7 +167,7 @@ playback/speed = 1.0
 blend_times = [  ]
 autoplay = ""
 
-[node name="ClickArea" parent="." instance=ExtResource( 10 )]
+[node name="ClickArea" parent="." instance=ExtResource( 9 )]
 
 [node name="Tween" type="Tween" parent="."]
 

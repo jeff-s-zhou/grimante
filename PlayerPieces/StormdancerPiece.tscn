@@ -1,18 +1,67 @@
-[gd_scene load_steps=11 format=1]
+[gd_scene load_steps=16 format=1]
 
 [ext_resource path="res://PlayerPieces/StormdancerPiece.gd" type="Script" id=1]
 [ext_resource path="res://PlayerPieces/BlueGlow.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Assets/Allies/stormdancer_piece.png" type="Texture" id=3]
-[ext_resource path="res://Assets/Allies/stormdancer_piece_sepia.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Allies/stormdancer_piece_green.png" type="Texture" id=5]
-[ext_resource path="res://Assets/Allies/stormdancer_piece_red.png" type="Texture" id=6]
-[ext_resource path="res://LightenLayer.tscn" type="PackedScene" id=7]
-[ext_resource path="res://PlayerPieces/Cooldown.tscn" type="PackedScene" id=8]
-[ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Assets/Allies/stormdancer_piece_red.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Allies/stormdancer_piece_sepia.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Allies/stormdancer_piece_blur.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Allies/stormdancer_piece_wind.png" type="Texture" id=7]
+[ext_resource path="res://PlayerPieces/OverlayLayers.tscn" type="PackedScene" id=8]
+[ext_resource path="res://PlayerPieces/Cooldown.tscn" type="PackedScene" id=9]
+[ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=11]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"cooldown", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"assist", "speed":5.0 }, { "frames":[ ExtResource( 6 ) ], "loop":true, "name":"hurt", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"hurt", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"cooldown", "speed":5.0 } ]
+
+[sub_resource type="Animation" id=2]
+
+resource/name = "ShunpoIn"
+length = 0.35
+loop = false
+step = 0.01
+tracks/0/type = "value"
+tracks/0/path = NodePath(".:visibility/visible")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = { "times":FloatArray( 0, 0.15, 0.25 ), "transitions":FloatArray( 1, 1, 1 ), "update":1, "values":[ true, false, true ] }
+tracks/1/type = "value"
+tracks/1/path = NodePath("WindLayer:visibility/visible")
+tracks/1/interp = 1
+tracks/1/imported = false
+tracks/1/keys = { "times":FloatArray( 0.05, 0.1 ), "transitions":FloatArray( 1, 1 ), "update":1, "values":[ true, false ] }
+tracks/2/type = "value"
+tracks/2/path = NodePath("BlurLayer:visibility/opacity")
+tracks/2/interp = 1
+tracks/2/imported = false
+tracks/2/keys = { "times":FloatArray( 0.15, 0.35 ), "transitions":FloatArray( 1, 1 ), "update":0, "values":[ 1.0, 0.0 ] }
+
+[sub_resource type="Animation" id=3]
+
+length = 0.65
+loop = false
+step = 0.03
+tracks/0/type = "value"
+tracks/0/path = NodePath("BlurLayer:visibility/opacity")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = { "times":FloatArray( 0.3, 0.55, 0.65 ), "transitions":FloatArray( 1, 1, 1 ), "update":0, "values":[ 0.0, 1.0, 0.0 ] }
+tracks/1/type = "value"
+tracks/1/path = NodePath(".:visibility/visible")
+tracks/1/interp = 1
+tracks/1/imported = false
+tracks/1/keys = { "times":FloatArray( 0, 0.05, 0.09, 0.35, 0.5, 0.65 ), "transitions":FloatArray( 1, 1, 1, 1, 1, 1 ), "update":1, "values":[ true, false, true, false, true, false ] }
+tracks/2/type = "value"
+tracks/2/path = NodePath("WindLayer:visibility/visible")
+tracks/2/interp = 1
+tracks/2/imported = false
+tracks/2/keys = { "times":FloatArray( 0, 0.6, 0.65 ), "transitions":FloatArray( 1, 1, 1 ), "update":1, "values":[ false, true, false ] }
+
+[sub_resource type="SampleLibrary" id=4]
+
+samples/tile_hover = { "db":0.0, "pitch":0.7, "sample":ExtResource( 11 ) }
 
 [node name="StormdancerPiece" type="KinematicBody2D"]
 
@@ -32,13 +81,23 @@ transform/pos = Vector2( 0, -4 )
 frames = SubResource( 1 )
 animation = "default"
 
-[node name="LightenLayer" parent="." instance=ExtResource( 7 )]
+[node name="BlurLayer" type="Sprite" parent="."]
 
-visibility/opacity = 0.1
+visibility/opacity = 0.0
+transform/pos = Vector2( 0, -4 )
+texture = ExtResource( 6 )
 
-[node name="Cooldown" parent="." instance=ExtResource( 8 )]
+[node name="WindLayer" type="Sprite" parent="."]
 
-[node name="ClickArea" parent="." instance=ExtResource( 9 )]
+visibility/visible = false
+transform/pos = Vector2( 0, -4 )
+texture = ExtResource( 7 )
+
+[node name="OverlayLayers" parent="." instance=ExtResource( 8 )]
+
+[node name="Cooldown" parent="." instance=ExtResource( 9 )]
+
+[node name="ClickArea" parent="." instance=ExtResource( 10 )]
 
 [node name="Timer" type="Timer" parent="."]
 
@@ -59,9 +118,22 @@ playback/speed = 1.0
 playback/process_mode = 1
 playback/default_blend_time = 0.0
 root/root = NodePath("..")
+anims/ShunpoIn = SubResource( 2 )
+anims/ShunpoOut = SubResource( 3 )
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
 autoplay = ""
+
+[node name="SamplePlayer2D" type="SamplePlayer2D" parent="."]
+
+params/volume_db = 0.0
+params/pitch_scale = 1.0
+params/attenuation/min_distance = 1.0
+params/attenuation/max_distance = 2048.0
+params/attenuation/distance_exp = 1.0
+config/polyphony = 1
+config/samples = SubResource( 4 )
+config/pitch_random = 0.0
 
 
