@@ -11,6 +11,8 @@ func initialize(max_hp):
 	self.unit_name = "Absorber"
 	self.hover_description = DESCRIPTION
 	self.movement_value = Vector2(0, 1)
+	self.default_movement_value = Vector2(0, 1)
+	
 	
 func turn_update():
 	set_hp(self.hp + 1)

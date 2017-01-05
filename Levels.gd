@@ -2,6 +2,7 @@
 const Grunt = preload("res://EnemyPieces/GruntPiece.tscn")
 const Fortifier = preload("res://EnemyPieces/FortifierPiece.tscn")
 const Grower = preload("res://EnemyPieces/GrowerPiece.tscn")
+const Drummer = preload("res://EnemyPieces/DrummerPiece.tscn")
 
 const Berserker = preload("res://PlayerPieces/BerserkerPiece.tscn")
 const Cavalier = preload("res://PlayerPieces/CavalierPiece.tscn")
@@ -20,7 +21,7 @@ func make_tip(tip_text, objective_text, arrow_coords, tooltip):
 var sandbox_allies = {2: Stormdancer, 3:Assassin, 4: Berserker, 5:Archer, 6:Cavalier}
 
 var sandbox_enemies = [
-{3: make(Grunt, 6), Vector2(4, 6):make(Grunt, 6), Vector2(5, 7):make(Grunt, 3)}
+{ Vector2(4, 5):make(Fortifier, 3), Vector2(5, 4):make(Drummer, 3), Vector2(5, 5):make(Grunt, 3)}
 ]
 
 var Sandbox_Level = {"allies": sandbox_allies, "enemies":sandbox_enemies, "initial_deploy_count":3,

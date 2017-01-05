@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=1]
+[gd_scene load_steps=17 format=1]
 
 [ext_resource path="res://PlayerPieces/ArcherPiece.gd" type="Script" id=1]
 [ext_resource path="res://PlayerPieces/BlueGlow.tscn" type="PackedScene" id=2]
@@ -10,7 +10,9 @@
 [ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=8]
 [ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=9]
 [ext_resource path="res://PlayerPieces/ArcherArrow.tscn" type="PackedScene" id=10]
-[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=11]
+[ext_resource path="res://Assets/processed_sounds/bow_draw.smp" type="Sample" id=11]
+[ext_resource path="res://Assets/processed_sounds/bow_hit.smp" type="Sample" id=12]
+[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=13]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -22,7 +24,9 @@ samples/error = { "db":0.0, "pitch":1.0, "sample":ExtResource( 9 ) }
 
 [sub_resource type="SampleLibrary" id=3]
 
-samples/tile_hover = { "db":0.0, "pitch":0.7, "sample":ExtResource( 11 ) }
+samples/bow_draw = { "db":0.0, "pitch":1.0, "sample":ExtResource( 11 ) }
+samples/bow_hit = { "db":0.0, "pitch":1.0, "sample":ExtResource( 12 ) }
+samples/tile_hover = { "db":0.0, "pitch":0.7, "sample":ExtResource( 13 ) }
 
 [node name="ArcherType" type="KinematicBody2D"]
 
@@ -94,5 +98,12 @@ params/attenuation/distance_exp = 1.0
 config/polyphony = 1
 config/samples = SubResource( 3 )
 config/pitch_random = 0.0
+
+[node name="Tween 2" type="Tween" parent="."]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
 
 

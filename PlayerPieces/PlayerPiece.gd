@@ -10,6 +10,9 @@ var state = States.PLACED
 var coords
 var cursor_area
 var name = ""
+
+var unit_name = null #temp for debugging, fix this discrepancy
+
 var cooldown = 0
 var ultimate_flag = false
 var armor = 0
@@ -19,7 +22,6 @@ const SHOVE_SPEED = 4
 signal invalid_move
 signal description_data(unit_name, description)
 signal hide_description
-signal animation_done
 signal shake
 
 signal pre_attack(attack_coords)
@@ -52,10 +54,7 @@ func is_placed():
 func delete_self():
 	get_parent().remove_piece(self.coords)
 	remove_from_group("player_pieces")
-
 	
-func animate_delete_self():
-	self.queue_free()
 
 func initialize(cursor_area):
 	self.cursor_area = cursor_area
@@ -202,11 +201,9 @@ func animate_placed():
 		get_node("Cooldown/Label").set_text(str(self.cooldown))
 	get_node("AnimatedSprite").play("cooldown")
 
-func dies_to_collision(side_of_pusher):
-	print(side_of_pusher != null)
-	print(side_of_pusher != self.side)
-	print(self.armor == 0)
-	return side_of_pusher != null and side_of_pusher != self.side and self.armor == 0 #if there's a pusher and not on the same side
+func dies_to_collision(pusher):
+	if pusher != null and pusher.side != self.side:  #if there's a pusher and not on the same side
+		return pusher.deadly or self.armor == 0 #if the piece has no armor, or the pusher enemy is deadly
 
 #OVERRIDEN FUNCTIONS
 func act(new_coords):

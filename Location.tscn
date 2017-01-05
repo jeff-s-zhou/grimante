@@ -84,7 +84,7 @@ playback/speed = 1.0
 
 [node name="SamplePlayer2D" type="SamplePlayer2D" parent="."]
 
-params/volume_db = -20.0
+params/volume_db = -30.0
 params/pitch_scale = 1.0
 params/attenuation/min_distance = 1.0
 params/attenuation/max_distance = 2048.0

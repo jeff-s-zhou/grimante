@@ -11,6 +11,8 @@ func initialize(max_hp):
 	self.unit_name = "Seraph"
 	self.hover_description = DESCRIPTION
 	self.movement_value = Vector2(0, 1)
+	self.default_movement_value = Vector2(0, 1)
+	self.set_shield(true)
 	
 func delete_self():
 	.delete_self()

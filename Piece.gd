@@ -6,9 +6,19 @@ extends KinematicBody2D
 
 var side = null
 
+signal animation_done
+
 func animate_summon():
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
+	
+func animate_delete_self(blocking=true):
+	get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	if blocking:
+		emit_signal("animation_done")
+	self.queue_free()
 	
 func animate_move_to_pos(position, speed, blocking=false, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
 	var distance = get_pos().distance_to(position)
@@ -30,18 +40,17 @@ func animate_move(new_coords, speed=250, blocking=true, trans_type=Tween.TRANS_L
 		emit_signal("animation_done")
 
 #the unit that calls this moves too, as part of the act of pushing
-func push(distance, side=null):
-	if dies_to_collision(side): #check if they're going to die from collision
+func push(distance, pusher=null):
+	if self.unit_name != null:
+		print("pushing type: " + self.unit_name)
+	if dies_to_collision(pusher): #check if they're going to die from collision
 		print("deleting self")
 		delete_self()
-		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
+		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", true)
 	
 	elif get_parent().locations.has(self.coords + distance):
-		print("not deleting self")
-		var distance_length = distance.length()
-		print(distance)
+		var distance_length = get_parent().hex_length(distance)
 		var direction = get_parent().get_direction_from_vector(distance)
-		print(direction)
 		var collide_range = get_parent().get_range(self.coords, [1, distance_length + 1], "ANY", true, [direction, direction + 1])
 		#if there's something in front, push that
 		if collide_range.size() > 0:
@@ -55,17 +64,23 @@ func push(distance, side=null):
 			var new_distance = (self.coords + distance) - collide_coords + get_parent().hex_normalize(distance)
 			print("new_distance is" + str(new_distance))
 			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 250, true])
+			get_parent().pieces[collide_coords].push(new_distance, self)
 			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance, 250, false])
-			get_parent().pieces[collide_coords].push(new_distance, self.side)
 		else:
 			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance, 250, false])
 		set_coords(self.coords + distance)
 	else:
 		print("actually deleting self lul")
-		#TODO: move to last square before falling off the map
 		delete_self()
-		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
+		var distance_length = get_parent().hex_length(distance)
+		var direction = get_parent().get_direction_from_vector(distance)
+		var falloff_range = get_parent().get_range(self.coords, [1, distance_length + 1], null, false, [direction, direction + 1])
+		var fall_off_pos = get_pos()
+		if falloff_range.size() != 0:
+			fall_off_pos = falloff_range[falloff_range.size() - 1].get_pos()
+			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [fall_off_pos, 250, true])
+		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", true)
 		
-func dies_to_collision(side_of_pusher):
+func dies_to_collision(pusher):
 	return false
 	

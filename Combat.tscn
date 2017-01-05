@@ -61,8 +61,8 @@ size_flags/horizontal = 2
 size_flags/vertical = 2
 margin/left = 1202.0
 margin/top = 1.0
-margin/right = 1602.0
-margin/bottom = 1081.0
+margin/right = 1612.0
+margin/bottom = 1091.0
 custom_styles/panel = SubResource( 1 )
 
 [node name="ComboSystem" parent="." instance=ExtResource( 4 )]

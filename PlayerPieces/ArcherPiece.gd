@@ -99,22 +99,35 @@ func animate_ranged_attack(new_coords):
 	var arrow = get_node("ArcherArrow")
 	arrow.set_rot(angle)
 	var distance = get_pos().distance_to(new_position)
-	var speed = 400
+	var speed = 1800
 	var time = distance/speed
 	
-	get_node("Tween").interpolate_property(arrow, "visibility/opacity", 0, 1, 0.6, Tween.TRANS_SINE, Tween.EASE_IN)
-	get_node("Tween").start()
-	yield(get_node("Tween"), "tween_complete")
+	get_node("Tween 2").interpolate_property(arrow, "visibility/opacity", 0, 1, 0.6, Tween.TRANS_SINE, Tween.EASE_IN)
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
+	
 	var offset = Vector2(0, -10)
 	var new_arrow_pos = (location.get_pos() - get_pos()) + offset
-	get_node("Tween").interpolate_property(arrow, "transform/pos", arrow.get_pos(), new_arrow_pos, time, Tween.TRANS_BACK, Tween.EASE_IN)
-	get_node("Tween").start()
-	yield(get_node("Tween"), "tween_complete")
+	
+	#draw back
+	get_node("SamplePlayer2D").play("bow_draw")
+	var draw_back_position = arrow.get_pos() - (40 * (new_arrow_pos - arrow.get_pos()).normalized())
+	get_node("Tween 2").interpolate_property(arrow, "transform/pos", arrow.get_pos(), draw_back_position, 1.1, Tween.TRANS_SINE, Tween.EASE_OUT)
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
+	
+	get_node("Tween 2").interpolate_property(arrow, "transform/pos", arrow.get_pos(), new_arrow_pos, time, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	print("time to fire arrow is " + str(time))
+	get_node("Tween 2").interpolate_callback(self, time - 0.15, "play_bow_hit")
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
 	arrow.set_opacity(0)
 	arrow.set_pos(offset)
 	
 	emit_signal("animation_done")
 
+func play_bow_hit():
+	get_node("SamplePlayer2D").play("bow_hit")
 
 func predict(new_coords):
 	if self.ultimate_flag:
@@ -123,15 +136,16 @@ func predict(new_coords):
 	elif _is_within_movement_range(new_coords):
 		var coords = get_step_shot_coords(new_coords)
 		if coords != null:
-			predict_ranged_attack(coords)
+			predict_ranged_attack(coords, true)
 
 	#elif the tile selected is within attack range
 	elif _is_within_attack_range(new_coords):
 		predict_ranged_attack(new_coords)
 
 
-func predict_ranged_attack(new_coords):
-	get_parent().pieces[new_coords].predict(SHOOT_DAMAGE)
+func predict_ranged_attack(new_coords, passive=false):
+	get_parent().pieces[new_coords].predict(SHOOT_DAMAGE, passive)
+	
 	
 func cast_ultimate():
 	self.set_cooldown(2)

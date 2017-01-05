@@ -7,12 +7,18 @@ extends "res://Piece.gd"
 
 var action_highlighted = false
 var movement_value = Vector2(0, 1)
+var default_movement_value = Vector2(0, 1)
 var mid_trailing_animation = false
 var predicting_hp = false
 
 
 var coords #enemies move automatically each turn a certain number of spaces forward
 var hp
+var shielded = false
+var deadly = false
+
+var temp_display_hp #what we reset to when resetting prediction, in case original hp is already changed
+
 var type
 
 var prediction_flyover = null
@@ -29,8 +35,6 @@ signal description_data(name, description)
 signal hide_description
 
 signal broke_defenses
-
-signal animation_done
 
 
 func _ready():
@@ -111,18 +115,18 @@ func will_die_to(damage):
 	
 func reset_prediction_flyover():
 	get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
-	get_node("Physicals/HealthDisplay/Label").set_text(str(hp))
+	get_node("Physicals/HealthDisplay/Label").set_text(str(self.temp_display_hp))
 	get_node("Physicals/HealthDisplay/Label").show()
 	self.predicting_hp = false
 	if self.prediction_flyover != null:
 		self.prediction_flyover.queue_free()
-		#remove_child(self.prediction_flyover)
 		self.prediction_flyover = null
-		get_node("Physicals/HealthDisplay/Label").set_text(str(hp))
+
 
 func animate_predict_hp(hp, value, color):
 	self.predicting_hp = true
 	self.mid_trailing_animation = true
+	self.temp_display_hp = self.hp
 	get_node("Physicals/HealthDisplay/AnimationPlayer").play("HealthFlicker")
 	yield(get_node("Physicals/HealthDisplay/AnimationPlayer"), "finished")
 	
@@ -145,6 +149,8 @@ func animate_predict_hp(hp, value, color):
 		if value > 0:
 			value_text = "+" + value_text
 			text.set("custom_colors/font_color", Color(0,1,0))
+		elif value == 0:
+			value_text = "-" + value_text
 		text.set_opacity(1.0)
 		self.prediction_flyover.get_node("AnimationPlayer").play("OpacityHover")
 		text.set_text(value_text)
@@ -158,6 +164,7 @@ func animate_predict_hp(hp, value, color):
 		tween.queue_free()
 	self.mid_trailing_animation = false
 
+
 func predict(damage, is_passive_damage=false):
 	var color = Color(1, 0, 0.4)
 	if is_passive_damage:
@@ -167,7 +174,10 @@ func predict(damage, is_passive_damage=false):
 		if self.action_highlighted:
 			get_node("Physicals/EnemyOverlays/Red").hide()
 			get_node("Physicals/HealthDisplay/RedLayer").hide()
-	get_node("/root/AnimationQueue").enqueue(self, "animate_predict_hp", false, [self.hp - damage, -1 * damage, color])
+	if self.shielded:
+		get_node("/root/AnimationQueue").enqueue(self, "animate_predict_hp", false, [self.hp, 0, color])
+	else:
+		get_node("/root/AnimationQueue").enqueue(self, "animate_predict_hp", false, [self.hp - damage, -1 * damage, color])
 	
 
 #for the berserker's smash kill which should instantly remove
@@ -178,24 +188,56 @@ func smash_killed(damage):
 
 func animate_smash_killed():
 	get_node("Physicals").set_opacity(0)
-	
+
+
+func set_deadly(flag):
+	self.deadly = flag
+	if flag:
+		get_node("Physicals/EnemyEffects/DeathTouch").show()
+	else:
+		get_node("/root/AnimationQueue").enqueue(self, "animate_deadly_hide", false)
+		
+func animate_deadly_hide():
+	get_node("Physicals/EnemyEffects/DeathTouch").hide()
+
+func set_shield(flag):
+	self.shielded = flag
+	if flag:
+		get_node("Physicals/EnemyEffects/Bubble").show()
+	else:
+		get_node("/root/AnimationQueue").enqueue(self, "animate_bubble_hide", false)
+
+
+func animate_bubble_hide():
+	get_node("Physicals/EnemyEffects/Bubble").hide()
+
 	
 func set_hp(hp):
 	self.hp = hp
+	self.temp_display_hp = self.hp
 	get_node("Physicals/HealthDisplay/Label").set_text(str(self.hp))
+
 
 func heal(amount):
 	modify_hp(amount)
 
+
 func attacked(amount):
-	modify_hp(amount * -1)
+	if self.shielded:
+		set_shield(false)
+	else:
+		modify_hp(amount * -1)
 
 #always leaves them with 1 hp
 func nonlethal_attacked(damage):
-	var amount = damage * -1
-	self.hp = (max(1, self.hp + amount))
-	print("nonlethal_attacked, hp: " + str(self.hp) + ", amount: " + str(amount))
-	get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [self.hp, amount])
+	if self.shielded:
+		set_shield(false)
+	else:
+		var amount = damage * -1
+		self.hp = (max(1, self.hp + amount))
+		print("nonlethal_attacked, hp: " + str(self.hp) + ", amount: " + str(amount))
+		get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [self.hp, amount])
+
 
 func modify_hp(amount):
 	self.hp = (max(0, self.hp + amount))
@@ -247,14 +289,10 @@ func animate_set_hp(hp, value):
 
 
 func delete_self():
+	get_node("/root/Combat/ComboSystem").increase_combo()
 	get_parent().remove_piece(self.coords)
 	remove_from_group("enemy_pieces")
 
-
-func animate_delete_self():
-	get_node("/root/Combat/ComboSystem").increase_combo()
-	self.queue_free()
-	
 
 func set_coords(coords):
 	get_parent().move_piece(self.coords, coords)
@@ -265,7 +303,13 @@ func get_movement_value():
 	return self.movement_value
 
 
-#called at the start of enemy turn
+func aura_update():
+	pass
+	
+func reset_auras():
+	self.movement_value = self.default_movement_value
+
+#called at the start of enemy turn, after checking for aura effects
 func turn_update():
 	if !get_parent().locations.has(coords + movement_value):
 		emit_signal("broke_defenses")
@@ -274,3 +318,4 @@ func turn_update():
 	else:
 		#TODO: refactor all this
 		self.push(movement_value)
+		reset_auras()

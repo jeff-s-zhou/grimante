@@ -201,6 +201,10 @@ func enemy_phase(enemy_pieces):
 	
 	enemy_pieces.sort_custom(self, "_sort_by_y_axis") #ensures the pieces in front move first
 	for enemy_piece in enemy_pieces:
+		print("in enemy_phase: " + enemy_piece.unit_name)
+		enemy_piece.aura_update()
+	
+	for enemy_piece in enemy_pieces:
 		enemy_piece.turn_update()
 	
 	#if there are enemy pieces, wait for them to finish

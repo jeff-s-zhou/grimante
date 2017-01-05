@@ -135,7 +135,8 @@ func get_range(coords, magnitude_range=[1,2], side=null, collision_check=false, 
 	return return_set
 	
 	
-func get_direction_from_vector(vector):
+func get_direction_from_vector(v):
+	var vector = hex_normalize(v)
 	if vector == Vector2(0, -1):
 		return 0
 	elif vector == Vector2(1, 0):
