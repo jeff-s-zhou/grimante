@@ -8,7 +8,27 @@ var side = null
 
 signal animation_done
 
+var mid_animation = false
+
 signal description_data(name, description, player_unit_flag)
+
+
+func _ready():
+	get_node("CollisionArea").connect("area_enter", self, "collide")
+	get_node("CollisionArea").connect("area_exit", self, "uncollide")
+	
+func collide(area):
+	print("calling collide")
+	if self.mid_animation:
+		print("this is the one moving: " + self.side )
+	else:
+		print("this is the one not moving: " + self.side )
+	
+func uncollide(area):
+	print("calling uncollide")
+
+func set_mid_animation(flag):
+	self.mid_animation = flag
 
 func animate_summon():
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)

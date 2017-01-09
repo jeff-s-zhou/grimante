@@ -7,7 +7,7 @@ points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
 
 [node name="CollisionShape2D" type="CollisionShape2D"]
 
-transform/scale = Vector2( 0.507232, 0.566107 )
+transform/scale = Vector2( 0.505871, 0.553837 )
 shape = SubResource( 1 )
 trigger = false
 _update_shape_index = 0

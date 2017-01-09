@@ -30,22 +30,18 @@ signal stepped_move_completed
 
 signal targeted
 
-var mid_animation = false #to handle the bug of the clickarea not moving until everything's done
-
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	get_node("ClickArea").connect("mouse_enter", self, "hovered")
 	get_node("ClickArea").connect("mouse_exit", self, "unhovered")
+	
 	set_process_input(true)
 	set_process(true)
 	self.side = "PLAYER"
 	
 func set_cooldown(cooldown):
 	self.cooldown = cooldown + 1 #offset for the first countdown tick
-	
-func set_mid_animation(flag):
-	self.mid_animation = flag
 
 	
 func is_placed():
