@@ -1,15 +1,20 @@
 
 extends "PlayerPiece.gd"
-# member variables here, example:
-# var a=2
-# var b="textvar"
 
-var ANIMATION_STATES = {"default":0, "moving":1}
-var animation_state = ANIMATION_STATES.default
 const BACKSTAB_DAMAGE = 2
 const PASSIVE_DAMAGE = 1
 const UNIT_TYPE = "Assassin"
-const DESCRIPTION = """
+const DESCRIPTION = """Armored
+
+Movement: 1 range step
+
+Attack: Backstab. 2 range. Teleport behind an enemy and deal 2 damage. Will fail if there is a unit behind the enemy.
+
+Passive: Opportunity Strikes. If an adjacent enemy takes direct damage (NOT passive), attack it for 1 damage.
+
+Passive: Combo. Killing a unit builds 1 Combo Point. 
+
+Ultimate: Danse Macabre. Requires and spends 3 Combo Points. During this player phase, killing an enemy allows the Assassin to act again.
 """
 const BEHIND = Vector2(0, -1)
 
@@ -118,6 +123,7 @@ func predict(new_coords):
 		get_parent().pieces[new_coords].predict(self.backstab_damage)
 
 func cast_ultimate():
+	get_node("OverlayLayers/UltimateWhite").show()
 #	if get_charge() == 3:
 	self.ultimate_flag = true
 	get_parent().reset_highlighting()
@@ -125,6 +131,7 @@ func cast_ultimate():
 	set_charge(0)
 	
 func placed():
+	get_node("OverlayLayers/UltimateWhite").hide()
 	.placed()
 	
 #same as regular placed() except doesn't reset the ultimate_flag

@@ -1,20 +1,21 @@
-[gd_scene load_steps=16 format=1]
+[gd_scene load_steps=17 format=1]
 
 [ext_resource path="res://PlayerPieces/StormdancerPiece.gd" type="Script" id=1]
 [ext_resource path="res://PlayerPieces/BlueGlow.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Assets/Allies/stormdancer_piece.png" type="Texture" id=3]
-[ext_resource path="res://Assets/Allies/stormdancer_piece_red.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Allies/stormdancer_piece_sepia.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Allies/stormdancer_piece_sepia.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Allies/stormdancer_piece_red.png" type="Texture" id=5]
 [ext_resource path="res://Assets/Allies/stormdancer_piece_blur.png" type="Texture" id=6]
 [ext_resource path="res://Assets/Allies/stormdancer_piece_wind.png" type="Texture" id=7]
 [ext_resource path="res://PlayerPieces/OverlayLayers.tscn" type="PackedScene" id=8]
 [ext_resource path="res://PlayerPieces/Cooldown.tscn" type="PackedScene" id=9]
-[ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=10]
-[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=11]
+[ext_resource path="res://PlayerPieces/UltimateBar.tscn" type="PackedScene" id=10]
+[ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=12]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"hurt", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"cooldown", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"cooldown", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"hurt", "speed":5.0 } ]
 
 [sub_resource type="Animation" id=2]
 
@@ -61,7 +62,7 @@ tracks/2/keys = { "times":FloatArray( 0, 0.6, 0.65 ), "transitions":FloatArray( 
 
 [sub_resource type="SampleLibrary" id=4]
 
-samples/tile_hover = { "db":0.0, "pitch":0.7, "sample":ExtResource( 11 ) }
+samples/tile_hover = { "db":0.0, "pitch":0.7, "sample":ExtResource( 12 ) }
 
 [node name="StormdancerPiece" type="KinematicBody2D"]
 
@@ -97,7 +98,9 @@ texture = ExtResource( 7 )
 
 [node name="Cooldown" parent="." instance=ExtResource( 9 )]
 
-[node name="ClickArea" parent="." instance=ExtResource( 10 )]
+[node name="UltimateBar" parent="." instance=ExtResource( 10 )]
+
+[node name="ClickArea" parent="." instance=ExtResource( 11 )]
 
 [node name="Timer" type="Timer" parent="."]
 

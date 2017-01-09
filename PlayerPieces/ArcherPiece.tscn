@@ -1,32 +1,33 @@
-[gd_scene load_steps=17 format=1]
+[gd_scene load_steps=18 format=1]
 
 [ext_resource path="res://PlayerPieces/ArcherPiece.gd" type="Script" id=1]
 [ext_resource path="res://PlayerPieces/BlueGlow.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Assets/Allies/archer_piece.png" type="Texture" id=3]
-[ext_resource path="res://Assets/Allies/archer_piece_red.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Allies/archer_piece_sepia.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Allies/archer_piece_sepia.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Allies/archer_piece_red.png" type="Texture" id=5]
 [ext_resource path="res://PlayerPieces/OverlayLayers.tscn" type="PackedScene" id=6]
 [ext_resource path="res://PlayerPieces/Cooldown.tscn" type="PackedScene" id=7]
-[ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=8]
-[ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=9]
-[ext_resource path="res://PlayerPieces/ArcherArrow.tscn" type="PackedScene" id=10]
-[ext_resource path="res://Assets/processed_sounds/bow_draw.smp" type="Sample" id=11]
-[ext_resource path="res://Assets/processed_sounds/bow_hit.smp" type="Sample" id=12]
-[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=13]
+[ext_resource path="res://PlayerPieces/UltimateBar.tscn" type="PackedScene" id=8]
+[ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=10]
+[ext_resource path="res://PlayerPieces/ArcherArrow.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Assets/processed_sounds/bow_draw.smp" type="Sample" id=12]
+[ext_resource path="res://Assets/processed_sounds/bow_hit.smp" type="Sample" id=13]
+[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=14]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"hurt", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"cooldown", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"cooldown", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"hurt", "speed":5.0 } ]
 
 [sub_resource type="SampleLibrary" id=2]
 
-samples/error = { "db":0.0, "pitch":1.0, "sample":ExtResource( 9 ) }
+samples/error = { "db":0.0, "pitch":1.0, "sample":ExtResource( 10 ) }
 
 [sub_resource type="SampleLibrary" id=3]
 
-samples/bow_draw = { "db":0.0, "pitch":1.0, "sample":ExtResource( 11 ) }
-samples/bow_hit = { "db":0.0, "pitch":1.0, "sample":ExtResource( 12 ) }
-samples/tile_hover = { "db":0.0, "pitch":0.7, "sample":ExtResource( 13 ) }
+samples/bow_draw = { "db":0.0, "pitch":1.0, "sample":ExtResource( 12 ) }
+samples/bow_hit = { "db":0.0, "pitch":1.0, "sample":ExtResource( 13 ) }
+samples/tile_hover = { "db":0.0, "pitch":0.7, "sample":ExtResource( 14 ) }
 
 [node name="ArcherType" type="KinematicBody2D"]
 
@@ -50,7 +51,9 @@ animation = "default"
 
 [node name="Cooldown" parent="." instance=ExtResource( 7 )]
 
-[node name="ClickArea" parent="." instance=ExtResource( 8 )]
+[node name="UltimateBar" parent="." instance=ExtResource( 8 )]
+
+[node name="ClickArea" parent="." instance=ExtResource( 9 )]
 
 [node name="Tween" type="Tween" parent="."]
 
@@ -76,7 +79,7 @@ default/reverb_room = 2
 default/reverb_send = 0.0
 default/chorus_send = 0.0
 
-[node name="ArcherArrow" parent="." instance=ExtResource( 10 )]
+[node name="ArcherArrow" parent="." instance=ExtResource( 11 )]
 
 visibility/opacity = 0.0
 transform/pos = Vector2( 0, -10 )

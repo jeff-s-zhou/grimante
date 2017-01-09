@@ -8,6 +8,8 @@ var side = null
 
 signal animation_done
 
+signal description_data(name, description, player_unit_flag)
+
 func animate_summon():
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
@@ -48,7 +50,7 @@ func push(distance, pusher=null):
 		delete_self()
 		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", true)
 	
-	elif get_parent().locations.has(self.coords + distance):
+	else:
 		var distance_length = get_parent().hex_length(distance)
 		var direction = get_parent().get_direction_from_vector(distance)
 		var collide_range = get_parent().get_range(self.coords, [1, distance_length + 1], "ANY", true, [direction, direction + 1])
@@ -60,27 +62,36 @@ func push(distance, pusher=null):
 			var location = get_parent().locations[collide_coords]
 			var difference = (location.get_pos() - get_pos())/4
 			print(difference)
-			var collide_pos = get_pos() + difference #offset it so that it "taps" it #TODO fix this
+			var collide_pos = get_pos() + difference 
 			var new_distance = (self.coords + distance) - collide_coords + get_parent().hex_normalize(distance)
 			print("new_distance is" + str(new_distance))
-			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 250, true])
+			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 250, true]) #push up against it
 			get_parent().pieces[collide_coords].push(new_distance, self)
-			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance, 250, false])
-		else:
-			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance, 250, false])
+		
+		move_or_fall_off(distance)
+
+
+func move_or_fall_off(distance):
+	if get_parent().locations.has(self.coords + distance):
+		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance, 250, false])
 		set_coords(self.coords + distance)
 	else:
-		print("actually deleting self lul")
 		delete_self()
 		var distance_length = get_parent().hex_length(distance)
 		var direction = get_parent().get_direction_from_vector(distance)
 		var falloff_range = get_parent().get_range(self.coords, [1, distance_length + 1], null, false, [direction, direction + 1])
 		var fall_off_pos = get_pos()
 		if falloff_range.size() != 0:
-			fall_off_pos = falloff_range[falloff_range.size() - 1].get_pos()
+			print("caught the fall_off new check")
+			var fall_off_coords = falloff_range[falloff_range.size() - 1]
+			fall_off_pos = get_parent().locations[fall_off_coords].get_pos() 
+			#var fall_off_distance = 30 * (fall_off_pos - get_pos()).normalized()
 			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [fall_off_pos, 250, true])
 		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", true)
-		
+
+		if self.side == "ENEMY" and get_parent().hex_normalize(distance) == Vector2(0, 1):
+				emit_signal("broke_defenses")
+			
 func dies_to_collision(pusher):
 	return false
 	

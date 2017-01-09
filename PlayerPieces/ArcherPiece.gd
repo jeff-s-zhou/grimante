@@ -10,7 +10,8 @@ const texture_path = "res://Assets/archer_piece.png"
 var ANIMATION_STATES = {"default":0, "moving":1}
 var animation_state = ANIMATION_STATES.default
 
-var SHOOT_DAMAGE = 3
+var SHOOT_DAMAGE = 4
+var PASSIVE_DAMAGE = 2
 
 var velocity
 var new_position
@@ -21,9 +22,16 @@ signal animation_finished
 
 const UNIT_TYPE = "Archer"
 
-const DESCRIPTION = """Armor: 0
-Movement: 1 range step
-Attack: Snipe. Attack the first enemy in a line for 4 damage. Can target diagonally. """
+const DESCRIPTION = """Unarmored.
+
+Movement: 2 range step
+
+Attack: Snipe. Fire an arrow at the first enemy in a line for 4 damage. Can target diagonally. Allies will block the shot.
+
+Passive: Step Shot. After moving, the Archer fires a (weaker) Snipe Attack directly north for 2 damage.
+
+Ultimate: Envision Death. For the rest of this Player Phase, immediately before an enemy takes direct damage (NOT passive) within Snipe range, Snipe the enemy. 
+"""
 	
 	
 func _ready():
@@ -72,22 +80,22 @@ func act(new_coords):
 		set_coords(new_coords)
 		var coords = get_step_shot_coords(self.coords)
 		if coords != null:
-			ranged_attack(coords)
+			ranged_attack(coords, PASSIVE_DAMAGE)
 		placed()
 
 	#elif the tile selected is within attack range
 	elif _is_within_attack_range(new_coords):
-		ranged_attack(new_coords)
+		ranged_attack(new_coords, SHOOT_DAMAGE)
 		get_node("/root/Combat").handle_assassin_passive(new_coords)
 		placed()
 		
 	else:
 		invalid_move()
 
-func ranged_attack(new_coords):
+func ranged_attack(new_coords, damage):
 	print("calling ranged attack")
 	get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [new_coords])
-	get_parent().pieces[new_coords].attacked(SHOOT_DAMAGE)
+	get_parent().pieces[new_coords].attacked(damage)
 
 
 func animate_ranged_attack(new_coords):
@@ -148,8 +156,8 @@ func predict_ranged_attack(new_coords, passive=false):
 	
 	
 func cast_ultimate():
+	get_node("OverlayLayers/UltimateWhite").show()
 	self.set_cooldown(2)
-	print("casting ultimate")
 	#first reset the highlighting on the parent nodes. Then call the new highlighting
 	self.ultimate_flag = true
 	display_overwatch()
@@ -164,3 +172,7 @@ func trigger_ultimate(attack_coords):
 	
 func display_overwatch():
 	pass
+	
+func animate_placed():
+	get_node("OverlayLayers/UltimateWhite").hide()
+	.animate_placed()

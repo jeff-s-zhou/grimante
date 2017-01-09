@@ -15,12 +15,12 @@ var unit_name = null #temp for debugging, fix this discrepancy
 
 var cooldown = 0
 var ultimate_flag = false
+
 var armor = 0
 
 const SHOVE_SPEED = 4
 
 signal invalid_move
-signal description_data(unit_name, description)
 signal hide_description
 signal shake
 
@@ -142,12 +142,12 @@ func unhovered():
 
 #called when hovered over during player turn		
 func hovered():
-	get_node("Timer").set_wait_time(0.05)
+	get_node("Timer").set_wait_time(0.01)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
 	if !self.mid_animation:
 		hover_highlight()
-	emit_signal("description_data", self.UNIT_TYPE, self.DESCRIPTION)
+	emit_signal("description_data", self.UNIT_TYPE, self.DESCRIPTION, true)
 	if get_parent().selected == null and self.state != States.PLACED:
 		display_action_range()
 
@@ -155,14 +155,20 @@ func hovered():
 
 #called when an event happens inside the click area hitput
 func input_event(viewport, event, shape_idx):
+	
+	if event.is_action("select") and !event.is_pressed() and get_node("UltimateBar").ultimate_charging:
+		get_node("UltimateBar").end_charging()
+
 	if event.is_action("select") and event.is_pressed():
 		if get_parent().selected == null and self.state != States.PLACED:
-			get_node("SamplePlayer2D").play("light_switch_019")
 			get_parent().selected = self
 			self.state = States.CLICKED
 			get_node("BlueGlow").show()
-			#hovered()
-		else: #if not selected, then some piece is trying to act on this one
+		
+		elif get_parent().selected == self:
+			get_node("UltimateBar").begin_charging()
+
+		else: #if not selected and not self, then some piece is trying to act on this one
 			get_parent().set_target(self)
 
 
@@ -171,14 +177,9 @@ func deselect():
 	get_node("BlueGlow").hide()
 
 func select_action_target(target):
-	print("calling select_action_target")
-	if target.coords == self.coords:
-		print("calling cast ultimate from select_action_target")
-		cast_ultimate()
-	else:
-		get_parent().reset_highlighting()
-		get_node("BlueGlow").hide()
-		act(target.coords)
+	get_parent().reset_highlighting()
+	get_node("BlueGlow").hide()
+	act(target.coords)
 
 #helper function for act
 func invalid_move():

@@ -7,10 +7,15 @@ var animation_state = ANIMATION_STATES.default
 const TRAMPLE_DAMAGE = 2
 
 const UNIT_TYPE = "Cavalier"
-const DESCRIPTION = """Armor: 1
-Movement: Can move to any empty tile along a straight line.
+const DESCRIPTION = """Armored.
+
+Movement: Able to move to any empty tile along a straight line.
+
 Passive: Trample. Moving through an enemy unit deals 2 damage to it.
+
 Attack: Charge. Run in a straight line, hitting the first enemy in the line for damage equal to the number of tiles travelled.
+
+Ultimate: Rally! For the rest of this Player Phase, all allied units have +1 movement and deal +1 damage.
 """
 
 func _ready():
@@ -94,9 +99,9 @@ func trample(new_coords):
 		current_coords = current_coords + increment
 		if get_parent().pieces.has(current_coords) and get_parent().pieces[current_coords].side == "ENEMY":
 			was_hopping = true
-			get_parent().pieces[current_coords].attacked(TRAMPLE_DAMAGE)
 			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [current_coords, 250, false])
 			get_node("/root/AnimationQueue").enqueue(self, "animate_hop", true, [current_coords - increment, current_coords])
+			get_parent().pieces[current_coords].attacked(TRAMPLE_DAMAGE)
 			
 		else:
 			if was_hopping:

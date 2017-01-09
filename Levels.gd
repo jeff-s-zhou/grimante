@@ -15,13 +15,17 @@ func make(prototype, health):
 	return {"prototype": prototype, "health": health}
 	
 	
-func make_tip(tip_text, objective_text, arrow_coords, tooltip):
-	return {"tip_text":tip_text, "objective_text": objective_text, "arrow_coords": arrow_coords, "tooltip": tooltip}
+func make_tip(tip_text, objective_text, arrow_coords, text):
+	return {"tip_text":tip_text, "objective_text": objective_text, "tooltip": {"coords":arrow_coords, "text":text}}
+
+#used when the tooltip changes upon clicking
+func make_complex_tip(tip_text, objective_text, tooltips):
+	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
 	
 var sandbox_allies = {2: Stormdancer, 3:Assassin, 4: Berserker, 5:Archer, 6:Cavalier}
 
 var sandbox_enemies = [
-{ Vector2(4, 5):make(Fortifier, 3), Vector2(5, 4):make(Drummer, 3), Vector2(5, 5):make(Grunt, 3)}
+{ Vector2(2, 4):make(Grunt, 2), Vector2(4, 5):make(Fortifier, 3), Vector2(5, 4):make(Drummer, 3), Vector2(5, 5):make(Grunt, 3)}
 ]
 
 var Sandbox_Level = {"allies": sandbox_allies, "enemies":sandbox_enemies, "initial_deploy_count":3,
@@ -42,9 +46,7 @@ var level5_enemies = [
 ]
 
 var level5_instructions = [
-make_tip("Have no fear, the Knight is here! The Knight is a utility unit that can push both enemies and allies.", "Uhh, use the Knight.", null, ""),
-make_tip("New enemies!", "Hold spacebar over them to read what they do.", null, ""),
-make_tip("Yeah my b, kinda ran out of time...", "Beat this last level and give Jeff feedback.", null, ""),
+make_tip("Have no fear, the Knight is here! Hold Spacebar over the Knight to learn its abilities.", "", null, "")
 ]
 
 var Level5 = {"allies": level5_allies, "enemies":level5_enemies, "initial_deploy_count":3,
@@ -61,12 +63,11 @@ var level4_enemies = [
 {2: make(Grunt, 2), 3: make(Grunt, 4), 7:make(Grunt, 3)}
 ]
 var level4_instructions = [
-make_tip("Each Friendly Unit can move once per turn. To quickly end your turn, you can press END TURN on the sidebar." \
+make_tip("Each Player Unit can move once per turn. To quickly end your turn, you can press END TURN on the sidebar." \
 ,"", null, ""),
 make_tip("Remaining Enemy Waves are deployed from the top of the screen.", "", null, ""),
-make_tip("The Archer has arrived! The Archer can either move 1 space OR fire a ranged attack for 4 damage.", "", null, ""),
-make_tip("The Archer's ranged attack hits the first target in a line, and can target hex diagonals.", "", null, ""),
-make_tip("The Archer has 0 Armor, so if it gets pushed it's KOed.", "Win?", null, ""),
+make_tip("The Archer has arrived! Hold Space over the Archer learn how to use this Unit.", "", null, ""),
+make_tip("The Archer has 0 Armor, so if it gets pushed it's KOed.", "Win", null, ""),
 ]
 
 var level4_reinforcements = {3:{7: Archer}}
@@ -86,9 +87,9 @@ var level3_enemies = [
 ]
 var level3_instructions = [
 make_tip("If you need a refresher on a Unit, hold spacebar over a Unit for a summary.", "Smash!", Vector2(4, 8), ""),
-make_tip("Enemies will push Friendly Units forward. If a Friendly Unit is pushed off the map, it is KOed.", \
+make_tip("Enemies will push Player Units forward. If a Player Unit is pushed off the map, it is KOed.", \
 "Don't let the Berserker get KOed.", null, ""),
-make_tip("You LOSE if an enemy exits from the bottom of the map or all Friendly Units are KOed.", "Don't lose.", null, "")
+make_tip("You LOSE if an enemy exits from the bottom of the map or all Player Units are KOed.", "Don't lose.", null, "")
 ]
 
 var Level3 = {"allies": level3_allies, "enemies":level3_enemies, "initial_deploy_count":5,
@@ -103,10 +104,10 @@ var level2_enemies = [
 ]
 
 var level2_instructions = [
-	make_tip("You win when all enemies waves are deployed and all enemies are eliminated.", \
-	"The Cavalier can run through enemies and Trample them. Move the Cavalier behind enemy lines.", Vector2(4, 2), ""),
+	make_tip("The Cavalier can run through enemies and Trample them.", \
+	"Move the Cavalier behind enemy lines.", Vector2(4, 2), ""),
 	make_tip("The Cavalier does 2 damage to each enemy he Tramples through.", \
-	"The Cavalier can unleash a strong attack when he has an open path to an enemy. Charge at the enemy!", Vector2(4, 7), ""),
+	"The Cavalier can unleash his direct attack, Charge, when he has an open path to an enemy. Charge at the enemy!", Vector2(4, 7), ""),
 	make_tip("Charge deals 1 damage for each tile travelled.", "Eliminate all remaining enemies.", null, ""),
 ]
 var Level2 = {"allies": level2_allies, "enemies":level2_enemies, "initial_deploy_count":1,
@@ -123,14 +124,17 @@ var level1_enemies = [
 {4: make(Grunt, 2)},
 ]
 
+var complex_tooltip1 = [{"coords":Vector2(4, 9), "text":"Click on the Berserker to select it."}, {"coords":Vector2(4, 7), "text": "Click on this tile to move the Berserker here."}]
+var complex_tooltip2 = [{"coords":Vector2(4, 7), "text":"Select the Berserker."}, {"coords":Vector2(4, 5), "text":"Select the enemy to attack it."}]
+
 var level1_instructions = [
-	make_tip("", "Move the Berserker towards the enemy forces.", Vector2(4, 7), "Drag the Berserker to this tile." ),
-	make_tip("Enemies move down one tile each turn.",  "Attack the nearby enemy.", Vector2(4, 5), "Drag the Berserker to this enemy."),
-	make_tip("The Berserker deals 3 damage per direct attack.",  "Finish off the enemy.", Vector2(4, 6), ""),
-	make_tip("When The Berserker kills an enemy, it lands on their tile. ", \
-	 "The next group of enemies is outside of attack range. Move the Berserker next to them to trigger its passive ability.", \
+	make_complex_tip("Eliminate all enemies to win.", "Move the Berserker towards the enemies.", complex_tooltip1),
+	make_complex_tip("Enemies move down one tile each turn.",  "Attack the nearby enemy.", complex_tooltip2),
+	make_tip("The Berserker's direct attack deals 3 damage.",  "Finish off the enemy.", Vector2(4, 6), ""),
+	make_tip("When the Berserker kills an enemy, it lands on their tile. ", \
+	 "The next group of enemies is outside of direct attack range. Move the Berserker next to them to trigger its passive effect, Ground Slam.", \
 	 Vector2(2, 4), ""),
-	make_tip("When the Berserker lands on a tile, his passive deals 2 damage to adjacent enemies.", \
+	make_tip("When the Berserker lands on a tile, Ground Slam deals 2 damage to adjacent enemies.", \
 	"Kill the remaining enemies in one move.", null, "")
 ]
 

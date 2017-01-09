@@ -23,6 +23,8 @@ signal next_pressed
 signal reinforced
 signal done_initializing
 
+signal animation_done
+
 var archer = null
 var assassin = null
 
@@ -142,9 +144,10 @@ func _input(event):
 	
 	elif event.is_action("detailed_description"):
 		if event.is_pressed():
-			get_node("SidebarTooltip").show()
+			get_node("Tooltip").set_pos(get_viewport().get_mouse_pos())
+			get_node("Tooltip").show()
 		else:
-			get_node("SidebarTooltip").hide()
+			get_node("Tooltip").hide()
 			
 	elif event.is_action("debug_level_skip") and event.is_pressed():
 		if(self.next_level != null):
@@ -201,10 +204,9 @@ func enemy_phase(enemy_pieces):
 	
 	enemy_pieces.sort_custom(self, "_sort_by_y_axis") #ensures the pieces in front move first
 	for enemy_piece in enemy_pieces:
-		print("in enemy_phase: " + enemy_piece.unit_name)
 		enemy_piece.aura_update()
-	
 	for enemy_piece in enemy_pieces:
+		print("in enemy_phase: " + enemy_piece.unit_name)
 		enemy_piece.turn_update()
 	
 	#if there are enemy pieces, wait for them to finish
@@ -295,13 +297,10 @@ func handle_instructions():
 	
 	
 	
-	var arrow_coords = instruction["arrow_coords"]
-	
-	if arrow_coords != null:
-		var new_pos = (get_node("Grid").locations[arrow_coords]).get_global_pos()
-		get_node("TutorialTooltip").set_pos(new_pos)
+	if instruction.has("tooltip"):
 		get_node("TutorialTooltip").set_tooltip(instruction["tooltip"])
-		get_node("TutorialTooltip").show()
+	elif instruction.has("tooltips"):
+		get_node("TutorialTooltip").set_tooltips(instruction["tooltips"])
 
 func screen_shake():
 	get_node("ShakeCamera").shake(0.5, 30, 4)
@@ -364,7 +363,18 @@ func damage_defenses():
 	if get_node("LivesSystem").lives == 0:
 		enemy_win()
 
-	
+func darken(amount=0.3, time=0.4):
+	get_node("Tween").interpolate_property(get_node("DarkenLayer"), "visibility/opacity", 0, amount, time, Tween.TRANS_SINE, Tween.EASE_IN)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	emit_signal("animation_done")
+
+func lighten(amount=0.3, time=0.4):
+	get_node("Tween").interpolate_property(get_node("DarkenLayer"), "visibility/opacity", amount, 0, time, Tween.TRANS_SINE, Tween.EASE_IN)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	emit_signal("animation_done")
+
 func handle_invalid_move():
 	get_node("SamplePlayer").play("error")
 	get_node("InvalidMoveIndicator/AnimationPlayer").play("flash")
@@ -377,7 +387,8 @@ func handle_assassin_passive(attack_coords):
 	if self.assassin != null:
 		self.assassin.trigger_passive(attack_coords)
 	
-func display_description(name, text):
-	get_node("SidebarTooltip").set(name, text)
+func display_description(name, text, player_unit_flag):
+	if !player_unit_flag:
+		get_node("Tooltip").set(name, text)
 
 

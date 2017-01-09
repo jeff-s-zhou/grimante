@@ -10,10 +10,16 @@ var animation_state = ANIMATION_STATES.default
 
 const UNIT_TYPE = "Berserker"
 
-const DESCRIPTION = """Armor: 1
+const DESCRIPTION = """Armored.
+
 Movement: 2 range leap
-Attack: Leap Strike. Leap to a tile. If there is an enemy on the tile, deal 3 damage. If the enemy is killed by the attack, move to that tile. Otherwise, return to your original tile.
-Passive: Ground Slam. Moving to a tile deals 2 damage in a 1-range AoE around your destination."""
+
+Attack: Leap Strike. Deal 3 damage to an enemy within movement range. If the enemy is killed by the attack, move to its tile.
+
+Passive: Ground Slam. Moving to a tile deals 2 damage to all units around your destination.
+
+Ultimate: Earthshatter. Stun and attack all enemies in a line from the Berserker, damage starting at 5 and decreasing by 1 for each enemy hit.
+"""
 
 
 func _ready():
@@ -88,7 +94,20 @@ func jump_back(new_coords):
 	yield(get_node("Tween2"), "tween_complete")
 	set_z(-1)
 	emit_signal("animation_done")
-	
+
+#called when an event happens inside the click area hitput
+func input_event(viewport, event, shape_idx):
+	if event.is_action("select") and event.is_pressed():
+		if get_parent().selected == null and self.state != States.PLACED:
+			get_node("SamplePlayer").play("mouseover")
+#			var sample = get_node("SamplePlayer").get_sample_library().get_sample("mouseover").get_rid()
+#			AudioServer.voice_play(AudioServer.voice_create(), sample)
+			get_parent().selected = self
+			self.state = States.CLICKED
+			get_node("BlueGlow").show()
+			#hovered()
+		else: #if not selected, then some piece is trying to act on this one
+			get_parent().set_target(self)
 
 func act(new_coords):
 	if _is_within_attack_range(new_coords):

@@ -23,15 +23,11 @@ var type
 
 var prediction_flyover = null
 
-
 const flyover_prototype = preload("res://EnemyPieces/Flyover.tscn")
 
 var hover_description = ""
 var unit_name = ""
 
-var reinforced_hp = 0
-
-signal description_data(name, description)
 signal hide_description
 
 signal broke_defenses
@@ -50,14 +46,15 @@ func _ready():
 	
 func input_event(viewport, event, shape_idx):
 	if event.is_action("select"):
+		print("selecting")
 		if event.is_pressed():
 			get_parent().set_target(self)
 		
 func hover_highlight():
-	get_node("Timer").set_wait_time(0.03)
+	get_node("Timer").set_wait_time(0.01)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
-	emit_signal("description_data", self.unit_name, self.hover_description)
+	emit_signal("description_data", self.unit_name, self.hover_description, false)
 	if self.action_highlighted:
 		get_node("Physicals/EnemyOverlays/White").show()
 		get_node("Physicals/HealthDisplay/WhiteLayer").show()
@@ -177,7 +174,7 @@ func predict(damage, is_passive_damage=false):
 	if self.shielded:
 		get_node("/root/AnimationQueue").enqueue(self, "animate_predict_hp", false, [self.hp, 0, color])
 	else:
-		get_node("/root/AnimationQueue").enqueue(self, "animate_predict_hp", false, [self.hp - damage, -1 * damage, color])
+		get_node("/root/AnimationQueue").enqueue(self, "animate_predict_hp", false, [max(self.hp - damage, 0), -1 * damage, color])
 	
 
 #for the berserker's smash kill which should instantly remove
@@ -241,6 +238,7 @@ func nonlethal_attacked(damage):
 
 func modify_hp(amount):
 	self.hp = (max(0, self.hp + amount))
+	self.temp_display_hp = self.hp
 	get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [self.hp, amount])
 	if self.hp <= 0:
 		delete_self()
@@ -311,11 +309,5 @@ func reset_auras():
 
 #called at the start of enemy turn, after checking for aura effects
 func turn_update():
-	if !get_parent().locations.has(coords + movement_value):
-		emit_signal("broke_defenses")
-		delete_self()
-		animate_delete_self()
-	else:
-		#TODO: refactor all this
-		self.push(movement_value)
-		reset_auras()
+	self.push(movement_value)
+	reset_auras()

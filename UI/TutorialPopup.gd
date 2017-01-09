@@ -48,6 +48,6 @@ func set_text(tip, objective):
 		get_node("Panel/ObjectiveText").set_bbcode(objective_text)
 		get_node("Panel/ObjectiveText").set_pos(Vector2(30, 30))
 	else: #handle the case where there's both tip and objective
-		var tip_text = "[color=yellow][b]TIP: [/b][/color]" + tip
+		var tip_text = "[color=yellow][b]RULE: [/b][/color]" + tip
 		get_node("Panel/TipText").set_bbcode(tip_text)
 		get_node("Panel/ObjectiveText").set_bbcode(objective_text)
