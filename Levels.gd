@@ -11,6 +11,7 @@ const Knight = preload("res://PlayerPieces/KnightPiece.tscn")
 const Assassin = preload("res://PlayerPieces/AssassinPiece.tscn")
 const Stormdancer = preload("res://PlayerPieces/StormdancerPiece.tscn")
 
+
 func make(prototype, health):
 	return {"prototype": prototype, "health": health}
 	
@@ -22,7 +23,7 @@ func make_tip(tip_text, objective_text, arrow_coords, text):
 func make_complex_tip(tip_text, objective_text, tooltips):
 	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
 	
-var sandbox_allies = {2: Stormdancer, 4:Assassin, 6:Cavalier}
+var sandbox_allies = {1: Knight, 2: Stormdancer, 3:Berserker, 4:Assassin, 6:Cavalier, 5:Archer}
 
 var sandbox_enemies = [
 { Vector2(2, 4):make(Grunt, 2), Vector2(4, 5):make(Fortifier, 3), Vector2(5, 4):make(Drummer, 3), Vector2(5, 5):make(Grunt, 3)}

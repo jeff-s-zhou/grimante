@@ -18,7 +18,6 @@ func _ready():
 	connect("mouse_enter", self, "_mouse_entered")
 	connect("mouse_exit", self, "_mouse_exited")
 	set_process_input(true)
-	set_z(-3)
 	
 func debug():
 	get_node("Label").set_text(str(coords.x) + "," + str(coords.y))

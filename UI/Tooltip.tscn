@@ -32,7 +32,16 @@ draw_bg = true
 
 [node name="Tooltip" type="Node2D"]
 
+visibility/opacity = 0.0
+z/z = 3
 script/script = ExtResource( 1 )
+
+[node name="Timer" type="Timer" parent="."]
+
+process_mode = 1
+wait_time = 1.0
+one_shot = false
+autostart = false
 
 [node name="Panel" type="Panel" parent="."]
 

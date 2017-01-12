@@ -4,7 +4,11 @@ extends "PlayerPiece.gd"
 var ANIMATION_STATES = {"default":0, "moving":1}
 var animation_state = ANIMATION_STATES.default
 
-const TRAMPLE_DAMAGE = 2
+const DEFAULT_TRAMPLE_DAMAGE = 2
+const DEFAULT_MOVEMENT_VALUE = 11
+
+var trample_damage = DEFAULT_TRAMPLE_DAMAGE setget , get_trample_damage
+
 
 const UNIT_TYPE = "Cavalier"
 const DESCRIPTION = """Armored.
@@ -20,6 +24,17 @@ Ultimate: Rally! For the rest of this Player Phase, all allied units have +1 mov
 
 func _ready():
 	self.armor = 1
+	self.movement_value = DEFAULT_MOVEMENT_VALUE
+	self.unit_name = UNIT_TYPE
+	self.hover_description = DESCRIPTION
+	#self.check_global_seen()
+	
+func get_trample_damage():
+	return self.attack_bonus + DEFAULT_TRAMPLE_DAMAGE
+
+#not a true getter function like the rest
+func get_charge_damage(distance_travelled):
+	return self.attack_bonus + distance_travelled
 
 func animate_attack(attack_coords):
 	print("animating attack")
@@ -44,7 +59,7 @@ func animate_attack_end(original_coords):
 
 
 func get_movement_range():
-	return get_parent().get_range(self.coords, [1, 11]) #locations only
+	return get_parent().get_range(self.coords, [1, self.movement_value + 1]) #locations only
 	
 func get_attack_range():
 	var attack_range = []
@@ -101,7 +116,7 @@ func trample(new_coords):
 			was_hopping = true
 			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [current_coords, 250, false])
 			get_node("/root/AnimationQueue").enqueue(self, "animate_hop", true, [current_coords - increment, current_coords])
-			get_parent().pieces[current_coords].attacked(TRAMPLE_DAMAGE)
+			get_parent().pieces[current_coords].attacked(self.trample_damage)
 			
 		else:
 			if was_hopping:
@@ -110,14 +125,15 @@ func trample(new_coords):
 				get_node("/root/AnimationQueue").enqueue(self, "animate_hop", true, [current_coords - increment, current_coords, true])
 				was_hopping = false
 			else:
-				get_node("/root/AnimationQueue").enqueue(self, "animate_move", true, [current_coords, 400])
+				get_node("/root/AnimationQueue").enqueue(self, "animate_move", true, [current_coords, 350])
 
 	set_coords(new_coords)
 	placed()
 
 
 func animate_hop(old_coords, new_coords, down=false):
-	set_z(2)
+	self.mid_leaping_animation = true
+	set_z(3)
 	var old_location = get_parent().locations[old_coords]
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
@@ -139,7 +155,8 @@ func animate_hop(old_coords, new_coords, down=false):
 	get_node("Tween2").start()
 	yield(get_node("Tween2"), "tween_complete")
 	if(down):
-		set_z(-1)
+		set_z(0)
+	self.mid_leaping_animation = false
 	emit_signal("animation_done")
 
 
@@ -153,7 +170,7 @@ func charge_attack(new_coords, attack=false):
 	var difference = new_coords - self.coords
 	var tiles_travelled = get_parent().hex_length(difference) - 1
 	get_node("/root/AnimationQueue").enqueue(self, "animate_attack", true, [new_coords])
-	get_parent().pieces[new_coords].attacked(tiles_travelled)
+	get_parent().pieces[new_coords].attacked(get_charge_damage(tiles_travelled))
 	var position_coords = decrement_one(new_coords)
 	get_node("/root/AnimationQueue").enqueue(self, "animate_attack_end", true, [position_coords])
 	set_coords(position_coords)
@@ -178,7 +195,7 @@ func predict_charge_move(new_coords, attack=false):
 	#deal damage to every tile you passed over
 	while(current_coords != new_coords):
 		if get_parent().pieces.has(current_coords) and get_parent().pieces[current_coords].side == "ENEMY":
-			get_parent().pieces[current_coords].predict(TRAMPLE_DAMAGE, true)
+			get_parent().pieces[current_coords].predict(self.trample_damage, true)
 		tiles_passed += 1
 		current_coords = current_coords + increment
 
@@ -186,4 +203,8 @@ func predict_charge_move(new_coords, attack=false):
 		get_parent().pieces[new_coords + increment].predict(tiles_passed)
 
 func cast_ultimate():
-	pass
+	get_node("OverlayLayers/UltimateWhite").show()
+	self.ultimate_flag = true
+	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
+		player_piece.attack_bonus += 1
+		player_piece.movement_value += 1

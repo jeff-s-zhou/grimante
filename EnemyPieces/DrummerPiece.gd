@@ -12,7 +12,7 @@ func initialize(max_hp):
 	self.hover_description = DESCRIPTION
 	self.movement_value = Vector2(0, 2)
 	self.default_movement_value = Vector2(0, 2)
-	
+
 #okay, I think we need a system for temporary buffs?
 #every enemy turn, update all units in its column? after resetting all units? but then this update has to be called first...
 #a method call called aura effects? that's looped through before other shit?

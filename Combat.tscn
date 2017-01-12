@@ -162,6 +162,4 @@ autostart = false
 
 [node name="Tooltip" parent="." instance=ExtResource( 19 )]
 
-visibility/visible = false
-
 

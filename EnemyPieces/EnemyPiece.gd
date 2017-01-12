@@ -25,9 +25,6 @@ var prediction_flyover = null
 
 const flyover_prototype = preload("res://EnemyPieces/Flyover.tscn")
 
-var hover_description = ""
-var unit_name = ""
-
 signal hide_description
 
 signal broke_defenses
@@ -38,23 +35,26 @@ func _ready():
 	# Initialization here
 	get_node("ClickArea").connect("mouse_enter", self, "hover_highlight")
 	get_node("ClickArea").connect("mouse_exit", self, "hover_unhighlight")
-	get_node("Physicals/AnimatedSprite").set_z(-2)
-	get_node("Physicals/HealthDisplay").set_z(0)
+	get_node("Physicals/HealthDisplay").set_z(2)
 	add_to_group("enemy_pieces")
+	#self.check_global_seen()
 	self.side = "ENEMY"
 	#set_opacity(0)
-	
+
+
 func input_event(viewport, event, shape_idx):
 	if event.is_action("select"):
-		print("selecting")
 		if event.is_pressed():
 			get_parent().set_target(self)
-		
+
+
 func hover_highlight():
+	#emit_signal("description_data", self)
+	get_node("/root/Combat").display_description(self)
 	get_node("Timer").set_wait_time(0.01)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
-	emit_signal("description_data", self.unit_name, self.hover_description, false)
+	
 	if self.action_highlighted:
 		get_node("Physicals/EnemyOverlays/White").show()
 		get_node("Physicals/HealthDisplay/WhiteLayer").show()
@@ -63,7 +63,7 @@ func hover_highlight():
 
 	
 func hover_unhighlight():
-	emit_signal("hide_description")
+	#emit_signal("hide_description")
 	get_node("Physicals/EnemyOverlays/White").hide()
 	get_node("Physicals/HealthDisplay/WhiteLayer").hide()
 	if self.action_highlighted:
@@ -77,14 +77,14 @@ func movement_highlight():
 	get_node("Physicals/HealthDisplay/RedLayer").show()
 
 #called from grid to reset highlighting over the whole board
-func reset_highlight():
+func reset_highlight(right_click_flag=false):
 	self.action_highlighted = false
 	get_node("Physicals/EnemyOverlays/White").hide()
 	get_node("Physicals/HealthDisplay/WhiteLayer").hide()
 	
 	get_node("Physicals/EnemyOverlays/Orange").hide()
 	get_node("Physicals/HealthDisplay/OrangeLayer").hide()
-	
+	print("resetting normal highlighting")
 	reset_prediction_flyover()
 	
 	get_node("Physicals/EnemyOverlays/Red").hide()
@@ -92,6 +92,7 @@ func reset_highlight():
 
 
 func reset_prediction_highlight():
+	print("resetting prediction highlighting")
 	reset_prediction_flyover()
 	get_node("Physicals/EnemyOverlays/Orange").hide()
 	get_node("Physicals/HealthDisplay/OrangeLayer").hide()
@@ -112,6 +113,7 @@ func will_die_to(damage):
 	
 func reset_prediction_flyover():
 	get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
+	print("about to call reset prediction flyover")
 	get_node("Physicals/HealthDisplay/Label").set_text(str(self.temp_display_hp))
 	get_node("Physicals/HealthDisplay/Label").show()
 	self.predicting_hp = false
@@ -122,7 +124,7 @@ func reset_prediction_flyover():
 
 func animate_predict_hp(hp, value, color):
 	self.predicting_hp = true
-	self.mid_trailing_animation = true
+	print("about to call set temp display hp")
 	self.temp_display_hp = self.hp
 	get_node("Physicals/HealthDisplay/AnimationPlayer").play("HealthFlicker")
 	yield(get_node("Physicals/HealthDisplay/AnimationPlayer"), "finished")
@@ -138,7 +140,7 @@ func animate_predict_hp(hp, value, color):
 	if self.predicting_hp:
 		#right here is the conditional check
 		self.prediction_flyover = self.flyover_prototype.instance()
-		self.prediction_flyover.set_z(1)
+		self.prediction_flyover.set_z(4)
 		add_child(self.prediction_flyover)
 		var text = self.prediction_flyover.get_node("FlyoverText")
 		var value_text = str(value)
@@ -159,7 +161,6 @@ func animate_predict_hp(hp, value, color):
 		tween.start()
 		yield(tween, "tween_complete") #this is the problem line...fuuuuck
 		tween.queue_free()
-	self.mid_trailing_animation = false
 
 
 func predict(damage, is_passive_damage=false):
@@ -185,6 +186,13 @@ func smash_killed(damage):
 
 func animate_smash_killed():
 	get_node("Physicals").set_opacity(0)
+	
+func set_stunned(flag):
+	self.stunned = flag
+	if flag:
+		get_node("Physicals/EnemyEffects/StunSpiral").show()
+	else:
+		get_node("Physicals/EnemyEffects/StunSpiral").hide()
 
 
 func set_deadly(flag):
@@ -212,7 +220,6 @@ func animate_bubble_hide():
 func set_hp(hp):
 	self.hp = hp
 	self.temp_display_hp = self.hp
-	get_node("Physicals/HealthDisplay/Label").set_text(str(self.hp))
 
 
 func heal(amount):
@@ -247,20 +254,12 @@ func modify_hp(amount):
 func animate_set_hp(hp, value):
 	reset_prediction_flyover()
 	self.mid_trailing_animation = true
-#	var timer = Timer.new()
-#	add_child(timer)
 	get_node("AnimationPlayer").play("FlickerAnimation")
-	#get_node("Physicals/EnemyOverlays/AnimationPlayer").play("DamageFlickerAnimation")
-	
-#	timer.set_wait_time(1.0)
-#	timer.start()
-#	yield(timer, "timeout")
-#	remove_child(timer)
 
 	get_node("Physicals/HealthDisplay/Label").set_text(str(hp))
 	
 	var flyover = self.flyover_prototype.instance()
-	flyover.set_z(1)
+	flyover.set_z(4)
 	add_child(flyover)
 	var text = flyover.get_node("FlyoverText")
 	var value_text = str(value)
@@ -278,8 +277,6 @@ func animate_set_hp(hp, value):
 	yield(tween, "tween_complete") #this is the problem line...fuuuuck
 	flyover.queue_free()
 	tween.queue_free()
-#	remove_child(flyover)
-#	remove_child(tween)
 	self.mid_trailing_animation = false
 	
 	if hp == 0:
@@ -289,8 +286,10 @@ func animate_set_hp(hp, value):
 func delete_self():
 	get_node("/root/Combat/ComboSystem").increase_combo()
 	get_parent().remove_piece(self.coords)
-	remove_from_group("enemy_pieces")
 
+func animate_delete_self():
+	remove_from_group("enemy_pieces")
+	.animate_delete_self()
 
 func set_coords(coords):
 	get_parent().move_piece(self.coords, coords)
@@ -309,5 +308,9 @@ func reset_auras():
 
 #called at the start of enemy turn, after checking for aura effects
 func turn_update():
-	self.push(movement_value)
+	set_z(0)
+	if self.stunned:
+		set_stunned(false)
+	else:
+		self.push(movement_value)
 	reset_auras()

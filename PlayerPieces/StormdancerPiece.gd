@@ -1,12 +1,6 @@
 
 extends "PlayerPiece.gd"
 
-
-var ANIMATION_STATES = {"default":0, "moving":1}
-var animation_state = ANIMATION_STATES.default
-
-const TRAMPLE_DAMAGE = 2
-
 const UNIT_TYPE = "Stormdancer"
 const DESCRIPTION = """Unarmored
 
@@ -23,13 +17,27 @@ Ultimate: Storm. Deal damage to enemies on Rain tiles equal to the number of Rai
 
 
 const DEFAULT_BOLT_DAMAGE = 1
+const DEFAULT_MOVEMENT_VALUE = 2
 
-var bolt_damage = DEFAULT_BOLT_DAMAGE
+var bolt_damage = DEFAULT_BOLT_DAMAGE setget ,get_bolt_damage
+
 
 var rain_coords_dict = {}
 
 func _ready():
 	self.armor = 0
+	self.movement_value = DEFAULT_MOVEMENT_VALUE
+	self.unit_name = UNIT_TYPE
+	self.hover_description = DESCRIPTION
+	self.check_global_seen()
+
+func get_bolt_damage():
+	return self.attack_bonus + DEFAULT_BOLT_DAMAGE
+
+#not a true getter
+func get_storm_damage(num_rain_tiles):
+	return self.attack_bonus + num_rain_tiles
+	
 
 func set_coords(coords):
 	get_parent().locations[coords].set_rain(true)
@@ -41,7 +49,7 @@ func get_attack_range():
 
 
 func get_movement_range():
-	return get_parent().get_radial_range(self.coords)
+	return get_parent().get_radial_range(self.coords, [1, self.movement_value + 1])
 
 
 #parameters to use for get_node("get_parent()").get_neighbors
@@ -106,9 +114,11 @@ func predict(new_coords):
 
 
 func cast_ultimate():
+	self.ultimate_used_flag = true
 	get_node("/root/AnimationQueue").enqueue(get_node("/root/Combat"), "darken", true)
 	for coords in self.rain_coords_dict:
 		if get_parent().pieces.has(coords) and get_parent().pieces[coords].side == "ENEMY":
 			get_parent().locations[coords].activate_lightning()
-			get_parent().pieces[coords].attacked(self.rain_coords_dict.size())
+			get_parent().pieces[coords].set_stunned(true)
+			get_parent().pieces[coords].attacked(get_storm_damage(self.rain_coords_dict.size()))
 	get_node("/root/AnimationQueue").enqueue(get_node("/root/Combat"), "lighten", true)

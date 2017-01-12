@@ -1,8 +1,9 @@
 
 extends "PlayerPiece.gd"
 
-const BACKSTAB_DAMAGE = 2
-const PASSIVE_DAMAGE = 1
+const DEFAULT_BACKSTAB_DAMAGE = 2
+const DEFAULT_PASSIVE_DAMAGE = 1
+const DEFAULT_MOVEMENT_VALUE = 1
 const UNIT_TYPE = "Assassin"
 const DESCRIPTION = """Armored
 
@@ -18,16 +19,26 @@ Ultimate: Danse Macabre. Requires and spends 3 Combo Points. During this player 
 """
 const BEHIND = Vector2(0, -1)
 
-var backstab_damage = BACKSTAB_DAMAGE
-var passive_damage = PASSIVE_DAMAGE
+var backstab_damage = DEFAULT_BACKSTAB_DAMAGE setget , get_backstab_damage
+var passive_damage = DEFAULT_PASSIVE_DAMAGE setget , get_passive_damage
 
 var pathed_range
 
 func _ready():
 	self.armor = 0
+	self.movement_value = DEFAULT_MOVEMENT_VALUE
+	self.unit_name = UNIT_TYPE
+	self.hover_description = DESCRIPTION
+	self.check_global_seen()
+	
+func get_backstab_damage():
+	return self.attack_bonus + DEFAULT_BACKSTAB_DAMAGE
+	
+func get_passive_damage():
+	return self.attack_bonus + DEFAULT_PASSIVE_DAMAGE
 
 func get_movement_range():
-	self.pathed_range = get_parent().get_pathed_range(self.coords, 1)
+	self.pathed_range = get_parent().get_pathed_range(self.coords, self.movement_value)
 	return self.pathed_range.keys()
 	
 func get_attack_range():
@@ -123,16 +134,13 @@ func predict(new_coords):
 		get_parent().pieces[new_coords].predict(self.backstab_damage)
 
 func cast_ultimate():
-	get_node("OverlayLayers/UltimateWhite").show()
-#	if get_charge() == 3:
-	self.ultimate_flag = true
-	get_parent().reset_highlighting()
-	display_action_range()
-	set_charge(0)
+	if get_charge() == 3:
+		get_node("OverlayLayers/UltimateWhite").show()
+		self.ultimate_flag = true
+		get_parent().reset_highlighting()
+		display_action_range()
+		set_charge(0)
 	
-func placed():
-	get_node("OverlayLayers/UltimateWhite").hide()
-	.placed()
 	
 #same as regular placed() except doesn't reset the ultimate_flag
 func soft_placed(): 
@@ -150,7 +158,7 @@ func unplaced():
 func trigger_passive(attack_coords):
 	if _is_within_passive_range(attack_coords):
 		get_node("/root/AnimationQueue").enqueue(self, "animate_passive", true, [attack_coords])
-		get_parent().pieces[attack_coords].attacked(PASSIVE_DAMAGE)
+		get_parent().pieces[attack_coords].attacked(self.passive_damage)
 		if self.ultimate_flag:
 			unplaced()
 		get_node("/root/AnimationQueue").enqueue(self, "animate_passive_end", true, [self.coords])

@@ -1,8 +1,12 @@
 
 extends "PlayerPiece.gd"
 #extends KinematicBody2D
-const DAMAGE = 3
-const AOE_DAMAGE = 2
+const DEFAULT_DAMAGE = 3
+const DEFAULT_AOE_DAMAGE = 2
+const DEFAULT_MOVEMENT_VALUE = 2
+
+var damage = DEFAULT_DAMAGE setget , get_damage
+var aoe_damage = DEFAULT_AOE_DAMAGE setget , get_aoe_damage
 
 const ANIMATION_STATES = {"default":0, "moving":1, "jumping":2}
 
@@ -24,12 +28,23 @@ Ultimate: Earthshatter. Stun and attack all enemies in a line from the Berserker
 
 func _ready():
 	self.armor = 1
+	self.movement_value = DEFAULT_MOVEMENT_VALUE
+	self.unit_name = UNIT_TYPE
+	self.hover_description = DESCRIPTION
+	#self.check_global_seen()
+	
+func get_damage():
+	return self.attack_bonus + DEFAULT_DAMAGE
+	
+func get_aoe_damage():
+	return self.attack_bonus + DEFAULT_AOE_DAMAGE
+
 
 func get_attack_range():
-	return get_parent().get_radial_range(self.coords, [1, 3], "ENEMY")
+	return get_parent().get_radial_range(self.coords, [1, self.movement_value + 1], "ENEMY")
 	
 func get_movement_range():
-	return get_parent().get_radial_range(self.coords)
+	return get_parent().get_radial_range(self.coords, [1, self.movement_value + 1])
 
 #parameters to use for get_node("Grid").get_neighbors
 func display_action_range():
@@ -48,7 +63,8 @@ func play_smash_sound():
 	get_node("SamplePlayer2D").play("explode3")
 
 func jump_to(new_coords, speed=4):
-	set_z(2)
+	self.mid_leaping_animation = true
+	set_z(3)
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
@@ -69,13 +85,15 @@ func jump_to(new_coords, speed=4):
 	get_node("Tween").interpolate_callback(self, time/2 - 0.1, "play_smash_sound")
 	get_node("Tween2").start()
 	yield(get_node("Tween2"), "tween_complete")
-	set_z(-1)
+	self.mid_leaping_animation = false
+	set_z(0)
 	emit_signal("shake")
 	emit_signal("animation_done")
 
 	
 func jump_back(new_coords):
-	set_z(2)
+	self.mid_leaping_animation = true
+	set_z(3)
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
@@ -92,7 +110,8 @@ func jump_back(new_coords):
 		get_node("AnimatedSprite").get_pos(), old_height, time/2, Tween.TRANS_QUAD, Tween.EASE_IN)
 	get_node("Tween2").start()
 	yield(get_node("Tween2"), "tween_complete")
-	set_z(-1)
+	self.mid_leaping_animation = false
+	set_z(0)
 	emit_signal("animation_done")
 
 #called when an event happens inside the click area hitput
@@ -121,11 +140,11 @@ func act(new_coords):
 
 
 func smash_attack(new_coords):
-	if get_parent().pieces[new_coords].will_die_to(DAMAGE):
+	if get_parent().pieces[new_coords].will_die_to(self.damage):
 		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [new_coords, 350, false])
 		get_node("/root/AnimationQueue").enqueue(self, "jump_to", true, [new_coords])
 		
-		get_parent().pieces[new_coords].smash_killed(DAMAGE)
+		get_parent().pieces[new_coords].smash_killed(self.damage)
 		var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 		smash(smash_range)
 		set_coords(new_coords)
@@ -136,7 +155,7 @@ func smash_attack(new_coords):
 		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [new_coords, 350, false])
 		get_node("/root/AnimationQueue").enqueue(self, "jump_to", true, [new_coords])
 		
-		get_parent().pieces[new_coords].attacked(DAMAGE)
+		get_parent().pieces[new_coords].attacked(self.damage)
 		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords, 300, false])
 		get_node("/root/AnimationQueue").enqueue(self, "jump_back", true, [self.coords])
 		placed()
@@ -155,7 +174,7 @@ func smash_move(new_coords):
 
 func smash(smash_range):
 	for coords in smash_range:
-		get_parent().pieces[coords].attacked(AOE_DAMAGE)
+		get_parent().pieces[coords].attacked(self.aoe_damage)
 
 
 func predict(new_coords):
@@ -166,12 +185,12 @@ func predict(new_coords):
 
 
 func predict_smash_attack(new_coords):
-	if get_parent().pieces[new_coords].hp - DAMAGE <= 0:
-		get_parent().pieces[new_coords].predict(DAMAGE)
+	if get_parent().pieces[new_coords].hp - self.damage <= 0:
+		get_parent().pieces[new_coords].predict(self.damage)
 		var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 		predict_smash(smash_range)
 	else:
-		get_parent().pieces[new_coords].predict(DAMAGE)
+		get_parent().pieces[new_coords].predict(self.damage)
 
 func predict_smash_move(new_coords):
 	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
@@ -179,7 +198,7 @@ func predict_smash_move(new_coords):
 
 func predict_smash(smash_range):
 	for coords in smash_range:
-		get_parent().pieces[coords].predict(AOE_DAMAGE, true)
+		get_parent().pieces[coords].predict(self.aoe_damage, true)
 
 func cast_ultimate():
 	pass

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=1]
+[gd_scene load_steps=14 format=1]
 
 [ext_resource path="res://EnemyPieces/GruntPiece.gd" type="Script" id=1]
 [ext_resource path="res://EnemyPieces/EnemyCollisionArea.tscn" type="PackedScene" id=2]
@@ -9,12 +9,13 @@
 [ext_resource path="res://EnemyPieces/EnemyEffects.tscn" type="PackedScene" id=7]
 [ext_resource path="res://EnemyPieces/FlickerAnimation.tres" type="Animation" id=8]
 [ext_resource path="res://EnemyPieces/SummonAnimation.tres" type="Animation" id=9]
-[ext_resource path="res://Assets/processed_fonts/flyover.fnt" type="BitmapFont" id=10]
-[ext_resource path="res://EnemyPieces/EnemyClickArea.tscn" type="PackedScene" id=11]
+[ext_resource path="res://UI/SeenIcon.tscn" type="PackedScene" id=10]
+[ext_resource path="res://Assets/processed_fonts/flyover.fnt" type="BitmapFont" id=11]
+[ext_resource path="res://EnemyPieces/EnemyClickArea.tscn" type="PackedScene" id=12]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"attack_range", "speed":5.0 }, { "frames":[ ExtResource( 3 ), ExtResource( 4 ) ], "loop":true, "name":"damaged", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ), ExtResource( 4 ) ], "loop":true, "name":"damaged", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"attack_range", "speed":5.0 } ]
 
 [node name="GruntPiece" type="KinematicBody2D"]
 
@@ -53,6 +54,8 @@ playback/speed = 1.0
 blend_times = [  ]
 autoplay = ""
 
+[node name="SeenIcon" parent="." instance=ExtResource( 10 )]
+
 [node name="Flyover" type="Node2D" parent="."]
 
 [node name="FlyoverText" type="Label" parent="Flyover"]
@@ -66,7 +69,7 @@ margin/left = -25.0
 margin/top = 16.0
 margin/right = 19.0
 margin/bottom = 56.0
-custom_fonts/font = ExtResource( 10 )
+custom_fonts/font = ExtResource( 11 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 0
@@ -83,7 +86,7 @@ playback/active = false
 playback/repeat = false
 playback/speed = 1.0
 
-[node name="ClickArea" parent="." instance=ExtResource( 11 )]
+[node name="ClickArea" parent="." instance=ExtResource( 12 )]
 
 [node name="Timer" type="Timer" parent="."]
 

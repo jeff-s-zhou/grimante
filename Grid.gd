@@ -100,11 +100,12 @@ func get_at_location(coords):
 		return null
 	
 #done once a piece is moved by the player	
-func reset_highlighting():
+#right click flag is so if we know to check immediately after if cursor is still in a piece's area
+func reset_highlighting(right_click_flag=false):
 	for location in locations.values():
 		location.reset_highlight()
 	for piece in pieces.values():
-		piece.reset_highlight()
+		piece.reset_highlight(right_click_flag)
 
 #called when moved off of a tile while a player unit is selected
 func reset_prediction():
@@ -195,6 +196,16 @@ func get_range_helper(return_set, change_vector, coords, magnitude_range, side, 
 #calls both get_neighbors and get_diagonal_neighbors to provide a radial
 #TODO: broken with a radius 3 because hexagons. fix in case I ever need
 func get_radial_range(coords, radial_range=[1, 3], side=null, collision_check=false):
+	if radial_range[1] == 4:
+		#TODO: fix this hacky shit
+		var diagonal_range = get_diagonal_range(coords, [radial_range[0], 2], side, collision_check)
+		var diagonal_surrounding_range = []
+		for coords in diagonal_range:
+			diagonal_surrounding_range += get_range(coords, [1, 2], side)
+		
+		return get_range(coords, radial_range, side, collision_check) \
+		+ diagonal_range + diagonal_surrounding_range
+	
 	var diagonal_radial_range = [radial_range[0], radial_range[1] - 1]
 	return get_range(coords, radial_range, side, collision_check) \
 	+ get_diagonal_range(coords, diagonal_radial_range, side, collision_check)
@@ -219,14 +230,14 @@ class PathedCoords:
 
 
 #get a range if the unit were to take steps and avoid collisions
-func get_pathed_range(coords, steps):
+func get_pathed_range(coords, steps, side=null):
 	var return_range = {}
 	var explored_range = [PathedCoords.new(coords, 0, null) ]
 	while explored_range.size() > 0:
 		var current_pathed_coords = explored_range[0]
 		explored_range.pop_front()
 		if current_pathed_coords.steps < steps:
-			var neighbors = get_pathed_range_helper(current_pathed_coords, return_range)
+			var neighbors = get_pathed_range_helper(current_pathed_coords, return_range, side)
 			for neighbor_pathed_coords in neighbors:
 				if !return_range.has(neighbor_pathed_coords.coords):
 					return_range[neighbor_pathed_coords.coords] = neighbor_pathed_coords
@@ -236,9 +247,9 @@ func get_pathed_range(coords, steps):
 
 		
 #return all immediate neighbors as PathedCoords
-func get_pathed_range_helper(pathed_coords, return_range):
+func get_pathed_range_helper(pathed_coords, return_range, side=null):
 	var return_list = []
-	var neighbor_range = get_range(pathed_coords.coords)
+	var neighbor_range = get_range(pathed_coords.coords, [1, 2], side)
 	for coords in neighbor_range:
 		return_list.append(PathedCoords.new(coords, pathed_coords.steps + 1, pathed_coords))
 	return return_list

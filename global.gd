@@ -8,12 +8,14 @@ extends Node
 var current_scene = null
 var _params = null
 
+var seen_units = {"Pawn":true, "Berserker":true, "Cavalier":true}
+var seen_effect = {}
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	var root = get_tree().get_root()
 	current_scene = root.get_child( root.get_child_count() -1 )
-	print("autoloaded")
 	
 func goto_scene(path, params=null):
 	call_deferred("_deferred_goto_scene", path, params)

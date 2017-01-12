@@ -9,14 +9,15 @@ var States = {"LOCKED":0, "DEFAULT":1, "CLICKED": 2, "PLACED":3, "SELECTED":4}
 var state = States.PLACED
 var coords
 var cursor_area
-var name = ""
-
-var unit_name = null #temp for debugging, fix this discrepancy
 
 var cooldown = 0
 var ultimate_flag = false
 
+var ultimate_used_flag = false
+
 var armor = 0
+var movement_value = 1
+var attack_bonus = 0
 
 const SHOVE_SPEED = 4
 
@@ -37,7 +38,6 @@ func _ready():
 	get_node("ClickArea").connect("mouse_exit", self, "unhovered")
 	
 	set_process_input(true)
-	set_process(true)
 	self.side = "PLAYER"
 	
 func set_cooldown(cooldown):
@@ -54,17 +54,17 @@ func delete_self():
 
 func initialize(cursor_area):
 	self.cursor_area = cursor_area
-	set_z(-1)
 	add_to_group("player_pieces")
 	
 func turn_update():
+	set_z(0)
 	if self.cooldown > 0:
 		pass
 	else:
 		self.state = States.DEFAULT
 		get_node("Cooldown").hide()
 		get_node("AnimatedSprite").play("default")
-		if(get_node("ClickArea").overlaps_area(self.cursor_area)):
+		if(get_node("CollisionArea").overlaps_area(self.cursor_area)):
 			self.hovered()
 
 func set_coords(coords):
@@ -100,12 +100,14 @@ func assist_highlight():
 
 
 #called when the whole board's highlighting is reset
-func reset_highlight():
+func reset_highlight(right_click_flag=false):
 	get_node("OverlayLayers/White").hide()
 	get_node("OverlayLayers/Green").hide()
 	if(self.state != States.PLACED):
 		get_node("AnimatedSprite").play("default")
 		
+	if right_click_flag and get_node("CollisionArea").overlaps_area(self.cursor_area):
+			self.hovered()
 #	else:
 #		get_node("AnimatedSprite").play("cooldown")
 
@@ -127,7 +129,7 @@ func hover_highlight():
 
 #called on mouse exiting the ClickArea
 func unhovered():
-	emit_signal("hide_description")
+	#emit_signal("hide_description")
 	get_node("OverlayLayers/White").hide()
 	if get_parent().selected == null:
 		get_parent().reset_highlighting()
@@ -138,12 +140,13 @@ func unhovered():
 
 #called when hovered over during player turn		
 func hovered():
+	get_node("/root/Combat").display_description(self)
 	get_node("Timer").set_wait_time(0.01)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
 	if !self.mid_animation:
 		hover_highlight()
-	emit_signal("description_data", self.UNIT_TYPE, self.DESCRIPTION, true)
+	
 	if get_parent().selected == null and self.state != States.PLACED:
 		display_action_range()
 
@@ -155,7 +158,7 @@ func input_event(viewport, event, shape_idx):
 	if event.is_action("select") and !event.is_pressed() and get_node("UltimateBar").ultimate_charging:
 		get_node("UltimateBar").end_charging()
 
-	if event.is_action("select") and event.is_pressed():
+	if event.is_action("select") and event.is_pressed() and !self.ultimate_used_flag:
 		if get_parent().selected == null and self.state != States.PLACED:
 			get_parent().selected = self
 			self.state = States.CLICKED
@@ -187,11 +190,15 @@ func invalid_move():
 
 func placed():
 	get_node("/root/AnimationQueue").enqueue(self, "animate_placed", false)
-	self.ultimate_flag = false
+	if self.ultimate_flag:
+		self.ultimate_used_flag = true
+		self.ultimate_flag = false
 	self.state = States.PLACED
+	self.attack_bonus = 0
 	get_parent().selected = null
 
 func animate_placed():
+	get_node("OverlayLayers/UltimateWhite").hide()
 	if(self.cooldown > 0):
 		self.cooldown -= 1
 		get_node("Cooldown").show()
@@ -211,6 +218,7 @@ func display_action_range():
 	
 func cast_ultimate():
 	pass
+
 
 
 

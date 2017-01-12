@@ -37,7 +37,7 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(200, 140))
 	
-	#get_node("Grid").debug()
+	get_node("Grid").debug()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("Button").connect("pressed", self, "end_turn")
@@ -110,6 +110,7 @@ func initialize_piece(piece, column):
 	new_piece.initialize(get_node("CursorArea"))
 	var position = get_node("Grid").get_bottom_of_column(column)
 	get_node("Grid").add_piece(position, new_piece)
+	new_piece.check_global_seen()
 	new_piece.animate_summon()
 	yield(new_piece.get_node("Tween"), "tween_complete")
 	emit_signal("done_initializing")
@@ -140,14 +141,18 @@ func _input(event):
 		if get_node("Grid").selected:
 			get_node("Grid").selected.deselect()
 			get_node("Grid").selected = null
-			get_node("Grid").reset_highlighting()
-	
+			get_node("Grid").reset_highlighting(true)
+			
 	elif event.is_action("detailed_description"):
 		if event.is_pressed():
 			get_node("Tooltip").set_pos(get_viewport().get_mouse_pos())
-			get_node("Tooltip").show()
+			get_node("Tooltip").set_opacity(1)
+			#get_node("Tooltip").show()
+			get_node("Tooltip").resize()
 		else:
-			get_node("Tooltip").hide()
+			get_node("Tooltip").set_opacity(0)
+			#get_node("Tooltip").hide()
+
 			
 	elif event.is_action("debug_level_skip") and event.is_pressed():
 		if(self.next_level != null):
@@ -323,6 +328,7 @@ func deploy_wave():
 		enemy_piece.initialize(health)
 		enemy_piece.connect("broke_defenses", self, "damage_defenses")
 		enemy_piece.connect("description_data", self, "display_description")
+		#enemy_piece.check_global_seen()
 
 		var position
 		if typeof(key) == TYPE_INT:
@@ -345,9 +351,9 @@ func player_win():
 	set_process(false)
 	if get_node("/root/AnimationQueue").is_busy():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	get_node("Timer2").set_wait_time(3.0)
-	get_node("Timer2").start()
-	yield(get_node("Timer2"), "timeout")
+#	get_node("Timer2").set_wait_time(3.0)
+#	get_node("Timer2").start()
+#	yield(get_node("Timer2"), "timeout")
 	get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.next_level})
 	
 func enemy_win():
@@ -357,6 +363,9 @@ func enemy_win():
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
 	get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level":self.level})
+	
+func display_description(piece):
+	get_node("Tooltip").set(piece.unit_name, piece.hover_description)
 	
 func damage_defenses():
 	get_node("LivesSystem").lose_lives(1)
@@ -387,8 +396,3 @@ func handle_assassin_passive(attack_coords):
 	if self.assassin != null:
 		self.assassin.trigger_passive(attack_coords)
 	
-func display_description(name, text, player_unit_flag):
-	if !player_unit_flag:
-		get_node("Tooltip").set(name, text)
-
-

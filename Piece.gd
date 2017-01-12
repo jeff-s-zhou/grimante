@@ -10,6 +10,14 @@ signal animation_done
 
 var mid_animation = false
 
+var mid_leaping_animation = false
+
+var stunned = false
+
+var unit_name
+
+var hover_description
+
 signal description_data(name, description, player_unit_flag)
 
 
@@ -17,15 +25,49 @@ func _ready():
 	get_node("CollisionArea").connect("area_enter", self, "collide")
 	get_node("CollisionArea").connect("area_exit", self, "uncollide")
 	
-func collide(area):
-	print("calling collide")
-	if self.mid_animation:
-		print("this is the one moving: " + self.side )
+func set_seen(flag):
+	if flag:
+		get_node("SeenIcon").hide()
+		get_node("/root/global").seen_units[self.unit_name] = true
+		#hide all other similar icons by calling them to re-check against the global seen list
+		if self.side == "ENEMY":
+			for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
+				if enemy_piece != self:
+					enemy_piece.check_global_seen()
+		elif self.side == "PLAYER":
+			for player_piece in get_tree().get_nodes_in_group("player_pieces"):
+				if player_piece != self:
+					player_piece.check_global_seen()
 	else:
-		print("this is the one not moving: " + self.side )
+		get_node("SeenIcon").show()
+		
+		
+	
+func check_global_seen():
+	if get_node("/root/global").seen_units.has(self.unit_name):
+		get_node("SeenIcon").hide()
+	else:
+		get_node("SeenIcon").show()
+	
+
+	
+func collide(area):
+	if self.mid_animation and !self.mid_leaping_animation: #If leaping, it'll set its own z above everythin else
+		print("this is the one moving: " + self.side )
+		var other_piece = area.get_parent()
+		print(other_piece)
+		if other_piece.get_pos().y > get_pos().y:
+			other_piece.set_z(get_z() + 1)
+		else:
+			other_piece.set_z(get_z() - 1)
 	
 func uncollide(area):
-	print("calling uncollide")
+	if area.get_name() != "CursorArea": #make sure it's not the thing that checks for mouse inside areas
+		if self.mid_animation:
+			print("calling uncollide")
+			var other_piece = area.get_parent()
+			other_piece.set_z(0)
+		
 
 func set_mid_animation(flag):
 	self.mid_animation = flag

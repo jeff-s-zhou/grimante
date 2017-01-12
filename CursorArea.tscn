@@ -9,7 +9,7 @@ radius = 2.0
 
 [node name="CursorArea" type="Area2D"]
 
-input/pickable = true
+input/pickable = false
 shapes/0/shape = SubResource( 1 )
 shapes/0/transform = Matrix32( 1, 0, 0, 1, 0, 0 )
 shapes/0/trigger = false

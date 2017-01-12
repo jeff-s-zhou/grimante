@@ -5,12 +5,11 @@ extends Area2D
 # var a=2
 # var b="textvar"
 
-var po
-
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	set_process_input(true)
+	
 	
 	
 func _input(ev):

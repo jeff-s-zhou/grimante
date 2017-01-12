@@ -14,6 +14,7 @@ func initialize(max_hp):
 	self.default_movement_value = Vector2(0, 1)
 	
 	
+	
 func turn_update():
 	set_hp(self.hp + 1)
 	.turn_update()

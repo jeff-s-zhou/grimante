@@ -10,8 +10,14 @@ const texture_path = "res://Assets/archer_piece.png"
 var ANIMATION_STATES = {"default":0, "moving":1}
 var animation_state = ANIMATION_STATES.default
 
-var SHOOT_DAMAGE = 4
-var PASSIVE_DAMAGE = 2
+const DEFAULT_SHOOT_DAMAGE = 4
+const DEFAULT_PASSIVE_DAMAGE = 2
+const DEFAULT_MOVEMENT_VALUE = 2
+
+var shoot_damage = DEFAULT_SHOOT_DAMAGE setget , get_shoot_damage
+var passive_damage = DEFAULT_PASSIVE_DAMAGE setget , get_passive_damage
+
+
 
 var velocity
 var new_position
@@ -36,6 +42,16 @@ Ultimate: Envision Death. For the rest of this Player Phase, immediately before 
 	
 func _ready():
 	self.armor = 0
+	self.movement_value = DEFAULT_MOVEMENT_VALUE
+	self.unit_name = UNIT_TYPE
+	self.hover_description = DESCRIPTION
+	#self.check_global_seen()
+	
+func get_shoot_damage():
+	return self.attack_bonus + DEFAULT_SHOOT_DAMAGE
+	
+func get_passive_damage():
+	return self.attack_bonus + DEFAULT_PASSIVE_DAMAGE
 
 func get_attack_range():
 	var attack_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", true)
@@ -43,7 +59,7 @@ func get_attack_range():
 	return attack_range + attack_range_diagonal
 
 func get_movement_range():
-	self.pathed_range = get_parent().get_pathed_range(self.coords, 2)
+	self.pathed_range = get_parent().get_pathed_range(self.coords, self.movement_value)
 	return self.pathed_range.keys()
 	
 func get_step_shot_coords(coords):
@@ -80,12 +96,12 @@ func act(new_coords):
 		set_coords(new_coords)
 		var coords = get_step_shot_coords(self.coords)
 		if coords != null:
-			ranged_attack(coords, PASSIVE_DAMAGE)
+			ranged_attack(coords, self.passive_damage)
 		placed()
 
 	#elif the tile selected is within attack range
 	elif _is_within_attack_range(new_coords):
-		ranged_attack(new_coords, SHOOT_DAMAGE)
+		ranged_attack(new_coords, self.shoot_damage)
 		get_node("/root/Combat").handle_assassin_passive(new_coords)
 		placed()
 		
@@ -126,7 +142,7 @@ func animate_ranged_attack(new_coords):
 	
 	get_node("Tween 2").interpolate_property(arrow, "transform/pos", arrow.get_pos(), new_arrow_pos, time, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	print("time to fire arrow is " + str(time))
-	get_node("Tween 2").interpolate_callback(self, time - 0.15, "play_bow_hit")
+	get_node("Tween 2").interpolate_callback(self, max(time - 0.15, 0), "play_bow_hit")
 	get_node("Tween 2").start()
 	yield(get_node("Tween 2"), "tween_complete")
 	arrow.set_opacity(0)
@@ -152,8 +168,12 @@ func predict(new_coords):
 
 
 func predict_ranged_attack(new_coords, passive=false):
-	get_parent().pieces[new_coords].predict(SHOOT_DAMAGE, passive)
-	
+	pass
+	if passive:
+		get_parent().pieces[new_coords].predict(self.passive_damage, passive)
+	else:
+		get_parent().pieces[new_coords].predict(self.shoot_damage, passive)
+#	
 	
 func cast_ultimate():
 	get_node("OverlayLayers/UltimateWhite").show()
@@ -173,6 +193,3 @@ func trigger_ultimate(attack_coords):
 func display_overwatch():
 	pass
 	
-func animate_placed():
-	get_node("OverlayLayers/UltimateWhite").hide()
-	.animate_placed()

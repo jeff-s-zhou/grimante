@@ -7,6 +7,8 @@ extends "PlayerPiece.gd"
 var ANIMATION_STATES = {"default":0, "moving":1}
 var animation_state = ANIMATION_STATES.default
 
+const DEFAULT_MOVEMENT_VALUE = 1
+
 const UNIT_TYPE = "Knight"
 const DESCRIPTION = """Armor: 2
 Movement: 1 range step
@@ -15,8 +17,10 @@ Attack: Shove. 1 range, pushes target back and also pushes targets behind them. 
 	
 func _ready():
 	self.armor = 1
-
-
+	self.movement_value = DEFAULT_MOVEMENT_VALUE
+	self.unit_name = UNIT_TYPE
+	self.hover_description = DESCRIPTION
+	
 func get_movement_range():
 	return get_parent().get_range(self.coords)
 	
