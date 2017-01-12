@@ -7,7 +7,7 @@ extends "EnemyPiece.gd"
 var DESCRIPTION = "Causes all enemy pieces in the column to move +1 tiles each turn."
 
 func initialize(max_hp):
-	set_hp(max_hp)
+	initialize_hp(max_hp)
 	self.unit_name = "Shrieker"
 	self.hover_description = DESCRIPTION
 	self.movement_value = Vector2(0, 2)

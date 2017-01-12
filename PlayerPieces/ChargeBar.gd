@@ -14,7 +14,9 @@ func _ready():
 
 func set_charge(charge):
 	self.charge = charge
+	get_node("/root/AnimationQueue").enqueue(self, "animate_set_charge", false, [charge])
 	
+func animate_set_charge(charge):
 	if charge == 0:
 		hide()
 	

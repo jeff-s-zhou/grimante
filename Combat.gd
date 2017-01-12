@@ -37,7 +37,7 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(200, 140))
 	
-	get_node("Grid").debug()
+	#get_node("Grid").debug()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("Button").connect("pressed", self, "end_turn")
@@ -142,15 +142,16 @@ func _input(event):
 			get_node("Grid").selected.deselect()
 			get_node("Grid").selected = null
 			get_node("Grid").reset_highlighting(true)
+			get_node("Grid").reset_prediction()
 			
 	elif event.is_action("detailed_description"):
 		if event.is_pressed():
 			get_node("Tooltip").set_pos(get_viewport().get_mouse_pos())
 			get_node("Tooltip").set_opacity(1)
 			#get_node("Tooltip").show()
-			get_node("Tooltip").resize()
 		else:
 			get_node("Tooltip").set_opacity(0)
+			get_node("Tooltip").set_pos(Vector2(-300, -300))
 			#get_node("Tooltip").hide()
 
 			
@@ -328,7 +329,6 @@ func deploy_wave():
 		enemy_piece.initialize(health)
 		enemy_piece.connect("broke_defenses", self, "damage_defenses")
 		enemy_piece.connect("description_data", self, "display_description")
-		#enemy_piece.check_global_seen()
 
 		var position
 		if typeof(key) == TYPE_INT:
@@ -341,6 +341,8 @@ func deploy_wave():
 			get_node("Grid").pieces[position].push(enemy_piece.get_movement_value())
 		get_node("Grid").add_piece(position, enemy_piece)
 		
+		enemy_piece.get_node("Sprinkles").set_particle_endpoint(get_node("ComboSystem/ComboPointsLabel").get_global_pos())
+		enemy_piece.check_global_seen()
 		enemy_piece.animate_summon()
 		yield(enemy_piece.get_node("Tween"), "tween_complete" )
 		get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.size()))
@@ -365,6 +367,7 @@ func enemy_win():
 	get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level":self.level})
 	
 func display_description(piece):
+	piece.set_seen(true)
 	get_node("Tooltip").set(piece.unit_name, piece.hover_description)
 	
 func damage_defenses():

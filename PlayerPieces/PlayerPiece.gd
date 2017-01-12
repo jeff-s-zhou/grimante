@@ -177,6 +177,7 @@ func deselect():
 
 func select_action_target(target):
 	get_parent().reset_highlighting()
+	get_parent().reset_prediction()
 	get_node("BlueGlow").hide()
 	act(target.coords)
 

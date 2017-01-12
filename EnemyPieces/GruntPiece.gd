@@ -9,7 +9,7 @@ var max_hp = 5
 var DESCRIPTION = "Basic Enemy. Moves forward 1 tile each turn."
 
 func initialize(max_hp):
-	set_hp(max_hp)
+	initialize_hp(max_hp)
 	#set_deadly(true)
 	self.unit_name = "Pawn"
 	self.hover_description = DESCRIPTION

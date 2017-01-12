@@ -85,7 +85,7 @@ func reset_highlight(right_click_flag=false):
 	get_node("Physicals/EnemyOverlays/Orange").hide()
 	get_node("Physicals/HealthDisplay/OrangeLayer").hide()
 	print("resetting normal highlighting")
-	reset_prediction_flyover()
+	#reset_prediction_flyover() #it's this one lol
 	
 	get_node("Physicals/EnemyOverlays/Red").hide()
 	get_node("Physicals/HealthDisplay/RedLayer").hide()
@@ -113,7 +113,7 @@ func will_die_to(damage):
 	
 func reset_prediction_flyover():
 	get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
-	print("about to call reset prediction flyover")
+	print("about to call reset prediction flyover with " + str(self.temp_display_hp))
 	get_node("Physicals/HealthDisplay/Label").set_text(str(self.temp_display_hp))
 	get_node("Physicals/HealthDisplay/Label").show()
 	self.predicting_hp = false
@@ -220,10 +220,15 @@ func animate_bubble_hide():
 func set_hp(hp):
 	self.hp = hp
 	self.temp_display_hp = self.hp
+	
+func initialize_hp(hp):
+	self.hp = hp
+	self.temp_display_hp = self.hp
+	get_node("Physicals/HealthDisplay/Label").set_text(str(hp))
 
 
-func heal(amount):
-	modify_hp(amount)
+func heal(amount, delay=0.0):
+	modify_hp(amount, delay)
 
 
 func attacked(amount):
@@ -243,19 +248,21 @@ func nonlethal_attacked(damage):
 		get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [self.hp, amount])
 
 
-func modify_hp(amount):
+func modify_hp(amount, delay=0.0):
 	self.hp = (max(0, self.hp + amount))
 	self.temp_display_hp = self.hp
-	get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [self.hp, amount])
+	get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [self.hp, amount, delay])
 	if self.hp <= 0:
 		delete_self()
 	
 
-func animate_set_hp(hp, value):
+func animate_set_hp(hp, value, delay=0.0):
 	reset_prediction_flyover()
 	self.mid_trailing_animation = true
-	get_node("AnimationPlayer").play("FlickerAnimation")
-
+	if delay > 0.0:
+		get_node("Timer").set_wait_time(delay)
+		get_node("Timer").start()
+		yield(get_node("Timer"), "timeout")
 	get_node("Physicals/HealthDisplay/Label").set_text(str(hp))
 	
 	var flyover = self.flyover_prototype.instance()
@@ -266,6 +273,8 @@ func animate_set_hp(hp, value):
 	if value > 0:
 		value_text = "+" + value_text
 		text.set("custom_colors/font_color", Color(0,1,0))
+	else:
+		get_node("AnimationPlayer").play("FlickerAnimation")
 	text.set_opacity(1.0)
 	text.set_text(value_text)
 	var destination = text.get_pos() - Vector2(0, 200)
@@ -284,12 +293,19 @@ func animate_set_hp(hp, value):
 
 
 func delete_self():
-	get_node("/root/Combat/ComboSystem").increase_combo()
+	
 	get_parent().remove_piece(self.coords)
 
 func animate_delete_self():
+	
 	remove_from_group("enemy_pieces")
-	.animate_delete_self()
+	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	get_node("Sprinkles").animate_sprinkles()
+	yield(get_node("Sprinkles"), "animation_done")
+	get_node("/root/Combat/ComboSystem").increase_combo()
+	self.queue_free()
 
 func set_coords(coords):
 	get_parent().move_piece(self.coords, coords)

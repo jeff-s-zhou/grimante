@@ -26,7 +26,7 @@ func make_complex_tip(tip_text, objective_text, tooltips):
 var sandbox_allies = {1: Knight, 2: Stormdancer, 3:Berserker, 4:Assassin, 6:Cavalier, 5:Archer}
 
 var sandbox_enemies = [
-{ Vector2(2, 4):make(Grunt, 2), Vector2(4, 5):make(Fortifier, 3), Vector2(5, 4):make(Drummer, 3), Vector2(5, 5):make(Grunt, 3)}
+{ Vector2(4, 6):make(Fortifier, 3), Vector2(5, 6):make(Grunt, 2)}
 ]
 
 var Sandbox_Level = {"allies": sandbox_allies, "enemies":sandbox_enemies, "initial_deploy_count":3,
@@ -119,10 +119,10 @@ var Level2 = {"allies": level2_allies, "enemies":level2_enemies, "initial_deploy
 var level1_allies = {4: Berserker}
 
 var level1_enemies = [
-{ Vector2(4, 4): make(Grunt, 6), 1: make(Grunt, 2), Vector2(1, 1): make(Grunt, 2)},
-{2: make(Grunt, 2)},
-{3: make(Grunt, 2), 4: make(Grunt, 3), 5: make(Grunt, 2)},
-{4: make(Grunt, 2)},
+{ Vector2(4, 4): make(Grunt, 6), 1: make(Grunt, 1), Vector2(1, 1): make(Grunt, 1)},
+{2: make(Grunt, 1)},
+{3: make(Grunt, 1), 4: make(Grunt, 3), 5: make(Grunt, 1)},
+{4: make(Grunt, 1)},
 ]
 
 var complex_tooltip1 = [{"coords":Vector2(4, 9), "text":"Click on the Berserker to select it."}, {"coords":Vector2(4, 7), "text": "Click on this tile to move the Berserker here."}]
