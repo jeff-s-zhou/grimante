@@ -162,4 +162,6 @@ autostart = false
 
 [node name="Tooltip" parent="." instance=ExtResource( 19 )]
 
+transform/pos = Vector2( -300, -300 )
+
 

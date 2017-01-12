@@ -151,7 +151,7 @@ func _input(event):
 			#get_node("Tooltip").show()
 		else:
 			get_node("Tooltip").set_opacity(0)
-			get_node("Tooltip").set_pos(Vector2(-300, -300))
+			get_node("Tooltip").set_pos(Vector2(-500, -500))
 			#get_node("Tooltip").hide()
 
 			

@@ -64,7 +64,6 @@ func collide(area):
 func uncollide(area):
 	if area.get_name() != "CursorArea": #make sure it's not the thing that checks for mouse inside areas
 		if self.mid_animation:
-			print("calling uncollide")
 			var other_piece = area.get_parent()
 			other_piece.set_z(0)
 		
@@ -89,9 +88,7 @@ func animate_move_to_pos(position, speed, blocking=false, trans_type=Tween.TRANS
 	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
 	get_node("Tween").start()
 	if blocking:
-		print("blocking move_to_pos")
 		yield(get_node("Tween"), "tween_complete")
-		print("move_to_pos done")
 		emit_signal("animation_done")
 	
 
@@ -135,6 +132,7 @@ func push(distance, pusher=null):
 
 func move_or_fall_off(distance):
 	if get_parent().locations.has(self.coords + distance):
+		print("got here")
 		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance, 250, false])
 		set_coords(self.coords + distance)
 	else:
@@ -149,7 +147,7 @@ func move_or_fall_off(distance):
 			fall_off_pos = get_parent().locations[fall_off_coords].get_pos() 
 			#var fall_off_distance = 30 * (fall_off_pos - get_pos()).normalized()
 			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [fall_off_pos, 250, true])
-		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", true)
+		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
 
 		if self.side == "ENEMY" and get_parent().hex_normalize(distance) == Vector2(0, 1):
 				emit_signal("broke_defenses")

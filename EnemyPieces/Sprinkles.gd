@@ -5,6 +5,7 @@ extends Node2D
 # var b = "textvar"
 
 signal animation_done
+var particle_endpoint
 
 func _ready():
 	# Called every time the node is added to the scene.
@@ -12,7 +13,12 @@ func _ready():
 	pass
 	
 func set_particle_endpoint(global_pos):
+	self.particle_endpoint = global_pos
 	get_node("ParticleAttractor2D").set_global_pos(global_pos)
+
+#need to update the position of the attractor because it'll move relative to the piece
+func update():
+	get_node("ParticleAttractor2D").set_global_pos(self.particle_endpoint)
 
 func animate_sprinkles():
 	print("animating sprinkles!!!!!")

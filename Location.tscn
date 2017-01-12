@@ -29,7 +29,7 @@ samples/tile_hover = { "db":-20.0, "pitch":0.9, "sample":ExtResource( 7 ) }
 
 [node name="Location" type="Area2D"]
 
-z/z = -3
+z/z = -10
 input/pickable = true
 shapes/0/shape = SubResource( 1 )
 shapes/0/transform = Matrix32( 0.5, 0, 0, 0.5, 0, 0 )

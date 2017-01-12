@@ -4,7 +4,7 @@ extends "PlayerPiece.gd"
 var ANIMATION_STATES = {"default":0, "moving":1}
 var animation_state = ANIMATION_STATES.default
 
-const DEFAULT_TRAMPLE_DAMAGE = 1
+const DEFAULT_TRAMPLE_DAMAGE = 2
 const DEFAULT_MOVEMENT_VALUE = 11
 
 var trample_damage = DEFAULT_TRAMPLE_DAMAGE setget , get_trample_damage

@@ -50,6 +50,9 @@ func get_attack_range():
 
 func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value + 1])
+	
+func get_swap_range():
+	pass
 
 
 #parameters to use for get_node("get_parent()").get_neighbors

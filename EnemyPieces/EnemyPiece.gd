@@ -185,7 +185,8 @@ func smash_killed(damage):
 
 
 func animate_smash_killed():
-	get_node("Physicals").set_opacity(0)
+	get_node("Physicals").hide()
+
 	
 func set_stunned(flag):
 	self.stunned = flag
@@ -324,9 +325,11 @@ func reset_auras():
 
 #called at the start of enemy turn, after checking for aura effects
 func turn_update():
+	
 	set_z(0)
 	if self.stunned:
 		set_stunned(false)
 	else:
 		self.push(movement_value)
+		get_node("Sprinkles").update()
 	reset_auras()
