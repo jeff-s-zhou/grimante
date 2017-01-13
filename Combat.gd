@@ -17,6 +17,8 @@ var level = null
 var reload_level = null
 var next_level = null
 
+var tabbed_flag #to check if a current description is tabbed in
+
 signal enemy_turn_finished
 signal wave_deployed
 signal next_pressed
@@ -104,7 +106,6 @@ func initialize_piece(piece, column):
 		self.assassin = new_piece
 	new_piece.set_opacity(0)
 	new_piece.connect("invalid_move", self, "handle_invalid_move")
-	new_piece.connect("description_data", self, "display_description")
 	new_piece.connect("pre_attack", self, "handle_archer_ultimate")
 	new_piece.connect("shake", self, "screen_shake")
 	new_piece.initialize(get_node("CursorArea"))
@@ -144,16 +145,36 @@ func _input(event):
 			get_node("Grid").reset_highlighting(true)
 			get_node("Grid").reset_prediction()
 			
-	elif event.is_action("detailed_description"):
-		if event.is_pressed():
-			get_node("Tooltip").set_pos(get_viewport().get_mouse_pos())
-			get_node("Tooltip").set_opacity(1)
-			#get_node("Tooltip").show()
-		else:
-			get_node("Tooltip").set_opacity(0)
-			get_node("Tooltip").set_pos(Vector2(-500, -500))
-			#get_node("Tooltip").hide()
-
+	elif event.is_action("detailed_description") :
+		
+		
+		if event.is_pressed() and !event.is_echo():
+			var hovered_piece = get_node("CursorArea").get_piece_hovered()
+			if hovered_piece.side == "ENEMY":
+				hovered_piece.set_seen(true)
+				self.enemy_tooltip_flag = true
+				get_node("Tooltip").set(hovered_piece.unit_name, hovered_piece.hover_description)
+				get_node("Tooltip").set_pos(get_viewport().get_mouse_pos())
+				get_node("Tooltip").set_opacity(1)
+			else: #elif hovered_piece.side == "PLAYER"
+				self.player_info_flag = true
+				get_node("PhaseShifter/AnimationPlayer").play("start_blur")
+				darken(0.2, 0.1)
+				get_node("PlayerPieceInfo").set_info(hovered_piece.unit_name, hovered_piece.overview_description, \
+	 			hovered_piece.attack_description, hovered_piece.passive_description, hovered_piece.ultimate_description)
+				get_node("PlayerPieceInfo").show()
+				
+				
+		elif !event.is_pressed() and !event.is_echo():
+			if self.enemy_tooltip_flag:
+				self.enemy_tooltip_flag = false
+				get_node("Tooltip").set_opacity(0)
+				get_node("Tooltip").set_pos(Vector2(-500, -500))
+			elif self.player_info_flag: #elif hovered_piece.side == "PLAYER"
+				self.player_info_flag = false
+				lighten(0.2, 0.1)
+				get_node("PhaseShifter/AnimationPlayer").play("end_blur")
+				get_node("PlayerPieceInfo").hide()
 			
 	elif event.is_action("debug_level_skip") and event.is_pressed():
 		if(self.next_level != null):
@@ -328,7 +349,6 @@ func deploy_wave():
 		var enemy_piece = prototype.instance()
 		enemy_piece.initialize(health)
 		enemy_piece.connect("broke_defenses", self, "damage_defenses")
-		enemy_piece.connect("description_data", self, "display_description")
 
 		var position
 		if typeof(key) == TYPE_INT:
@@ -366,9 +386,6 @@ func enemy_win():
 	yield(get_node("Timer2"), "timeout")
 	get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level":self.level})
 	
-func display_description(piece):
-	piece.set_seen(true)
-	get_node("Tooltip").set(piece.unit_name, piece.hover_description)
 	
 func damage_defenses():
 	get_node("LivesSystem").lose_lives(1)

@@ -6,6 +6,11 @@ extends "res://Piece.gd"
 
 var States = {"LOCKED":0, "DEFAULT":1, "CLICKED": 2, "PLACED":3, "SELECTED":4}
 
+var overview_description
+var attack_description
+var passive_description
+var ultimate_description
+
 var state = States.PLACED
 var coords
 var cursor_area
@@ -22,7 +27,6 @@ var attack_bonus = 0
 const SHOVE_SPEED = 4
 
 signal invalid_move
-signal hide_description
 signal shake
 
 signal pre_attack(attack_coords)
@@ -129,7 +133,6 @@ func hover_highlight():
 
 #called on mouse exiting the ClickArea
 func unhovered():
-	#emit_signal("hide_description")
 	get_node("OverlayLayers/White").hide()
 	if get_parent().selected == null:
 		get_parent().reset_highlighting()
@@ -140,7 +143,6 @@ func unhovered():
 
 #called when hovered over during player turn		
 func hovered():
-	get_node("/root/Combat").display_description(self)
 	get_node("Timer").set_wait_time(0.01)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")

@@ -12,3 +12,4 @@ func _ready():
 #
 func _input_event(viewport, event, shape_idx):
 	get_parent().input_event(viewport, event, shape_idx)
+

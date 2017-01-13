@@ -11,23 +11,28 @@ var trample_damage = DEFAULT_TRAMPLE_DAMAGE setget , get_trample_damage
 
 
 const UNIT_TYPE = "Cavalier"
-const DESCRIPTION = """Armored.
+const OVERVIEW_DESCRIPTION = """Armored.
 
 Movement: Able to move to any empty tile along a straight line.
+"""
 
-Passive: Trample. Moving through an enemy unit deals 2 damage to it.
+const PASSIVE_DESCRIPTION = """Trample. Moving through an enemy unit deals 2 damage to it.
+"""
 
-Attack: Charge. Run in a straight line, hitting the first enemy in the line for damage equal to the number of tiles travelled.
+const ATTACK_DESCRIPTION = """Charge. Run in a straight line, hitting the first enemy in the line for damage equal to the number of tiles travelled.
+"""
 
-Ultimate: Rally! For the rest of this Player Phase, all allied units have +1 movement and deal +1 damage.
+const ULTIMATE_DESCRIPTION = """Rally! For the rest of this Player Phase, all allied units have +1 movement and deal +1 damage.
 """
 
 func _ready():
 	self.armor = 1
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.hover_description = DESCRIPTION
-	#self.check_global_seen()
+	self.overview_description = OVERVIEW_DESCRIPTION
+	self.attack_description = ATTACK_DESCRIPTION
+	self.passive_description = PASSIVE_DESCRIPTION
+	self.ultimate_description = ULTIMATE_DESCRIPTION
 	
 func get_trample_damage():
 	return self.attack_bonus + DEFAULT_TRAMPLE_DAMAGE

@@ -27,6 +27,7 @@ samples/tile_hover = { "db":0.0, "pitch":0.7, "sample":ExtResource( 16 ) }
 
 [node name="StormdancerPiece" type="KinematicBody2D"]
 
+visibility/visible = false
 input/pickable = false
 collision/layers = 1
 collision/mask = 1
@@ -45,13 +46,15 @@ transform/pos = Vector2( 0, -4 )
 frames = SubResource( 1 )
 animation = "default"
 
-[node name="BlurLayer" type="Sprite" parent="."]
+[node name="ShunpoParts" type="Node2D" parent="."]
+
+[node name="BlurLayer" type="Sprite" parent="ShunpoParts"]
 
 visibility/opacity = 0.0
 transform/pos = Vector2( 0, -4 )
 texture = ExtResource( 7 )
 
-[node name="WindLayer" type="Sprite" parent="."]
+[node name="WindLayer" type="Sprite" parent="ShunpoParts"]
 
 visibility/visible = false
 transform/pos = Vector2( 0, -4 )

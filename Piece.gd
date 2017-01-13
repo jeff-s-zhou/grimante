@@ -16,10 +16,6 @@ var stunned = false
 
 var unit_name
 
-var hover_description
-
-signal description_data(name, description, player_unit_flag)
-
 
 func _ready():
 	get_node("CollisionArea").connect("area_enter", self, "collide")

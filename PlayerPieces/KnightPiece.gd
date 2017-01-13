@@ -10,16 +10,25 @@ var animation_state = ANIMATION_STATES.default
 const DEFAULT_MOVEMENT_VALUE = 1
 
 const UNIT_TYPE = "Knight"
-const DESCRIPTION = """Armor: 2
+const OVERVIEW_DESCRIPTION = """Armor: 2
+
 Movement: 1 range step
-Attack: Shove. 1 range, pushes target back and also pushes targets behind them. Can push friendly units and not KO them.
 """
+
+const ATTACK_DESCRIPTION = """"Shove. 1 range, pushes target back and also pushes targets behind them. Can push friendly units and not KO them.
+"""
+
+const PASSIVE_DESCRIPTION = ""
+const ULTIMATE_DESCRIPTION = ""
 	
 func _ready():
 	self.armor = 1
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.hover_description = DESCRIPTION
+	self.overview_description = OVERVIEW_DESCRIPTION
+	self.attack_description = ATTACK_DESCRIPTION
+	self.passive_description = PASSIVE_DESCRIPTION
+	self.ultimate_description = ULTIMATE_DESCRIPTION
 	
 func get_movement_range():
 	return get_parent().get_range(self.coords)

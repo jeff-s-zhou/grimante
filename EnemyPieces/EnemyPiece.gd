@@ -25,9 +25,9 @@ var prediction_flyover = null
 
 const flyover_prototype = preload("res://EnemyPieces/Flyover.tscn")
 
-signal hide_description
-
 signal broke_defenses
+
+var hover_description
 
 
 func _ready():
@@ -49,8 +49,6 @@ func input_event(viewport, event, shape_idx):
 
 
 func hover_highlight():
-	#emit_signal("description_data", self)
-	get_node("/root/Combat").display_description(self)
 	get_node("Timer").set_wait_time(0.01)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
@@ -63,7 +61,6 @@ func hover_highlight():
 
 	
 func hover_unhighlight():
-	#emit_signal("hide_description")
 	get_node("Physicals/EnemyOverlays/White").hide()
 	get_node("Physicals/HealthDisplay/WhiteLayer").hide()
 	if self.action_highlighted:

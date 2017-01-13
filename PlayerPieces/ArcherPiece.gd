@@ -28,24 +28,26 @@ signal animation_finished
 
 const UNIT_TYPE = "Archer"
 
-const DESCRIPTION = """Unarmored.
+const OVERVIEW_DESCRIPTION = """Unarmored.
 
 Movement: 2 range step
-
-Attack: Snipe. Fire an arrow at the first enemy in a line for 4 damage. Can target diagonally. Allies will block the shot.
-
-Passive: Step Shot. After moving, the Archer fires a (weaker) Snipe Attack directly north for 2 damage.
-
-Ultimate: Envision Death. For the rest of this Player Phase, immediately before an enemy takes direct damage (NOT passive) within Snipe range, Snipe the enemy. 
 """
-	
-	
+const ATTACK_DESCRIPTION = """Snipe. Fire an arrow at the first enemy in a line for 4 damage. Can target diagonally. Allies will block the shot.
+"""
+const PASSIVE_DESCRIPTION = """Step Shot. After moving, the Archer fires a (weaker) Snipe Attack directly north for 2 damage.
+"""
+const ULTIMATE_DESCRIPTION = """Envision Death. For the rest of this Player Phase, immediately before an enemy takes direct damage (NOT passive) within Snipe range, Snipe the enemy. 
+"""
+
+
 func _ready():
 	self.armor = 0
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.hover_description = DESCRIPTION
-	#self.check_global_seen()
+	self.overview_description = OVERVIEW_DESCRIPTION
+	self.attack_description = ATTACK_DESCRIPTION
+	self.passive_description = PASSIVE_DESCRIPTION
+	self.ultimate_description = ULTIMATE_DESCRIPTION
 	
 func get_shoot_damage():
 	return self.attack_bonus + DEFAULT_SHOOT_DAMAGE

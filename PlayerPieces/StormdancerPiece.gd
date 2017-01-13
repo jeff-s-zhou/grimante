@@ -2,17 +2,20 @@
 extends "PlayerPiece.gd"
 
 const UNIT_TYPE = "Stormdancer"
-const DESCRIPTION = """Unarmored
+const OVERVIEW_DESCRIPTION = """Unarmored
 
 Movement: 2 range leap
+"""
 
-Attack. Lightning Strike. Deal 1 damage to any enemy on the map.
+const ATTACK_DESCRIPTION = """Lightning Strike. Deal 1 damage to any enemy on the map.
+"""
 
-Passive: Rain Dance. Moving to a tile casts Rain on the tile. 
+const PASSIVE_DESCRIPTION = """Rain Dance. Moving to a tile casts Rain on the tile. 
 
-Passive: Tango. Select an allied unit within movement range to swap positions with it.
+Tango. Select an allied unit within movement range to swap positions with it.
+"""
 
-Ultimate: Storm. Deal damage to enemies on Rain tiles equal to the number of Rain Tiles on the map. Stun all enemies hit. Rain tiles that dealt damage disappear.
+const ULTIMATE_DESCRIPTION = """Storm. Deal damage to enemies on Rain tiles equal to the number of Rain Tiles on the map. Stun all enemies hit. Rain tiles that dealt damage disappear.
 """
 
 
@@ -28,8 +31,10 @@ func _ready():
 	self.armor = 0
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.hover_description = DESCRIPTION
-	self.check_global_seen()
+	self.overview_description = OVERVIEW_DESCRIPTION
+	self.attack_description = ATTACK_DESCRIPTION
+	self.passive_description = PASSIVE_DESCRIPTION
+	self.ultimate_description = ULTIMATE_DESCRIPTION
 
 func get_bolt_damage():
 	return self.attack_bonus + DEFAULT_BOLT_DAMAGE

@@ -5,18 +5,21 @@ const DEFAULT_BACKSTAB_DAMAGE = 2
 const DEFAULT_PASSIVE_DAMAGE = 1
 const DEFAULT_MOVEMENT_VALUE = 1
 const UNIT_TYPE = "Assassin"
-const DESCRIPTION = """Armored
+const OVERVIEW_DESCRIPTION = """Armored
 
 Movement: 1 range step
-
-Attack: Backstab. 2 range. Teleport behind an enemy and deal 2 damage. Will fail if there is a unit behind the enemy.
-
-Passive: Opportunity Strikes. If an adjacent enemy takes direct damage (NOT passive), attack it for 1 damage.
-
-Passive: Combo. Killing a unit builds 1 Combo Point. 
-
-Ultimate: Danse Macabre. Requires and spends 3 Combo Points. During this player phase, killing an enemy allows the Assassin to act again.
 """
+
+const ATTACK_DESCRIPTION = """Backstab. 2 range. Teleport behind an enemy and deal 2 damage. Will fail if there is a unit behind the enemy.
+"""
+
+const PASSIVE_DESCRIPTION = """Opportunity Strikes. If an adjacent enemy takes direct damage (NOT passive), attack it for 1 damage.
+
+Combo. Killing a unit builds 1 Combo Point."""
+
+const ULTIMATE_DESCRIPTION = """Danse Macabre. Requires and spends 3 Combo Points. During this player phase, killing an enemy allows the Assassin to act again.
+"""
+
 const BEHIND = Vector2(0, -1)
 
 var backstab_damage = DEFAULT_BACKSTAB_DAMAGE setget , get_backstab_damage
@@ -28,8 +31,10 @@ func _ready():
 	self.armor = 0
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.hover_description = DESCRIPTION
-	self.check_global_seen()
+	self.overview_description = OVERVIEW_DESCRIPTION
+	self.attack_description = ATTACK_DESCRIPTION
+	self.passive_description = PASSIVE_DESCRIPTION
+	self.ultimate_description = ULTIMATE_DESCRIPTION
 	
 func get_backstab_damage():
 	return self.attack_bonus + DEFAULT_BACKSTAB_DAMAGE

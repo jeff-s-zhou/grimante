@@ -14,15 +14,17 @@ var animation_state = ANIMATION_STATES.default
 
 const UNIT_TYPE = "Berserker"
 
-const DESCRIPTION = """Armored.
+const OVERVIEW_DESCRIPTION = """Armored.
 
 Movement: 2 range leap
+"""
 
-Attack: Leap Strike. Deal 3 damage to an enemy within movement range. If the enemy is killed by the attack, move to its tile.
+const ATTACK_DESCRIPTION = """Leap Strike. Deal 3 damage to an enemy within movement range. If the enemy is killed by the attack, move to its tile.
+"""
+const PASSIVE_DESCRIPTION = """Ground Slam. Moving to a tile deals 2 damage to all units around your destination.
+"""
 
-Passive: Ground Slam. Moving to a tile deals 2 damage to all units around your destination.
-
-Ultimate: Earthshatter. Stun and attack all enemies in a line from the Berserker, damage starting at 5 and decreasing by 1 for each enemy hit.
+const ULTIMATE_DESCRIPTION = """Earthshatter. Stun and attack all enemies in a line from the Berserker, damage starting at 5 and decreasing by 1 for each enemy hit.
 """
 
 
@@ -30,8 +32,10 @@ func _ready():
 	self.armor = 1
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.hover_description = DESCRIPTION
-	#self.check_global_seen()
+	self.overview_description = OVERVIEW_DESCRIPTION
+	self.attack_description = ATTACK_DESCRIPTION
+	self.passive_description = PASSIVE_DESCRIPTION
+	self.ultimate_description = ULTIMATE_DESCRIPTION
 	
 func get_damage():
 	return self.attack_bonus + DEFAULT_DAMAGE

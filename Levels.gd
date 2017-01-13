@@ -48,7 +48,7 @@ var level5_enemies = [
 ]
 
 var level5_instructions = [
-make_tip("Have no fear, the Knight is here! Hold Spacebar over the Knight to learn its abilities.", "", null, "")
+make_tip("Have no fear, the Knight is here! Hold Tab over the Knight to learn its abilities.", "", null, "")
 ]
 
 var Level5 = {"allies": level5_allies, "enemies":level5_enemies, "initial_deploy_count":3,
@@ -68,7 +68,7 @@ var level4_instructions = [
 make_tip("Each Player Unit can move once per turn. To quickly end your turn, you can press END TURN on the sidebar." \
 ,"", null, ""),
 make_tip("Remaining Enemy Waves are deployed from the top of the screen.", "", null, ""),
-make_tip("The Archer has arrived! Hold Space over the Archer learn how to use this Unit.", "", null, ""),
+make_tip("The Archer has arrived! Hold Tab over the Archer learn how to use this Unit.", "", null, ""),
 make_tip("The Archer has 0 Armor, so if it gets pushed it's KOed.", "Win", null, ""),
 ]
 
@@ -88,7 +88,7 @@ var level3_enemies = [
 {Vector2(3, 8): make(Grunt, 2), Vector2(4, 9): make(Grunt, 2), Vector2(5, 9): make(Grunt, 2)}
 ]
 var level3_instructions = [
-make_tip("If you need a refresher on a Unit, hold spacebar over a Unit for a summary.", "Smash!", Vector2(4, 8), ""),
+make_tip("If you need a refresher on a Unit, hold Tab over a Unit for a summary.", "Smash!", Vector2(4, 8), ""),
 make_tip("Enemies will push Player Units forward. If a Player Unit is pushed off the map, it is KOed.", \
 "Don't let the Berserker get KOed.", null, ""),
 make_tip("You LOSE if an enemy exits from the bottom of the map or all Player Units are KOed.", "Don't lose.", null, "")
