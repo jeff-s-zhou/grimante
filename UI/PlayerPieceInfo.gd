@@ -16,9 +16,11 @@ func _ready():
 	
 func set_info(unit_name, overview_text, active_text, passive_text, ultimate_text):
 	get_node("Label").set_text(unit_name)
+	yield(get_tree(), "idle_frame")
 	var label_x = get_viewport_rect().size.width/2 - get_node("Label").get_size().width/2
 	get_node("Label").set_pos(Vector2(label_x, 200))
 	get_node("TabContainer/OVERVIEW").set_bbcode(overview_text)
 	get_node("TabContainer/ATTACK").set_bbcode(active_text)
 	get_node("TabContainer/PASSIVE").set_bbcode(passive_text)
-	get_node("TabContainer/ULTIMATE").set_bbcode(ultimate_text)
+	if get_node("/root/global").ultimates_enabled_flag:
+		get_node("TabContainer/ULTIMATE").set_bbcode(ultimate_text)

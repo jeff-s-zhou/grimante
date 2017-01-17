@@ -4,7 +4,7 @@ extends "EnemyPiece.gd"
 # var a=2
 # var b="textvar"
 
-var DESCRIPTION = "When this enemy dies, +1 hp to adjacent enemies."
+var DESCRIPTION = "When this enemy dies, +2 hp to adjacent enemies."
 
 func initialize(max_hp):
 	initialize_hp(max_hp)
@@ -20,5 +20,5 @@ func delete_self():
 	var neighbor_coords_range = get_parent().get_range(self.coords, [1,2], "ENEMY")
 	for coords in neighbor_coords_range:
 		var neighbor = get_parent().pieces[coords]
-		neighbor.heal(1, 1.5) #delay it by 1.5 so it happens when this piece dies
+		neighbor.heal(2, 1.5) #delay it by 1.5 so it happens when this piece dies
 	

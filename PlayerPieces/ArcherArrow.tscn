@@ -2,8 +2,9 @@
 
 [ext_resource path="res://Assets/Allies/archer_arrow2.png" type="Texture" id=1]
 
-
 [node name="ArcherArrow" type="Node2D"]
+
+z/z = 4
 
 [node name="Sprite" type="Sprite" parent="."]
 

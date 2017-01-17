@@ -6,7 +6,7 @@
 [ext_resource path="res://Assets/processed_fonts/tutorial_popup.fnt" type="BitmapFont" id=4]
 [ext_resource path="res://Assets/processed_fonts/ui_large_text.fnt" type="BitmapFont" id=5]
 
-[sub_resource type="StyleBoxFlat" id=2]
+[sub_resource type="StyleBoxFlat" id=1]
 
 content_margin/left = 12.0
 content_margin/right = 12.0
@@ -19,7 +19,7 @@ border_size = 0
 border_blend = false
 draw_bg = true
 
-[sub_resource type="StyleBoxFlat" id=3]
+[sub_resource type="StyleBoxFlat" id=2]
 
 content_margin/left = 12.0
 content_margin/right = 12.0
@@ -32,7 +32,7 @@ border_size = 3
 border_blend = false
 draw_bg = true
 
-[sub_resource type="StyleBoxFlat" id=1]
+[sub_resource type="StyleBoxFlat" id=3]
 
 content_margin/left = 20.0
 content_margin/right = 20.0
@@ -61,9 +61,9 @@ margin/left = 16.0
 margin/top = 91.0
 margin/right = 616.0
 margin/bottom = 491.0
-custom_styles/tab_fg = SubResource( 2 )
-custom_styles/tab_bg = SubResource( 3 )
-custom_styles/panel = SubResource( 1 )
+custom_styles/tab_fg = SubResource( 1 )
+custom_styles/tab_bg = SubResource( 2 )
+custom_styles/panel = SubResource( 3 )
 custom_fonts/font = ExtResource( 2 )
 custom_constants/label_valign_fg = 5
 custom_constants/hseparation = 47
@@ -100,10 +100,10 @@ focus/ignore_mouse = false
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
-margin/left = 0.0
-margin/top = 37.0
-margin/right = 0.0
-margin/bottom = 0.0
+margin/left = 20.0
+margin/top = 57.0
+margin/right = 20.0
+margin/bottom = 20.0
 custom_fonts/bold_font = ExtResource( 3 )
 custom_fonts/normal_font = ExtResource( 4 )
 bbcode/enabled = false
@@ -119,10 +119,10 @@ focus/ignore_mouse = false
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
-margin/left = 0.0
-margin/top = 37.0
-margin/right = 0.0
-margin/bottom = 0.0
+margin/left = 20.0
+margin/top = 57.0
+margin/right = 20.0
+margin/bottom = 20.0
 custom_fonts/bold_font = ExtResource( 3 )
 custom_fonts/normal_font = ExtResource( 4 )
 bbcode/enabled = false
@@ -138,14 +138,14 @@ focus/ignore_mouse = false
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
-margin/left = 0.0
-margin/top = 37.0
-margin/right = 0.0
-margin/bottom = 0.0
+margin/left = 20.0
+margin/top = 57.0
+margin/right = 20.0
+margin/bottom = 20.0
 custom_fonts/bold_font = ExtResource( 3 )
 custom_fonts/normal_font = ExtResource( 4 )
 bbcode/enabled = false
-bbcode/bbcode = "Envision Death. For the rest of this Player Phase, immediately before an enemy takes direct damage (NOT passive) within Snipe range, Snipe the enemy. "
+bbcode/bbcode = ""
 visible_characters = -1
 
 [node name="Label" type="Label" parent="."]
@@ -156,10 +156,10 @@ size_flags/horizontal = 2
 size_flags/vertical = 0
 margin/left = 13.0
 margin/top = 12.0
-margin/right = 291.0
+margin/right = 213.0
 margin/bottom = 75.0
 custom_fonts/font = ExtResource( 5 )
-text = "Berserker"
+text = "Archer"
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1

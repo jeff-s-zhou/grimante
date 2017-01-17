@@ -39,9 +39,6 @@ func process_animations():
 		var node = animation_action["node"]
 		var blocking = animation_action["blocking"]
 		var func_ref = animation_action["func_ref"]
-		print("processing animation")
-		print(func_ref)
-		print(OS.get_ticks_msec())
 		var args = animation_action["args"]
 		if node.has_method("set_mid_animation"):
 			node.set_mid_animation(true)

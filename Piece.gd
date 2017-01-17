@@ -20,7 +20,8 @@ var unit_name
 func _ready():
 	get_node("CollisionArea").connect("area_enter", self, "collide")
 	get_node("CollisionArea").connect("area_exit", self, "uncollide")
-	
+
+
 func set_seen(flag):
 	if flag:
 		get_node("SeenIcon").hide()
@@ -36,17 +37,15 @@ func set_seen(flag):
 					player_piece.check_global_seen()
 	else:
 		get_node("SeenIcon").show()
-		
-		
-	
+
+
 func check_global_seen():
 	if get_node("/root/global").seen_units.has(self.unit_name):
 		get_node("SeenIcon").hide()
 	else:
 		get_node("SeenIcon").show()
-	
 
-	
+
 func collide(area):
 	if self.mid_animation and !self.mid_leaping_animation: #If leaping, it'll set its own z above everythin else
 		print("this is the one moving: " + self.side )
@@ -128,7 +127,6 @@ func push(distance, pusher=null):
 
 func move_or_fall_off(distance):
 	if get_parent().locations.has(self.coords + distance):
-		print("got here")
 		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance, 250, false])
 		set_coords(self.coords + distance)
 	else:

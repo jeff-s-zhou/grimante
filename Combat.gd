@@ -19,6 +19,9 @@ var next_level = null
 
 var tabbed_flag #to check if a current description is tabbed in
 
+var enemy_tooltip_flag
+var player_info_flag
+
 signal enemy_turn_finished
 signal wave_deployed
 signal next_pressed
@@ -39,7 +42,7 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(200, 140))
 	
-	#get_node("Grid").debug()
+	get_node("Grid").debug()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("Button").connect("pressed", self, "end_turn")
@@ -57,8 +60,8 @@ func _ready():
 	var temp_allies = {}
 	soft_copy_dict(level["allies"], temp_allies)
 	var allies = temp_allies
-	for column in allies.keys():
-		initialize_piece(allies[column], column)
+	for key in allies.keys():
+		initialize_piece(allies[key], key)
 	
 	var temp_enemies = []
 	soft_copy_array(level["enemies"], temp_enemies)
@@ -75,6 +78,11 @@ func _ready():
 	#we store the initial wave count as the first value in the array
 	var initial_deploy_count = level["initial_deploy_count"]
 	
+	if level.has("flags"):
+		var flags = level["flags"]
+		for flag in flags:
+			if flag == "ultimates_enabled_flag":
+				get_node("/root/global").ultimates_enabled_flag = true
 	
 	for i in range(0, initial_deploy_count):
 		if self.enemy_waves.size() > 0:
@@ -98,7 +106,7 @@ func soft_copy_array(source, target):
 		target.push_back(item)
 
 	
-func initialize_piece(piece, column):
+func initialize_piece(piece, key):
 	var new_piece = piece.instance()
 	if new_piece.UNIT_TYPE == "Archer":
 		self.archer = new_piece
@@ -108,9 +116,16 @@ func initialize_piece(piece, column):
 	new_piece.connect("invalid_move", self, "handle_invalid_move")
 	new_piece.connect("pre_attack", self, "handle_archer_ultimate")
 	new_piece.connect("shake", self, "screen_shake")
-	new_piece.initialize(get_node("CursorArea"))
-	var position = get_node("Grid").get_bottom_of_column(column)
+	
+	
+	var position
+	if typeof(key) == TYPE_INT:
+		position = get_node("Grid").get_bottom_of_column(key)
+	else:
+		position = key #that way when we need to we can specify by coordinates
+	
 	get_node("Grid").add_piece(position, new_piece)
+	new_piece.initialize(get_node("CursorArea")) #placed afterwards because we might need the piece to be on the grid	
 	new_piece.check_global_seen()
 	new_piece.animate_summon()
 	yield(new_piece.get_node("Tween"), "tween_complete")
@@ -146,25 +161,27 @@ func _input(event):
 			get_node("Grid").reset_prediction()
 			
 	elif event.is_action("detailed_description") :
-		
-		
 		if event.is_pressed() and !event.is_echo():
 			var hovered_piece = get_node("CursorArea").get_piece_hovered()
-			if hovered_piece.side == "ENEMY":
+			if hovered_piece == null:
+				return
+			
+			elif hovered_piece.side == "ENEMY":
 				hovered_piece.set_seen(true)
 				self.enemy_tooltip_flag = true
-				get_node("Tooltip").set(hovered_piece.unit_name, hovered_piece.hover_description)
+				get_node("Tooltip").set_info(hovered_piece.unit_name, hovered_piece.hover_description, hovered_piece.modifier_descriptions)
 				get_node("Tooltip").set_pos(get_viewport().get_mouse_pos())
 				get_node("Tooltip").set_opacity(1)
 			else: #elif hovered_piece.side == "PLAYER"
 				self.player_info_flag = true
+				hovered_piece.set_seen(true)
 				get_node("PhaseShifter/AnimationPlayer").play("start_blur")
 				darken(0.2, 0.1)
 				get_node("PlayerPieceInfo").set_info(hovered_piece.unit_name, hovered_piece.overview_description, \
 	 			hovered_piece.attack_description, hovered_piece.passive_description, hovered_piece.ultimate_description)
 				get_node("PlayerPieceInfo").show()
-				
-				
+
+
 		elif !event.is_pressed() and !event.is_echo():
 			if self.enemy_tooltip_flag:
 				self.enemy_tooltip_flag = false
@@ -175,10 +192,15 @@ func _input(event):
 				lighten(0.2, 0.1)
 				get_node("PhaseShifter/AnimationPlayer").play("end_blur")
 				get_node("PlayerPieceInfo").hide()
-			
+
+
 	elif event.is_action("debug_level_skip") and event.is_pressed():
 		if(self.next_level != null):
 			get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.next_level})
+			
+			
+	elif event.is_action("restart") and event.is_pressed():
+		get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level})
 	
 	elif event.is_action("toggle_fullscreen") and event.is_pressed():
 		if OS.is_window_fullscreen():
@@ -239,6 +261,7 @@ func enemy_phase(enemy_pieces):
 	#if there are enemy pieces, wait for them to finish
 	if(get_tree().get_nodes_in_group("enemy_pieces").size() > 0):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
+
 
 	if self.enemy_waves.size() > 0:
 		deploy_wave()
@@ -346,8 +369,12 @@ func deploy_wave():
 		var prototype_parts = wave[key]
 		var prototype = prototype_parts["prototype"]
 		var health = prototype_parts["health"]
+		var modifiers = prototype_parts["modifiers"]
+		
 		var enemy_piece = prototype.instance()
 		enemy_piece.initialize(health)
+		
+		
 		enemy_piece.connect("broke_defenses", self, "damage_defenses")
 
 		var position
@@ -358,9 +385,19 @@ func deploy_wave():
 		
 		#push any player pieces if they're on the spawn point
 		if(get_node("Grid").pieces.has(position)):
-			get_node("Grid").pieces[position].push(enemy_piece.get_movement_value())
+			get_node("Grid").pieces[position].push(Vector2(0, 1))
 		get_node("Grid").add_piece(position, enemy_piece)
 		
+		if modifiers != null:
+			print("caught modifiers!")
+			for modifier in modifiers:
+				print(modifier)
+				if modifier == get_node("/root/constants").enemy_modifiers["Poisonous"]:
+					enemy_piece.set_deadly(true)
+				elif modifier == get_node("/root/constants").enemy_modifiers["Shield"]:
+					enemy_piece.set_shield(true)
+
+
 		enemy_piece.get_node("Sprinkles").set_particle_endpoint(get_node("ComboSystem/ComboPointsLabel").get_global_pos())
 		enemy_piece.check_global_seen()
 		enemy_piece.animate_summon()
@@ -371,17 +408,26 @@ func deploy_wave():
 
 func player_win():
 	set_process(false)
+	self.state = STATES.transitioning
 	if get_node("/root/AnimationQueue").is_busy():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-#	get_node("Timer2").set_wait_time(3.0)
-#	get_node("Timer2").start()
-#	yield(get_node("Timer2"), "timeout")
+	for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
+		if enemy_piece.mid_trailing_animation:
+			return
+	get_node("Timer2").set_wait_time(3.0)
+	get_node("Timer2").start()
+	yield(get_node("Timer2"), "timeout")
 	get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.next_level})
 	
 func enemy_win():
+	set_process(false)
+	self.state = STATES.transitioning
 	if get_node("/root/AnimationQueue").is_busy():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	get_node("Timer2").set_wait_time(3.0)
+	for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
+		if enemy_piece.mid_trailing_animation:
+			return
+	get_node("Timer2").set_wait_time(0.6)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
 	get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level":self.level})

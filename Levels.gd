@@ -11,9 +11,12 @@ const Knight = preload("res://PlayerPieces/KnightPiece.tscn")
 const Assassin = preload("res://PlayerPieces/AssassinPiece.tscn")
 const Stormdancer = preload("res://PlayerPieces/StormdancerPiece.tscn")
 
+var enemy_modifiers = load("res://constants.gd").new().enemy_modifiers
+var shield_modifier = enemy_modifiers["Shield"]
+var poisonous_modifier = enemy_modifiers["Poisonous"]
 
-func make(prototype, health):
-	return {"prototype": prototype, "health": health}
+func make(prototype, health, modifiers=null):
+	return {"prototype": prototype, "health": health, "modifiers":modifiers}
 	
 	
 func make_tip(tip_text, objective_text, arrow_coords, text):
@@ -23,19 +26,77 @@ func make_tip(tip_text, objective_text, arrow_coords, text):
 func make_complex_tip(tip_text, objective_text, tooltips):
 	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
 	
-var sandbox_allies = {4: Knight}
+var sandbox_allies = {1: Cavalier, Vector2(7, 10): Berserker}
 
 var sandbox_enemies = [
-{ Vector2(4, 7):make(Fortifier, 3), Vector2(4, 8):make(Grunt, 2), Vector2(4, 6):make(Grunt, 2), Vector2(4, 5):make(Grunt, 2)},
-{ Vector2(4, 4): make(Grunt, 2), Vector2(4, 3): make(Grunt, 2), Vector2(4, 2): make(Grunt, 2) }
+{Vector2(7,7):make(Grunt, 5), Vector2(7,8):make(Grunt, 2), 3: make(Grunt, 4)}
 ]
 
-var Sandbox_Level = {"allies": sandbox_allies, "enemies":sandbox_enemies, "initial_deploy_count":3,
+var Sandbox_Level = {"allies": sandbox_allies, "enemies":sandbox_enemies, "initial_deploy_count":2,
 "instructions":[], "reinforcements": {}, "next_level":null}
+
+
+#LEVEL 8
+var level8_allies = {2: Stormdancer, 3: Cavalier, 4:Archer, 5:Assassin, 6: Berserker}
+
+var level8_enemies = [
+{Vector2(1, 3): make(Grunt, 3), Vector2(5, 5): make(Drummer, 2), Vector2(7, 6): make(Drummer, 2)},
+{1: make(Grunt, 4), 2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous_modifier]), 6: make(Grower, 2)},
+{4: make(Grower, 2, [shield_modifier]), 5: make(Drummer, 4, [shield_modifier]), 6: make(Grunt, 3), 7: make(Grunt, 2)},
+{0: make(Grower, 2), 2: make(Drummer, 2), 3: make(Fortifier, 3), 5: make(Grunt, 5), 8: make(Drummer, 2)},
+{1: make(Grower, 2, [shield_modifier]), 3: make(Grunt, 5, [poisonous_modifier]), 4: make(Grunt, 4, [poisonous_modifier]), 7: make(Grunt, 4)},
+{0: make(Grower, 1), 4: make(Grunt, 7, [shield_modifier, poisonous_modifier]), 7: make(Drummer, 3, [shield_modifier])},
+{2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous_modifier]), 6: make(Grower, 2)},
+]
+
+var level8_instructions = [
+	make_tip("Enemies now have Modifier abilities! Press Tab to read about any new abilities.", "", null, "")
+]
+
+var Level8 = {"allies":level8_allies, "enemies":level8_enemies, "initial_deploy_count":3,
+"instructions":[], "reinforcements":{}, "next_level":null}
+
+
+
+#LEVEL 7
+var level7_allies = {3: Archer, 4: Berserker, 5:Cavalier, 6:Assassin}
+
+var level7_enemies = [
+{Vector2(7, 6): make(Drummer, 2), 1: make(Grunt, 4), 2: make(Grunt, 3), 4: make(Grunt, 2), 5: make(Grunt, 4), 6: make(Grunt, 2)},
+{3: make(Fortifier, 2), 4: make(Grunt, 5), 5: make(Grower, 2), 6: make(Fortifier, 5)},
+{0: make(Grower, 1), 3: make(Grunt, 3), 4: make(Drummer, 2), 6: make(Grower, 1), 8: make(Grower, 1)},
+{2: make(Grunt, 6), 5: make(Grower, 1), 6: make(Grunt, 2), 7: make(Grunt, 3)},
+{0: make(Grunt, 4), 3: make(Fortifier, 3), 4: make(Grower, 1), 5: make(Drummer, 4)},
+{1: make(Grunt, 4), 2: make(Grunt, 3), 4: make(Grunt, 4), 5: make(Grower, 3)},
+{2: make(Grunt, 2), 3: make(Drummer, 1), 5: make(Fortifier, 2), 7: make(Grunt, 2)}
+]
+
+var level7_instructions = [
+	make_tip("Remember to press Tab to learn about new units (and Ultimate abilities)!", "", null, "")
+]
+
+var Level7 = {"allies":level7_allies, "enemies":level7_enemies, "initial_deploy_count":3,
+"instructions":level7_instructions, "reinforcements": {}, "next_level":Level8}
+
+#LEVEL 6
+var level6_allies = {Vector2(4, 3): Berserker}
+
+var level6_enemies = [
+	{  Vector2(4, 9):make(Grunt, 2), Vector2(4, 8):make(Grunt, 2), Vector2(4, 7):make(Grunt, 3), Vector2(4, 6):make(Grunt, 5), },
+	{  3: make(Grunt, 3), 4: make(Grunt, 2)}
+]
+
+var level6_instructions = [
+	make_tip("Select a unit and then hold Left Click on it to activate its Ultimate Ability.", "Use your ultimate (animation not yet implemented sorry!).", null, ""),
+	make_tip("With some exceptions, Ultimates may only be used once per level.", "", null, "")
+]
+
+var Level6 = {"allies": level6_allies, "enemies":level6_enemies, "initial_deploy_count":3,
+"instructions":level6_instructions, "reinforcements": {}, "next_level":Level7, "flags":["ultimates_enabled_flag"]}
 
 #LEVEL 5
 
-var level5_allies = {3: Cavalier, 5: Knight, 4:Berserker, 6:Archer}
+var level5_allies = {3: Berserker, 4: Cavalier, 5:Archer}
 
 var level5_enemies = [
 	{2: make(Grunt, 5), 4: make(Grunt, 5), 6:make(Grunt, 3), 7:make(Grunt, 4)},
@@ -48,11 +109,12 @@ var level5_enemies = [
 ]
 
 var level5_instructions = [
-make_tip("Have no fear, the Knight is here! Hold Tab over the Knight to learn its abilities.", "", null, "")
+make_tip("", "", null, ""),
+make_tip("Elite Enemies with special abilities are colored Grey.", "Hold Tab over them to learn their abilities.", null, "")
 ]
 
 var Level5 = {"allies": level5_allies, "enemies":level5_enemies, "initial_deploy_count":3,
-"instructions":level5_instructions, "reinforcements": {}, "next_level":null}
+"instructions":level5_instructions, "reinforcements": {}, "next_level":Level6}
 	
 #LEVEL 4
 var level4_allies = {3: Berserker, 4: Cavalier}
@@ -67,9 +129,9 @@ var level4_enemies = [
 var level4_instructions = [
 make_tip("Each Player Unit can move once per turn. To quickly end your turn, you can press END TURN on the sidebar." \
 ,"", null, ""),
-make_tip("Remaining Enemy Waves are deployed from the top of the screen.", "", null, ""),
+make_tip("Right click or press Escape to de-select a Player Unit.", "", null, ""),
 make_tip("The Archer has arrived! Hold Tab over the Archer learn how to use this Unit.", "", null, ""),
-make_tip("The Archer has 0 Armor, so if it gets pushed it's KOed.", "Win", null, ""),
+make_tip("The Archer has 0 Armor, so if it gets pushed it's KOed. Units with 0 Armor are partially transparent.", "Win", null, ""),
 ]
 
 var level4_reinforcements = {3:{7: Archer}}
@@ -91,7 +153,7 @@ var level3_instructions = [
 make_tip("If you need a refresher on a Unit, hold Tab over a Unit for a summary.", "Smash!", Vector2(4, 8), ""),
 make_tip("Enemies will push Player Units forward. If a Player Unit is pushed off the map, it is KOed.", \
 "Don't let the Berserker get KOed.", null, ""),
-make_tip("You LOSE if an enemy exits from the bottom of the map or all Player Units are KOed.", "Don't lose.", null, "")
+make_tip("You lose a life if an enemy exits from the bottom of the map. You LOSE the game if you lose all lives or all Player Units are KOed.", "Don't lose.", null, "")
 ]
 
 var Level3 = {"allies": level3_allies, "enemies":level3_enemies, "initial_deploy_count":5,

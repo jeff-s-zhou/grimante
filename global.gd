@@ -11,6 +11,8 @@ var _params = null
 var seen_units = {"Pawn":true, "Berserker":true, "Cavalier":true}
 var seen_effect = {}
 
+var ultimates_enabled_flag = false
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here

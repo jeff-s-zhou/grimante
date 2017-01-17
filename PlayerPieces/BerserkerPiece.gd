@@ -3,10 +3,12 @@ extends "PlayerPiece.gd"
 #extends KinematicBody2D
 const DEFAULT_DAMAGE = 3
 const DEFAULT_AOE_DAMAGE = 2
+const DEFAULT_ULTIMATE_DAMAGE = 5
 const DEFAULT_MOVEMENT_VALUE = 2
 
 var damage = DEFAULT_DAMAGE setget , get_damage
 var aoe_damage = DEFAULT_AOE_DAMAGE setget , get_aoe_damage
+var ultimate_damage = DEFAULT_ULTIMATE_DAMAGE setget, get_ultimate_damage
 
 const ANIMATION_STATES = {"default":0, "moving":1, "jumping":2}
 
@@ -21,7 +23,7 @@ Movement: 2 range leap
 
 const ATTACK_DESCRIPTION = """Leap Strike. Deal 3 damage to an enemy within movement range. If the enemy is killed by the attack, move to its tile.
 """
-const PASSIVE_DESCRIPTION = """Ground Slam. Moving to a tile deals 2 damage to all units around your destination.
+const PASSIVE_DESCRIPTION = """Ground Slam. Moving or attacking deals 1 damage to all units around your destination.
 """
 
 const ULTIMATE_DESCRIPTION = """Earthshatter. Stun and attack all enemies in a line from the Berserker, damage starting at 5 and decreasing by 1 for each enemy hit.
@@ -42,6 +44,9 @@ func get_damage():
 	
 func get_aoe_damage():
 	return self.attack_bonus + DEFAULT_AOE_DAMAGE
+	
+func get_ultimate_damage():
+	return self.attack_bonus + DEFAULT_ULTIMATE_DAMAGE
 
 
 func get_attack_range():
@@ -49,12 +54,21 @@ func get_attack_range():
 	
 func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value + 1])
+	
+func get_ultimate_range():
+	return get_parent().get_range(self.coords, [1, 11], "ENEMY")
 
 #parameters to use for get_node("Grid").get_neighbors
 func display_action_range():
-	var action_range = get_attack_range() + get_movement_range()
-	for coords in action_range:
-		get_parent().get_at_location(coords).movement_highlight()
+	if self.ultimate_flag:
+		var ultimate_range = get_ultimate_range()
+		for coords in ultimate_range:
+			get_parent().get_at_location(coords).movement_highlight()
+	else:
+	
+		var action_range = get_attack_range() + get_movement_range()
+		for coords in action_range:
+			get_parent().get_at_location(coords).movement_highlight()
 
 
 func _is_within_attack_range(new_coords):
@@ -62,6 +76,9 @@ func _is_within_attack_range(new_coords):
 	
 func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
+	
+func _is_within_ultimate_range(new_coords):
+	return new_coords in get_ultimate_range()
 
 func play_smash_sound():
 	get_node("SamplePlayer2D").play("explode3")
@@ -118,22 +135,16 @@ func jump_back(new_coords):
 	set_z(0)
 	emit_signal("animation_done")
 
-#called when an event happens inside the click area hitput
-func input_event(viewport, event, shape_idx):
-	if event.is_action("select") and event.is_pressed():
-		if get_parent().selected == null and self.state != States.PLACED:
-			get_node("SamplePlayer").play("mouseover")
-#			var sample = get_node("SamplePlayer").get_sample_library().get_sample("mouseover").get_rid()
-#			AudioServer.voice_play(AudioServer.voice_create(), sample)
-			get_parent().selected = self
-			self.state = States.CLICKED
-			get_node("BlueGlow").show()
-			#hovered()
-		else: #if not selected, then some piece is trying to act on this one
-			get_parent().set_target(self)
-
 func act(new_coords):
-	if _is_within_attack_range(new_coords):
+	if ultimate_flag:
+		if _is_within_ultimate_range(new_coords):
+			get_node("/root/Combat").handle_archer_ultimate(new_coords)
+			earthshatter(new_coords)
+			get_node("/root/Combat").handle_assassin_passive(new_coords)
+		else:
+			invalid_move()
+
+	elif _is_within_attack_range(new_coords):
 		get_node("/root/Combat").handle_archer_ultimate(new_coords)
 		smash_attack(new_coords)
 		get_node("/root/Combat").handle_assassin_passive(new_coords)
@@ -160,6 +171,8 @@ func smash_attack(new_coords):
 		get_node("/root/AnimationQueue").enqueue(self, "jump_to", true, [new_coords])
 		
 		get_parent().pieces[new_coords].attacked(self.damage)
+		var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY") #testing
+		smash(smash_range) #testing
 		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords, 300, false])
 		get_node("/root/AnimationQueue").enqueue(self, "jump_back", true, [self.coords])
 		placed()
@@ -179,22 +192,53 @@ func smash_move(new_coords):
 func smash(smash_range):
 	for coords in smash_range:
 		get_parent().pieces[coords].attacked(self.aoe_damage)
+		
+		
+func earthshatter(new_coords):
+	var direction = get_parent().get_direction_from_vector(new_coords - self.coords)
+	var damage_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", false, [direction, direction +1])
+	var damage = self.ultimate_damage
+	for coords in damage_range:
+		if damage == 0:
+			break
+		get_parent().pieces[coords].set_stunned(true)
+		get_parent().pieces[coords].attacked(damage)
+		damage -= 1
+	emit_signal("shake")
+	placed()
 
 
 func predict(new_coords):
-	if _is_within_attack_range(new_coords):
+	if ultimate_flag:
+		if _is_within_ultimate_range(new_coords):
+			predict_ultimate_attack(new_coords)
+	elif _is_within_attack_range(new_coords):
 		predict_smash_attack(new_coords)
 	elif _is_within_movement_range(new_coords):
 		predict_smash_move(new_coords)
 
 
+func predict_ultimate_attack(new_coords):
+	var direction = get_parent().get_direction_from_vector(new_coords - self.coords)
+	var damage_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", false, [direction, direction +1])
+	var damage = self.ultimate_damage
+	for coords in damage_range:
+		if damage == 0:
+			break
+		if coords == new_coords:
+			get_parent().pieces[coords].predict(damage)
+		else:
+			get_parent().pieces[coords].predict(damage, true)
+		damage -= 1
+
+
 func predict_smash_attack(new_coords):
-	if get_parent().pieces[new_coords].hp - self.damage <= 0:
-		get_parent().pieces[new_coords].predict(self.damage)
-		var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
-		predict_smash(smash_range)
-	else:
-		get_parent().pieces[new_coords].predict(self.damage)
+#	if get_parent().pieces[new_coords].hp - self.damage <= 0:
+	get_parent().pieces[new_coords].predict(self.damage)
+	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
+	predict_smash(smash_range)
+#	else:
+#		get_parent().pieces[new_coords].predict(self.damage)
 
 func predict_smash_move(new_coords):
 	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
@@ -205,7 +249,16 @@ func predict_smash(smash_range):
 		get_parent().pieces[coords].predict(self.aoe_damage, true)
 
 func cast_ultimate():
-	pass
+	get_node("OverlayLayers/UltimateWhite").show()
+	self.ultimate_flag = true
+	get_parent().reset_highlighting()
+	display_action_range()
+	
 
+func placed():
+	if self.ultimate_flag:
+		self.ultimate_used_flag = true
+		self.ultimate_flag = false
+	.placed()
 
 

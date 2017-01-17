@@ -15,11 +15,11 @@ const OVERVIEW_DESCRIPTION = """Armor: 2
 Movement: 1 range step
 """
 
-const ATTACK_DESCRIPTION = """"Shove. 1 range, pushes target back and also pushes targets behind them. Can push friendly units and not KO them.
+const ATTACK_DESCRIPTION = """Shove. 1 range, pushes target back and also pushes targets behind them. Can push friendly units and not KO them.
 """
 
-const PASSIVE_DESCRIPTION = ""
-const ULTIMATE_DESCRIPTION = ""
+const PASSIVE_DESCRIPTION = "TODO"
+const ULTIMATE_DESCRIPTION = "TODO"
 	
 func _ready():
 	self.armor = 1

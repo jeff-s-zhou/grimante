@@ -160,13 +160,15 @@ func input_event(viewport, event, shape_idx):
 	if event.is_action("select") and !event.is_pressed() and get_node("UltimateBar").ultimate_charging:
 		get_node("UltimateBar").end_charging()
 
-	if event.is_action("select") and event.is_pressed() and !self.ultimate_used_flag:
+	if event.is_action("select") and event.is_pressed():
 		if get_parent().selected == null and self.state != States.PLACED:
 			get_parent().selected = self
+			get_node("SamplePlayer").play("mouseover")
 			self.state = States.CLICKED
 			get_node("BlueGlow").show()
 		
-		elif get_parent().selected == self:
+		#can't begin casting ultimate if mid ultimate already, or ultimate already spent previously
+		elif get_parent().selected == self and !self.ultimate_used_flag and !self.ultimate_flag:
 			get_node("UltimateBar").begin_charging()
 
 		else: #if not selected and not self, then some piece is trying to act on this one
@@ -193,11 +195,10 @@ func invalid_move():
 
 func placed():
 	get_node("/root/AnimationQueue").enqueue(self, "animate_placed", false)
-	if self.ultimate_flag:
-		self.ultimate_used_flag = true
-		self.ultimate_flag = false
+	get_node("BlueGlow").hide()
 	self.state = States.PLACED
 	self.attack_bonus = 0
+	self.movement_value = self.DEFAULT_MOVEMENT_VALUE
 	get_parent().selected = null
 
 func animate_placed():
@@ -221,7 +222,6 @@ func display_action_range():
 	
 func cast_ultimate():
 	pass
-
 
 
 

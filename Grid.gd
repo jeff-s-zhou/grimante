@@ -198,13 +198,21 @@ func get_range_helper(return_set, change_vector, coords, magnitude_range, side, 
 func get_radial_range(coords, radial_range=[1, 3], side=null, collision_check=false):
 	if radial_range[1] == 4:
 		#TODO: fix this hacky shit
-		var diagonal_range = get_diagonal_range(coords, [radial_range[0], 2], side, collision_check)
+		if side != null:
+			print("getting radial range with " + side) 
+		var diagonal_radial_range = [radial_range[0], 2]
+		var diagonal_range = get_diagonal_range(coords, diagonal_radial_range)
 		var diagonal_surrounding_range = []
 		for coords in diagonal_range:
 			diagonal_surrounding_range += get_range(coords, [1, 2], side)
-		
+			print(diagonal_surrounding_range)
+		if side != null:
+			print("ending getting radial range with " + side) 
+			
+			
+		var diagonal_enemy_range = get_diagonal_range(coords, diagonal_radial_range, side)
 		return get_range(coords, radial_range, side, collision_check) \
-		+ diagonal_range + diagonal_surrounding_range
+		+ diagonal_enemy_range + diagonal_surrounding_range
 	
 	var diagonal_radial_range = [radial_range[0], radial_range[1] - 1]
 	return get_range(coords, radial_range, side, collision_check) \

@@ -213,3 +213,9 @@ func cast_ultimate():
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 		player_piece.attack_bonus += 1
 		player_piece.movement_value += 1
+		
+func placed():
+	if self.ultimate_flag:
+		self.ultimate_used_flag = true
+		self.ultimate_flag = false
+	.placed()

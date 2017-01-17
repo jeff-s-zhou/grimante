@@ -184,8 +184,6 @@ autoplay = ""
 
 [node name="SeenIcon" parent="." instance=ExtResource( 11 )]
 
-transform/scale = Vector2( 1, 1 )
-
 [node name="ClickArea" parent="." instance=ExtResource( 12 )]
 
 [node name="Tween" type="Tween" parent="."]

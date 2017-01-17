@@ -10,8 +10,8 @@ const texture_path = "res://Assets/archer_piece.png"
 var ANIMATION_STATES = {"default":0, "moving":1}
 var animation_state = ANIMATION_STATES.default
 
-const DEFAULT_SHOOT_DAMAGE = 4
-const DEFAULT_PASSIVE_DAMAGE = 2
+const DEFAULT_SHOOT_DAMAGE = 3
+const DEFAULT_PASSIVE_DAMAGE = 3
 const DEFAULT_MOVEMENT_VALUE = 2
 
 var shoot_damage = DEFAULT_SHOOT_DAMAGE setget , get_shoot_damage
@@ -32,11 +32,11 @@ const OVERVIEW_DESCRIPTION = """Unarmored.
 
 Movement: 2 range step
 """
-const ATTACK_DESCRIPTION = """Snipe. Fire an arrow at the first enemy in a line for 4 damage. Can target diagonally. Allies will block the shot.
+const ATTACK_DESCRIPTION = """Snipe. Fire an arrow at the first enemy in a line for 3 damage. Can target diagonally. Allies will block the shot.
 """
-const PASSIVE_DESCRIPTION = """Step Shot. After moving, the Archer fires a (weaker) Snipe Attack directly north for 2 damage.
+const PASSIVE_DESCRIPTION = """Step Shot. After moving, the Archer fires a Snipe Attack directly north.
 """
-const ULTIMATE_DESCRIPTION = """Envision Death. For the rest of this Player Phase, immediately before an enemy takes direct damage (NOT passive) within Snipe range, Snipe the enemy. 
+const ULTIMATE_DESCRIPTION = """Envision Death. For the rest of this Player Phase, immediately before an enemy takes direct damage (NOT passive) within Snipe range, Snipe the enemy, but cannot kill.
 """
 
 
@@ -179,19 +179,63 @@ func predict_ranged_attack(new_coords, passive=false):
 	
 func cast_ultimate():
 	get_node("OverlayLayers/UltimateWhite").show()
-	self.set_cooldown(2)
 	#first reset the highlighting on the parent nodes. Then call the new highlighting
 	self.ultimate_flag = true
 	display_overwatch()
 	get_parent().reset_highlighting()
 	get_node("BlueGlow").hide()
 	get_parent().selected = null
+	self.state = States.PLACED
 	
 func trigger_ultimate(attack_coords):
 	if _is_within_attack_range(attack_coords):
 		get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [attack_coords])
 		get_parent().pieces[attack_coords].nonlethal_attacked(3)
+		
+func placed():
+	if self.ultimate_flag:
+		self.ultimate_used_flag = true
+		self.ultimate_flag = false
+	.placed()
+		
+func delete_self():
+	get_node("/root/Combat").archer = null
+	.delete_self()
 	
 func display_overwatch():
 	pass
+	
+#func animate_move_and_passive(coords, attack_coords):
+#	self.animate_move(coords, 250, false)
+#	yield(get_node("Tween"), "tween_complete")
+#	self.animate_ranged_attack(attack_coords)
+#	
+#	
+#
+#func move_or_fall_off(distance):
+#	if get_parent().locations.has(self.coords + distance):
+#		var coords = get_step_shot_coords(self.coords + distance)
+#		if coords != null:
+#			get_node("/root/AnimationQueue").enqueue(self, "animate_move_and_passive", false, [self.coords + distance, coords])
+#			get_parent().pieces[coords].attacked(self.passive_damage)
+#			set_coords(self.coords + distance)
+#		else:
+#			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance, 250, false])
+#			set_coords(self.coords + distance)
+#	else:
+#		delete_self()
+#		var distance_length = get_parent().hex_length(distance)
+#		var direction = get_parent().get_direction_from_vector(distance)
+#		var falloff_range = get_parent().get_range(self.coords, [1, distance_length + 1], null, false, [direction, direction + 1])
+#		var fall_off_pos = get_pos()
+#		if falloff_range.size() != 0:
+#			print("caught the fall_off new check")
+#			var fall_off_coords = falloff_range[falloff_range.size() - 1]
+#			fall_off_pos = get_parent().locations[fall_off_coords].get_pos() 
+#			#var fall_off_distance = 30 * (fall_off_pos - get_pos()).normalized()
+#			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [fall_off_pos, 250, true])
+#		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
+#
+#		if self.side == "ENEMY" and get_parent().hex_normalize(distance) == Vector2(0, 1):
+#				emit_signal("broke_defenses")
 	
