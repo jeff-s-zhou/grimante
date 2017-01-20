@@ -181,6 +181,10 @@ func unplaced():
 	self.state = States.DEFAULT
 	get_node("AnimatedSprite").play("default")
 
+func placed():
+	if self.ultimate_flag:
+		self.ultimate_flag = false
+	.placed()
 
 func trigger_passive(attack_coords):
 	if _is_within_passive_range(attack_coords):

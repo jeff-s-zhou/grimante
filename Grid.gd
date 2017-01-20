@@ -56,11 +56,13 @@ func _ready():
 func debug():
 	for key in self.locations.keys():
 		self.locations[key].debug()
-	
+
+
 #so we know what target
 func set_target(target):
 	if self.selected != null:
 		self.selected.select_action_target(target)
+
 
 func add_piece(coords, piece):
 	pieces[coords] = piece
@@ -280,7 +282,7 @@ static func hex_normalize(vector):
 		return Vector2(vector.x/lowest_denominator, vector.y/lowest_denominator)
 		
 static func hex_length(vector):
-	return vector.length()/hex_normalize(vector).length()
+	return round(vector.length()/hex_normalize(vector).length())
 
 
 #utility function for enemy unit deployment

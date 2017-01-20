@@ -42,7 +42,7 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(200, 140))
 	
-	get_node("Grid").debug()
+	debug_mode()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("Button").connect("pressed", self, "end_turn")
@@ -86,16 +86,24 @@ func _ready():
 	
 	for i in range(0, initial_deploy_count):
 		if self.enemy_waves.size() > 0:
-			deploy_wave()
-			yield(self, "wave_deployed")
+			deploy_wave(true)
+			print("met here")
 			
 	get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.size()))
 	get_node("WavesDisplay/WavesLabel").set_opacity(1)
 	get_node("ComboSystem/ComboPointsLabel").set_opacity(1)
-
+	
+	get_node("Timer2").set_wait_time(0.3)
+	get_node("Timer2").start()
+	yield(get_node("Timer2"), "timeout")
+	
 	get_node("PhaseShifter").player_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	player_phase_start()
+	
+func debug_mode():
+	get_node("Grid").debug()
+	get_node("/root/global").ultimates_enabled_flag = true
 
 func soft_copy_dict(source, target):
     for k in source.keys():
@@ -321,13 +329,12 @@ func handle_instructions():
 	popup.set_text(tip_text, objective_text)
 		
 	get_node("PhaseShifter/AnimationPlayer").play("start_blur")
-	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	
 	
 	get_node("Tween").interpolate_property(popup, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_SINE, Tween.EASE_IN)
 	
 	var end_pos = popup.get_pos() + Vector2(0, get_viewport_rect().size.height/2 + 100)
-	get_node("Tween").interpolate_property(popup, "transform/pos",popup.get_pos(), end_pos, 1, Tween.TRANS_BACK, Tween.EASE_OUT)
+	get_node("Tween").interpolate_property(popup, "transform/pos",popup.get_pos(), end_pos, 0.7, Tween.TRANS_BACK, Tween.EASE_OUT)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	popup.transition_in()
@@ -335,10 +342,10 @@ func handle_instructions():
 	
 	yield(popup, "next")
 	popup.transition_out()
-	get_node("Tween").interpolate_property(popup, "visibility/opacity", 1, 0, 1, Tween.TRANS_SINE, Tween.EASE_IN)
+	get_node("Tween").interpolate_property(popup, "visibility/opacity", 1, 0, 0.7, Tween.TRANS_SINE, Tween.EASE_IN)
 	
 	var end_pos = Vector2((get_viewport_rect().size.width)/2, -100)
-	get_node("Tween").interpolate_property(popup, "transform/pos", popup.get_pos(), end_pos, 1, Tween.TRANS_BACK, Tween.EASE_IN)
+	get_node("Tween").interpolate_property(popup, "transform/pos", popup.get_pos(), end_pos, 0.7, Tween.TRANS_BACK, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	get_node("PhaseShifter/AnimationPlayer").play("end_blur")
@@ -361,7 +368,7 @@ func _sort_by_y_axis(enemy_piece1, enemy_piece2):
 			return true
 		return false
 		
-func deploy_wave():
+func deploy_wave(mass_summon=false):
 	var wave = self.enemy_waves[0]
 	self.enemy_waves.pop_front()
 	for key in wave.keys():
@@ -401,9 +408,10 @@ func deploy_wave():
 		enemy_piece.get_node("Sprinkles").set_particle_endpoint(get_node("ComboSystem/ComboPointsLabel").get_global_pos())
 		enemy_piece.check_global_seen()
 		enemy_piece.animate_summon()
-		yield(enemy_piece.get_node("Tween"), "tween_complete" )
+		if !mass_summon:
+			yield(enemy_piece.get_node("Tween"), "tween_complete" )
 		get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.size()))
-
+	print("met here?")
 	emit_signal("wave_deployed")
 
 func player_win():

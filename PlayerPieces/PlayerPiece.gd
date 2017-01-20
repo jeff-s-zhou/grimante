@@ -162,22 +162,31 @@ func input_event(viewport, event, shape_idx):
 
 	if event.is_action("select") and event.is_pressed():
 		if get_parent().selected == null and self.state != States.PLACED:
-			get_parent().selected = self
-			get_node("SamplePlayer").play("mouseover")
-			self.state = States.CLICKED
-			get_node("BlueGlow").show()
+			select()
 		
 		#can't begin casting ultimate if mid ultimate already, or ultimate already spent previously
-		elif get_parent().selected == self and !self.ultimate_used_flag and !self.ultimate_flag:
+		elif get_parent().selected == self \
+		and !self.ultimate_used_flag \
+		and !self.ultimate_flag \
+		and get_node("/root/global").ultimates_enabled_flag: 
 			get_node("UltimateBar").begin_charging()
 
 		else: #if not selected and not self, then some piece is trying to act on this one
 			get_parent().set_target(self)
 
 
+func select():
+	get_parent().selected = self
+	hovered()
+	get_node("SamplePlayer").play("mouseover")
+	self.state = States.CLICKED
+	get_node("BlueGlow").show()
+
+
 func deselect():
 	self.state = States.DEFAULT
 	get_node("BlueGlow").hide()
+
 
 func select_action_target(target):
 	get_parent().reset_highlighting()
@@ -185,11 +194,17 @@ func select_action_target(target):
 	get_node("BlueGlow").hide()
 	act(target.coords)
 
+
 #helper function for act
 func invalid_move():
 	emit_signal("invalid_move")
 	self.state = States.DEFAULT
 	get_parent().selected = null
+#	var invalid_target = self.cursor_area.get_piece_hovered()
+#	if  invalid_target != null and invalid_target.has_method("select"):
+#		if invalid_target.state != States.PLACED:
+#			invalid_target.select()
+	
 
 #helper function for act
 

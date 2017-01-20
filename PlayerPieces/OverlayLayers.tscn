@@ -41,7 +41,7 @@ texture = ExtResource( 3 )
 [node name="UltimateWhite" type="Sprite" parent="."]
 
 visibility/visible = false
-visibility/opacity = 0.0
+visibility/opacity = 0.481344
 texture = ExtResource( 3 )
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]

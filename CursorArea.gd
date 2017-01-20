@@ -23,4 +23,4 @@ func get_piece_hovered():
 		if area.get_name() == "CollisionArea": #hackey, since CollisionArea is the one that has monitorable enabled but ClickArea doesn't
 			return area.get_parent()
 	return null
-
+	

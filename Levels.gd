@@ -26,10 +26,10 @@ func make_tip(tip_text, objective_text, arrow_coords, text):
 func make_complex_tip(tip_text, objective_text, tooltips):
 	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
 	
-var sandbox_allies = {1: Cavalier, Vector2(7, 10): Berserker}
+var sandbox_allies = {4: Berserker}
 
 var sandbox_enemies = [
-{Vector2(7,7):make(Grunt, 5), Vector2(7,8):make(Grunt, 2), 3: make(Grunt, 4)}
+{Vector2(3,7):make(Fortifier, 2), Vector2(4, 7):make(Fortifier, 2), Vector2(5, 8):make(Fortifier, 2)}
 ]
 
 var Sandbox_Level = {"allies": sandbox_allies, "enemies":sandbox_enemies, "initial_deploy_count":2,

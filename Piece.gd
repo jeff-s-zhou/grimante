@@ -114,20 +114,20 @@ func push(distance, pusher=null):
 			var collide_coords = collide_range[0]
 			print(collide_coords)
 			var location = get_parent().locations[collide_coords]
-			var difference = (location.get_pos() - get_pos())/4
+			var difference = (location.get_pos() - get_pos()) - Vector2(0, 85)
 			print(difference)
 			var collide_pos = get_pos() + difference 
 			var new_distance = (self.coords + distance) - collide_coords + get_parent().hex_normalize(distance)
 			print("new_distance is" + str(new_distance))
-			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 250, true]) #push up against it
+			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 300, true]) #push up against it
 			get_parent().pieces[collide_coords].push(new_distance, self)
-		
+
 		move_or_fall_off(distance)
 
 
 func move_or_fall_off(distance):
 	if get_parent().locations.has(self.coords + distance):
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance, 250, false])
+		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance, 300, false])
 		set_coords(self.coords + distance)
 	else:
 		delete_self()
@@ -140,7 +140,7 @@ func move_or_fall_off(distance):
 			var fall_off_coords = falloff_range[falloff_range.size() - 1]
 			fall_off_pos = get_parent().locations[fall_off_coords].get_pos() 
 			#var fall_off_distance = 30 * (fall_off_pos - get_pos()).normalized()
-			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [fall_off_pos, 250, true])
+			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [fall_off_pos, 300, true])
 		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
 
 		if self.side == "ENEMY" and get_parent().hex_normalize(distance) == Vector2(0, 1):

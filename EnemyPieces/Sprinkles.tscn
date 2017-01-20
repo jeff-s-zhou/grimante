@@ -36,8 +36,8 @@ params/anim_initial_pos = 0.0
 transform/pos = Vector2( 579.52, -254.39 )
 enabled = true
 radius = 2000.0
-disable_radius = 0.3
-gravity = 2.0
+disable_radius = 1.0
+gravity = 3.0
 absorption = 5.0
 particles_path = NodePath("../Particles2D")
 

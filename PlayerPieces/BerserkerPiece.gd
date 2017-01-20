@@ -23,7 +23,7 @@ Movement: 2 range leap
 
 const ATTACK_DESCRIPTION = """Leap Strike. Deal 3 damage to an enemy within movement range. If the enemy is killed by the attack, move to its tile.
 """
-const PASSIVE_DESCRIPTION = """Ground Slam. Moving or attacking deals 1 damage to all units around your destination.
+const PASSIVE_DESCRIPTION = """Ground Slam. Moving or attacking deals 2 damage to all units around your destination.
 """
 
 const ULTIMATE_DESCRIPTION = """Earthshatter. Stun and attack all enemies in a line from the Berserker, damage starting at 5 and decreasing by 1 for each enemy hit.

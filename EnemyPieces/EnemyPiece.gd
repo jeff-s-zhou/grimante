@@ -110,14 +110,13 @@ func will_die_to(damage):
 	return (self.hp - damage) <= 0
 	
 func reset_prediction_flyover():
-	pass
-#	get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
-#	get_node("Physicals/HealthDisplay/Label").set_text(str(self.temp_display_hp))
-#	get_node("Physicals/HealthDisplay/Label").show()
-#	self.predicting_hp = false
-#	if self.prediction_flyover != null:
-#		self.prediction_flyover.queue_free()
-#		self.prediction_flyover = null
+	get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
+	get_node("Physicals/HealthDisplay/Label").set_text(str(self.temp_display_hp))
+	get_node("Physicals/HealthDisplay/Label").show()
+	self.predicting_hp = false
+	if self.prediction_flyover != null:
+		self.prediction_flyover.queue_free()
+		self.prediction_flyover = null
 
 
 func animate_predict_hp(hp, value, color):
@@ -161,19 +160,18 @@ func animate_predict_hp(hp, value, color):
 
 
 func predict(damage, is_passive_damage=false):
-	pass
-#	var color = Color(1, 0, 0.4)
-#	if is_passive_damage:
-#		color = Color(1, 1, 0.0)
-#		get_node("Physicals/EnemyOverlays/Orange").show()
-#		get_node("Physicals/HealthDisplay/OrangeLayer").show()
-#		if self.action_highlighted:
-#			get_node("Physicals/EnemyOverlays/Red").hide()
-#			get_node("Physicals/HealthDisplay/RedLayer").hide()
-#	if self.shielded:
-#		get_node("/root/AnimationQueue").enqueue(self, "animate_predict_hp", false, [self.hp, 0, color])
-#	else:
-#		get_node("/root/AnimationQueue").enqueue(self, "animate_predict_hp", false, [max(self.hp - damage, 0), -1 * damage, color])
+	var color = Color(1, 0, 0.4)
+	if is_passive_damage:
+		color = Color(1, 1, 0.0)
+		get_node("Physicals/EnemyOverlays/Orange").show()
+		get_node("Physicals/HealthDisplay/OrangeLayer").show()
+		if self.action_highlighted:
+			get_node("Physicals/EnemyOverlays/Red").hide()
+			get_node("Physicals/HealthDisplay/RedLayer").hide()
+	if self.shielded:
+		get_node("/root/AnimationQueue").enqueue(self, "animate_predict_hp", false, [self.hp, 0, color])
+	else:
+		get_node("/root/AnimationQueue").enqueue(self, "animate_predict_hp", false, [max(self.hp - damage, 0), -1 * damage, color])
 
 
 #for the berserker's smash kill which should instantly remove
@@ -257,18 +255,11 @@ func nonlethal_attacked(damage):
 
 func modify_hp(amount, delay=0):
 	if hp != 0: #in the case that someone tries to modify hp after the unit is already in the process of dying
-		if amount == -5:
-			print("this is the 5 damage one")
 		hp = (max(0, hp + amount))
 		self.temp_display_hp = hp
 		get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [hp, amount, delay])
-		print(hp)
 		if hp == 0:
-			print("deleting self")
 			delete_self()
-		else:
-			print("this shouldn't be met")
-			print(hp)
 	
 
 func animate_set_hp(hp, value, delay=0):
@@ -302,10 +293,6 @@ func animate_set_hp(hp, value, delay=0):
 	flyover.queue_free()
 	tween.queue_free()
 	self.mid_trailing_animation = false
-	
-	if value == -5:
-		print("inside animate delete self for 5")
-		print(self.hp)
 	if hp == 0:
 		animate_delete_self()
 
