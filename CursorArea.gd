@@ -13,14 +13,24 @@ func _ready():
 	
 	
 func _input(ev):
-   if (ev.type==InputEvent.MOUSE_MOTION):
-       set_pos(ev.pos)
+	if (ev.type==InputEvent.MOUSE_MOTION):
+		set_pos(ev.pos)
 
-	
+
 func get_piece_hovered():
 	var areas = get_overlapping_areas()
 	for area in areas:
 		if area.get_name() == "CollisionArea": #hackey, since CollisionArea is the one that has monitorable enabled but ClickArea doesn't
 			return area.get_parent()
+	return null
+	
+func get_piece_or_location_hovered():
+	var areas = get_overlapping_areas()
+	for area in areas:
+		if area.get_name() == "CollisionArea": #hackey, since CollisionArea is the one that has monitorable enabled but ClickArea doesn't
+			return area.get_parent()
+	for area in areas:
+		if area.get_name().find("Location") != -1: #the Locations have unique modifiers to their name because they're all children of one class
+			return area
 	return null
 	

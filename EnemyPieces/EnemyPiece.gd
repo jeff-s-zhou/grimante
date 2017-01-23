@@ -44,7 +44,7 @@ func _ready():
 	#set_opacity(0)
 
 
-func input_event(viewport, event, shape_idx):
+func input_event(event):
 	if event.is_action("select"):
 		if event.is_pressed():
 			get_parent().set_target(self)
@@ -172,13 +172,7 @@ func predict(damage, is_passive_damage=false):
 		get_node("/root/AnimationQueue").enqueue(self, "animate_predict_hp", false, [self.hp, 0, color])
 	else:
 		get_node("/root/AnimationQueue").enqueue(self, "animate_predict_hp", false, [max(self.hp - damage, 0), -1 * damage, color])
-
-
-#for the berserker's smash kill which should instantly remove
-func smash_killed(damage):
-	get_node("/root/AnimationQueue").enqueue(self, "animate_smash_killed", false)
-	attacked(damage)
-
+		
 
 func animate_smash_killed():
 	get_node("Physicals").hide()
@@ -232,6 +226,33 @@ func initialize_hp(hp):
 	get_node("Physicals/HealthDisplay/Label").set_text(str(hp))
 
 
+func handle_pre_payload(payload):
+	if payload["hp_change"] < 0:
+		#handle archer ultimate
+		pass
+	
+func handle_payload(payload):
+	if payload["hp_change"] < 0:
+		if self.shielded:
+			set_shield(false)
+		else:
+			if payload["effects"] == null:
+				pass
+			modify_hp(payload["hp_change"])
+			
+	elif payload["hp_change"] > 0:
+		modify_hp(payload["hp_change"])
+		
+func handle_post_payload(payload):
+	if payload["hp_change"] < 0:
+		#handle assassin's passive
+		pass
+	
+func resolve_death():
+	if hp == 0:
+		delete_self()
+
+
 func heal(amount, delay=0.0):
 	modify_hp(amount, delay)
 
@@ -242,6 +263,13 @@ func attacked(amount):
 	else:
 		modify_hp(amount * -1)
 
+
+#for the berserker's smash kill which should instantly remove
+func smash_killed(damage):
+	get_node("/root/AnimationQueue").enqueue(self, "animate_smash_killed", false)
+	attacked(damage)
+
+
 #always leaves them with 1 hp
 func nonlethal_attacked(damage):
 	if self.shielded:
@@ -249,7 +277,6 @@ func nonlethal_attacked(damage):
 	else:
 		var amount = damage * -1
 		self.hp = (max(1, self.hp + amount))
-		print("nonlethal_attacked, hp: " + str(self.hp) + ", amount: " + str(amount))
 		get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [self.hp, amount])
 
 

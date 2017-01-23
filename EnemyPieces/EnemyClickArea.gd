@@ -7,8 +7,9 @@ extends Area2D
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	set_process_input(true)
+	pass
+	#set_process_input(true)
 	
 #
-func _input_event(viewport, event, shape_idx):
-	get_parent().input_event(viewport, event, shape_idx)
+#func _input_event(viewport, event, shape_idx):
+#	get_parent().input_event(viewport, event, shape_idx)

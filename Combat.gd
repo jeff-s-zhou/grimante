@@ -42,7 +42,7 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(200, 140))
 	
-	debug_mode()
+	#debug_mode()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("Button").connect("pressed", self, "end_turn")
@@ -161,6 +161,22 @@ func end_turn():
 	self.state = STATES.enemy_turn
 
 func _input(event):
+	#select a unit
+	if event.is_action("select") and event.is_pressed():
+#		var hovered_piece = get_node("CursorArea").get_piece_hovered()
+#		if hovered_piece:
+#			hovered_piece.input_event(event)
+#		elif get_node("Grid").selected != null:
+#			print("caught the invalid move here")
+#			get_node("Grid").selected.invalid_move()
+		var hovered = get_node("CursorArea").get_piece_or_location_hovered()
+		if hovered:
+			hovered.input_event(event)
+		elif get_node("Grid").selected != null:
+			print("caught the invalid move here")
+			get_node("Grid").selected.invalid_move()
+	
+	#deselect a unit
 	if event.is_action("deselect") and event.is_pressed(): 
 		if get_node("Grid").selected:
 			get_node("Grid").selected.deselect()

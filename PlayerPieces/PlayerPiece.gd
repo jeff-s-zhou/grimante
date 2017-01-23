@@ -155,7 +155,7 @@ func hovered():
 
 
 #called when an event happens inside the click area hitput
-func input_event(viewport, event, shape_idx):
+func input_event(event):
 	
 	if event.is_action("select") and !event.is_pressed() and get_node("UltimateBar").ultimate_charging:
 		get_node("UltimateBar").end_charging()
@@ -197,14 +197,12 @@ func select_action_target(target):
 
 #helper function for act
 func invalid_move():
+	get_parent().reset_highlighting()
+	get_parent().reset_prediction()
+	get_node("BlueGlow").hide()
 	emit_signal("invalid_move")
 	self.state = States.DEFAULT
 	get_parent().selected = null
-#	var invalid_target = self.cursor_area.get_piece_hovered()
-#	if  invalid_target != null and invalid_target.has_method("select"):
-#		if invalid_target.state != States.PLACED:
-#			invalid_target.select()
-	
 
 #helper function for act
 
