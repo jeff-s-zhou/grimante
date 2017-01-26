@@ -2,7 +2,7 @@
 extends "PlayerPiece.gd"
 #extends KinematicBody2D
 const DEFAULT_DAMAGE = 3
-const DEFAULT_AOE_DAMAGE = 2
+const DEFAULT_AOE_DAMAGE = 1
 const DEFAULT_ULTIMATE_DAMAGE = 5
 const DEFAULT_MOVEMENT_VALUE = 2
 
@@ -155,22 +155,19 @@ func act(new_coords):
 
 
 func smash_attack(new_coords):
+	get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [new_coords, 350, false])
+	get_node("/root/AnimationQueue").enqueue(self, "jump_to", true, [new_coords])
 	if get_parent().pieces[new_coords].will_die_to(self.damage):
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [new_coords, 350, false])
-		get_node("/root/AnimationQueue").enqueue(self, "jump_to", true, [new_coords])
-		
-		get_parent().pieces[new_coords].smash_killed(self.damage)
+		get_parent().pieces[new_coords].smash_killed(self.damage, true)
 		var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 		smash(smash_range)
+		get_parent().pieces[new_coords].aoe_death_check()
 		set_coords(new_coords)
 		placed()
-		
+
 	#else leap back
 	else:
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [new_coords, 350, false])
-		get_node("/root/AnimationQueue").enqueue(self, "jump_to", true, [new_coords])
-		
-		get_parent().pieces[new_coords].attacked(self.damage)
+		get_parent().pieces[new_coords].attacked(self.damage, true)
 		var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY") #testing
 		smash(smash_range) #testing
 		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords, 300, false])
@@ -191,7 +188,9 @@ func smash_move(new_coords):
 
 func smash(smash_range):
 	for coords in smash_range:
-		get_parent().pieces[coords].attacked(self.aoe_damage)
+		get_parent().pieces[coords].attacked(self.aoe_damage, true)
+	for coords in smash_range:
+		get_parent().pieces[coords].aoe_death_check()
 		
 		
 func earthshatter(new_coords):

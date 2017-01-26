@@ -1,18 +1,23 @@
 [gd_scene load_steps=15 format=1]
 
 [ext_resource path="res://EnemyPieces/FortifierPiece.gd" type="Script" id=1]
-[ext_resource path="res://EnemyPieces/Sprinkles.tscn" type="PackedScene" id=2]
-[ext_resource path="res://EnemyPieces/EnemyCollisionArea.tscn" type="PackedScene" id=3]
+[ext_resource path="res://EnemyPieces/Components/Sprinkles.tscn" type="PackedScene" id=2]
+[ext_resource path="res://EnemyPieces/Components/EnemyCollisionArea.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Assets/Enemies/harpy_piece.png" type="Texture" id=4]
 [ext_resource path="res://Assets/Enemies/harpy_piece_red.png" type="Texture" id=5]
-[ext_resource path="res://EnemyPieces/EnemyOverlayLayers.tscn" type="PackedScene" id=6]
-[ext_resource path="res://EnemyPieces/HealthDisplay.tscn" type="PackedScene" id=7]
-[ext_resource path="res://EnemyPieces/EnemyEffects.tscn" type="PackedScene" id=8]
-[ext_resource path="res://EnemyPieces/FlickerAnimation.tres" type="Animation" id=9]
-[ext_resource path="res://EnemyPieces/SummonAnimation.tres" type="Animation" id=10]
+[ext_resource path="res://EnemyPieces/Components/EnemyOverlayLayers.tscn" type="PackedScene" id=6]
+[ext_resource path="res://EnemyPieces/Components/HealthDisplay.tscn" type="PackedScene" id=7]
+[ext_resource path="res://EnemyPieces/Components/EnemyEffects.tscn" type="PackedScene" id=8]
+[ext_resource path="res://EnemyPieces/Components/FlickerAnimation.tres" type="Animation" id=9]
+[ext_resource path="res://EnemyPieces/Components/SummonAnimation.tres" type="Animation" id=10]
 [ext_resource path="res://UI/SeenIcon.tscn" type="PackedScene" id=11]
-[ext_resource path="res://EnemyPieces/Flyover.tscn" type="PackedScene" id=12]
-[ext_resource path="res://EnemyPieces/EnemyClickArea.tscn" type="PackedScene" id=13]
+[ext_resource path="res://EnemyPieces/Components/Flyover.tscn" type="PackedScene" id=12]
+[ext_resource path="res://EnemyPieces/Components/EnemyClickArea.tscn" type="PackedScene" id=13]
+
+
+
+
+
 
 [sub_resource type="SpriteFrames" id=1]
 

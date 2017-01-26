@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=1]
 
-[ext_resource path="res://EnemyPieces/EnemyEffects.gd" type="Script" id=1]
+[ext_resource path="res://EnemyPieces/Components/EnemyEffects.gd" type="Script" id=1]
 [ext_resource path="res://Assets/effects/bubble_small.png" type="Texture" id=2]
-[ext_resource path="res://EnemyPieces/DeathTouchEffect.tscn" type="PackedScene" id=3]
+[ext_resource path="res://EnemyPieces/Components/DeathTouchEffect.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Effects/StunSpiral.tscn" type="PackedScene" id=4]
 
 [node name="EnemyEffects" type="Node2D"]

@@ -1,19 +1,20 @@
 [gd_scene load_steps=18 format=1]
 
 [ext_resource path="res://PlayerPieces/CavalierPiece.gd" type="Script" id=1]
-[ext_resource path="res://PlayerPieces/PlayerCollisionArea.tscn" type="PackedScene" id=2]
-[ext_resource path="res://PlayerPieces/BlueGlow.tscn" type="PackedScene" id=3]
+[ext_resource path="res://PlayerPieces/Components/PlayerCollisionArea.tscn" type="PackedScene" id=2]
+[ext_resource path="res://PlayerPieces/Components/BlueGlow.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Assets/Allies/cavalier_piece.png" type="Texture" id=4]
 [ext_resource path="res://Assets/Allies/cavalier_piece_red.png" type="Texture" id=5]
 [ext_resource path="res://Assets/Allies/cavalier_piece_sepia.png" type="Texture" id=6]
-[ext_resource path="res://PlayerPieces/OverlayLayers.tscn" type="PackedScene" id=7]
-[ext_resource path="res://PlayerPieces/Cooldown.tscn" type="PackedScene" id=8]
-[ext_resource path="res://PlayerPieces/UltimateBar.tscn" type="PackedScene" id=9]
+[ext_resource path="res://PlayerPieces/Components/OverlayLayers.tscn" type="PackedScene" id=7]
+[ext_resource path="res://PlayerPieces/Components/Cooldown.tscn" type="PackedScene" id=8]
+[ext_resource path="res://PlayerPieces/Components/UltimateBar.tscn" type="PackedScene" id=9]
 [ext_resource path="res://UI/SeenIcon.tscn" type="PackedScene" id=10]
-[ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=11]
+[ext_resource path="res://PlayerPieces/Components/PlayerClickArea.tscn" type="PackedScene" id=11]
 [ext_resource path="res://Assets/processed_sounds/hit.smp" type="Sample" id=12]
 [ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=13]
 [ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=14]
+
 
 [sub_resource type="SpriteFrames" id=1]
 

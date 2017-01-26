@@ -23,7 +23,7 @@ var type
 
 var prediction_flyover = null
 
-const flyover_prototype = preload("res://EnemyPieces/Flyover.tscn")
+const flyover_prototype = preload("res://EnemyPieces/Components/Flyover.tscn")
 
 signal broke_defenses
 
@@ -253,21 +253,21 @@ func resolve_death():
 		delete_self()
 
 
-func heal(amount, delay=0.0):
-	modify_hp(amount, delay)
+func heal(amount, aoe=false, delay=0.0):
+	modify_hp(amount, aoe, delay)
 
 
-func attacked(amount):
+func attacked(amount, aoe=false):
 	if self.shielded:
 		set_shield(false)
 	else:
-		modify_hp(amount * -1)
+		modify_hp(amount * -1, aoe)
 
 
 #for the berserker's smash kill which should instantly remove
-func smash_killed(damage):
+func smash_killed(damage, aoe=false):
 	get_node("/root/AnimationQueue").enqueue(self, "animate_smash_killed", false)
-	attacked(damage)
+	attacked(damage, aoe)
 
 
 #always leaves them with 1 hp
@@ -280,14 +280,20 @@ func nonlethal_attacked(damage):
 		get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [self.hp, amount])
 
 
-func modify_hp(amount, delay=0):
+func modify_hp(amount, aoe=false, delay=0):
 	if hp != 0: #in the case that someone tries to modify hp after the unit is already in the process of dying
 		hp = (max(0, hp + amount))
 		self.temp_display_hp = hp
 		get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [hp, amount, delay])
-		if hp == 0:
+		 
+		if hp == 0 and !aoe: #if aoe, then we manually do the delete self check afterwards
 			delete_self()
-	
+
+
+func aoe_death_check():
+	if hp == 0:
+		delete_self()
+
 
 func animate_set_hp(hp, value, delay=0):
 	reset_prediction_flyover()

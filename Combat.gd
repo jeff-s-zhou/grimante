@@ -40,9 +40,10 @@ func _ready():
 	get_node("Timer").set_active(false)
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Grid").set_pos(Vector2(200, 140))
+	get_node("Grid").set_pos(Vector2(300, 250))
 	
-	#debug_mode()
+	debug_mode()
+	#ultimates_enabled()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("Button").connect("pressed", self, "end_turn")
@@ -103,6 +104,9 @@ func _ready():
 	
 func debug_mode():
 	get_node("Grid").debug()
+	get_node("/root/global").ultimates_enabled_flag = true
+	
+func ultimates_enabled():
 	get_node("/root/global").ultimates_enabled_flag = true
 
 func soft_copy_dict(source, target):

@@ -17,14 +17,14 @@ var pieces = {}
 const _GRID_X_OFFSET = 0
 const _GRID_Y_OFFSET = 0
 
-const TILE_X_OFFSET = 4
+const TILE_X_OFFSET = 8
 #const TILE_X_OFFSET = -8
-const TILE_Y_OFFSET = 29
+const TILE_Y_OFFSET = 34
 #const TILE_Y_OFFSET = 16
 
 const _Z_PIECE_OFFSET = Vector2(0, -0) #this is to offset for the pseudo-3d vertical distance of pieces
 
-const _LOCATION_Y_OFFSETS = [0, 0, 1, 1, 2, 2, 3, 3, 4]
+const _LOCATION_Y_OFFSETS = [0, 1, 1, 2, 2, 3, 3]
 
 var selected = null
 
@@ -34,13 +34,13 @@ func _ready():
 	var location = load("res://Location.tscn")
 
 	# place location tiles
-	for i in range(0, 9):
+	for i in range(0, 7):
 		var offset = 0
-		var column_count = 8
-		if i % 2 == 1:
+		var column_count = 7
+		if i % 2 == 0:
 			offset = -56
 			#offset = -44
-			column_count = 9
+			column_count = 7
 		for j in range(0, column_count):
 			var location1 = location.instance()
 			var tile_x_spacing = location1.get_size().width + TILE_X_OFFSET
@@ -292,9 +292,9 @@ func get_top_of_column(column):
 
 #utility function for player unit deployment
 func get_bottom_of_column(column):
-	var column_count = 8
+	var column_count = 7
 	if column % 2 == 1:
-		column_count = 9
+		column_count = 7
 			
 	return Vector2(column, _LOCATION_Y_OFFSETS[column] + column_count - 1)
 

@@ -1,22 +1,24 @@
 [gd_scene load_steps=21 format=1]
 
 [ext_resource path="res://PlayerPieces/StormdancerPiece.gd" type="Script" id=1]
-[ext_resource path="res://PlayerPieces/PlayerCollisionArea.tscn" type="PackedScene" id=2]
-[ext_resource path="res://PlayerPieces/BlueGlow.tscn" type="PackedScene" id=3]
+[ext_resource path="res://PlayerPieces/Components/PlayerCollisionArea.tscn" type="PackedScene" id=2]
+[ext_resource path="res://PlayerPieces/Components/BlueGlow.tscn" type="PackedScene" id=3]
 [ext_resource path="res://Assets/Allies/stormdancer_piece.png" type="Texture" id=4]
 [ext_resource path="res://Assets/Allies/stormdancer_piece_red.png" type="Texture" id=5]
 [ext_resource path="res://Assets/Allies/stormdancer_piece_sepia.png" type="Texture" id=6]
 [ext_resource path="res://Assets/Allies/stormdancer_piece_blur.png" type="Texture" id=7]
 [ext_resource path="res://Assets/Allies/stormdancer_piece_wind.png" type="Texture" id=8]
-[ext_resource path="res://PlayerPieces/OverlayLayers.tscn" type="PackedScene" id=9]
-[ext_resource path="res://PlayerPieces/Cooldown.tscn" type="PackedScene" id=10]
-[ext_resource path="res://PlayerPieces/UltimateBar.tscn" type="PackedScene" id=11]
+[ext_resource path="res://PlayerPieces/Components/OverlayLayers.tscn" type="PackedScene" id=9]
+[ext_resource path="res://PlayerPieces/Components/Cooldown.tscn" type="PackedScene" id=10]
+[ext_resource path="res://PlayerPieces/Components/UltimateBar.tscn" type="PackedScene" id=11]
 [ext_resource path="res://UI/SeenIcon.tscn" type="PackedScene" id=12]
-[ext_resource path="res://PlayerPieces/PlayerClickArea.tscn" type="PackedScene" id=13]
-[ext_resource path="res://PlayerPieces/ShunpoIn.tres" type="Animation" id=14]
-[ext_resource path="res://PlayerPieces/ShunpoOut.tres" type="Animation" id=15]
+[ext_resource path="res://PlayerPieces/Components/PlayerClickArea.tscn" type="PackedScene" id=13]
+[ext_resource path="res://PlayerPieces/Components/ShunpoIn.tres" type="Animation" id=14]
+[ext_resource path="res://PlayerPieces/Components/ShunpoOut.tres" type="Animation" id=15]
 [ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=16]
 [ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=17]
+
+
 
 [sub_resource type="SpriteFrames" id=1]
 

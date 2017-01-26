@@ -26,13 +26,31 @@ func make_tip(tip_text, objective_text, arrow_coords, text):
 func make_complex_tip(tip_text, objective_text, tooltips):
 	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
 	
-var sandbox_allies = {4: Berserker}
+var sandbox_allies = {1: Stormdancer, 2: Cavalier, 3: Berserker, 4: Archer, 5:Assassin}
 
 var sandbox_enemies = [
-{Vector2(3,7):make(Fortifier, 2), Vector2(4, 7):make(Fortifier, 2), Vector2(5, 8):make(Fortifier, 2)}
+{2: make(Grunt, 4), 3:make(Fortifier, 4), 6: make(Grunt, 3)},
+{0: make(Grower, 2), 3:make(Drummer, 4), 5: make(Grunt, 6)},
+{1: make(Fortifier, 1), 4:make(Drummer, 2), 5: make(Fortifier, 3)},
+{1: make(Grower, 2, [shield_modifier]), 3: make(Grunt, 5, [poisonous_modifier]), 4: make(Grunt, 4, [poisonous_modifier])},
+{0: make(Grunt, 2), 3: make(Drummer, 1), 5: make(Grunt, 2, [poisonous_modifier])},
+{1: make(Fortifier, 1), 3:make(Drummer, 2, [shield_modifier]), 4:make(Grunt, 2), 5: make(Grower, 2)},
+{1: make(Grower, 2, [shield_modifier]), 3: make(Grunt, 5, [poisonous_modifier]), 4: make(Grunt, 4, [poisonous_modifier])},
 ]
 
-var Sandbox_Level = {"allies": sandbox_allies, "enemies":sandbox_enemies, "initial_deploy_count":2,
+var Sandbox_Level = {"allies": sandbox_allies, "enemies":sandbox_enemies, "initial_deploy_count":3,
+"instructions":[], "reinforcements": {}, "next_level":null}
+
+
+var sandbox_allies2 = {3: Berserker}
+
+var sandbox_enemies2 = [
+{Vector2(3, 6): make(Fortifier, 1), Vector2(2, 6): make(Fortifier, 1), Vector2(4, 7): make(Fortifier, 1)},
+{1: make(Fortifier, 1)}
+]
+
+
+var Sandbox_Level2 = {"allies": sandbox_allies2, "enemies":sandbox_enemies2, "initial_deploy_count":1,
 "instructions":[], "reinforcements": {}, "next_level":null}
 
 

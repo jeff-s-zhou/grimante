@@ -1,6 +1,7 @@
 [gd_scene load_steps=3 format=1]
 
-[ext_resource path="res://EnemyPieces/EnemyCollisionShape2D.tscn" type="PackedScene" id=1]
+[ext_resource path="res://PlayerPieces/Components/PlayerCollisionShape2D.tscn" type="PackedScene" id=1]
+
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 
@@ -9,9 +10,10 @@ points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
 
 [node name="CollisionArea" type="Area2D"]
 
+transform/pos = Vector2( 0, -4 )
 input/pickable = false
 shapes/0/shape = SubResource( 1 )
-shapes/0/transform = Matrix32( 0.507232, 0, 0, 0.566107, 0, 0 )
+shapes/0/transform = Matrix32( 0.505871, 0, 0, 0.553837, 0, 0 )
 shapes/0/trigger = true
 gravity_vec = Vector2( 0, 1 )
 gravity = 98.0

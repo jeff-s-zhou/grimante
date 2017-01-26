@@ -1,6 +1,7 @@
 [gd_scene load_steps=3 format=1]
 
-[ext_resource path="res://EnemyPieces/EnemyClickArea.gd" type="Script" id=1]
+[ext_resource path="res://EnemyPieces/Components/EnemyClickArea.gd" type="Script" id=1]
+
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 
