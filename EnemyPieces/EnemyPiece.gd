@@ -107,7 +107,7 @@ func attack_highlight():
 
 	
 func will_die_to(damage):
-	return (self.hp - damage) <= 0
+	return (self.hp - damage) <= 0 and self.shielded == false
 	
 func reset_prediction_flyover():
 	get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
@@ -348,6 +348,11 @@ func animate_delete_self():
 func set_coords(coords):
 	get_parent().move_piece(self.coords, coords)
 	self.coords = coords
+	#handle stepping on a lightning tile
+	if get_parent().locations[self.coords].raining:
+		get_parent().locations[self.coords].activate_lightning()
+		modify_hp(-1)
+	
 	
 
 func get_movement_value():

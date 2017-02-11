@@ -7,12 +7,16 @@ extends Node2D
 
 var locations = {}
 var pieces = {}
+var pyromancer_selectors = {}
 
 
 #starts at 1, 2, 2, 3, 3, 4, 4, 5, 5,
 #ends at 8, 8, 9, 9, 10, 10, 11, 11, 12
 
 #in order, (0, 8), (1, 8), (1, 9), (2, 9), (2, 10), (3, 10), (3, 11), (4, 11), (4, 12)
+
+var tiles_x = 7 #x
+var tiles_y = 7 #y
 
 const _GRID_X_OFFSET = 0
 const _GRID_Y_OFFSET = 0
@@ -34,13 +38,13 @@ func _ready():
 	var location = load("res://Location.tscn")
 
 	# place location tiles
-	for i in range(0, 7):
+	for i in range(0, self.tiles_x):
 		var offset = 0
-		var column_count = 7
+		var column_count = self.tiles_y
 		if i % 2 == 0:
 			offset = -56
 			#offset = -44
-			column_count = 7
+			column_count = self.tiles_y
 		for j in range(0, column_count):
 			var location1 = location.instance()
 			var tile_x_spacing = location1.get_size().width + TILE_X_OFFSET
@@ -52,6 +56,10 @@ func _ready():
 			locations[Vector2(i, location_y_coord)] = location1
 			location1.set_coords(Vector2(i, location_y_coord))
 
+
+func initialize_shadow_wall_tiles(shadow_wall_tile_range):
+	for coords in shadow_wall_tile_range:
+		self.locations[coords].set_shadow_wall(true)
 
 func debug():
 	for key in self.locations.keys():
@@ -100,6 +108,14 @@ func get_at_location(coords):
 		return locations[coords]
 	else:
 		return null
+		
+func reset_reinforcement_indicators():
+	for location in locations.values():
+		location.set_reinforcement_indicator(false)
+		
+func reset_deployable_indicators():
+	for location in locations.values():
+		location.set_deployable_indicator(false)
 	
 #done once a piece is moved by the player	
 #right click flag is so if we know to check immediately after if cursor is still in a piece's area

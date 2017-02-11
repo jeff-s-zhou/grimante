@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=1]
+[gd_scene load_steps=20 format=1]
 
 [ext_resource path="res://PlayerPieces/ArcherPiece.gd" type="Script" id=1]
 [ext_resource path="res://PlayerPieces/Components/PlayerCollisionArea.tscn" type="PackedScene" id=2]
@@ -11,14 +11,12 @@
 [ext_resource path="res://PlayerPieces/Components/UltimateBar.tscn" type="PackedScene" id=9]
 [ext_resource path="res://UI/SeenIcon.tscn" type="PackedScene" id=10]
 [ext_resource path="res://PlayerPieces/Components/PlayerClickArea.tscn" type="PackedScene" id=11]
-[ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=12]
-[ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=13]
-[ext_resource path="res://PlayerPieces/Components/ArcherArrow.tscn" type="PackedScene" id=14]
-[ext_resource path="res://Assets/processed_sounds/bow_draw.smp" type="Sample" id=15]
-[ext_resource path="res://Assets/processed_sounds/bow_hit.smp" type="Sample" id=16]
-[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=17]
-
-
+[ext_resource path="res://Assets/processed_sounds/bow_draw.smp" type="Sample" id=12]
+[ext_resource path="res://Assets/processed_sounds/bow_hit.smp" type="Sample" id=13]
+[ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=14]
+[ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=15]
+[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=16]
+[ext_resource path="res://PlayerPieces/Components/ArcherArrow.tscn" type="PackedScene" id=17]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -26,14 +24,11 @@ animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"default", "
 
 [sub_resource type="SampleLibrary" id=2]
 
-samples/error = { "db":0.0, "pitch":1.0, "sample":ExtResource( 12 ) }
-samples/mouseover = { "db":0.0, "pitch":1.0, "sample":ExtResource( 13 ) }
-
-[sub_resource type="SampleLibrary" id=3]
-
-samples/bow_draw = { "db":0.0, "pitch":1.0, "sample":ExtResource( 15 ) }
-samples/bow_hit = { "db":0.0, "pitch":1.0, "sample":ExtResource( 16 ) }
-samples/tile_hover = { "db":0.0, "pitch":0.7, "sample":ExtResource( 17 ) }
+samples/bow_draw = { "db":0.0, "pitch":1.0, "sample":ExtResource( 12 ) }
+samples/bow_hit = { "db":0.0, "pitch":1.0, "sample":ExtResource( 13 ) }
+samples/error = { "db":0.0, "pitch":1.0, "sample":ExtResource( 14 ) }
+samples/mouseover = { "db":0.0, "pitch":1.0, "sample":ExtResource( 15 ) }
+samples/tile_hover = { "db":0.0, "pitch":1.0, "sample":ExtResource( 16 ) }
 
 [node name="ArcherType" type="KinematicBody2D"]
 
@@ -90,7 +85,7 @@ default/reverb_room = 2
 default/reverb_send = 0.0
 default/chorus_send = 0.0
 
-[node name="ArcherArrow" parent="." instance=ExtResource( 14 )]
+[node name="ArcherArrow" parent="." instance=ExtResource( 17 )]
 
 visibility/opacity = 0.0
 transform/pos = Vector2( 0, -10 )
@@ -101,17 +96,6 @@ process_mode = 1
 wait_time = 1.0
 one_shot = false
 autostart = false
-
-[node name="SamplePlayer2D" type="SamplePlayer2D" parent="."]
-
-params/volume_db = 0.0
-params/pitch_scale = 1.0
-params/attenuation/min_distance = 1.0
-params/attenuation/max_distance = 2048.0
-params/attenuation/distance_exp = 1.0
-config/polyphony = 1
-config/samples = SubResource( 3 )
-config/pitch_random = 0.0
 
 [node name="Tween 2" type="Tween" parent="."]
 

@@ -9,6 +9,10 @@ var coords
 
 var raining = false
 
+var deployable = false
+
+var shadow_wall = false
+
 signal is_targeted(location)
 
 func _ready():
@@ -25,12 +29,35 @@ func debug():
 func set_coords(coords):
 	self.coords = coords
 	
+func set_reinforcement_indicator(flag):
+	if flag:
+		get_node("ReinforcementIndicator").show()
+	else:
+		get_node("ReinforcementIndicator").hide()
+		
+		
+func set_deployable_indicator(flag):
+	if flag:
+		get_node("DeployableIndicator").show()
+	else:
+		get_node("DeployableIndicator").hide()
+	
 func set_rain(flag):
 	self.raining = flag
 	if flag:
 		get_node("/root/AnimationQueue").enqueue(get_node("StormEffect"), "animate_set_rain", false)
 	else:
 		get_node("StormEffect/RainParticles").hide()
+		
+func set_shadow_wall(flag):
+	self.shadow_wall = flag
+	if flag:
+		get_node("WallFront").show()
+		get_node("WallBack").show()
+	else:
+		get_node("WallFront").hide()
+		get_node("WallBack").hide()
+		
 		
 func activate_lightning():
 	self.raining = false
@@ -63,10 +90,6 @@ func _mouse_exited():
 	get_node("Sprite").set_self_opacity(0.4)
 	if get_parent().selected != null:
 		get_parent().reset_prediction()
-	
-func _input_event(viewport, event, shape_idx):
-	if event.is_action("select") and event.is_pressed():
-		get_parent().set_target(self)
 
 func input_event(event):
 	if event.is_action("select") and event.is_pressed():

@@ -1,4 +1,8 @@
 
+var enemy_wave_generator = load("res://EnemyListGenerator.gd").new()
+var WaveWrappers = load("res://WaveWrappers.gd").new()
+var LevelTypes = load("res://LevelTypes.gd").new()
+
 const Grunt = preload("res://EnemyPieces/GruntPiece.tscn")
 const Fortifier = preload("res://EnemyPieces/FortifierPiece.tscn")
 const Grower = preload("res://EnemyPieces/GrowerPiece.tscn")
@@ -10,6 +14,7 @@ const Archer = preload("res://PlayerPieces/ArcherPiece.tscn")
 const Knight = preload("res://PlayerPieces/KnightPiece.tscn")
 const Assassin = preload("res://PlayerPieces/AssassinPiece.tscn")
 const Stormdancer = preload("res://PlayerPieces/StormdancerPiece.tscn")
+const Pyromancer = preload("res://PlayerPieces/PyromancerPiece.tscn")
 
 var enemy_modifiers = load("res://constants.gd").new().enemy_modifiers
 var shield_modifier = enemy_modifiers["Shield"]
@@ -26,36 +31,24 @@ func make_tip(tip_text, objective_text, arrow_coords, text):
 func make_complex_tip(tip_text, objective_text, tooltips):
 	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
 	
-var sandbox_allies = {1: Stormdancer, 2: Cavalier, 3: Berserker, 4: Archer, 5:Assassin}
+var sandbox_allies = {1: Stormdancer, 2: Cavalier, 3: Berserker, 4: Archer, 5:Pyromancer}
 
-var sandbox_enemies = [
-{2: make(Grunt, 4), 3:make(Fortifier, 4), 6: make(Grunt, 3)},
-{0: make(Grower, 2), 3:make(Drummer, 4), 5: make(Grunt, 6)},
-{1: make(Fortifier, 1), 4:make(Drummer, 2), 5: make(Fortifier, 3)},
-{1: make(Grower, 2, [shield_modifier]), 3: make(Grunt, 5, [poisonous_modifier]), 4: make(Grunt, 4, [poisonous_modifier])},
-{0: make(Grunt, 2), 3: make(Drummer, 1), 5: make(Grunt, 2, [poisonous_modifier])},
-{1: make(Fortifier, 1), 3:make(Drummer, 2, [shield_modifier]), 4:make(Grunt, 2), 5: make(Grower, 2)},
-{1: make(Grower, 2, [shield_modifier]), 3: make(Grunt, 5, [poisonous_modifier]), 4: make(Grunt, 4, [poisonous_modifier])},
-]
+class SandboxPowerGenerator:
+	func get_next():
+		return 300
 
-var Sandbox_Level = {"allies": sandbox_allies, "enemies":sandbox_enemies, "initial_deploy_count":3,
-"instructions":[], "reinforcements": {}, "next_level":null}
+var sandbox_enemies = WaveWrappers.InfiniteGeneratedWrapper.new(SandboxPowerGenerator.new())
+var sandbox_extras = {"shadow_wall_tiles": [Vector2(3, 6)]}
+var Sandbox_Level = LevelTypes.RoomSeal.new(sandbox_allies, sandbox_enemies, 3, null, sandbox_extras)
 
 
-var sandbox_allies2 = {3: Berserker}
+var sandbox_allies2 = {1: Stormdancer, 2: Cavalier, 3:Archer, 4:Pyromancer, 5: Berserker}
 
-var sandbox_enemies2 = [
-{Vector2(3, 6): make(Fortifier, 1), Vector2(2, 6): make(Fortifier, 1), Vector2(4, 7): make(Fortifier, 1)},
-{1: make(Fortifier, 1)}
-]
-
-
-var Sandbox_Level2 = {"allies": sandbox_allies2, "enemies":sandbox_enemies2, "initial_deploy_count":1,
-"instructions":[], "reinforcements": {}, "next_level":null}
-
+var sandbox_enemies2 = WaveWrappers.FiniteGeneratedWrapper.new([300, 200, 100, 100])
+var Sandbox_Level2 = LevelTypes.ClearWaves.new(sandbox_allies2, sandbox_enemies2)
 
 #LEVEL 8
-var level8_allies = {2: Stormdancer, 3: Cavalier, 4:Archer, 5:Assassin, 6: Berserker}
+var level8_allies = {1: Stormdancer, 2: Cavalier, 3:Archer, 4:Assassin, 5: Berserker}
 
 var level8_enemies = [
 {Vector2(1, 3): make(Grunt, 3), Vector2(5, 5): make(Drummer, 2), Vector2(7, 6): make(Drummer, 2)},
@@ -67,13 +60,13 @@ var level8_enemies = [
 {2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous_modifier]), 6: make(Grower, 2)},
 ]
 
+
 var level8_instructions = [
 	make_tip("Enemies now have Modifier abilities! Press Tab to read about any new abilities.", "", null, "")
 ]
 
 var Level8 = {"allies":level8_allies, "enemies":level8_enemies, "initial_deploy_count":3,
 "instructions":[], "reinforcements":{}, "next_level":null}
-
 
 
 #LEVEL 7

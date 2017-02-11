@@ -1,13 +1,17 @@
-[gd_scene load_steps=13 format=1]
+[gd_scene load_steps=17 format=1]
 
 [ext_resource path="res://Location.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/location.png" type="Texture" id=2]
-[ext_resource path="res://Assets/UI/location_red.png" type="Texture" id=3]
-[ext_resource path="res://Assets/UI/location_blue.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/location_blue.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/location_red.png" type="Texture" id=4]
 [ext_resource path="res://Effects/StormEffect.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Assets/processed_fonts/enemy_health.fnt" type="BitmapFont" id=6]
 [ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=7]
 [ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=8]
+[ext_resource path="res://Assets/UI/reinforcement_preview_indicator.png" type="Texture" id=9]
+[ext_resource path="res://Assets/UI/tile_deployable_indicator.png" type="Texture" id=10]
+[ext_resource path="res://Assets/Objects/wall_behind.png" type="Texture" id=11]
+[ext_resource path="res://Assets/Objects/wall_front.png" type="Texture" id=12]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 
@@ -16,7 +20,7 @@ points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
 
 [sub_resource type="SpriteFrames" id=2]
 
-animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"attack_hover", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"movement_hover", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"movement_hover", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"attack_hover", "speed":5.0 } ]
 
 [sub_resource type="SampleLibrary" id=3]
 
@@ -113,5 +117,32 @@ default/filter/gain = 1.0
 default/reverb_room = 2
 default/reverb_send = 0.0
 default/chorus_send = 0.0
+
+[node name="ReinforcementIndicator" type="Sprite" parent="."]
+
+visibility/visible = false
+transform/pos = Vector2( 0, -90 )
+texture = ExtResource( 9 )
+
+[node name="DeployableIndicator" type="Sprite" parent="."]
+
+visibility/visible = false
+texture = ExtResource( 10 )
+
+[node name="WallBack" type="Sprite" parent="."]
+
+visibility/visible = false
+transform/pos = Vector2( 0, -41 )
+z/z = -9
+z/relative = false
+texture = ExtResource( 11 )
+
+[node name="WallFront" type="Sprite" parent="."]
+
+visibility/visible = false
+transform/pos = Vector2( 0, 17 )
+z/z = 4
+z/relative = false
+texture = ExtResource( 12 )
 
 

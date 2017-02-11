@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=1]
+[gd_scene load_steps=16 format=1]
 
 [ext_resource path="res://PlayerPieces/KnightPiece.gd" type="Script" id=1]
 [ext_resource path="res://PlayerPieces/Components/PlayerCollisionArea.tscn" type="PackedScene" id=2]
@@ -11,21 +11,17 @@
 [ext_resource path="res://PlayerPieces/Components/UltimateBar.tscn" type="PackedScene" id=9]
 [ext_resource path="res://UI/SeenIcon.tscn" type="PackedScene" id=10]
 [ext_resource path="res://PlayerPieces/Components/PlayerClickArea.tscn" type="PackedScene" id=11]
-[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=12]
-[ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=13]
-
+[ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=12]
+[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=13]
 
 [sub_resource type="SpriteFrames" id=1]
 
 animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"hurt", "speed":5.0 }, { "frames":[ ExtResource( 6 ) ], "loop":true, "name":"cooldown", "speed":5.0 } ]
 
-[sub_resource type="SampleLibrary" id=2]
-
-samples/tile_hover = { "db":0.0, "pitch":0.7, "sample":ExtResource( 12 ) }
-
 [sub_resource type="SampleLibrary" id=3]
 
-samples/mouseover = { "db":0.0, "pitch":1.0, "sample":ExtResource( 13 ) }
+samples/mouseover = { "db":0.0, "pitch":1.0, "sample":ExtResource( 12 ) }
+samples/tile_hover = { "db":0.0, "pitch":1.0, "sample":ExtResource( 13 ) }
 
 [node name="KnightType" type="KinematicBody2D"]
 
@@ -70,17 +66,6 @@ process_mode = 1
 wait_time = 1.0
 one_shot = false
 autostart = false
-
-[node name="SamplePlayer2D" type="SamplePlayer2D" parent="."]
-
-params/volume_db = 0.0
-params/pitch_scale = 1.0
-params/attenuation/min_distance = 1.0
-params/attenuation/max_distance = 2048.0
-params/attenuation/distance_exp = 1.0
-config/polyphony = 1
-config/samples = SubResource( 2 )
-config/pitch_random = 0.0
 
 [node name="SamplePlayer" type="SamplePlayer" parent="."]
 

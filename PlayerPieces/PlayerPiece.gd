@@ -6,6 +6,8 @@ extends "res://Piece.gd"
 
 var States = {"LOCKED":0, "DEFAULT":1, "CLICKED": 2, "PLACED":3, "SELECTED":4}
 
+var deploying_flag = false
+
 var overview_description
 var attack_description
 var passive_description
@@ -125,7 +127,7 @@ func reset_prediction_highlight():
 func hover_highlight():
 	
 	if(self.state != States.PLACED):
-		get_node("SamplePlayer2D").play("tile_hover")
+		get_node("SamplePlayer").play("tile_hover")
 		get_node("OverlayLayers/White").show()
 	else:
 		print("is placed")
@@ -156,7 +158,10 @@ func hovered():
 
 #called when an event happens inside the click area hitput
 func input_event(event):
-	
+	if self.deploying_flag: #if in deploy phase
+		deploy_input_event(event)
+		return
+	#deploy TODO
 	if event.is_action("select") and !event.is_pressed() and get_node("UltimateBar").ultimate_charging:
 		get_node("UltimateBar").end_charging()
 
@@ -172,6 +177,14 @@ func input_event(event):
 			get_node("UltimateBar").begin_charging()
 
 		else: #if not selected and not self, then some piece is trying to act on this one
+			get_parent().set_target(self)
+			
+			
+func deploy_input_event(event):
+	if event.is_action("select") and event.is_pressed():
+		if get_parent().selected == null:
+			select()
+		else:
 			get_parent().set_target(self)
 
 
@@ -189,10 +202,48 @@ func deselect():
 
 
 func select_action_target(target):
+	print("selecting action target")
+	#deploy TODO
 	get_parent().reset_highlighting()
 	get_parent().reset_prediction()
 	get_node("BlueGlow").hide()
-	act(target.coords)
+	if self.deploying_flag:
+		print("deploying select action target")
+		deploy_select_action_target(target)
+	else:
+		act(target.coords)
+		
+func start_deploy_phase():
+	print("met the start deploy phase thing?")
+	self.state = States.DEFAULT
+	self.deploying_flag = true
+
+	
+func _is_within_deploy_range(coords):
+	return coords in get_node("/root/Combat").level.deploy_tiles
+	
+func deploy_select_action_target(target):
+	if _is_within_deploy_range(target.coords):
+		if get_parent().pieces.has(target.coords) and target.side == "PLAYER":
+			swap_coords_and_pos(target)
+			get_parent().selected = null
+		else:
+			set_coords(target.coords)
+			set_pos(target.get_pos())
+			get_parent().selected = null
+	else:
+		invalid_move()
+		
+func swap_coords_and_pos(target):
+	var temp_coords = self.coords
+	self.coords = target.coords
+	target.coords = temp_coords
+	
+	#set the positions
+	set_pos(get_parent().locations[self.coords].get_pos())
+	target.set_pos(get_parent().locations[target.coords].get_pos())
+	
+	
 
 
 #helper function for act

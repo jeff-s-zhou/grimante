@@ -81,7 +81,7 @@ func _is_within_ultimate_range(new_coords):
 	return new_coords in get_ultimate_range()
 
 func play_smash_sound():
-	get_node("SamplePlayer2D").play("explode3")
+	get_node("SamplePlayer").play("explode3")
 
 func jump_to(new_coords, speed=4):
 	self.mid_leaping_animation = true

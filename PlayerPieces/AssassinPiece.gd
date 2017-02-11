@@ -119,7 +119,10 @@ func act(new_coords):
 		var args = [self.coords, new_coords, self.pathed_range, 350]
 		get_node("/root/AnimationQueue").enqueue(self, "animate_stepped_move", true, args)
 		set_coords(new_coords)
-		placed()
+		if self.ultimate_flag:
+			soft_placed() #in the case that it resets again using its passive
+		else:
+			placed()
 	elif _is_within_attack_range(new_coords):
 		get_node("/root/Combat").handle_archer_ultimate(new_coords)
 		backstab(new_coords)

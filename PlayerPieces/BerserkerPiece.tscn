@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=1]
+[gd_scene load_steps=24 format=1]
 
 [ext_resource path="res://PlayerPieces/BerserkerPiece.gd" type="Script" id=1]
 [ext_resource path="res://PlayerPieces/Components/PlayerCollisionArea.tscn" type="PackedScene" id=2]
@@ -13,13 +13,10 @@
 [ext_resource path="res://UI/SeenIcon.tscn" type="PackedScene" id=11]
 [ext_resource path="res://PlayerPieces/Components/PlayerClickArea.tscn" type="PackedScene" id=12]
 [ext_resource path="res://Assets/processed_sounds/explode3.smp" type="Sample" id=13]
-[ext_resource path="res://Assets/processed_sounds/generalclick10.smp" type="Sample" id=14]
-[ext_resource path="res://Assets/processed_sounds/generalclick16.smp" type="Sample" id=15]
-[ext_resource path="res://Assets/processed_sounds/light_switch_019.smp" type="Sample" id=16]
+[ext_resource path="res://Assets/processed_sounds/light_switch_019.smp" type="Sample" id=14]
+[ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=15]
+[ext_resource path="res://Assets/processed_sounds/select.smp" type="Sample" id=16]
 [ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=17]
-[ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=18]
-[ext_resource path="res://Assets/processed_sounds/select.smp" type="Sample" id=19]
-
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -123,17 +120,11 @@ tracks/4/keys = { "times":FloatArray( 0, 0.2 ), "transitions":FloatArray( 1, 1 )
 
 [sub_resource type="SampleLibrary" id=6]
 
-samples/explode3 = { "db":-5.0, "pitch":1.0, "sample":ExtResource( 13 ) }
-samples/generalclick10 = { "db":0.01, "pitch":1.0, "sample":ExtResource( 14 ) }
-samples/generalclick16 = { "db":0.0, "pitch":1.0, "sample":ExtResource( 15 ) }
-samples/light_switch_019 = { "db":24.0, "pitch":0.5, "sample":ExtResource( 16 ) }
-samples/tile_hover = { "db":0.0, "pitch":0.7, "sample":ExtResource( 17 ) }
-
-[sub_resource type="SampleLibrary" id=7]
-
-samples/light_switch_019 = { "db":0.0, "pitch":1.0, "sample":ExtResource( 16 ) }
-samples/mouseover = { "db":5.0, "pitch":1.0, "sample":ExtResource( 18 ) }
-samples/select = { "db":0.0, "pitch":1.0, "sample":ExtResource( 19 ) }
+samples/explode3 = { "db":0.0, "pitch":1.0, "sample":ExtResource( 13 ) }
+samples/light_switch_019 = { "db":0.0, "pitch":1.0, "sample":ExtResource( 14 ) }
+samples/mouseover = { "db":5.0, "pitch":1.0, "sample":ExtResource( 15 ) }
+samples/select = { "db":0.0, "pitch":1.0, "sample":ExtResource( 16 ) }
+samples/tile_hover = { "db":0.0, "pitch":1.0, "sample":ExtResource( 17 ) }
 
 [node name="BerserkerType" type="KinematicBody2D"]
 
@@ -194,17 +185,6 @@ playback/active = false
 playback/repeat = false
 playback/speed = 1.0
 
-[node name="SamplePlayer2D" type="SamplePlayer2D" parent="."]
-
-params/volume_db = 0.0
-params/pitch_scale = 1.0
-params/attenuation/min_distance = 1.0
-params/attenuation/max_distance = 2048.0
-params/attenuation/distance_exp = 1.0
-config/polyphony = 1
-config/samples = SubResource( 6 )
-config/pitch_random = 0.0
-
 [node name="Timer" type="Timer" parent="."]
 
 process_mode = 1
@@ -222,7 +202,7 @@ playback/speed = 1.0
 [node name="SamplePlayer" type="SamplePlayer" parent="."]
 
 config/polyphony = 1
-config/samples = SubResource( 7 )
+config/samples = SubResource( 6 )
 default/volume_db = 0.0
 default/pitch_scale = 1.0
 default/pan = 0.0

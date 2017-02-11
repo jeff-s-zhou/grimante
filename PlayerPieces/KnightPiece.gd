@@ -15,7 +15,7 @@ const OVERVIEW_DESCRIPTION = """Armor: 2
 Movement: 1 range step
 """
 
-const ATTACK_DESCRIPTION = """Shove. 1 range, pushes target back and also pushes targets behind them. Can push friendly units and not KO them.
+const ATTACK_DESCRIPTION = """Shove.
 """
 
 const PASSIVE_DESCRIPTION = "TODO"
