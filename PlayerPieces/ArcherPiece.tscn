@@ -1,11 +1,11 @@
-[gd_scene load_steps=20 format=1]
+[gd_scene load_steps=21 format=1]
 
 [ext_resource path="res://PlayerPieces/ArcherPiece.gd" type="Script" id=1]
 [ext_resource path="res://PlayerPieces/Components/PlayerCollisionArea.tscn" type="PackedScene" id=2]
 [ext_resource path="res://PlayerPieces/Components/BlueGlow.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Assets/Allies/archer_piece.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Allies/archer_piece_red.png" type="Texture" id=5]
-[ext_resource path="res://Assets/Allies/archer_piece_sepia.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Allies/archer_piece_red.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Allies/archer_piece_sepia.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Allies/archer_piece.png" type="Texture" id=6]
 [ext_resource path="res://PlayerPieces/Components/OverlayLayers.tscn" type="PackedScene" id=7]
 [ext_resource path="res://PlayerPieces/Components/Cooldown.tscn" type="PackedScene" id=8]
 [ext_resource path="res://PlayerPieces/Components/UltimateBar.tscn" type="PackedScene" id=9]
@@ -17,10 +17,11 @@
 [ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=15]
 [ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=16]
 [ext_resource path="res://PlayerPieces/Components/ArcherArrow.tscn" type="PackedScene" id=17]
+[ext_resource path="res://Assets/Allies/overlay_art/archer.png" type="Texture" id=18]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"hurt", "speed":5.0 }, { "frames":[ ExtResource( 6 ) ], "loop":true, "name":"cooldown", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"hurt", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"cooldown", "speed":5.0 }, { "frames":[ ExtResource( 6 ) ], "loop":true, "name":"default", "speed":5.0 } ]
 
 [sub_resource type="SampleLibrary" id=2]
 
@@ -103,6 +104,12 @@ playback/process_mode = 1
 playback/active = false
 playback/repeat = false
 playback/speed = 1.0
+
+[node name="OverlayArt" type="Sprite" parent="."]
+
+visibility/visible = false
+z/z = 200
+texture = ExtResource( 18 )
 
 
 [editable path="CollisionArea"]

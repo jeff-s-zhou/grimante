@@ -20,9 +20,11 @@ const ULTIMATE_DESCRIPTION = """Storm. Deal damage to enemies on Rain tiles equa
 
 
 const DEFAULT_BOLT_DAMAGE = 1
+const DEFAULT_STORM_DAMAGE = 5
 const DEFAULT_MOVEMENT_VALUE = 2
 
 var bolt_damage = DEFAULT_BOLT_DAMAGE setget ,get_bolt_damage
+var storm_damage = DEFAULT_STORM_DAMAGE setget ,get_storm_damage
 
 
 var rain_coords_dict = {}
@@ -45,38 +47,33 @@ func get_bolt_damage():
 	return self.attack_bonus + DEFAULT_BOLT_DAMAGE
 
 #not a true getter
-func get_storm_damage(num_rain_tiles):
-	return self.attack_bonus + num_rain_tiles
+func get_storm_damage():
+	return self.attack_bonus + DEFAULT_STORM_DAMAGE
 	
 
 func set_coords(coords):
 	.set_coords(coords)
 
-func get_attack_range():
-	return get_parent().get_all_range("ENEMY")
-
-
 func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value + 1])
 	
 
-func get_swap_range():
+func get_ally_swap_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value + 1], "PLAYER")
+	
+	
+func get_enemy_swap_range():
+	return get_parent().get_radial_range(self.coords, [1, self.movement_value + 1], "ENEMY")
 
 
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
-	var action_range = get_movement_range() + get_attack_range()
+	var action_range = get_movement_range() + get_enemy_swap_range()
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
-	var ally_action_range = get_swap_range()
-	for coords in ally_action_range:
+	for coords in get_ally_swap_range():
 		get_parent().get_at_location(coords).assist_highlight()
 
-
-func _is_within_attack_range(new_coords):
-	var attack_range = get_attack_range()
-	return new_coords in attack_range
 
 
 func _is_within_movement_range(new_coords):
@@ -84,7 +81,7 @@ func _is_within_movement_range(new_coords):
 	return new_coords in movement_range
 	
 func _is_within_swap_range(new_coords):
-	var swap_range = get_swap_range()
+	var swap_range = get_ally_swap_range() + get_enemy_swap_range()
 	return new_coords in swap_range
 
 
@@ -92,12 +89,6 @@ func act(new_coords):
 	#returns whether the act was successfully committed
 	if _is_within_swap_range(new_coords):
 		tango(new_coords)
-		placed()
-		
-	elif _is_within_attack_range(new_coords):
-		get_node("/root/Combat").handle_archer_ultimate(new_coords)
-		lightning_attack(new_coords)
-		get_node("/root/Combat").handle_assassin_passive(new_coords)
 		placed()
 		
 	elif _is_within_movement_range(new_coords):
@@ -142,11 +133,7 @@ func animate_shunpo(new_coords):
 
 
 func predict(new_coords):
-	if _is_within_attack_range(new_coords):
-		get_parent().pieces[new_coords].predict(self.bolt_damage)
-		
-	elif _is_within_movement_range(new_coords):
-		pass
+	pass
 
 
 func cast_ultimate():
@@ -156,6 +143,6 @@ func cast_ultimate():
 		if get_parent().pieces.has(coords) and get_parent().pieces[coords].side == "ENEMY":
 			get_parent().locations[coords].activate_lightning()
 			get_parent().pieces[coords].set_stunned(true)
-			get_parent().pieces[coords].attacked(get_storm_damage(self.rain_coords_dict.size()))
+			get_parent().pieces[coords].attacked(self.storm_damage)
 	get_node("/root/AnimationQueue").enqueue(get_node("/root/Combat"), "lighten", true)
 	placed()

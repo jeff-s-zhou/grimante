@@ -5,18 +5,17 @@ extends "PlayerPiece.gd"
 # var a=2
 # var b="textvar"
 
-const texture_path = "res://Assets/archer_piece.png"
-
 var ANIMATION_STATES = {"default":0, "moving":1}
 var animation_state = ANIMATION_STATES.default
 
 const DEFAULT_SHOOT_DAMAGE = 3
 const DEFAULT_PASSIVE_DAMAGE = 3
 const DEFAULT_MOVEMENT_VALUE = 1
+const DEFAULT_ULTIMATE_DAMAGE = 5
 
 var shoot_damage = DEFAULT_SHOOT_DAMAGE setget , get_shoot_damage
 var passive_damage = DEFAULT_PASSIVE_DAMAGE setget , get_passive_damage
-
+var ultimate_damage = DEFAULT_ULTIMATE_DAMAGE setget, get_ultimate_damage
 
 
 var velocity
@@ -48,16 +47,25 @@ func _ready():
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.ultimate_description = ULTIMATE_DESCRIPTION
+
 	
 func get_shoot_damage():
 	return self.attack_bonus + DEFAULT_SHOOT_DAMAGE
 	
 func get_passive_damage():
 	return self.attack_bonus + DEFAULT_PASSIVE_DAMAGE
+	
+func get_ultimate_damage():
+	return self.attack_bonus + DEFAULT_ULTIMATE_DAMAGE
 
 func get_attack_range():
 	var attack_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", true)
 	var attack_range_diagonal = get_parent().get_diagonal_range(self.coords, [1, 8], "ENEMY", true)
+	return attack_range + attack_range_diagonal
+	
+func get_ultimate_range():
+	var attack_range = get_parent().get_range(self.coords, [1, 11], "ENEMY")
+	var attack_range_diagonal = get_parent().get_diagonal_range(self.coords, [1, 8], "ENEMY")
 	return attack_range + attack_range_diagonal
 
 func get_movement_range():
@@ -74,47 +82,69 @@ func get_step_shot_coords(coords):
 
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
+	var action_range
 	if self.ultimate_flag:
-		return
-	var action_range = get_attack_range() + get_movement_range()
+		action_range = get_ultimate_range() + get_movement_range()
+	else:
+		action_range = get_attack_range() + get_movement_range()
+		
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
+	
+	.display_action_range()
 		
 func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
 
 func _is_within_attack_range(new_coords):
+	if self.ultimate_flag:
+		return new_coords in get_ultimate_range()
 	return new_coords in get_attack_range()
 
 
 func act(new_coords):
-	#if the tile selected is within movement range
-	if self.ultimate_flag:
-		invalid_move()
 	
-	elif _is_within_movement_range(new_coords):
+	if _is_within_movement_range(new_coords):
 		var args = [self.coords, new_coords, self.pathed_range, 350]
 		get_node("/root/AnimationQueue").enqueue(self, "animate_stepped_move", true, args)
 		set_coords(new_coords)
 		var coords = get_step_shot_coords(self.coords)
 		if coords != null:
+			#get_node("/root/Combat").display_overlay(self.unit_name)
 			ranged_attack(coords, self.passive_damage)
 		placed()
 
 	#elif the tile selected is within attack range
 	elif _is_within_attack_range(new_coords):
+		get_node("/root/Combat").display_overlay(self.unit_name)
 		ranged_attack(new_coords, self.shoot_damage)
-		get_node("/root/Combat").handle_assassin_passive(new_coords)
+		placed()
+	
+	elif _is_within_ally_shove_range(new_coords):
+		initiate_shove(new_coords)
 		placed()
 		
 	else:
 		invalid_move()
 
 func ranged_attack(new_coords, damage):
-	print("calling ranged attack")
-	get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [new_coords])
-	get_parent().pieces[new_coords].attacked(damage)
+	
+	if self.ultimate_flag:
+		silver_arrow(new_coords)
+	else:
+		get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [new_coords])
+		get_parent().pieces[new_coords].attacked(damage)
 
+func silver_arrow(new_coords):
+	var direction = get_parent().get_direction_from_vector(new_coords - self.coords)
+	var damage_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", false, [direction, direction +1])
+	var damage = self.ultimate_damage
+	for coords in damage_range:
+		if damage == 0:
+			break
+		get_parent().pieces[coords].attacked(damage)
+		damage -= 1
+	placed()
 
 func animate_ranged_attack(new_coords):
 	print("animating ranged attack")
@@ -125,7 +155,7 @@ func animate_ranged_attack(new_coords):
 	var arrow = get_node("ArcherArrow")
 	arrow.set_rot(angle)
 	var distance = get_pos().distance_to(new_position)
-	var speed = 1800
+	var speed = 2200
 	var time = distance/speed
 	
 	get_node("Tween 2").interpolate_property(arrow, "visibility/opacity", 0, 1, 0.6, Tween.TRANS_SINE, Tween.EASE_IN)
@@ -157,7 +187,9 @@ func play_bow_hit():
 
 func predict(new_coords):
 	if self.ultimate_flag:
-		return
+		var ultimate_range = get_ultimate_range()
+		for coords in ultimate_range:
+			get_parent().get_at_location(coords).movement_highlight()
 	
 	elif _is_within_movement_range(new_coords):
 		var coords = get_step_shot_coords(new_coords)
@@ -181,26 +213,16 @@ func cast_ultimate():
 	get_node("OverlayLayers/UltimateWhite").show()
 	#first reset the highlighting on the parent nodes. Then call the new highlighting
 	self.ultimate_flag = true
-	display_overwatch()
 	get_parent().reset_highlighting()
-	get_node("BlueGlow").hide()
-	get_parent().selected = null
-	self.state = States.PLACED
-	
-func trigger_ultimate(attack_coords):
-	if _is_within_attack_range(attack_coords):
-		get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [attack_coords])
-		get_parent().pieces[attack_coords].nonlethal_attacked(3)
-		
+	display_action_range()
+
+
 func placed():
 	if self.ultimate_flag:
 		self.ultimate_used_flag = true
 		self.ultimate_flag = false
 	.placed()
-		
-func delete_self():
-	get_node("/root/Combat").archer = null
-	.delete_self()
+
 	
 func display_overwatch():
 	pass

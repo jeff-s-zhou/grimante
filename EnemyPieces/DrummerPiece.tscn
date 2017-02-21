@@ -14,10 +14,6 @@
 [ext_resource path="res://EnemyPieces/Components/Flyover.tscn" type="PackedScene" id=12]
 [ext_resource path="res://EnemyPieces/Components/EnemyClickArea.tscn" type="PackedScene" id=13]
 
-
-
-
-
 [sub_resource type="SpriteFrames" id=1]
 
 animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ), ExtResource( 5 ) ], "loop":true, "name":"damaged", "speed":5.0 } ]

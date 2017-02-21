@@ -83,6 +83,7 @@ func display_action_range():
 	var action_range = get_movement_range() + get_attack_range()
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
+	.display_action_range()
 
 
 func _is_within_attack_range(new_coords):
@@ -99,12 +100,14 @@ func act(new_coords):
 	#returns whether the act was successfully committed
 	
 	if _is_within_attack_range(new_coords):
-		get_node("/root/Combat").handle_archer_ultimate(new_coords)
+		get_node("/root/Combat").display_overlay(self.unit_name)
 		charge_attack(new_coords)
-		get_node("/root/Combat").handle_assassin_passive(new_coords)
 		
 	elif _is_within_movement_range(new_coords):
 		trample(new_coords)
+	elif _is_within_ally_shove_range(new_coords):
+		initiate_shove(new_coords)
+		placed()
 	else:
 		invalid_move()
 
@@ -210,9 +213,7 @@ func predict_charge_move(new_coords, attack=false):
 func cast_ultimate():
 	get_node("OverlayLayers/UltimateWhite").show()
 	self.ultimate_flag = true
-	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
-		player_piece.attack_bonus += 1
-		player_piece.movement_value += 1
+	pass
 		
 func placed():
 	if self.ultimate_flag:

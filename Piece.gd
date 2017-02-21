@@ -114,7 +114,7 @@ func push(distance, pusher=null):
 			var collide_coords = collide_range[0]
 			print(collide_coords)
 			var location = get_parent().locations[collide_coords]
-			var difference = (location.get_pos() - get_pos()) - Vector2(0, 85)
+			var difference = (location.get_pos() - get_pos()) / 3
 			print(difference)
 			var collide_pos = get_pos() + difference 
 			var new_distance = (self.coords + distance) - collide_coords + get_parent().hex_normalize(distance)
@@ -148,4 +148,7 @@ func move_or_fall_off(distance):
 			
 func dies_to_collision(pusher):
 	return false
+	
+
+
 	

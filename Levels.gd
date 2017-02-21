@@ -15,6 +15,7 @@ const Knight = preload("res://PlayerPieces/KnightPiece.tscn")
 const Assassin = preload("res://PlayerPieces/AssassinPiece.tscn")
 const Stormdancer = preload("res://PlayerPieces/StormdancerPiece.tscn")
 const Pyromancer = preload("res://PlayerPieces/PyromancerPiece.tscn")
+const FrostKnight = preload("res://PlayerPieces/FrostKnightPiece.tscn")
 
 var enemy_modifiers = load("res://constants.gd").new().enemy_modifiers
 var shield_modifier = enemy_modifiers["Shield"]
@@ -31,15 +32,15 @@ func make_tip(tip_text, objective_text, arrow_coords, text):
 func make_complex_tip(tip_text, objective_text, tooltips):
 	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
 	
-var sandbox_allies = {1: Stormdancer, 2: Cavalier, 3: Berserker, 4: Archer, 5:Pyromancer}
+var sandbox_allies = {1: Stormdancer, 2: Cavalier, 3: Berserker, 4: Archer, 5: Assassin}
 
 class SandboxPowerGenerator:
 	func get_next():
 		return 300
 
 var sandbox_enemies = WaveWrappers.InfiniteGeneratedWrapper.new(SandboxPowerGenerator.new())
-var sandbox_extras = {"shadow_wall_tiles": [Vector2(3, 6)]}
-var Sandbox_Level = LevelTypes.RoomSeal.new(sandbox_allies, sandbox_enemies, 3, null, sandbox_extras)
+#var sandbox_extras = {"shadow_wall_tiles": [Vector2(3, 6)]}
+var Sandbox_Level = LevelTypes.RoomSeal.new(sandbox_allies, sandbox_enemies, 3, null) #sandbox_extras)
 
 
 var sandbox_allies2 = {1: Stormdancer, 2: Cavalier, 3:Archer, 4:Pyromancer, 5: Berserker}

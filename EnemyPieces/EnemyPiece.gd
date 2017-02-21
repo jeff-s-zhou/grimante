@@ -16,6 +16,10 @@ var coords #enemies move automatically each turn a certain number of spaces forw
 var hp
 var shielded = false
 var deadly = false
+var burning = false
+var frozen = false
+
+var silenced = false
 
 var temp_display_hp #what we reset to when resetting prediction, in case original hp is already changed
 
@@ -210,7 +214,22 @@ func set_shield(flag):
 		if self.modifier_descriptions.has(name):
 			self.modifier_descriptions.erase(name)
 		get_node("/root/AnimationQueue").enqueue(self, "animate_bubble_hide", false)
+		
+func set_burning(flag):
+	self.burning = flag
+	if flag:
+		get_node("Physicals/EnemyEffects/BurningEffect").show()
+	else:
+		get_node("/root/AnimationQueue").enqueue(self,"animate_burning_hide", false)
+		
+func set_frozen(flag):
+	self.frozen = flag
+	
+func set_silenced(flag):
+	self.silenced = flag
 
+func animate_burning_hide():
+	get_node("Physicals/EnemyEffects/BurningEffect").hide()
 
 func animate_bubble_hide():
 	get_node("Physicals/EnemyEffects/Bubble").hide()
@@ -258,6 +277,7 @@ func heal(amount, aoe=false, delay=0.0):
 
 
 func attacked(amount, aoe=false):
+	#if not aoe, check assassin passive here
 	if self.shielded:
 		set_shield(false)
 	else:
@@ -268,6 +288,47 @@ func attacked(amount, aoe=false):
 func smash_killed(damage, aoe=false):
 	get_node("/root/AnimationQueue").enqueue(self, "animate_smash_killed", false)
 	attacked(damage, aoe)
+	
+	
+func receive_shield_bash(destination_coords):
+	#if it falls off the edge of map
+	if !get_parent().locations.has(destination_coords):
+		delete_self()
+		#var fall_off_distance = 30 * (fall_off_pos - get_pos()).normalized()
+		if get_parent().hex_normalize(destination_coords - self.coords) == Vector2(0, 1):
+				emit_signal("broke_defenses")
+		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
+		
+	#if there's a piece in the destination coords
+	elif get_parent().pieces.has(destination_coords):
+		if get_parent().pieces[destination_coords].side == "ENEMY":
+			var other_enemy_piece = get_parent().pieces[destination_coords]
+			#shove itself into the other piece
+			var offset = get_parent().hex_normalize(destination_coords - self.coords)
+			var location = get_parent().locations[destination_coords]
+			var difference = (location.get_pos() - get_pos()) / 3
+			var collide_pos = get_pos() + difference 
+			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 300, true]) #push up against it
+			
+			#then kill one or the other, depending on which has the higher hp
+			if self.hp >= other_enemy_piece.hp:
+				other_enemy_piece.receive_shield_bashed_enemy_bash()
+				get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [destination_coords, 300, false])
+				set_coords(destination_coords)
+			else:
+				delete_self()
+				get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
+		#TODO: what do we do if it tries to shove an enemy into an ally?
+		
+	#otherwise just push it
+	else:
+		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [destination_coords, 300, false])
+		set_coords(destination_coords)
+
+#can't think of what to call this lol, it's when an enemy is shoved by another enemy that's shield bashed
+func receive_shield_bashed_enemy_bash():
+	delete_self()
+	get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
 
 
 #always leaves them with 1 hp
@@ -285,7 +346,6 @@ func modify_hp(amount, aoe=false, delay=0):
 		hp = (max(0, hp + amount))
 		self.temp_display_hp = hp
 		get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [hp, amount, delay])
-		 
 		if hp == 0 and !aoe: #if aoe, then we manually do the delete self check afterwards
 			delete_self()
 
@@ -373,4 +433,11 @@ func turn_update():
 		set_stunned(false)
 	else:
 		self.push(movement_value)
+	
+	if self.silenced:
+		set_silenced(false)
+	
+	if self.burning:
+		attacked(1)
+		get_node("/root/Combat").handle_assassin_passive(self.coords)
 	reset_auras()

@@ -27,6 +27,8 @@ var passive_damage = DEFAULT_PASSIVE_DAMAGE setget , get_passive_damage
 
 var pathed_range
 
+var bloodlust_flag = false
+
 func _ready():
 	self.armor = 1
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
@@ -35,7 +37,6 @@ func _ready():
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.ultimate_description = ULTIMATE_DESCRIPTION
-	#set_charge(3) #for debugging purposes
 
 func delete_self():
 	get_node("/root/Combat").assassin = null
@@ -47,6 +48,7 @@ func get_backstab_damage():
 	
 func get_passive_damage():
 	return self.attack_bonus + DEFAULT_PASSIVE_DAMAGE
+
 
 func get_movement_range():
 	self.pathed_range = get_parent().get_pathed_range(self.coords, self.movement_value)
@@ -102,6 +104,8 @@ func display_action_range():
 	var action_range = get_attack_range() + get_movement_range()
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
+	.display_action_range()
+	
 
 func _is_within_attack_range(new_coords):
 	var attack_range = get_attack_range()
@@ -124,8 +128,11 @@ func act(new_coords):
 		else:
 			placed()
 	elif _is_within_attack_range(new_coords):
-		get_node("/root/Combat").handle_archer_ultimate(new_coords)
+		get_node("/root/Combat").display_overlay(self.unit_name)
 		backstab(new_coords)
+	elif _is_within_ally_shove_range(new_coords):
+		initiate_shove(new_coords)
+		placed()
 	else:
 		invalid_move()
 
@@ -140,36 +147,38 @@ func backstab(new_coords):
 	var return_position = get_parent().locations[new_coords + BEHIND].get_pos()
 	get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [return_position, 200, true])
 	set_coords(new_coords + BEHIND)
+	
 	if self.ultimate_flag:
 		if get_parent().pieces.has(new_coords): #if it didn't kill
 			soft_placed() 
 		else:
+			if !self.bloodlust_flag:
+				self.attack_bonus += 2 #on the very first kill, get the +2 attack bonus
+				self.bloodlust_flag = true
+				
 			get_parent().selected = null
-
-	else:
-		if !get_parent().pieces.has(new_coords): #if it did kill
-			set_charge(get_charge() + 1)
+		
+	elif !self.bloodlust_flag: #hasn't triggered bloodlust yet
+		if get_parent().pieces.has(new_coords): #if it didn't kill
+			soft_placed()
+		else:
+			self.bloodlust_flag = true
+			get_parent().selected = null
+			self.attack_bonus += 2
+	
+	else: #already triggered bloodlust
 		placed()
 
-
-func get_charge():
-	return get_node("ChargeBar").charge
-
-func set_charge(charge):
-	get_node("ChargeBar").set_charge(charge)
 
 func predict(new_coords):
 	if _is_within_attack_range(new_coords):
 		get_parent().pieces[new_coords].predict(self.backstab_damage)
 
 func cast_ultimate():
-	if get_charge() == 3:
-		get_node("OverlayLayers/UltimateWhite").show()
-		self.ultimate_flag = true
-		self.attack_bonus += 2
-		get_parent().reset_highlighting()
-		display_action_range()
-		set_charge(0)
+	get_node("OverlayLayers/UltimateWhite").show()
+	self.ultimate_flag = true
+	get_parent().reset_highlighting()
+	display_action_range()
 	
 	
 #same as regular placed() except doesn't reset the ultimate_flag
@@ -185,6 +194,7 @@ func unplaced():
 	get_node("AnimatedSprite").play("default")
 
 func placed():
+	self.bloodlust_flag = false
 	if self.ultimate_flag:
 		self.ultimate_flag = false
 	.placed()
@@ -194,11 +204,14 @@ func trigger_passive(attack_coords):
 		get_node("/root/AnimationQueue").enqueue(self, "animate_passive", true, [attack_coords])
 		get_parent().pieces[attack_coords].attacked(self.passive_damage)
 		if !get_parent().pieces.has(attack_coords) and self.ultimate_flag:
+			if !self.bloodlust_flag:
+				self.attack_bonus += 2 #on the very first kill, get the +2 attack bonus
+				self.bloodlust_flag = true
 			unplaced()
-		
-		elif !get_parent().pieces.has(attack_coords): #if it did kill
-			set_charge(get_charge() + 1)
-		
+
+		elif !get_parent().pieces.has(attack_coords) and !self.bloodlust_flag:
+			self.attack_bonus += 2
+			unplaced()
 		get_node("/root/AnimationQueue").enqueue(self, "animate_passive_end", true, [self.coords])
 
 

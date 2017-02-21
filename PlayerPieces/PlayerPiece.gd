@@ -48,6 +48,12 @@ func _ready():
 	
 func set_cooldown(cooldown):
 	self.cooldown = cooldown + 1 #offset for the first countdown tick
+	
+func get_ally_shove_range():
+	return get_parent().get_range(self.coords, [1, 2], "PLAYER")
+	
+func _is_within_ally_shove_range(coords):
+	return coords in get_ally_shove_range()
 
 	
 func is_placed():
@@ -95,7 +101,7 @@ func animate_stepped_move(old_coords, new_coords, pathed_range, speed=250, block
 
 	if blocking:
 		emit_signal("animation_done")
-
+		
 
 	
 func attack_highlight():
@@ -243,7 +249,7 @@ func swap_coords_and_pos(target):
 	set_pos(get_parent().locations[self.coords].get_pos())
 	target.set_pos(get_parent().locations[target.coords].get_pos())
 	
-	
+
 
 
 #helper function for act
@@ -276,13 +282,35 @@ func animate_placed():
 func dies_to_collision(pusher):
 	if pusher != null and pusher.side != self.side:  #if there's a pusher and not on the same side
 		return pusher.deadly or self.armor == 0 #if the piece has no armor, or the pusher enemy is deadly
+		
 
-#OVERRIDEN FUNCTIONS
+#shove is different than push
+func initiate_shove(coords):
+	var offset = get_parent().hex_normalize(coords - self.coords)
+	var shoved_coords = coords + offset
+	if(get_parent().locations.has(shoved_coords) and !get_parent().pieces.has(shoved_coords)):
+		var location = get_parent().locations[coords]
+		var difference = (location.get_pos() - get_pos()) / 3
+		var collide_pos = get_pos() + difference 
+		get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 300, true]) #push up against it
+		get_parent().pieces[coords].receive_shove(shoved_coords)
+		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [coords, 300, false])
+		set_coords(coords)
+	else:
+		invalid_move()
+		
+func receive_shove(destination_coords):
+	get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [destination_coords, 300, false])
+	set_coords(destination_coords)
+
+
+#OVERRIDEN OR INHERITED FUNCTIONS
 func act(new_coords):
 	return false
 
 func display_action_range():
-	pass
+	for coords in get_ally_shove_range():
+		get_parent().get_at_location(coords).assist_highlight()
 	
 func cast_ultimate():
 	pass

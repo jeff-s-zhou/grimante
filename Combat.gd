@@ -44,8 +44,8 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(300, 250))
 	
-	debug_mode()
-	#ultimates_enabled()
+	#debug_mode()
+	ultimates_enabled()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("Button").connect("pressed", self, "end_turn")
@@ -187,7 +187,9 @@ func end_turn():
 
 func _input(event):
 	#select a unit
+	
 	if event.is_action("select") and event.is_pressed():
+		get_node("OverlayDisplayer").skip_animation()
 		var hovered = get_node("CursorArea").get_piece_or_location_hovered()
 		if hovered:
 			hovered.input_event(event)
@@ -199,10 +201,6 @@ func _input(event):
 	if event.is_action("deselect") and event.is_pressed(): 
 		if get_node("Grid").selected:
 			get_node("Grid").selected.deselect()
-			
-			#if the unit selected was pyromancer, remove the pyromancer selectors
-			if get_node("Grid").selected.UNIT_TYPE == "Pyromancer":
-				get_node("Grid").hide_pyromancer_selectors()
 			
 			get_node("Grid").selected = null
 			get_node("Grid").reset_highlighting(true)
@@ -225,7 +223,7 @@ func _input(event):
 				self.player_info_flag = true
 				hovered_piece.set_seen(true)
 				get_node("PhaseShifter/AnimationPlayer").play("start_blur")
-				darken(0.2, 0.1)
+				darken(0.1, 0.2)
 				get_node("PlayerPieceInfo").set_info(hovered_piece.unit_name, hovered_piece.overview_description, \
 	 			hovered_piece.attack_description, hovered_piece.passive_description, hovered_piece.ultimate_description)
 				get_node("PlayerPieceInfo").show()
@@ -238,7 +236,7 @@ func _input(event):
 				get_node("Tooltip").set_pos(Vector2(-500, -500))
 			elif self.player_info_flag: #elif hovered_piece.side == "PLAYER"
 				self.player_info_flag = false
-				lighten(0.2, 0.1)
+				lighten(0.1)
 				get_node("PhaseShifter/AnimationPlayer").play("end_blur")
 				get_node("PlayerPieceInfo").hide()
 
@@ -259,26 +257,6 @@ func _input(event):
 			OS.set_window_maximized(false)
 			OS.set_window_fullscreen(true)
 
-	elif event.is_action("test_action"):
-		if event.is_pressed():
-			get_node("TestSprite").show()
-		else:
-			get_node("TestSprite").hide()
-			
-	elif event.is_action("test_action2"):
-		if event.is_pressed():
-			get_node("TestSprite2").show()
-		else:
-			get_node("TestSprite2").hide()
-			
-	elif event.is_action("test_action3"):
-		if event.is_pressed():
-			get_node("Panel 2").show()
-			get_node("TestSprite3").show()
-		else:
-			get_node("Panel 2").hide()
-			get_node("TestSprite3").hide()
-	
 
 func _process(delta):
 	var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
@@ -521,14 +499,18 @@ func damage_defenses():
 	get_node("LivesSystem").lose_lives(1)
 	if get_node("LivesSystem").lives == 0:
 		enemy_win()
+		
+func display_overlay(unit_name):
+	get_node("/root/AnimationQueue").enqueue(get_node("OverlayDisplayer"), "animate_display_overlay", true, [unit_name])
 
-func darken(amount=0.3, time=0.4):
+func darken(time=0.4, amount=0.3):
 	get_node("Tween").interpolate_property(get_node("DarkenLayer"), "visibility/opacity", 0, amount, time, Tween.TRANS_SINE, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	emit_signal("animation_done")
 
-func lighten(amount=0.3, time=0.4):
+func lighten(time=0.4):
+	var amount = get_node("DarkenLayer").get_opacity()
 	get_node("Tween").interpolate_property(get_node("DarkenLayer"), "visibility/opacity", amount, 0, time, Tween.TRANS_SINE, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")

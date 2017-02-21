@@ -7,7 +7,9 @@ extends Node2D
 
 var locations = {}
 var pieces = {}
-var pyromancer_selectors = {}
+
+var shadow_wall_tile_range = []
+
 
 
 #starts at 1, 2, 2, 3, 3, 4, 4, 5, 5,
@@ -55,9 +57,32 @@ func _ready():
 			var location_y_coord = _LOCATION_Y_OFFSETS[i] + j
 			locations[Vector2(i, location_y_coord)] = location1
 			location1.set_coords(Vector2(i, location_y_coord))
+			
+#func draw_pyromancer_selectors():
+#	var selector_prototype = load("res://UI/PyromancerSelector.tscn")
+#	
+#	for i in range(0, self.tiles_x):
+#		for j in range(_LOCATION_Y_OFFSETS[i], _LOCATION_Y_OFFSETS[i] + 7 - 1):
+#			
+#			var tri_coords = [Vector2(i, j), Vector2(i, j+1), Vector2(i-1, j)]
+#			if self.locations.has(Vector2(i-1, j)) and !self.pyromancer_selectors.has(tri_coords): #if it has the offset to the left of the pair
+#				var selector = selector_prototype.instance()
+#				selector.tri_coords = tri_coords
+#				add_child(selector)
+#				selector.triangulate_set_pos()
+#				self.pyromancer_selectors[tri_coords] = selector
+#			
+#			tri_coords = [Vector2(i, j), Vector2(i, j+1), Vector2(i+1, j+1)]
+#			if self.locations.has(Vector2(i+1, j+1)) and !self.pyromancer_selectors.has(tri_coords): #if it has the offset to the right of the pair
+#				var selector = selector_prototype.instance()
+#				selector.tri_coords = tri_coords
+#				add_child(selector)
+#				selector.triangulate_set_pos()
+#				self.pyromancer_selectors[tri_coords] = selector
 
-
+		
 func initialize_shadow_wall_tiles(shadow_wall_tile_range):
+	self.shadow_wall_tile_range = shadow_wall_tile_range
 	for coords in shadow_wall_tile_range:
 		self.locations[coords].set_shadow_wall(true)
 
@@ -168,6 +193,8 @@ func get_direction_from_vector(v):
 		return 4
 	elif vector == Vector2(-1, -1):
 		return 5
+	else:
+		return null
 
 #gets the "diagonal" neighbors in the six directions
 func get_diagonal_range(coords, magnitude_range=[1, 2], side=null, collision_check=false, direction_range=[0, 6]):
@@ -205,10 +232,10 @@ func get_range_helper(return_set, change_vector, coords, magnitude_range, side, 
 					break #break regardless on first collision
 	
 			elif side:
-				if pieces.has(new_coords) and pieces[new_coords].side == side:
+				if pieces.has(new_coords) and pieces[new_coords].side == side and !(new_coords in self.shadow_wall_tile_range):
 					return_set.append(new_coords)
 
-			elif locations.has(new_coords) and !pieces.has(new_coords): #only return empty locations
+			elif locations.has(new_coords) and !pieces.has(new_coords)  and !(new_coords in self.shadow_wall_tile_range): #only return empty locations
 				return_set.append(new_coords)
 
 #calls both get_neighbors and get_diagonal_neighbors to provide a radial

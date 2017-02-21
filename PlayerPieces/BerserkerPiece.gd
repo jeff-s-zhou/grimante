@@ -3,12 +3,12 @@ extends "PlayerPiece.gd"
 #extends KinematicBody2D
 const DEFAULT_DAMAGE = 3
 const DEFAULT_AOE_DAMAGE = 1
-const DEFAULT_ULTIMATE_DAMAGE = 5
+
 const DEFAULT_MOVEMENT_VALUE = 2
 
 var damage = DEFAULT_DAMAGE setget , get_damage
 var aoe_damage = DEFAULT_AOE_DAMAGE setget , get_aoe_damage
-var ultimate_damage = DEFAULT_ULTIMATE_DAMAGE setget, get_ultimate_damage
+
 
 const ANIMATION_STATES = {"default":0, "moving":1, "jumping":2}
 
@@ -44,32 +44,19 @@ func get_damage():
 	
 func get_aoe_damage():
 	return self.attack_bonus + DEFAULT_AOE_DAMAGE
-	
-func get_ultimate_damage():
-	return self.attack_bonus + DEFAULT_ULTIMATE_DAMAGE
-
 
 func get_attack_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value + 1], "ENEMY")
 	
 func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value + 1])
-	
-func get_ultimate_range():
-	return get_parent().get_range(self.coords, [1, 11], "ENEMY")
 
 #parameters to use for get_node("Grid").get_neighbors
 func display_action_range():
-	if self.ultimate_flag:
-		var ultimate_range = get_ultimate_range()
-		for coords in ultimate_range:
-			get_parent().get_at_location(coords).movement_highlight()
-	else:
-	
-		var action_range = get_attack_range() + get_movement_range()
-		for coords in action_range:
-			get_parent().get_at_location(coords).movement_highlight()
-
+	var action_range = get_attack_range() + get_movement_range()
+	for coords in action_range:
+		get_parent().get_at_location(coords).movement_highlight()
+	.display_action_range()
 
 func _is_within_attack_range(new_coords):
 	return new_coords in get_attack_range()
@@ -136,20 +123,14 @@ func jump_back(new_coords):
 	emit_signal("animation_done")
 
 func act(new_coords):
-	if ultimate_flag:
-		if _is_within_ultimate_range(new_coords):
-			get_node("/root/Combat").handle_archer_ultimate(new_coords)
-			earthshatter(new_coords)
-			get_node("/root/Combat").handle_assassin_passive(new_coords)
-		else:
-			invalid_move()
-
-	elif _is_within_attack_range(new_coords):
-		get_node("/root/Combat").handle_archer_ultimate(new_coords)
+	if _is_within_attack_range(new_coords):
+		get_node("/root/Combat").display_overlay(self.unit_name)
 		smash_attack(new_coords)
-		get_node("/root/Combat").handle_assassin_passive(new_coords)
 	elif _is_within_movement_range(new_coords):
 		smash_move(new_coords)
+	elif _is_within_ally_shove_range(new_coords):
+		initiate_shove(new_coords)
+		placed()
 	else:
 		invalid_move()
 
@@ -191,20 +172,6 @@ func smash(smash_range):
 		get_parent().pieces[coords].attacked(self.aoe_damage, true)
 	for coords in smash_range:
 		get_parent().pieces[coords].aoe_death_check()
-		
-		
-func earthshatter(new_coords):
-	var direction = get_parent().get_direction_from_vector(new_coords - self.coords)
-	var damage_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", false, [direction, direction +1])
-	var damage = self.ultimate_damage
-	for coords in damage_range:
-		if damage == 0:
-			break
-		get_parent().pieces[coords].set_stunned(true)
-		get_parent().pieces[coords].attacked(damage)
-		damage -= 1
-	emit_signal("shake")
-	placed()
 
 
 func predict(new_coords):
@@ -250,6 +217,9 @@ func predict_smash(smash_range):
 func cast_ultimate():
 	get_node("OverlayLayers/UltimateWhite").show()
 	self.ultimate_flag = true
+	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
+		player_piece.attack_bonus += 1
+		player_piece.movement_value += 1
 	get_parent().reset_highlighting()
 	display_action_range()
 	

@@ -4,7 +4,7 @@ const DEFAULT_WILDFIRE_DAMAGE = 2
 const DEFAULT_MOVEMENT_VALUE = 1
 const UNIT_TYPE = "Pyromancer"
 
-var backstab_damage = DEFAULT_WILDFIRE_DAMAGE setget , get_wildfire_damage
+var wildfire_damage = DEFAULT_WILDFIRE_DAMAGE setget , get_wildfire_damage
 
 const OVERVIEW_DESCRIPTION = """
 """
@@ -37,19 +37,15 @@ func get_movement_range():
 	return self.pathed_range.keys()
 	
 func get_attack_range():
-	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, self.movement_value + 1], "ENEMY")
+	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, 3], "ENEMY")
 	return unfiltered_range
-	
-func unhovered():
-	if get_parent().selected == null:
-		get_parent().hide_pyromancer_selectors()
-	.unhovered()
 
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
 	var action_range = get_attack_range() + get_movement_range()
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
+	.display_action_range()
 
 func _is_within_attack_range(new_coords):
 	var attack_range = get_attack_range()
@@ -60,23 +56,30 @@ func _is_within_movement_range(new_coords):
 
 
 func act(new_coords):
-	get_parent().hide_pyromancer_selectors()
 	if _is_within_movement_range(new_coords):
 		
 		var args = [self.coords, new_coords, self.pathed_range, 350]
 		get_node("/root/AnimationQueue").enqueue(self, "animate_stepped_move", true, args)
 		set_coords(new_coords)
-		placed()
+		#placed()
 	elif _is_within_attack_range(new_coords):
-		get_node("/root/Combat").handle_archer_ultimate(new_coords)
-		backstab(new_coords)
+		bomb(new_coords)
+	elif _is_within_ally_shove_range(new_coords):
+		initiate_shove(new_coords)
+		placed()
 	else:
 		invalid_move()
 		
 
-func backstab(new_coords):
-	pass
-
+func bomb(new_coords):
+	get_parent().pieces[new_coords].set_burning(true)
+	get_parent().pieces[new_coords].attacked(self.wildfire_damage)
+	var nearby_enemy_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
+	if nearby_enemy_range.size() > 0:
+		var random_index = randi() % nearby_enemy_range.size()
+		var spread_coords = nearby_enemy_range[random_index]
+		bomb(spread_coords)
+		
 
 func predict(new_coords):
 	if _is_within_attack_range(new_coords):
