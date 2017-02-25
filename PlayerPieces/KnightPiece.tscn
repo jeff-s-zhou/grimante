@@ -18,7 +18,7 @@
 
 animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"hurt", "speed":5.0 }, { "frames":[ ExtResource( 6 ) ], "loop":true, "name":"cooldown", "speed":5.0 } ]
 
-[sub_resource type="SampleLibrary" id=3]
+[sub_resource type="SampleLibrary" id=2]
 
 samples/mouseover = { "db":0.0, "pitch":1.0, "sample":ExtResource( 12 ) }
 samples/tile_hover = { "db":0.0, "pitch":1.0, "sample":ExtResource( 13 ) }
@@ -70,7 +70,7 @@ autostart = false
 [node name="SamplePlayer" type="SamplePlayer" parent="."]
 
 config/polyphony = 1
-config/samples = SubResource( 3 )
+config/samples = SubResource( 2 )
 default/volume_db = 0.0
 default/pitch_scale = 1.0
 default/pan = 0.0

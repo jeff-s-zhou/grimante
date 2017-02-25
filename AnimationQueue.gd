@@ -13,7 +13,7 @@ func _ready():
 	set_process(true)
 
 func enqueue(node, func_ref, blocking, args=[]):
-	print("enqueuing: " + func_ref)
+	#print("enqueuing: " + func_ref)
 	self.lock.lock()
 	self.queue.append({"node":node, "func_ref":func_ref, "blocking":blocking, "args":args})
 	self.lock.unlock()
@@ -44,24 +44,24 @@ func process_animations():
 			node.set_mid_animation(true)
 		if args == []:
 			node.call(func_ref)
-		else:
 			#GIVE ME FUCKING SPREAD SYNTAX AAAAAAAAAGGGGGGGGHHHHHHHH
-			if args.size() == 1:
-				node.call(func_ref, args[0])
-			elif args.size() == 2:
-				node.call(func_ref, args[0], args[1])
-			elif args.size() == 3:
-				node.call(func_ref, args[0], args[1], args[2])
-			elif args.size() == 4:
-				node.call(func_ref, args[0], args[1], args[2], args[3])
-			elif args.size() == 5:
-				node.call(func_ref, args[0], args[1], args[2], args[3], args[4])
-			elif args.size() == 6:
-				node.call(func_ref, args[0], args[1], args[2], args[3], args[4], args[5])
-			elif args.size() == 7:
-				node.call(func_ref, args[0], args[1], args[2], args[3], args[4], args[5], args[6])
-			else:
-				print("Error: EXCEEDED MAX NUMBER OF ARGUMENTS IN AnimationQueue")
+		elif args.size() == 1:
+			node.call(func_ref, args[0])
+		elif args.size() == 2:
+			node.call(func_ref, args[0], args[1])
+		elif args.size() == 3:
+			node.call(func_ref, args[0], args[1], args[2])
+		elif args.size() == 4:
+			node.call(func_ref, args[0], args[1], args[2], args[3])
+		elif args.size() == 5:
+			node.call(func_ref, args[0], args[1], args[2], args[3], args[4])
+		elif args.size() == 6:
+			node.call(func_ref, args[0], args[1], args[2], args[3], args[4], args[5])
+		elif args.size() == 7:
+			node.call(func_ref, args[0], args[1], args[2], args[3], args[4], args[5], args[6])
+		else:
+			print("Error: EXCEEDED MAX NUMBER OF ARGUMENTS IN AnimationQueue")
+
 		if blocking:
 			yield(node, "animation_done")
 		if node.has_method("set_mid_animation"):

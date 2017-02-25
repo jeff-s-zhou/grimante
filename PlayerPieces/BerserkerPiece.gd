@@ -1,8 +1,8 @@
 
 extends "PlayerPiece.gd"
 #extends KinematicBody2D
-const DEFAULT_DAMAGE = 3
-const DEFAULT_AOE_DAMAGE = 1
+const DEFAULT_DAMAGE = 4
+const DEFAULT_AOE_DAMAGE = 2
 
 const DEFAULT_MOVEMENT_VALUE = 2
 
@@ -140,17 +140,12 @@ func smash_attack(new_coords):
 	get_node("/root/AnimationQueue").enqueue(self, "jump_to", true, [new_coords])
 	if get_parent().pieces[new_coords].will_die_to(self.damage):
 		get_parent().pieces[new_coords].smash_killed(self.damage, true)
-		var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
-		smash(smash_range)
-		get_parent().pieces[new_coords].aoe_death_check()
 		set_coords(new_coords)
 		placed()
 
 	#else leap back
 	else:
 		get_parent().pieces[new_coords].attacked(self.damage, true)
-		var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY") #testing
-		smash(smash_range) #testing
 		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords, 300, false])
 		get_node("/root/AnimationQueue").enqueue(self, "jump_back", true, [self.coords])
 		placed()
@@ -168,7 +163,12 @@ func smash_move(new_coords):
 
 
 func smash(smash_range):
+	#attack_event = new aoe_attack_event(smash_range)
+	#attack_event.add_call(attacked, [self.aoe_damage, true])
+	#attack_event.add_call(set_stunned, [true])
+	#attack_event.execute()
 	for coords in smash_range:
+		get_parent().pieces[coords].set_stunned(true)
 		get_parent().pieces[coords].attacked(self.aoe_damage, true)
 	for coords in smash_range:
 		get_parent().pieces[coords].aoe_death_check()
@@ -184,35 +184,16 @@ func predict(new_coords):
 		predict_smash_move(new_coords)
 
 
-func predict_ultimate_attack(new_coords):
-	var direction = get_parent().get_direction_from_vector(new_coords - self.coords)
-	var damage_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", false, [direction, direction +1])
-	var damage = self.ultimate_damage
-	for coords in damage_range:
-		if damage == 0:
-			break
-		if coords == new_coords:
-			get_parent().pieces[coords].predict(damage)
-		else:
-			get_parent().pieces[coords].predict(damage, true)
-		damage -= 1
-
-
 func predict_smash_attack(new_coords):
-#	if get_parent().pieces[new_coords].hp - self.damage <= 0:
 	get_parent().pieces[new_coords].predict(self.damage)
 	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
-	predict_smash(smash_range)
-#	else:
-#		get_parent().pieces[new_coords].predict(self.damage)
+
 
 func predict_smash_move(new_coords):
 	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
-	predict_smash(smash_range)
-
-func predict_smash(smash_range):
 	for coords in smash_range:
 		get_parent().pieces[coords].predict(self.aoe_damage, true)
+
 
 func cast_ultimate():
 	get_node("OverlayLayers/UltimateWhite").show()

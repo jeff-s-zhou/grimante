@@ -11,12 +11,9 @@ var animation_state = ANIMATION_STATES.default
 const DEFAULT_SHOOT_DAMAGE = 3
 const DEFAULT_PASSIVE_DAMAGE = 3
 const DEFAULT_MOVEMENT_VALUE = 1
-const DEFAULT_ULTIMATE_DAMAGE = 5
 
 var shoot_damage = DEFAULT_SHOOT_DAMAGE setget , get_shoot_damage
 var passive_damage = DEFAULT_PASSIVE_DAMAGE setget , get_passive_damage
-var ultimate_damage = DEFAULT_ULTIMATE_DAMAGE setget, get_ultimate_damage
-
 
 var velocity
 var new_position
@@ -55,8 +52,6 @@ func get_shoot_damage():
 func get_passive_damage():
 	return self.attack_bonus + DEFAULT_PASSIVE_DAMAGE
 	
-func get_ultimate_damage():
-	return self.attack_bonus + DEFAULT_ULTIMATE_DAMAGE
 
 func get_attack_range():
 	var attack_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", true)
@@ -136,9 +131,26 @@ func ranged_attack(new_coords, damage):
 		get_parent().pieces[new_coords].attacked(damage)
 
 func silver_arrow(new_coords):
+	var damage_range
 	var direction = get_parent().get_direction_from_vector(new_coords - self.coords)
-	var damage_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", false, [direction, direction +1])
-	var damage = self.ultimate_damage
+	if direction == null:
+		direction = get_parent().get_diagonal_direction_from_vector(new_coords - self.coords)
+		damage_range = get_parent().get_diagonal_range(self.coords, [1, 11], "ENEMY", false, [direction, direction +1])
+	else:
+		damage_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", false, [direction, direction +1])
+	
+	var damage = self.shoot_damage
+	
+	var last_hit_coords = damage_range[-1] #by default set the last hit to the furthest enemy away in the line
+	for coords in damage_range:
+		if damage == 0:
+			last_hit_coords = coords #if it stops prematurely, the arrow stops there
+		damage -= 1
+	#animate hitting to the last coords hit
+	get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [last_hit_coords])
+	
+	damage = self.shoot_damage
+
 	for coords in damage_range:
 		if damage == 0:
 			break
@@ -186,33 +198,55 @@ func play_bow_hit():
 	get_node("SamplePlayer").play("bow_hit")
 
 func predict(new_coords):
-	if self.ultimate_flag:
-		var ultimate_range = get_ultimate_range()
-		for coords in ultimate_range:
-			get_parent().get_at_location(coords).movement_highlight()
-	
-	elif _is_within_movement_range(new_coords):
-		var coords = get_step_shot_coords(new_coords)
-		if coords != null:
-			predict_ranged_attack(coords, true)
+	if _is_within_movement_range(new_coords):
+		var attack_coords = get_step_shot_coords(new_coords)
+		if attack_coords != null:
+			predict_passive_ranged_attack(new_coords, attack_coords)
 
 	#elif the tile selected is within attack range
 	elif _is_within_attack_range(new_coords):
 		predict_ranged_attack(new_coords)
 
 
-func predict_ranged_attack(new_coords, passive=false):
-	pass
-	if passive:
-		get_parent().pieces[new_coords].predict(self.passive_damage, passive)
+func predict_passive_ranged_attack(new_position_coords, new_attack_coords):
+	if self.ultimate_flag:
+		predict_ultimate_attack(new_position_coords, new_attack_coords)
 	else:
-		get_parent().pieces[new_coords].predict(self.shoot_damage, passive)
+		get_parent().pieces[new_attack_coords].predict(self.passive_damage, true)
+
+
+func predict_ranged_attack(new_coords):
+	if self.ultimate_flag:
+		predict_ultimate_attack(self.coords, new_coords)
+	else:
+		get_parent().pieces[new_coords].predict(self.shoot_damage, false)
+	
+
+func predict_ultimate_attack(position_coords, attack_coords):
+	var damage_range
+	var direction = get_parent().get_direction_from_vector(attack_coords - position_coords)
+	if direction == null:
+		direction = get_parent().get_diagonal_direction_from_vector(attack_coords  - position_coords)
+		damage_range = get_parent().get_diagonal_range(self.coords, [1, 11], "ENEMY", false, [direction, direction +1])
+	else:
+		damage_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", false, [direction, direction +1])
+
+	var damage = self.shoot_damage
+	for coords in damage_range:
+		if damage == 0:
+			break
+		if coords == attack_coords:
+			get_parent().pieces[coords].predict(damage)
+		else:
+			get_parent().pieces[coords].predict(damage, true)
+		damage -= 1
 #	
 	
 func cast_ultimate():
 	get_node("OverlayLayers/UltimateWhite").show()
 	#first reset the highlighting on the parent nodes. Then call the new highlighting
 	self.ultimate_flag = true
+	self.attack_bonus += 2
 	get_parent().reset_highlighting()
 	display_action_range()
 
@@ -226,38 +260,6 @@ func placed():
 	
 func display_overwatch():
 	pass
-	
-#func animate_move_and_passive(coords, attack_coords):
-#	self.animate_move(coords, 250, false)
-#	yield(get_node("Tween"), "tween_complete")
-#	self.animate_ranged_attack(attack_coords)
-#	
-#	
-#
-#func move_or_fall_off(distance):
-#	if get_parent().locations.has(self.coords + distance):
-#		var coords = get_step_shot_coords(self.coords + distance)
-#		if coords != null:
-#			get_node("/root/AnimationQueue").enqueue(self, "animate_move_and_passive", false, [self.coords + distance, coords])
-#			get_parent().pieces[coords].attacked(self.passive_damage)
-#			set_coords(self.coords + distance)
-#		else:
-#			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance, 250, false])
-#			set_coords(self.coords + distance)
-#	else:
-#		delete_self()
-#		var distance_length = get_parent().hex_length(distance)
-#		var direction = get_parent().get_direction_from_vector(distance)
-#		var falloff_range = get_parent().get_range(self.coords, [1, distance_length + 1], null, false, [direction, direction + 1])
-#		var fall_off_pos = get_pos()
-#		if falloff_range.size() != 0:
-#			print("caught the fall_off new check")
-#			var fall_off_coords = falloff_range[falloff_range.size() - 1]
-#			fall_off_pos = get_parent().locations[fall_off_coords].get_pos() 
-#			#var fall_off_distance = 30 * (fall_off_pos - get_pos()).normalized()
-#			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [fall_off_pos, 250, true])
-#		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
-#
-#		if self.side == "ENEMY" and get_parent().hex_normalize(distance) == Vector2(0, 1):
-#				emit_signal("broke_defenses")
+
+
 	

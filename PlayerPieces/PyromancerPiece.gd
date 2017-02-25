@@ -75,9 +75,13 @@ func bomb(new_coords):
 	get_parent().pieces[new_coords].set_burning(true)
 	get_parent().pieces[new_coords].attacked(self.wildfire_damage)
 	var nearby_enemy_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
-	if nearby_enemy_range.size() > 0:
-		var random_index = randi() % nearby_enemy_range.size()
-		var spread_coords = nearby_enemy_range[random_index]
+	var nearby_enemy_range_filtered = []
+	for coords in nearby_enemy_range:
+		if !get_parent().pieces[coords].burning:
+			nearby_enemy_range_filtered.append(coords)
+	if nearby_enemy_range_filtered.size() > 0:
+		var random_index = randi() % nearby_enemy_range_filtered.size()
+		var spread_coords = nearby_enemy_range_filtered[random_index]
 		bomb(spread_coords)
 		
 

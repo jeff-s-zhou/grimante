@@ -45,6 +45,10 @@ func _ready():
 	
 	set_process_input(true)
 	self.side = "PLAYER"
+
+#called once the unit positions are finalized in the deployment phase
+func deploy():
+	self.deploying_flag = false
 	
 func set_cooldown(cooldown):
 	self.cooldown = cooldown + 1 #offset for the first countdown tick

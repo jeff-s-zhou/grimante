@@ -40,8 +40,12 @@ func _ready():
 
 func initialize(cursor_area):
 	.initialize(cursor_area)
+	
+
+func deploy():
 	get_parent().locations[self.coords].set_rain(true)
 	self.rain_coords_dict[self.coords] = true
+	.deploy()
 
 func get_bolt_damage():
 	return self.attack_bonus + DEFAULT_BOLT_DAMAGE
@@ -119,7 +123,7 @@ func tango(new_coords):
 	self.rain_coords_dict[new_coords] = true
 	set_coords(new_coords)
 	get_parent().add_piece(old_coords, swap_partner)
-	
+	swap_partner.set_coords(old_coords)
 	
 func animate_shunpo(new_coords):
 	get_node("AnimationPlayer").play("ShunpoOut")

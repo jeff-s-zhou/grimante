@@ -185,9 +185,15 @@ func animate_smash_killed():
 func set_stunned(flag):
 	self.stunned = flag
 	if flag:
-		get_node("Physicals/EnemyEffects/StunSpiral").show()
+		get_node("/root/AnimationQueue").enqueue(self, "animate_set_stunned", false)
 	else:
-		get_node("Physicals/EnemyEffects/StunSpiral").hide()
+		get_node("/root/AnimationQueue").enqueue(self, "animate_hide_stunned", false)
+		
+func animate_set_stunned():
+	get_node("Physicals/EnemyEffects/StunSpiral").show()
+
+func animate_hide_stunned():
+	get_node("Physicals/EnemyEffects/StunSpiral").hide()
 
 
 func set_deadly(flag):
@@ -226,6 +232,9 @@ func set_frozen(flag):
 	self.frozen = flag
 	
 func set_silenced(flag):
+	if flag:
+		set_shield(false)
+		set_deadly(false)
 	self.silenced = flag
 
 func animate_burning_hide():
@@ -278,6 +287,14 @@ func heal(amount, aoe=false, delay=0.0):
 
 func attacked(amount, aoe=false):
 	#if not aoe, check assassin passive here
+	if self.shielded:
+		set_shield(false)
+	else:
+		modify_hp(amount * -1, aoe)
+	#if still alive, check assassin's passive here, passing the aoe flag
+
+#obviously doesn't check the assassin's passive. just deals damage and gets teh fuck outta here
+func backstab_attacked(amount, aoe=false):
 	if self.shielded:
 		set_shield(false)
 	else:

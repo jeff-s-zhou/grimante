@@ -43,7 +43,7 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(300, 250))
-	
+	#get_node("Grid").set_pos(Vector2(400, 250))
 	#debug_mode()
 	ultimates_enabled()
 	
@@ -103,7 +103,8 @@ func _ready():
 		get_node("StartLevelButton").hide()
 		get_node("Grid").reset_deployable_indicators()
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
-			player_piece.deploying_flag = false
+			player_piece.deploy()
+			
 
 			
 	get_node("Timer2").set_wait_time(0.3)
@@ -256,9 +257,14 @@ func _input(event):
 		else:
 			OS.set_window_maximized(false)
 			OS.set_window_fullscreen(true)
+			
+	elif event.is_action("test_action") and event.is_pressed():
+		print("child count: " + str(get_node("Grid").get_child_count()))
 
 
 func _process(delta):
+	get_node('FpsLabel').set_text(str(OS.get_frames_per_second()))
+	
 	var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
 	
 	if self.level.check_player_win(enemy_pieces): 
@@ -405,6 +411,7 @@ func _sort_by_y_axis(enemy_piece1, enemy_piece2):
 		return false
 		
 func deploy_wave(mass_summon=false):
+	
 	var wave = null
 	if self.next_wave != null:
 		wave = self.next_wave

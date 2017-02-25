@@ -18,7 +18,8 @@ func initialize(max_hp):
 #a method call called aura effects? that's looped through before other shit?
 
 func aura_update():
-	var column_range = get_parent().get_range(self.coords, [1, 12], "ENEMY", false, [0, 1])
-	column_range += get_parent().get_range(self.coords, [1, 12], "ENEMY", false, [3, 4])
-	for coords in column_range:
-		get_parent().pieces[coords].movement_value = Vector2(0, 2)
+	if !self.silenced:
+		var column_range = get_parent().get_range(self.coords, [1, 12], "ENEMY", false, [0, 1])
+		column_range += get_parent().get_range(self.coords, [1, 12], "ENEMY", false, [3, 4])
+		for coords in column_range:
+			get_parent().pieces[coords].movement_value = Vector2(0, 2)

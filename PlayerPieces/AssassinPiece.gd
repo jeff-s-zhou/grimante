@@ -199,7 +199,7 @@ func placed():
 		self.ultimate_flag = false
 	.placed()
 
-func trigger_passive(attack_coords):
+func trigger_passive(attack_coords, aoe=false):
 	if _is_within_passive_range(attack_coords):
 		get_node("/root/AnimationQueue").enqueue(self, "animate_passive", true, [attack_coords])
 		get_parent().pieces[attack_coords].attacked(self.passive_damage)

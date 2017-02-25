@@ -31,17 +31,18 @@ func create_raw_wave(req_power_level, roster, modifier_roster):
 	while abs(req_power_level - total_power_level) > EPSILON:
 		var unit_schematic = null
 		var power_level = 9999999
-		var capped = false #reaching deploy max (7)
+		var capped = false #reaching deploy max
 		var iterations = 0
-		while total_power_level + power_level > req_power_level + EPSILON and !capped: #generate new unit until we find one that fits
+		var lower_bound = 0
+		#generate new unit until we find one that doesn't exceed the power cap
+		#only break if requirements are met
+		while total_power_level + power_level > req_power_level + EPSILON or power_level < lower_bound: 
 			unit_schematic = generate_unit(roster, modifier_roster)
 			power_level = get_power_level(unit_schematic)
 			
+			#if return_wave.size() == 4: #can only shove in one more unit
 			if return_wave.size() == 6: #can only shove in one more unit
-				if abs((total_power_level + power_level) - req_power_level) > EPSILON:
-					capped = true
-				else:
-					capped = false
+				lower_bound = req_power_level - (total_power_level + EPSILON) #set minimum that the power level has to exceed
 
 			if iterations > 50:
 				print("can't get a unit to fit a requirement in the generator")
@@ -55,6 +56,7 @@ func create_raw_wave(req_power_level, roster, modifier_roster):
 	
 func get_wave_dict_with_positions(wave):
 	var wave_dict = {}
+	#var available_positions = [0, 1, 2, 3, 4]
 	var available_positions = [0, 1, 2, 3, 4, 5, 6]
 	for unit_schematic in wave:
 		var position_selector = randi() % available_positions.size()

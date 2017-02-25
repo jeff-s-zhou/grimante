@@ -16,5 +16,6 @@ func initialize(max_hp):
 #	
 #	
 func turn_update():
-	heal(1)
+	if !self.silenced:
+		heal(1)
 	.turn_update()

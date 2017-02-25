@@ -24,13 +24,14 @@ const _GRID_X_OFFSET = 0
 const _GRID_Y_OFFSET = 0
 
 const TILE_X_OFFSET = 8
-#const TILE_X_OFFSET = -8
+#const TILE_X_OFFSET = -4
 const TILE_Y_OFFSET = 34
-#const TILE_Y_OFFSET = 16
+#const TILE_Y_OFFSET = 20
 
 const _Z_PIECE_OFFSET = Vector2(0, -0) #this is to offset for the pseudo-3d vertical distance of pieces
 
 const _LOCATION_Y_OFFSETS = [0, 1, 1, 2, 2, 3, 3]
+#const _LOCATION_Y_OFFSETS = [0, 1, 1, 2, 2]
 
 var selected = null
 
@@ -45,7 +46,7 @@ func _ready():
 		var column_count = self.tiles_y
 		if i % 2 == 0:
 			offset = -56
-			#offset = -44
+			#offset = -50
 			column_count = self.tiles_y
 		for j in range(0, column_count):
 			var location1 = location.instance()
@@ -109,6 +110,7 @@ func remove_piece(coords):
 	self.pieces[coords].set_pickable(false)
 	self.pieces.erase(coords)
 	locations[coords].set_pickable(true)
+	
 
 #moves the piece's location on grid. doesn't actually physically move the sprite
 func move_piece(old_coords, new_coords):
@@ -192,6 +194,24 @@ func get_direction_from_vector(v):
 	elif vector == Vector2(-1, -0):
 		return 4
 	elif vector == Vector2(-1, -1):
+		return 5
+	else:
+		return null
+		
+func get_diagonal_direction_from_vector(v):
+	var vector = hex_normalize(v)
+	print(vector)
+	if vector == Vector2(1, -1):
+		return 0
+	elif vector == Vector2(2, 1):
+		return 1
+	elif vector == Vector2(1, 2):
+		return 2
+	elif vector == Vector2(-1, 1):
+		return 3
+	elif vector == Vector2(-2, -1):
+		return 4
+	elif vector == Vector2(-1, -2):
 		return 5
 	else:
 		return null
@@ -316,11 +336,12 @@ static func get_coord_list(grid_items):
 	return return_list
 	
 static func hex_normalize(vector):
+	print(vector)
 	if(vector.x == 0 or vector.y == 0):
 		return vector.normalized()
 	else:
 		var lowest_denominator = abs(vector.x)
-		if(vector.y < vector.x):
+		if(abs(vector.y) < abs(vector.x)):
 			lowest_denominator = abs(vector.y)
 		return Vector2(vector.x/lowest_denominator, vector.y/lowest_denominator)
 		

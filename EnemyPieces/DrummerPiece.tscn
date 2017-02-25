@@ -1,18 +1,19 @@
-[gd_scene load_steps=15 format=1]
+[gd_scene load_steps=16 format=1]
 
 [ext_resource path="res://EnemyPieces/DrummerPiece.gd" type="Script" id=1]
-[ext_resource path="res://EnemyPieces/Components/Sprinkles.tscn" type="PackedScene" id=2]
-[ext_resource path="res://EnemyPieces/Components/EnemyCollisionArea.tscn" type="PackedScene" id=3]
+[ext_resource path="res://EnemyPieces/Components/EnemyCollisionArea.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Assets/Allies/piece_shadow.png" type="Texture" id=3]
 [ext_resource path="res://Assets/Enemies/drakkar_piece.png" type="Texture" id=4]
 [ext_resource path="res://Assets/Enemies/drakkar_piece_red.png" type="Texture" id=5]
 [ext_resource path="res://EnemyPieces/Components/EnemyOverlayLayers.tscn" type="PackedScene" id=6]
 [ext_resource path="res://EnemyPieces/Components/HealthDisplay.tscn" type="PackedScene" id=7]
 [ext_resource path="res://EnemyPieces/Components/EnemyEffects.tscn" type="PackedScene" id=8]
-[ext_resource path="res://EnemyPieces/Components/FlickerAnimation.tres" type="Animation" id=9]
-[ext_resource path="res://EnemyPieces/Components/SummonAnimation.tres" type="Animation" id=10]
-[ext_resource path="res://UI/SeenIcon.tscn" type="PackedScene" id=11]
-[ext_resource path="res://EnemyPieces/Components/Flyover.tscn" type="PackedScene" id=12]
-[ext_resource path="res://EnemyPieces/Components/EnemyClickArea.tscn" type="PackedScene" id=13]
+[ext_resource path="res://EnemyPieces/Components/Sprinkles.tscn" type="PackedScene" id=9]
+[ext_resource path="res://EnemyPieces/Components/FlickerAnimation.tres" type="Animation" id=10]
+[ext_resource path="res://EnemyPieces/Components/SummonAnimation.tres" type="Animation" id=11]
+[ext_resource path="res://UI/SeenIcon.tscn" type="PackedScene" id=12]
+[ext_resource path="res://EnemyPieces/Components/Flyover.tscn" type="PackedScene" id=13]
+[ext_resource path="res://EnemyPieces/Components/EnemyClickArea.tscn" type="PackedScene" id=14]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -27,11 +28,15 @@ collision/mask = 1
 collision/margin = 0.08
 script/script = ExtResource( 1 )
 
-[node name="Sprinkles" parent="." instance=ExtResource( 2 )]
-
-[node name="CollisionArea" parent="." instance=ExtResource( 3 )]
+[node name="CollisionArea" parent="." instance=ExtResource( 2 )]
 
 [node name="Physicals" type="Node2D" parent="."]
+
+[node name="Shadow" type="Sprite" parent="Physicals"]
+
+visibility/opacity = 0.7
+transform/pos = Vector2( 0, 5 )
+texture = ExtResource( 3 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="Physicals"]
 
@@ -44,21 +49,23 @@ animation = "default"
 
 [node name="EnemyEffects" parent="Physicals" instance=ExtResource( 8 )]
 
+[node name="Sprinkles" parent="." instance=ExtResource( 9 )]
+
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 playback/process_mode = 1
 playback/default_blend_time = 0.0
 root/root = NodePath("..")
-anims/FlickerAnimation = ExtResource( 9 )
-anims/SummonAnimation = ExtResource( 10 )
+anims/FlickerAnimation = ExtResource( 10 )
+anims/SummonAnimation = ExtResource( 11 )
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
 autoplay = ""
 
-[node name="SeenIcon" parent="." instance=ExtResource( 11 )]
+[node name="SeenIcon" parent="." instance=ExtResource( 12 )]
 
-[node name="Flyover" parent="." instance=ExtResource( 12 )]
+[node name="Flyover" parent="." instance=ExtResource( 13 )]
 
 [node name="Tween" type="Tween" parent="."]
 
@@ -67,7 +74,7 @@ playback/active = false
 playback/repeat = false
 playback/speed = 1.0
 
-[node name="ClickArea" parent="." instance=ExtResource( 13 )]
+[node name="ClickArea" parent="." instance=ExtResource( 14 )]
 
 [node name="Timer" type="Timer" parent="."]
 

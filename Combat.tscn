@@ -195,4 +195,18 @@ visibility/visible = false
 
 [node name="OverlayDisplayer" parent="." instance=ExtResource( 24 )]
 
+[node name="FpsLabel" type="Label" parent="."]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 29.0
+margin/top = 29.0
+margin/right = 69.0
+margin/bottom = 43.0
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
 
