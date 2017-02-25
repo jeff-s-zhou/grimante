@@ -13,13 +13,12 @@ func initialize(max_hp):
 	self.movement_value = Vector2(0, 1)
 	self.default_movement_value = Vector2(0, 1)
 	#self.set_shield(true)
-	
-	
-func delete_self():
-	.delete_self()
+
+
+func deathrattle():
 	if !self.silenced:
 		var neighbor_coords_range = get_parent().get_range(self.coords, [1,2], "ENEMY")
 		for coords in neighbor_coords_range:
 			var neighbor = get_parent().pieces[coords]
-			neighbor.heal(2, false, 1.5) #delay it by 1.5 so it happens when this piece dies
+			neighbor.heal(2, 1.5) #delay it by 1.5 so it happens when this piece dies
 	

@@ -72,7 +72,9 @@ func act(new_coords):
 
 
 func shield_bash(new_coords):
-	get_parent().pieces[new_coords].attacked(self.shield_bash_damage)
+	var action = get_new_action(coords)
+	action.add_call("attacked", [self.shield_bash_damage])
+	action.execute()
 	var offset = get_parent().hex_normalize(new_coords - self.coords)
 	var shove_destination_coords = new_coords + offset
 		
@@ -91,12 +93,11 @@ func frostbringer(new_coords):
 	var horizontal_range = get_parent().get_diagonal_range(new_coords, [1, 4], "ENEMY", false, [1, 2]) + \
 	 get_parent().get_diagonal_range(new_coords, [1, 4], "ENEMY", false, [4, 5])
 	
-	for coords in horizontal_range:
-		get_parent().pieces[coords].set_frozen(true)
-		get_parent().pieces[coords].attacked(self.freeze_damage)
+	var action = get_new_action(horizontal_range)
+	action.add_call("set_frozen", [true])
+	action.add_call("attacked", [self.freeze_damage])
+	action.execute()
 	
-	
-
 
 func predict(new_coords):
 	if _is_within_attack_range(new_coords):

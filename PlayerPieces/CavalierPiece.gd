@@ -124,7 +124,9 @@ func trample(new_coords):
 			was_hopping = true
 			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [current_coords, 250, false])
 			get_node("/root/AnimationQueue").enqueue(self, "animate_hop", true, [current_coords - increment, current_coords])
-			get_parent().pieces[current_coords].attacked(self.trample_damage)
+			var action = get_new_action(current_coords)
+			action.add_call("attacked", [self.trample_damage])
+			action.execute()
 			
 		else:
 			if was_hopping:
@@ -178,7 +180,9 @@ func charge_attack(new_coords, attack=false):
 	var difference = new_coords - self.coords
 	var tiles_travelled = get_parent().hex_length(difference) - 1
 	get_node("/root/AnimationQueue").enqueue(self, "animate_attack", true, [new_coords])
-	get_parent().pieces[new_coords].attacked(get_charge_damage(tiles_travelled))
+	var action = get_new_action(new_coords)
+	action.add_call("attacked", [get_charge_damage(tiles_travelled)])
+	action.execute()
 	var position_coords = decrement_one(new_coords)
 	get_node("/root/AnimationQueue").enqueue(self, "animate_attack_end", true, [position_coords])
 	set_coords(position_coords)

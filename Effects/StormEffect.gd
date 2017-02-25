@@ -20,5 +20,9 @@ func animate_lightning():
 	get_node("AnimationPlayer").play("Flash")
 	yield(get_node("AnimationPlayer"), "finished")
 	emit_signal("animation_done")
+	
+func animate_hide_rain():
 	get_node("Tween").interpolate_property(get_node("RainParticles"), "visibility/opacity", 1, 0, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	yield(get_node("Tween"), "tween_complete")
+	get_node("RainParticles").hide()
 	

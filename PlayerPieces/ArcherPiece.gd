@@ -128,7 +128,11 @@ func ranged_attack(new_coords, damage):
 		silver_arrow(new_coords)
 	else:
 		get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [new_coords])
-		get_parent().pieces[new_coords].attacked(damage)
+		var action = get_new_action(new_coords)
+		action.add_call("attacked", [damage])
+		action.execute()
+		
+
 
 func silver_arrow(new_coords):
 	var damage_range
@@ -154,7 +158,9 @@ func silver_arrow(new_coords):
 	for coords in damage_range:
 		if damage == 0:
 			break
-		get_parent().pieces[coords].attacked(damage)
+		var action = get_new_action(coords)
+		action.add_call("attacked", [damage])
+		action.execute()
 		damage -= 1
 	placed()
 

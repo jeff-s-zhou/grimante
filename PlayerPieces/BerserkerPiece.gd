@@ -167,11 +167,10 @@ func smash(smash_range):
 	#attack_event.add_call(attacked, [self.aoe_damage, true])
 	#attack_event.add_call(set_stunned, [true])
 	#attack_event.execute()
-	for coords in smash_range:
-		get_parent().pieces[coords].set_stunned(true)
-		get_parent().pieces[coords].attacked(self.aoe_damage, true)
-	for coords in smash_range:
-		get_parent().pieces[coords].aoe_death_check()
+	var action = get_new_action(smash_range)
+	action.add_call("set_stunned", [true])
+	action.add_call("attacked", [self.aoe_damage])
+	action.execute()
 
 
 func predict(new_coords):

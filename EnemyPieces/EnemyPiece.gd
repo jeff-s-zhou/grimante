@@ -281,30 +281,29 @@ func resolve_death():
 		delete_self()
 
 
-func heal(amount, aoe=false, delay=0.0):
-	modify_hp(amount, aoe, delay)
+func heal(amount, delay=0.0):
+	modify_hp(amount, delay)
 
 
-func attacked(amount, aoe=false):
-	#if not aoe, check assassin passive here
+func attacked(amount):
 	if self.shielded:
 		set_shield(false)
 	else:
-		modify_hp(amount * -1, aoe)
-	#if still alive, check assassin's passive here, passing the aoe flag
+		modify_hp(amount * -1)
 
-#obviously doesn't check the assassin's passive. just deals damage and gets teh fuck outta here
-func backstab_attacked(amount, aoe=false):
+
+#called by the assassin's passive
+func opportunity_attacked(amount):
 	if self.shielded:
 		set_shield(false)
 	else:
-		modify_hp(amount * -1, aoe)
+		modify_hp(amount * -1)
 
 
 #for the berserker's smash kill which should instantly remove
-func smash_killed(damage, aoe=false):
+func smash_killed(damage):
 	get_node("/root/AnimationQueue").enqueue(self, "animate_smash_killed", false)
-	attacked(damage, aoe)
+	attacked(damage)
 	
 	
 func receive_shield_bash(destination_coords):
@@ -358,18 +357,14 @@ func nonlethal_attacked(damage):
 		get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [self.hp, amount])
 
 
-func modify_hp(amount, aoe=false, delay=0):
-	if hp != 0: #in the case that someone tries to modify hp after the unit is already in the process of dying
-		hp = (max(0, hp + amount))
-		self.temp_display_hp = hp
-		get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [hp, amount, delay])
-		if hp == 0 and !aoe: #if aoe, then we manually do the delete self check afterwards
+func modify_hp(amount, delay=0):
+	if self.hp != 0: #in the case that someone tries to modify hp after the unit is already in the process of dying
+		self.hp = (max(0, self.hp + amount))
+		self.temp_display_hp = self.hp
+		get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [self.hp, amount, delay])
+		if self.hp == 0: #if aoe, then we manually do the delete self check afterwards
 			delete_self()
-
-
-func aoe_death_check():
-	if hp == 0:
-		delete_self()
+			
 
 
 func animate_set_hp(hp, value, delay=0):
@@ -407,11 +402,13 @@ func animate_set_hp(hp, value, delay=0):
 		animate_delete_self()
 
 
+#removes it from the grid, which prevents any interaction with other pieces
 func delete_self():
 	get_parent().remove_piece(self.coords)
 
+
+#actually physically removes it from the board
 func animate_delete_self():
-	print("animating deleting self")
 	get_node("Sprinkles").update() #update particleattractor location after all have moved
 	remove_from_group("enemy_pieces")
 	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
@@ -444,6 +441,10 @@ func reset_auras():
 
 #called at the start of enemy turn, after checking for aura effects
 func turn_update():
+	if self.burning:
+		var action = get_new_action(self.coords)
+		action.add_call("attacked", [1])
+		action.execute()
 	
 	set_z(0)
 	if self.stunned:
@@ -453,8 +454,5 @@ func turn_update():
 	
 	if self.silenced:
 		set_silenced(false)
-	
-	if self.burning:
-		attacked(1)
-		get_node("/root/Combat").handle_assassin_passive(self.coords)
+
 	reset_auras()

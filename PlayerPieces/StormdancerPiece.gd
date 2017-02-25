@@ -143,10 +143,17 @@ func predict(new_coords):
 func cast_ultimate():
 	self.ultimate_used_flag = true
 	get_node("/root/AnimationQueue").enqueue(get_node("/root/Combat"), "darken", true)
+	var damage_range = []
 	for coords in self.rain_coords_dict:
 		if get_parent().pieces.has(coords) and get_parent().pieces[coords].side == "ENEMY":
 			get_parent().locations[coords].activate_lightning()
-			get_parent().pieces[coords].set_stunned(true)
-			get_parent().pieces[coords].attacked(self.storm_damage)
+			damage_range.append[coords]
+		else:
+			get_parent().locations[coords].set_rain(false)
+	
+	var action = get_new_action(damage_range)
+	action.add_call("set_stunned", [true])
+	action.add_call("attacked", [self.storm_damage])
+	action.execute()
 	get_node("/root/AnimationQueue").enqueue(get_node("/root/Combat"), "lighten", true)
 	placed()

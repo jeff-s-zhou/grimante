@@ -531,7 +531,7 @@ func handle_archer_ultimate(attack_coords):
 	if self.archer != null and self.archer.ultimate_flag:
 		self.archer.trigger_ultimate(attack_coords)
 		
-func handle_assassin_passive(attack_coords):
+func handle_assassin_passive(attack_range):
 	if self.assassin != null:
-		self.assassin.trigger_passive(attack_coords)
+		self.assassin.trigger_passive(attack_range)
 	

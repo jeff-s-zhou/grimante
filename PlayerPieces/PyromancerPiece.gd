@@ -72,8 +72,11 @@ func act(new_coords):
 		
 
 func bomb(new_coords):
-	get_parent().pieces[new_coords].set_burning(true)
-	get_parent().pieces[new_coords].attacked(self.wildfire_damage)
+	var action = get_new_action(new_coords)
+	action.add_call("set_burning", [true])
+	action.add_call("attacked", [self.wildfire_damage])
+	action.execute()
+	
 	var nearby_enemy_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 	var nearby_enemy_range_filtered = []
 	for coords in nearby_enemy_range:

@@ -47,7 +47,8 @@ func set_rain(flag):
 	if flag:
 		get_node("/root/AnimationQueue").enqueue(get_node("StormEffect"), "animate_set_rain", false)
 	else:
-		get_node("StormEffect/RainParticles").hide()
+		get_node("/root/AnimationQueue").enqueue(get_node("StormEffect"), "animate_hide_rain", false)
+	
 		
 func set_shadow_wall(flag):
 	self.shadow_wall = flag
@@ -60,8 +61,8 @@ func set_shadow_wall(flag):
 		
 		
 func activate_lightning():
-	self.raining = false
 	get_node("/root/AnimationQueue").enqueue(get_node("StormEffect"), "animate_lightning", true)
+	set_rain(false)
 
 
 #when another unit is able to move to this location, it calls this function

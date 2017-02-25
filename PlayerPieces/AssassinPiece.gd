@@ -143,7 +143,9 @@ func backstab(new_coords):
 	else:
 		get_node("/root/AnimationQueue").enqueue(self, "animate_backstab", true, [new_coords])
 	#TODO: yield to AnimationQueue call
-	get_parent().pieces[new_coords].attacked(self.backstab_damage)
+	var action = get_new_action(new_coords, false)
+	action.add_call("opportunity_attacked", [self.backstab_damage])
+	action.execute()
 	var return_position = get_parent().locations[new_coords + BEHIND].get_pos()
 	get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [return_position, 200, true])
 	set_coords(new_coords + BEHIND)
@@ -199,20 +201,23 @@ func placed():
 		self.ultimate_flag = false
 	.placed()
 
-func trigger_passive(attack_coords, aoe=false):
-	if _is_within_passive_range(attack_coords):
-		get_node("/root/AnimationQueue").enqueue(self, "animate_passive", true, [attack_coords])
-		get_parent().pieces[attack_coords].attacked(self.passive_damage)
-		if !get_parent().pieces.has(attack_coords) and self.ultimate_flag:
-			if !self.bloodlust_flag:
-				self.attack_bonus += 2 #on the very first kill, get the +2 attack bonus
-				self.bloodlust_flag = true
-			unplaced()
-
-		elif !get_parent().pieces.has(attack_coords) and !self.bloodlust_flag:
-			self.attack_bonus += 2
-			unplaced()
-		get_node("/root/AnimationQueue").enqueue(self, "animate_passive_end", true, [self.coords])
+func trigger_passive(attack_range):
+	for attack_coords in attack_range:
+		if _is_within_passive_range(attack_coords):
+			get_node("/root/AnimationQueue").enqueue(self, "animate_passive", true, [attack_coords])
+			var action = get_new_action(attack_coords, false)
+			action.add_call("opportunity_attacked", [self.passive_damage])
+			action.execute()
+			if !get_parent().pieces.has(attack_coords) and self.ultimate_flag:
+				if !self.bloodlust_flag:
+					self.attack_bonus += 2 #on the very first kill, get the +2 attack bonus
+					self.bloodlust_flag = true
+				unplaced()
+	
+			elif !get_parent().pieces.has(attack_coords) and !self.bloodlust_flag:
+				self.attack_bonus += 2
+				unplaced()
+			get_node("/root/AnimationQueue").enqueue(self, "animate_passive_end", true, [self.coords])
 
 
 func animate_passive(attack_coords):

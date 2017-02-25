@@ -105,7 +105,9 @@ func purify(new_coords):
 		get_node("/root/AnimationQueue").enqueue(self, "animate_directly_above_purify", true, [new_coords])
 	else:
 		get_node("/root/AnimationQueue").enqueue(self, "animate_purify", true, [new_coords])
-	get_parent().pieces[new_coords].set_silenced(true)
+	var action = get_new_action(new_coords)
+	action.add_call("set_silenced", [true])
+	action.execute()
 	var return_position = get_parent().locations[new_coords + Vector2(0, 1)].get_pos()
 	get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [return_position, 200, true])
 	set_coords(new_coords + Vector2(0, 1))

@@ -6,6 +6,8 @@ extends KinematicBody2D
 
 var side = null
 
+const Action = preload("res://Action.gd")
+
 signal animation_done
 
 var mid_animation = false
@@ -22,6 +24,12 @@ onready var grid = get_parent()
 func _ready():
 	get_node("CollisionArea").connect("area_enter", self, "collide")
 	get_node("CollisionArea").connect("area_exit", self, "uncollide")
+
+
+func get_new_action(coords_or_range, trigger_assassin_passive=true):
+	var action = self.Action.new(coords_or_range, trigger_assassin_passive)
+	add_child(action)
+	return action
 
 
 func set_seen(flag):
