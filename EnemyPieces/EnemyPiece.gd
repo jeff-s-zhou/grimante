@@ -69,7 +69,6 @@ func hover_highlight():
 	
 func hover_unhighlight():
 	get_node("Physicals/EnemyOverlays/White").hide()
-	get_node("Physicals/HealthDisplay/WhiteLayer").hide()
 	if self.action_highlighted:
 		if get_parent().selected != null:
 			get_parent().reset_prediction()
@@ -78,36 +77,29 @@ func hover_unhighlight():
 func movement_highlight():
 	self.action_highlighted = true
 	get_node("Physicals/EnemyOverlays/Red").show()
-	get_node("Physicals/HealthDisplay/RedLayer").show()
 
 #called from grid to reset highlighting over the whole board
 func reset_highlight(right_click_flag=false):
 	self.action_highlighted = false
 	get_node("Physicals/EnemyOverlays/White").hide()
-	get_node("Physicals/HealthDisplay/WhiteLayer").hide()
 	
 	get_node("Physicals/EnemyOverlays/Orange").hide()
-	get_node("Physicals/HealthDisplay/OrangeLayer").hide()
 	#reset_prediction_flyover() #it's this one lol
 	
 	get_node("Physicals/EnemyOverlays/Red").hide()
-	get_node("Physicals/HealthDisplay/RedLayer").hide()
 
 
 func reset_prediction_highlight():
 	reset_prediction_flyover()
 	get_node("Physicals/EnemyOverlays/Orange").hide()
-	get_node("Physicals/HealthDisplay/OrangeLayer").hide()
 	if self.action_highlighted:
 		get_node("Physicals/EnemyOverlays/Red").show()
-		get_node("Physicals/HealthDisplay/RedLayer").show()
 	
 
 
 func attack_highlight():
 	self.action_highlighted = true
 	get_node("Physicals/EnemyOverlays/Red").show()
-	get_node("Physicals/HealthDisplay/RedLayer").show()
 
 	
 func will_die_to(damage):
@@ -168,10 +160,8 @@ func predict(damage, is_passive_damage=false):
 	if is_passive_damage:
 		color = Color(1, 1, 0.0)
 		get_node("Physicals/EnemyOverlays/Orange").show()
-		get_node("Physicals/HealthDisplay/OrangeLayer").show()
 		if self.action_highlighted:
 			get_node("Physicals/EnemyOverlays/Red").hide()
-			get_node("Physicals/HealthDisplay/RedLayer").hide()
 	if self.shielded:
 		get_node("/root/AnimationQueue").enqueue(self, "animate_predict_hp", false, [self.hp, 0, color])
 	else:
