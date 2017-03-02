@@ -33,15 +33,18 @@ func make_tip(tip_text, objective_text, arrow_coords, text):
 func make_complex_tip(tip_text, objective_text, tooltips):
 	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
 	
-var sandbox_allies = {0: Stormdancer, 1: Cavalier, 2: Berserker, 3: Archer, 4: Assassin, 5: Pyromancer}
+var sandbox_allies = {1: Cavalier, 2: Berserker, 3: Archer, 4: Assassin}
 
 class SandboxPowerGenerator:
 	func get_next():
 		return 300
+		
+	func reset():
+		pass
 
 
 var five_column_enemies = [
-{Vector2(1, 3): make(Grunt, 3)},
+{Vector2(1, 3): make(Grunt, 3)}, {Vector2(1, 2): make(Grunt, 3)},
 {1: make(Grunt, 4), 2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous_modifier])},
 {4: make(Grower, 2, [shield_modifier])},
 {0: make(Grower, 2), 2: make(Drummer, 2), 3: make(Fortifier, 3)},

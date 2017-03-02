@@ -30,6 +30,9 @@ class FiniteWrapper:
 			
 	func get_remaining_waves_count():
 		return self.waves.size() - index
+		
+	func reset():
+		self.index = 0
 #		
 #	
 class FiniteGeneratedWrapper:
@@ -59,6 +62,9 @@ class FiniteGeneratedWrapper:
 			
 	func get_remaining_waves_count():
 		return self.power_curve.size() - power_curve_index
+		
+	func reset():
+		self.power_curve_index = 0
 #		
 #	
 class InfiniteGeneratedWrapper:
@@ -81,3 +87,6 @@ class InfiniteGeneratedWrapper:
 		
 	func get_remaining_waves_count():
 		return 999
+		
+	func reset():
+		self.power_generator.reset()

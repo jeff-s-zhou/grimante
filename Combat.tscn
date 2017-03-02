@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=1]
+[gd_scene load_steps=29 format=1]
 
 [ext_resource path="res://Combat.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/textured_background.png" type="Texture" id=2]
@@ -24,6 +24,8 @@
 [ext_resource path="res://UI/Tooltip.tscn" type="PackedScene" id=22]
 [ext_resource path="res://UI/PlayerPieceInfo.tscn" type="PackedScene" id=23]
 [ext_resource path="res://OverlayDisplayer.tscn" type="PackedScene" id=24]
+[ext_resource path="res://UI/TidesOfBattleSystem.tscn" type="PackedScene" id=25]
+[ext_resource path="res://UI/HeroSystem.tscn" type="PackedScene" id=26]
 
 [sub_resource type="StyleBoxFlat" id=1]
 
@@ -208,5 +210,13 @@ margin/bottom = 43.0
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
+
+[node name="TidesOfBattleSystem" parent="." instance=ExtResource( 25 )]
+
+transform/pos = Vector2( 181.36, 31.4603 )
+
+[node name="HeroSystem" parent="." instance=ExtResource( 26 )]
+
+transform/pos = Vector2( 50.5192, 1010.43 )
 
 

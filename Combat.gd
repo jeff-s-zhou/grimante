@@ -42,9 +42,9 @@ func _ready():
 	get_node("Timer").set_active(false)
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Grid").set_pos(Vector2(300, 250))
+	get_node("Grid").set_pos(Vector2(300, 275))
 	#get_node("Grid").set_pos(Vector2(400, 250))
-	#debug_mode()
+	debug_mode()
 	ultimates_enabled()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
@@ -248,6 +248,7 @@ func _input(event):
 			
 			
 	elif event.is_action("restart") and event.is_pressed():
+		self.level.reset()
 		get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level})
 	
 	elif event.is_action("toggle_fullscreen") and event.is_pressed():
@@ -259,7 +260,12 @@ func _input(event):
 			OS.set_window_fullscreen(true)
 			
 	elif event.is_action("test_action") and event.is_pressed():
-		print("child count: " + str(get_node("Grid").get_child_count()))
+		var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
+		for enemy_piece in enemy_pieces:
+			enemy_piece.debug()
+		var player_pieces = get_tree().get_nodes_in_group("player_pieces")
+		for player_piece in player_pieces:
+			print(player_piece.unit_name + ": " + str(player_piece.coords))
 
 
 func _process(delta):
@@ -304,6 +310,7 @@ func _process(delta):
 		
 		
 func enemy_phase(enemy_pieces):
+	get_node("TidesOfBattleSystem").adjust_tides(-1 * enemy_pieces.size())
 	enemy_pieces.sort_custom(self, "_sort_by_y_axis") #ensures the pieces in front move first
 	for enemy_piece in enemy_pieces:
 		enemy_piece.aura_update()
@@ -334,6 +341,8 @@ func enemy_phase(enemy_pieces):
 	
 
 func start_player_phase():
+	get_node("TidesOfBattleSystem").reset_enemy_killcount()
+	get_node("HeroSystem").update()
 	self.turn_count += 1
 	if self.reinforcements.has(self.turn_count):
 		reinforce()
@@ -503,6 +512,7 @@ func enemy_win():
 	
 	
 func damage_defenses():
+	get_node("TidesOfBattleSystem").adjust_tides(-20)
 	get_node("LivesSystem").lose_lives(1)
 	if get_node("LivesSystem").lives == 0:
 		enemy_win()

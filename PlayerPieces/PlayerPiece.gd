@@ -18,6 +18,9 @@ var coords
 var cursor_area
 
 var cooldown = 0
+
+var ultimate_available_flag = false
+
 var ultimate_flag = false
 
 var ultimate_used_flag = false
@@ -45,6 +48,10 @@ func _ready():
 	
 	set_process_input(true)
 	self.side = "PLAYER"
+	
+func set_armor(value):
+	self.armor = value
+	get_node("ArmorDisplay/Label").set_text(str(value))
 
 #called once the unit positions are finalized in the deployment phase
 func deploy():
@@ -285,7 +292,7 @@ func animate_placed():
 
 func dies_to_collision(pusher):
 	if pusher != null and pusher.side != self.side:  #if there's a pusher and not on the same side
-		return pusher.deadly or self.armor == 0 #if the piece has no armor, or the pusher enemy is deadly
+		return pusher.deadly or pusher.hp >= self.armor #if the enemy has same or more hp than the pusher's armor, or the pusher enemy is deadly
 		
 
 #shove is different than push

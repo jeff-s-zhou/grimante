@@ -22,6 +22,7 @@ const ULTIMATE_DESCRIPTION = """Storm. Deal damage to enemies on Rain tiles equa
 const DEFAULT_BOLT_DAMAGE = 1
 const DEFAULT_STORM_DAMAGE = 5
 const DEFAULT_MOVEMENT_VALUE = 2
+const DEFAULT_ARMOR_VALUE = 3
 
 var bolt_damage = DEFAULT_BOLT_DAMAGE setget ,get_bolt_damage
 var storm_damage = DEFAULT_STORM_DAMAGE setget ,get_storm_damage
@@ -30,7 +31,7 @@ var storm_damage = DEFAULT_STORM_DAMAGE setget ,get_storm_damage
 var rain_coords_dict = {}
 
 func _ready():
-	self.armor = 1
+	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	self.overview_description = OVERVIEW_DESCRIPTION

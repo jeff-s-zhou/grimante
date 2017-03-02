@@ -2,6 +2,7 @@ extends "PlayerPiece.gd"
 
 const DEFAULT_WILDFIRE_DAMAGE = 2
 const DEFAULT_MOVEMENT_VALUE = 1
+const DEFAULT_ARMOR_VALUE = 1
 const UNIT_TYPE = "Pyromancer"
 
 var wildfire_damage = DEFAULT_WILDFIRE_DAMAGE setget , get_wildfire_damage
@@ -19,7 +20,7 @@ const ULTIMATE_DESCRIPTION = """"""
 var pathed_range
 
 func _ready():
-	self.armor = 1
+	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	self.overview_description = OVERVIEW_DESCRIPTION

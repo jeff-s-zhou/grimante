@@ -54,6 +54,9 @@ class BaseLevelType:
 
 	func should_deploy():
 		return true
+		
+	func reset():
+		self.enemies.reset()
 
 #infinite waves
 class RoomSeal extends BaseLevelType:
@@ -68,6 +71,7 @@ class RoomSeal extends BaseLevelType:
 		return self.enemies.get_remaining_waves_count() > 0
 
 
+
 class ClearWaves extends BaseLevelType:
 	func _init(allies, enemies, initial_deploy_count=1, \
 	next_level=null, extras={}).(allies, enemies, initial_deploy_count, next_level, extras):
@@ -78,6 +82,7 @@ class ClearWaves extends BaseLevelType:
 
 	func should_deploy():
 		return self.enemies.get_remaining_waves_count() > 0
+
 #
 #class Defend extends BaseLevelType:
 #	func check_player_win():

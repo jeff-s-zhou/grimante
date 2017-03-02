@@ -16,7 +16,7 @@ func initialize(max_hp):
 
 
 func deathrattle():
-	if !self.silenced:
+	if !self.silenced and self.hp == 0:
 		var neighbor_coords_range = get_parent().get_range(self.coords, [1,2], "ENEMY")
 		for coords in neighbor_coords_range:
 			var neighbor = get_parent().pieces[coords]

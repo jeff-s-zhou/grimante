@@ -3,7 +3,7 @@ extends "PlayerPiece.gd"
 #extends KinematicBody2D
 const DEFAULT_DAMAGE = 4
 const DEFAULT_AOE_DAMAGE = 2
-
+const DEFAULT_ARMOR_VALUE = 4
 const DEFAULT_MOVEMENT_VALUE = 2
 
 var damage = DEFAULT_DAMAGE setget , get_damage
@@ -31,7 +31,7 @@ const ULTIMATE_DESCRIPTION = """Earthshatter. Stun and attack all enemies in a l
 
 
 func _ready():
-	self.armor = 1
+	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	self.overview_description = OVERVIEW_DESCRIPTION
@@ -139,13 +139,17 @@ func smash_attack(new_coords):
 	get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [new_coords, 350, false])
 	get_node("/root/AnimationQueue").enqueue(self, "jump_to", true, [new_coords])
 	if get_parent().pieces[new_coords].will_die_to(self.damage):
-		get_parent().pieces[new_coords].smash_killed(self.damage, true)
+		var action = get_new_action(new_coords)
+		action.add_call("smash_killed", [self.damage])
+		action.execute()
 		set_coords(new_coords)
 		placed()
 
 	#else leap back
 	else:
-		get_parent().pieces[new_coords].attacked(self.damage, true)
+		var action = get_new_action(new_coords)
+		action.add_call("attacked", [self.damage])
+		action.execute()
 		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords, 300, false])
 		get_node("/root/AnimationQueue").enqueue(self, "jump_back", true, [self.coords])
 		placed()

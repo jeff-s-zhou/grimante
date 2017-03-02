@@ -1,6 +1,7 @@
 extends "PlayerPiece.gd"
 
 const DEFAULT_MOVEMENT_VALUE = 2
+const DEFAULT_ARMOR_VALUE = 2
 const UNIT_TYPE = "Saint"
 
 var pathed_range
@@ -17,7 +18,7 @@ const PASSIVE_DESCRIPTION = """"""
 const ULTIMATE_DESCRIPTION = """"""
 
 func _ready():
-	self.armor = 1
+	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	self.overview_description = OVERVIEW_DESCRIPTION

@@ -270,7 +270,6 @@ func get_radial_range(coords, radial_range=[1, 3], side=null, collision_check=fa
 		var diagonal_surrounding_range = []
 		for coords in diagonal_range:
 			diagonal_surrounding_range += get_range(coords, [1, 2], side)
-			print(diagonal_surrounding_range)
 		if side != null:
 			print("ending getting radial range with " + side) 
 			
@@ -336,6 +335,7 @@ static func get_coord_list(grid_items):
 	return return_list
 	
 static func hex_normalize(vector):
+	print("hex_normalizing")
 	print(vector)
 	if(vector.x == 0 or vector.y == 0):
 		return vector.normalized()

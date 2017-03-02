@@ -4,6 +4,7 @@ extends "PlayerPiece.gd"
 const DEFAULT_BACKSTAB_DAMAGE = 2
 const DEFAULT_PASSIVE_DAMAGE = 1
 const DEFAULT_MOVEMENT_VALUE = 2
+const DEFAULT_ARMOR_VALUE = 3
 const UNIT_TYPE = "Assassin"
 const OVERVIEW_DESCRIPTION = """Armored
 
@@ -30,7 +31,7 @@ var pathed_range
 var bloodlust_flag = false
 
 func _ready():
-	self.armor = 1
+	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	self.overview_description = OVERVIEW_DESCRIPTION

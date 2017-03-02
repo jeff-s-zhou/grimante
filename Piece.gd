@@ -135,6 +135,9 @@ func enemy_phase_push(distance, pusher=null):
 func push(distance, pusher=null):
 	if dies_to_collision(pusher): #check if they're going to die from collision
 		#print("deleting self")
+		print(self.unit_name + " is being pushed to death by " + pusher.unit_name)
+		print(self.unit_name + " coords: " + str(self.coords))
+		print(pusher.unit_name + " coords: " + str(pusher.coords))
 		delete_self()
 		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", true)
 	
@@ -148,7 +151,7 @@ func push(distance, pusher=null):
 			var collide_coords = collide_range[0]
 			#print(collide_coords)
 			var location = self.grid.locations[collide_coords]
-			var difference = (location.get_pos() - get_pos()) / 3
+			var difference = (location.get_pos() - get_pos()) - Vector2(0, 80)
 			#print(difference)
 			var collide_pos = get_pos() + difference 
 			var new_distance = (self.coords + distance) - collide_coords + self.grid.hex_normalize(distance)

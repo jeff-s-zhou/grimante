@@ -121,7 +121,7 @@ default/chorus_send = 0.0
 [node name="ReinforcementIndicator" type="Sprite" parent="."]
 
 visibility/visible = false
-transform/pos = Vector2( 0, -90 )
+transform/pos = Vector2( 0, -78 )
 texture = ExtResource( 9 )
 
 [node name="DeployableIndicator" type="Sprite" parent="."]

@@ -6,6 +6,7 @@ var animation_state = ANIMATION_STATES.default
 
 const DEFAULT_TRAMPLE_DAMAGE = 2
 const DEFAULT_MOVEMENT_VALUE = 11
+const DEFAULT_ARMOR_VALUE = 5
 
 var trample_damage = DEFAULT_TRAMPLE_DAMAGE setget , get_trample_damage
 
@@ -26,7 +27,7 @@ const ULTIMATE_DESCRIPTION = """Rally! For the rest of this Player Phase, all al
 """
 
 func _ready():
-	self.armor = 1
+	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	self.overview_description = OVERVIEW_DESCRIPTION

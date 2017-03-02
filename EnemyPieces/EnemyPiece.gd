@@ -62,10 +62,13 @@ func hover_highlight():
 
 	if self.action_highlighted:
 		get_node("Physicals/EnemyOverlays/White").show()
-		get_node("Physicals/HealthDisplay/WhiteLayer").show()
 		if get_parent().selected != null:
 			get_parent().selected.predict(self.coords)
 
+func debug():
+	#get_node("DebugText").show()
+	get_node("DebugText").set_text(str(self.coords))
+	
 	
 func hover_unhighlight():
 	get_node("Physicals/EnemyOverlays/White").hide()
@@ -394,6 +397,7 @@ func animate_set_hp(hp, value, delay=0):
 
 #removes it from the grid, which prevents any interaction with other pieces
 func delete_self():
+	get_node("/root/Combat/TidesOfBattleSystem").track_enemy_death()
 	get_parent().remove_piece(self.coords)
 
 
@@ -439,7 +443,7 @@ func turn_update():
 	set_z(0)
 	if self.stunned:
 		set_stunned(false)
-	else:
+	elif self.hp != 0:
 		self.push(movement_value)
 	
 	if self.silenced:

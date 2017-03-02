@@ -3,6 +3,7 @@ extends "PlayerPiece.gd"
 const DEFAULT_FREEZE_DAMAGE = 1
 const DEFAULT_SHIELD_BASH_DAMAGE = 2
 const DEFAULT_MOVEMENT_VALUE = 1
+const DEFAULT_ARMOR_VALUE = 7
 const UNIT_TYPE = "Frost Knight"
 
 var freeze_damage = DEFAULT_FREEZE_DAMAGE setget , get_freeze_damage
@@ -19,7 +20,7 @@ const PASSIVE_DESCRIPTION = """"""
 const ULTIMATE_DESCRIPTION = """"""
 
 func _ready():
-	self.armor = 1
+	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	self.overview_description = OVERVIEW_DESCRIPTION

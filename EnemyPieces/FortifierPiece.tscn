@@ -7,11 +7,10 @@
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"attack_range", "speed":5.0 }, { "frames":[ ExtResource( 3 ), ExtResource( 4 ) ], "loop":true, "name":"damaged", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ), ExtResource( 4 ) ], "loop":true, "name":"damaged", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"attack_range", "speed":5.0 } ]
 
 [node name="FortifierPiece" instance=ExtResource( 1 )]
 
-visibility/opacity = 1.0
 script/script = ExtResource( 2 )
 
 [node name="AnimatedSprite" parent="Physicals"]
