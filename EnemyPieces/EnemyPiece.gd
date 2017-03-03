@@ -413,9 +413,9 @@ func animate_delete_self():
 	get_node("/root/Combat/ComboSystem").increase_combo()
 	self.queue_free()
 
-func set_coords(coords):
-	get_parent().move_piece(self.coords, coords)
-	self.coords = coords
+func set_coords(new_coords):
+	get_parent().move_piece(self.coords, new_coords)
+	self.coords = new_coords
 	#handle stepping on a lightning tile
 	if get_parent().locations[self.coords].raining:
 		get_parent().locations[self.coords].activate_lightning()

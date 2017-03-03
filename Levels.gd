@@ -36,25 +36,28 @@ func make_complex_tip(tip_text, objective_text, tooltips):
 var sandbox_allies = {1: Cavalier, 2: Berserker, 3: Archer, 4: Assassin}
 
 class SandboxPowerGenerator:
+	var power_level = 200
 	func get_next():
-		return 300
+		print("getting next power level: " + str(self.power_level))
+		self.power_level += 20
+		return self.power_level
 		
 	func reset():
-		pass
+		self.power_level = 200
 
 
 var five_column_enemies = [
 {Vector2(1, 3): make(Grunt, 3)}, {Vector2(1, 2): make(Grunt, 3)},
-{1: make(Grunt, 4), 2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous_modifier])},
-{4: make(Grower, 2, [shield_modifier])},
-{0: make(Grower, 2), 2: make(Drummer, 2), 3: make(Fortifier, 3)},
+{1: make(Grunt, 4), 2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous_modifier]), 6: make(Grunt, 3)},
+{4: make(Grower, 2, [shield_modifier]), 5: make(Fortifier, 4)},
+{0: make(Grower, 2), 2: make(Drummer, 2), 3: make(Grunt, 3), 6: make(Fortifier, 3)},
 {1: make(Grower, 2, [shield_modifier]), 3: make(Grunt, 5, [poisonous_modifier]), 4: make(Grunt, 4, [poisonous_modifier])},
 {0: make(Grower, 1), 4: make(Grunt, 7, [shield_modifier, poisonous_modifier])},
 {2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous_modifier])}
 ]
 
-var sandbox_enemies = WaveWrappers.InfiniteGeneratedWrapper.new(SandboxPowerGenerator.new())
-#var sandbox_enemies = WaveWrappers.FiniteWrapper.new(five_column_enemies)
+#var sandbox_enemies = WaveWrappers.InfiniteGeneratedWrapper.new(SandboxPowerGenerator.new())
+var sandbox_enemies = WaveWrappers.FiniteWrapper.new(five_column_enemies)
 #var sandbox_extras = {"shadow_wall_tiles": [Vector2(3, 6)]}
 var Sandbox_Level = LevelTypes.RoomSeal.new(sandbox_allies, sandbox_enemies, 3, null) #sandbox_extras)
 

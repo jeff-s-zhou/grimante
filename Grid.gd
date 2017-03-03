@@ -110,7 +110,11 @@ func remove_piece(coords):
 	self.pieces[coords].set_pickable(false)
 	self.pieces.erase(coords)
 	locations[coords].set_pickable(true)
-	
+
+func swap_pieces(coords1, coords2):
+	var temp = self.pieces[coords1]
+	self.pieces[coords1] = self.pieces[coords2]
+	self.pieces[coords2] = temp
 
 #moves the piece's location on grid. doesn't actually physically move the sprite
 func move_piece(old_coords, new_coords):
@@ -121,7 +125,7 @@ func move_piece(old_coords, new_coords):
 	locations[new_coords].set_pickable(false)
 
 #only returns a free location
-func get__free_location_at(coords):
+func get_free_location_at(coords):
 	if pieces.has(coords):
 		return null
 	return locations[coords]
@@ -335,8 +339,6 @@ static func get_coord_list(grid_items):
 	return return_list
 	
 static func hex_normalize(vector):
-	print("hex_normalizing")
-	print(vector)
 	if(vector.x == 0 or vector.y == 0):
 		return vector.normalized()
 	else:

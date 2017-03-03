@@ -266,6 +266,14 @@ func _input(event):
 		var player_pieces = get_tree().get_nodes_in_group("player_pieces")
 		for player_piece in player_pieces:
 			print(player_piece.unit_name + ": " + str(player_piece.coords))
+			if get_node("Grid").pieces[player_piece.coords] != null:
+				print("found a piece here: " + get_node("Grid").pieces[player_piece.coords].unit_name)
+		
+		print("going through the pieces dict")
+		for key in get_node("Grid").pieces:
+			var piece = get_node("Grid").pieces[key]
+			print(str(key) + ": " + piece.unit_name + "/" + str(piece.coords))
+		#print(get_node("Grid").pieces)
 
 
 func _process(delta):

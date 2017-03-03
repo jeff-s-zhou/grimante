@@ -71,6 +71,7 @@ func is_placed():
 	return self.state == States.PLACED
 
 func delete_self():
+	print("deleting_self in " + str(self.unit_name) + ":" + str(self.coords))
 	get_parent().remove_piece(self.coords)
 	remove_from_group("player_pieces")
 	
@@ -90,9 +91,9 @@ func turn_update():
 		if(get_node("CollisionArea").overlaps_area(self.cursor_area)):
 			self.hovered()
 
-func set_coords(coords):
-	get_parent().move_piece(self.coords, coords)
-	self.coords = coords
+func set_coords(new_coords):
+	get_parent().move_piece(self.coords, new_coords)
+	self.coords = new_coords
 
 #ANIMATION FUNCTIONS
 
@@ -252,6 +253,7 @@ func deploy_select_action_target(target):
 		invalid_move()
 		
 func swap_coords_and_pos(target):
+	get_parent().swap_pieces(self.coords, target.coords)
 	var temp_coords = self.coords
 	self.coords = target.coords
 	target.coords = temp_coords
@@ -296,7 +298,7 @@ func dies_to_collision(pusher):
 		
 
 #shove is different than push
-func initiate_shove(coords):
+func initiate_friendly_shove(coords):
 	var offset = get_parent().hex_normalize(coords - self.coords)
 	var shoved_coords = coords + offset
 	if(get_parent().locations.has(shoved_coords) and !get_parent().pieces.has(shoved_coords)):
@@ -307,10 +309,11 @@ func initiate_shove(coords):
 		get_parent().pieces[coords].receive_shove(shoved_coords)
 		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [coords, 300, false])
 		set_coords(coords)
+		placed()
 	else:
 		invalid_move()
 		
-func receive_shove(destination_coords):
+func receive_friendly_shove(destination_coords):
 	get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [destination_coords, 300, false])
 	set_coords(destination_coords)
 

@@ -64,9 +64,6 @@ func _is_within_attack_range(new_coords):
 func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
 	
-func _is_within_ultimate_range(new_coords):
-	return new_coords in get_ultimate_range()
-
 func play_smash_sound():
 	get_node("SamplePlayer").play("explode3")
 
@@ -129,8 +126,7 @@ func act(new_coords):
 	elif _is_within_movement_range(new_coords):
 		smash_move(new_coords)
 	elif _is_within_ally_shove_range(new_coords):
-		initiate_shove(new_coords)
-		placed()
+		initiate_friendly_shove(new_coords)
 	else:
 		invalid_move()
 
@@ -178,10 +174,7 @@ func smash(smash_range):
 
 
 func predict(new_coords):
-	if ultimate_flag:
-		if _is_within_ultimate_range(new_coords):
-			predict_ultimate_attack(new_coords)
-	elif _is_within_attack_range(new_coords):
+	if _is_within_attack_range(new_coords):
 		predict_smash_attack(new_coords)
 	elif _is_within_movement_range(new_coords):
 		predict_smash_move(new_coords)

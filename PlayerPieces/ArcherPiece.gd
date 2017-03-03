@@ -117,7 +117,7 @@ func act(new_coords):
 		placed()
 	
 	elif _is_within_ally_shove_range(new_coords):
-		initiate_shove(new_coords)
+		initiate_friendly_shove(new_coords)
 		placed()
 		
 	else:

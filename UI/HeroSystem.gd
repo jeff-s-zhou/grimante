@@ -5,7 +5,7 @@ extends Node2D
 # var b = "textvar"
 
 var turn_count = 0
-var activation_turns = [1, 2, 8, 9, 10]
+var activation_turns = [3, 6, 8, 9, 10]
 
 func _ready():
 	# Called every time the node is added to the scene.
