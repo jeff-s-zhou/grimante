@@ -7,6 +7,7 @@ extends KinematicBody2D
 var side = null
 
 const Action = preload("res://Action.gd")
+const AnimationSequence = preload("res://AnimationSequence.gd")
 
 signal animation_done
 
@@ -79,7 +80,8 @@ func set_mid_animation(flag):
 func animate_summon():
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
-	
+
+#this doesn't actually block properly if you intend to have it block
 func animate_delete_self(blocking=true):
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
@@ -104,83 +106,124 @@ func animate_move(new_coords, speed=250, blocking=true, trans_type=Tween.TRANS_L
 	if(blocking):
 		yield(get_node("Tween"), "tween_complete")
 		emit_signal("animation_done")
+
+
+func move(distance, passed_animation_sequence=null):
+	var animation_sequence
+	if passed_animation_sequence != null:
+		animation_sequence = passed_animation_sequence
+	else:
+		animation_sequence = self.AnimationSequence.new()
 		
-
-
-#this fixes the fucking FPS drops lol why????
-#the unit that calls this moves too, as part of the act of pushing
-func enemy_phase_push(distance, pusher=null):
-	if dies_to_collision(pusher): #check if they're going to die from collision
-		print("deleting self")
-		delete_self()
-		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", true)
+	var old_coords = self.coords
 	
-	else:
-		var distance_length = self.grid.hex_length(distance)
-		var collide_range = self.grid.get_range(self.coords, [1, distance_length + 1], "ANY", true, [3, 4])
-		#if there's something in front, push that
-		if collide_range.size() > 0:
-			var collide_coords = collide_range[0]
-			var location = self.grid.locations[collide_coords]
-			var difference = (location.get_pos() - get_pos()) / 3
-			var collide_pos = get_pos() + difference 
-			var new_distance = (self.coords + distance) - collide_coords + self.grid.hex_normalize(distance)
-			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 300, true]) #push up against it
-			self.grid.pieces[collide_coords].push(new_distance, self)
-
-		move_or_fall_off(distance)
-
-
-func initiate_shove(coords):
-	var offset = get_parent().hex_normalize(coords - self.coords)
-	var shoved_coords = coords + offset
-	if(get_parent().locations.has(shoved_coords) and !get_parent().pieces.has(shoved_coords)):
-		var location = get_parent().locations[coords]
-		var difference = (location.get_pos() - get_pos()) / 3
-		var collide_pos = get_pos() + difference 
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 300, true]) #push up against it
-		get_parent().pieces[coords].receive_shove(shoved_coords)
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [coords, 300, false])
-		set_coords(coords)
-		placed()
-	else:
-		invalid_move()
-		
-func receive_shove(destination_coords):
-	get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [destination_coords, 300, false])
-	set_coords(destination_coords)
-
-#for every 1 movement range the unit has
-#if no piece, move
-
-#if piece in front, shove if possible for as far as possible
-#if you can't, chill
-
-#what if we need to shove something 2 tiles?
-
-func shove(distance):
 	var distance_length = self.grid.hex_length(distance)
-	var moves_left = distance_length
-	for i in range(0, distance_length):
-		pass
-		moves_left -= 1
-		#check if you can move the piece
-		#if not, break
-		
+	var distance_increment = self.grid.hex_normalize(distance)
 	var direction = self.grid.get_direction_from_vector(distance)
-	var collide_range = self.grid.get_range(self.coords, [1, moves_left + 1], "ANY", true, [direction, direction + 1])
+	var collide_range = self.grid.get_range(self.coords, [1, distance_length + 1], "ANY", true, [direction, direction + 1])
+	var collide_coords = null
+	
+	#if there's something in front, we shove it
 	if collide_range.size() > 0:
-		#print("found collido")
-		var collide_coords = collide_range[0]
-		#print(collide_coords)
+		collide_coords = collide_range[0]
+		#if the tile right before the one we want to collide with isn't the one we're on
+		if self.coords != collide_coords - distance_increment: 
+			move_helper(collide_coords - distance_increment, animation_sequence)
+	else: #else just move forward all the way
+		move_helper(self.coords + distance, animation_sequence)
+	
+	#if there was a collision
+	if collide_coords != null:
+		var distance_travelled  = self.coords - old_coords
+		var remaining_distance = distance - distance_travelled
+		self.shove(collide_coords, remaining_distance, animation_sequence)
+		
+	#we'd execute the whole animation sequence here
+	if passed_animation_sequence == null: #otherwise this was called recursively in shove
+		get_node("/root/AnimationQueue").enqueue(animation_sequence, "execute", false)
+
+#helper function to either move a piece, or have it fall off the map
+func move_helper(coords, animation_sequence=null):
+	var distance = coords - self.coords 
+	var distance_length = self.grid.hex_length(distance)
+	var distance_increment = self.grid.hex_normalize(distance)
+	var furthest_distance = Vector2(0, 0)
+	var walked_off = false
+	for i in range(0, distance_length):
+		if !get_parent().locations.has(self.coords + (i + 1) * distance_increment):
+			walked_off = true
+			break
+		else:
+			furthest_distance = (i + 1) * distance_increment
+
+	if furthest_distance != Vector2(0, 0):
+		animation_sequence.add(self, "animate_move", true, [self.coords + furthest_distance, 300, true])
+		set_coords(self.coords + furthest_distance)
+
+	if walked_off:
+		print("deleting self after walking off")
+		delete_self()
+		animation_sequence.add(self, "animate_delete_self", true)
+
+#at this point we've moved forward to cover all empty spaces
+#with remaining moves, try to push the obstacle immediately in front
+func shove(collide_coords, distance, animation_sequence):
+	var old_coords = self.coords
+	var distance_length = self.grid.hex_length(distance)
+	var distance_increment = self.grid.hex_normalize(distance)
+	var moves_left = distance_length
+	var direction = self.grid.get_direction_from_vector(distance)
+
+	if distance_length > 0:
+		
+		#push up against it
 		var location = self.grid.locations[collide_coords]
 		var difference = (location.get_pos() - get_pos()) - Vector2(0, 80)
-		#print(difference)
 		var collide_pos = get_pos() + difference 
 		var new_distance = (self.coords + distance) - collide_coords + self.grid.hex_normalize(distance)
+		animation_sequence.add(self, "animate_move_to_pos", true, [collide_pos, 300, true])
+		#get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 300, true]) 
 		
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 300, true]) #push up against it
-		self.grid.pieces[collide_coords].receive_shove(new_distance, self)
+		var distance_shoved = get_parent().pieces[collide_coords].receive_shove(self, distance, animation_sequence)
+		if distance_shoved == null: #that means it killed the piece it shoved
+			move_helper(collide_coords, animation_sequence)
+			if old_coords + distance != self.coords: #if we still haven't travelled the full distance after killing
+				#recursively call move from the position of the first killed player unit
+				move(old_coords + distance - self.coords, animation_sequence)
+				return
+		elif distance_shoved == Vector2(0, 0):
+			animation_sequence.add(self, "animate_move", true, [self.coords, 300, true])
+			#get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords, 300, false])
+		else:
+			move_helper(self.coords + distance_shoved, animation_sequence)
+		
+		
+func receive_shove(pusher, distance, animation_sequence):
+	if dies_to_collision(pusher): #check if they're going to die from collision
+		delete_self()
+		animation_sequence.add(self, "animate_delete_self", true)
+		return null
+
+
+	var old_coords = self.coords
+	var distance_length = self.grid.hex_length(distance)
+	var distance_increment = self.grid.hex_normalize(distance)
+	var direction = self.grid.get_direction_from_vector(distance)
+	
+	var collide_range = self.grid.get_range(self.coords, [1, distance_length + 1], "ANY", true, [direction, direction + 1])
+	var collide_coords = null
+	if collide_range.size() > 0:
+		collide_coords = collide_range[0]
+		if self.coords != collide_coords - distance_increment: 
+			move_helper(collide_coords - distance_increment, animation_sequence)
+			return (self.coords - old_coords)
+		else:
+			return Vector2(0, 0)
+	else:
+		move_helper(self.coords + distance, animation_sequence)
+		
+		return distance
+
 
 
 #the unit that calls this moves too, as part of the act of pushing
@@ -191,7 +234,7 @@ func push(distance, pusher=null):
 		print(self.unit_name + " coords: " + str(self.coords))
 		print(pusher.unit_name + " coords: " + str(pusher.coords))
 		delete_self()
-		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", true)
+		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
 	
 	else:
 		var distance_length = self.grid.hex_length(distance)

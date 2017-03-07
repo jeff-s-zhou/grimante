@@ -129,7 +129,7 @@ func act(new_coords):
 		else:
 			placed()
 	elif _is_within_attack_range(new_coords):
-		get_node("/root/Combat").display_overlay(self.unit_name)
+		#get_node("/root/Combat").display_overlay(self.unit_name)
 		backstab(new_coords)
 	elif _is_within_ally_shove_range(new_coords):
 		initiate_friendly_shove(new_coords)

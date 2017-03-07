@@ -44,7 +44,7 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(300, 275))
 	#get_node("Grid").set_pos(Vector2(400, 250))
-	debug_mode()
+	#debug_mode()
 	ultimates_enabled()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
@@ -329,15 +329,12 @@ func enemy_phase(enemy_pieces):
 	if(get_tree().get_nodes_in_group("enemy_pieces").size() > 0):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 
-
 	if self.level.should_deploy():
 		deploy_wave()
 		yield(self, "wave_deployed")
-	
 	get_node("Timer2").set_wait_time(0.8)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
-	
 	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
 	if self.level.check_enemy_win(player_pieces): #logic would change based on game type
 		enemy_win()
@@ -470,6 +467,8 @@ func deploy_wave(mass_summon=false):
 						enemy_piece.set_deadly(true)
 					elif modifier == get_node("/root/constants").enemy_modifiers["Shield"]:
 						enemy_piece.set_shield(true)
+					elif modifier == get_node("/root/constants").enemy_modifiers["Cloaked"]:
+						enemy_piece.set_cloaked(true)
 	
 	
 			enemy_piece.get_node("Sprinkles").set_particle_endpoint(get_node("ComboSystem/ComboPointsLabel").get_global_pos())
@@ -484,13 +483,14 @@ func deploy_wave(mass_summon=false):
 
 func display_wave_preview(wave):
 	get_node("Grid").reset_reinforcement_indicators()
-	for key in wave.keys():
-		var position = null
-		if typeof(key) == TYPE_INT:
-			position = get_node("Grid").get_top_of_column(key)
-		else:
-			position = key #that way when we need to we can specify by coordinates
-		get_node("Grid").locations[position].set_reinforcement_indicator(true)
+	if wave != null:
+		for key in wave.keys():
+			var position = null
+			if typeof(key) == TYPE_INT:
+				position = get_node("Grid").get_top_of_column(key)
+			else:
+				position = key #that way when we need to we can specify by coordinates
+			get_node("Grid").locations[position].set_reinforcement_indicator(true)
 
 func player_win():
 	set_process(false)

@@ -101,7 +101,7 @@ func act(new_coords):
 	#returns whether the act was successfully committed
 	
 	if _is_within_attack_range(new_coords):
-		get_node("/root/Combat").display_overlay(self.unit_name)
+		#get_node("/root/Combat").display_overlay(self.unit_name)
 		charge_attack(new_coords)
 		
 	elif _is_within_movement_range(new_coords):
@@ -152,16 +152,16 @@ func animate_hop(old_coords, new_coords, down=false):
 	print(time)
 	var old_position = Vector2(0, -15)
 	if down:
-		old_position = Vector2(0, -4)
+		old_position = Vector2(0, 0)
 	var new_position = Vector2(0, -60)
 	
-	get_node("Tween2").interpolate_property(get_node("AnimatedSprite"), "transform/pos", \
-		get_node("AnimatedSprite").get_pos(), new_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+	get_node("Tween2").interpolate_property(get_node("Physicals"), "transform/pos", \
+		get_node("Physicals").get_pos(), new_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_OUT)
 	get_node("Tween2").start()
 	yield(get_node("Tween2"), "tween_complete")
 	
-	get_node("Tween2").interpolate_property(get_node("AnimatedSprite"), "transform/pos", \
-		get_node("AnimatedSprite").get_pos(), old_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_IN)
+	get_node("Tween2").interpolate_property(get_node("Physicals"), "transform/pos", \
+		get_node("Physicals").get_pos(), old_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_IN)
 	get_node("Tween2").start()
 	yield(get_node("Tween2"), "tween_complete")
 	if(down):

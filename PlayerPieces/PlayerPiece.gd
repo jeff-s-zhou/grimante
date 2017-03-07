@@ -51,7 +51,7 @@ func _ready():
 	
 func set_armor(value):
 	self.armor = value
-	get_node("ArmorDisplay/Label").set_text(str(value))
+	get_node("Physicals/ArmorDisplay/Label").set_text(str(value))
 
 #called once the unit positions are finalized in the deployment phase
 func deploy():
@@ -65,7 +65,7 @@ func get_ally_shove_range():
 	
 func _is_within_ally_shove_range(coords):
 	return coords in get_ally_shove_range()
-
+	
 	
 func is_placed():
 	return self.state == States.PLACED
@@ -87,7 +87,7 @@ func turn_update():
 	else:
 		self.state = States.DEFAULT
 		get_node("Cooldown").hide()
-		get_node("AnimatedSprite").play("default")
+		get_node("Physicals/AnimatedSprite").play("default")
 		if(get_node("CollisionArea").overlaps_area(self.cursor_area)):
 			self.hovered()
 
@@ -120,24 +120,24 @@ func attack_highlight():
 	pass
 	
 func assist_highlight():
-	get_node("OverlayLayers/Green").show()
+	get_node("Physicals/OverlayLayers/Green").show()
 
 
 #called when the whole board's highlighting is reset
 func reset_highlight(right_click_flag=false):
-	get_node("OverlayLayers/White").hide()
-	get_node("OverlayLayers/Green").hide()
+	get_node("Physicals/OverlayLayers/White").hide()
+	get_node("Physicals/OverlayLayers/Green").hide()
 	if(self.state != States.PLACED):
-		get_node("AnimatedSprite").play("default")
+		get_node("Physicals/AnimatedSprite").play("default")
 		
 	if right_click_flag and get_node("CollisionArea").overlaps_area(self.cursor_area):
 			self.hovered()
 #	else:
-#		get_node("AnimatedSprite").play("cooldown")
+#		get_node("Physicals/AnimatedSprite").play("cooldown")
 
 func reset_prediction_highlight():
 	pass
-	#get_node("Physicals/AnimatedSprite").show()
+	#get_node("Physicals/Physicals/AnimatedSprite").show()
 	#get_node("Physicals/PredictionLayer").hide()
 	
 
@@ -146,14 +146,14 @@ func hover_highlight():
 	
 	if(self.state != States.PLACED):
 		get_node("SamplePlayer").play("tile_hover")
-		get_node("OverlayLayers/White").show()
+		get_node("Physicals/OverlayLayers/White").show()
 	else:
 		print("is placed")
 
 
 #called on mouse exiting the ClickArea
 func unhovered():
-	get_node("OverlayLayers/White").hide()
+	get_node("Physicals/OverlayLayers/White").hide()
 	if get_parent().selected == null:
 		get_parent().reset_highlighting()
 #		
@@ -285,12 +285,12 @@ func placed():
 	get_parent().selected = null
 
 func animate_placed():
-	get_node("OverlayLayers/UltimateWhite").hide()
+	get_node("Physicals/OverlayLayers/UltimateWhite").hide()
 	if(self.cooldown > 0):
 		self.cooldown -= 1
 		get_node("Cooldown").show()
 		get_node("Cooldown/Label").set_text(str(self.cooldown))
-	get_node("AnimatedSprite").play("cooldown")
+	get_node("Physicals/AnimatedSprite").play("cooldown")
 
 func dies_to_collision(pusher):
 	if pusher != null and pusher.side != self.side:  #if there's a pusher and not on the same side
@@ -306,7 +306,7 @@ func initiate_friendly_shove(coords):
 		var difference = (location.get_pos() - get_pos()) / 3
 		var collide_pos = get_pos() + difference 
 		get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 300, true]) #push up against it
-		get_parent().pieces[coords].receive_shove(shoved_coords)
+		get_parent().pieces[coords].receive_friendly_shove(shoved_coords)
 		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [coords, 300, false])
 		set_coords(coords)
 		placed()

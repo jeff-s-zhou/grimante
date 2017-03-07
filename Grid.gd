@@ -204,7 +204,6 @@ func get_direction_from_vector(v):
 		
 func get_diagonal_direction_from_vector(v):
 	var vector = hex_normalize(v)
-	print(vector)
 	if vector == Vector2(1, -1):
 		return 0
 	elif vector == Vector2(2, 1):

@@ -9,7 +9,7 @@ const Fortifier = preload("res://EnemyPieces/FortifierPiece.tscn")
 const Grower = preload("res://EnemyPieces/GrowerPiece.tscn")
 const Drummer = preload("res://EnemyPieces/DrummerPiece.tscn")
 
-var enemy_modifiers = {"Poisonous":"Poisonous", "Shield":"Shield"}
+var enemy_modifiers = {"Poisonous":"Poisonous", "Shield":"Shield", "Cloaked":"Cloaked"}
 
 var UNIT_POWER_LEVELS = {
 Grunt: 20,
@@ -21,7 +21,8 @@ Drummer: 45
 #potential problem, we don't want Fortifiers with shield_modifiers do we?
 var MODIFIER_POWER_LEVELS = {
 enemy_modifiers["Shield"]: 10,
-enemy_modifiers["Poisonous"]: 20
+enemy_modifiers["Poisonous"]: 20,
+enemy_modifiers["Cloaked"] : 15
 }
 
 
@@ -35,6 +36,7 @@ var FULL_UNIT_ROSTER = {
 var FULL_MODIFIER_ROSTER = {
 0: enemy_modifiers["Shield"],
 1: enemy_modifiers["Poisonous"],
+2: enemy_modifiers["Cloaked"],
 }
 
 const GRUNT_HEALTH_PROB_DIST = {

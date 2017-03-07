@@ -4,7 +4,7 @@ extends "EnemyPiece.gd"
 # var a=2
 # var b="textvar"
 
-var DESCRIPTION = "Causes all enemy pieces in the column to move +1 tiles each turn."
+var DESCRIPTION = "Causes all enemy pieces in the column in front of it (including itself) to move +1 tiles each turn."
 
 func initialize(max_hp):
 	initialize_hp(max_hp)
@@ -19,7 +19,6 @@ func initialize(max_hp):
 
 func aura_update():
 	if !self.silenced:
-		var column_range = get_parent().get_range(self.coords, [1, 12], "ENEMY", false, [0, 1])
-		column_range += get_parent().get_range(self.coords, [1, 12], "ENEMY", false, [3, 4])
+		var column_range = get_parent().get_range(self.coords, [1, 12], "ENEMY", false, [3, 4])
 		for coords in column_range:
 			get_parent().pieces[coords].movement_value = Vector2(0, 2)

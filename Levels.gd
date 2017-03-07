@@ -19,8 +19,9 @@ const FrostKnight = preload("res://PlayerPieces/FrostKnightPiece.tscn")
 const Saint = preload("res://PlayerPieces/SaintPiece.tscn")
 
 var enemy_modifiers = load("res://constants.gd").new().enemy_modifiers
-var shield_modifier = enemy_modifiers["Shield"]
-var poisonous_modifier = enemy_modifiers["Poisonous"]
+var shield = enemy_modifiers["Shield"]
+var poisonous = enemy_modifiers["Poisonous"]
+var cloaked = enemy_modifiers["Cloaked"]
 
 func make(prototype, health, modifiers=null):
 	return {"prototype": prototype, "health": health, "modifiers":modifiers}
@@ -47,13 +48,13 @@ class SandboxPowerGenerator:
 
 
 var five_column_enemies = [
-{Vector2(1, 3): make(Grunt, 3)}, {Vector2(1, 2): make(Grunt, 3)},
-{1: make(Grunt, 4), 2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous_modifier]), 6: make(Grunt, 3)},
-{4: make(Grower, 2, [shield_modifier]), 5: make(Fortifier, 4)},
+{Vector2(1, 4): make(Drummer, 2, [cloaked])},
+{1: make(Grunt, 4), 2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous]), 6: make(Grunt, 3)},
+{4: make(Grower, 2, [shield]), 5: make(Fortifier, 4)},
 {0: make(Grower, 2), 2: make(Drummer, 2), 3: make(Grunt, 3), 6: make(Fortifier, 3)},
-{1: make(Grower, 2, [shield_modifier]), 3: make(Grunt, 5, [poisonous_modifier]), 4: make(Grunt, 4, [poisonous_modifier])},
-{0: make(Grower, 1), 4: make(Grunt, 7, [shield_modifier, poisonous_modifier])},
-{2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous_modifier])}
+{1: make(Grower, 2, [shield]), 3: make(Grunt, 5, [poisonous]), 4: make(Grunt, 4, [poisonous])},
+{0: make(Grower, 1), 4: make(Grunt, 7, [shield, poisonous])},
+{2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous])}
 ]
 
 #var sandbox_enemies = WaveWrappers.InfiniteGeneratedWrapper.new(SandboxPowerGenerator.new())
@@ -72,12 +73,12 @@ var level8_allies = {1: Stormdancer, 2: Cavalier, 3:Archer, 4:Assassin, 5: Berse
 
 var level8_enemies = [
 {Vector2(1, 3): make(Grunt, 3), Vector2(5, 5): make(Drummer, 2), Vector2(7, 6): make(Drummer, 2)},
-{1: make(Grunt, 4), 2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous_modifier]), 6: make(Grower, 2)},
-{4: make(Grower, 2, [shield_modifier]), 5: make(Drummer, 4, [shield_modifier]), 6: make(Grunt, 3), 7: make(Grunt, 2)},
+{1: make(Grunt, 4), 2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous]), 6: make(Grower, 2)},
+{4: make(Grower, 2, [shield]), 5: make(Drummer, 4, [shield]), 6: make(Grunt, 3), 7: make(Grunt, 2)},
 {0: make(Grower, 2), 2: make(Drummer, 2), 3: make(Fortifier, 3), 5: make(Grunt, 5), 8: make(Drummer, 2)},
-{1: make(Grower, 2, [shield_modifier]), 3: make(Grunt, 5, [poisonous_modifier]), 4: make(Grunt, 4, [poisonous_modifier]), 7: make(Grunt, 4)},
-{0: make(Grower, 1), 4: make(Grunt, 7, [shield_modifier, poisonous_modifier]), 7: make(Drummer, 3, [shield_modifier])},
-{2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous_modifier]), 6: make(Grower, 2)},
+{1: make(Grower, 2, [shield]), 3: make(Grunt, 5, [poisonous]), 4: make(Grunt, 4, [poisonous]), 7: make(Grunt, 4)},
+{0: make(Grower, 1), 4: make(Grunt, 7, [shield, poisonous]), 7: make(Drummer, 3, [shield])},
+{2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous]), 6: make(Grower, 2)},
 ]
 
 

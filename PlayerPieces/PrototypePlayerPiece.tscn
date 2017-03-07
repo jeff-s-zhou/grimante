@@ -30,14 +30,16 @@ texture = ExtResource( 2 )
 
 visibility/visible = false
 
-[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+[node name="Physicals" type="Node2D" parent="."]
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="Physicals"]
 
 transform/pos = Vector2( 0, -4 )
 animation = "default"
 
-[node name="OverlayLayers" parent="." instance=ExtResource( 4 )]
+[node name="OverlayLayers" parent="Physicals" instance=ExtResource( 4 )]
 
-[node name="ArmorDisplay" parent="." instance=ExtResource( 5 )]
+[node name="ArmorDisplay" parent="Physicals" instance=ExtResource( 5 )]
 
 [node name="Cooldown" parent="." instance=ExtResource( 6 )]
 

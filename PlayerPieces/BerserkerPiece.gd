@@ -79,14 +79,14 @@ func jump_to(new_coords, speed=4):
 #	time = (distance) / (speed) 
 #	print(time)
 
-	var old_height = Vector2(0, -4)
+	var old_height = Vector2(0, 0)
 	var new_height = Vector2(0, (-3 * distance/4))
-	get_node("Tween2").interpolate_property(get_node("AnimatedSprite"), "transform/pos", \
-		get_node("AnimatedSprite").get_pos(), new_height, time/2, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+	get_node("Tween2").interpolate_property(get_node("Physicals"), "transform/pos", \
+		get_node("Physicals").get_pos(), new_height, time/2, Tween.TRANS_CUBIC, Tween.EASE_OUT)
 	get_node("Tween2").start()
 	yield(get_node("Tween2"), "tween_complete")
-	get_node("Tween2").interpolate_property(get_node("AnimatedSprite"), "transform/pos", \
-		get_node("AnimatedSprite").get_pos(), old_height, time/2, Tween.TRANS_QUART, Tween.EASE_IN)
+	get_node("Tween2").interpolate_property(get_node("Physicals"), "transform/pos", \
+		get_node("Physicals").get_pos(), old_height, time/2, Tween.TRANS_QUART, Tween.EASE_IN)
 	get_node("Tween").interpolate_callback(self, time/2 - 0.1, "play_smash_sound")
 	get_node("Tween2").start()
 	yield(get_node("Tween2"), "tween_complete")
@@ -105,14 +105,14 @@ func jump_back(new_coords):
 	var speed = 300
 	var time = distance/speed
 
-	var old_height = Vector2(0, -4)
+	var old_height = Vector2(0, 0)
 	var new_height = Vector2(0, (-1 * distance/2))
-	get_node("Tween2").interpolate_property(get_node("AnimatedSprite"), "transform/pos", \
-		get_node("AnimatedSprite").get_pos(), new_height, time/2, Tween.TRANS_QUAD, Tween.EASE_OUT)
+	get_node("Tween2").interpolate_property(get_node("Physicals"), "transform/pos", \
+		get_node("Physicals").get_pos(), new_height, time/2, Tween.TRANS_QUAD, Tween.EASE_OUT)
 	get_node("Tween2").start()
 	yield(get_node("Tween2"), "tween_complete")
-	get_node("Tween2").interpolate_property(get_node("AnimatedSprite"), "transform/pos", \
-		get_node("AnimatedSprite").get_pos(), old_height, time/2, Tween.TRANS_QUAD, Tween.EASE_IN)
+	get_node("Tween2").interpolate_property(get_node("Physicals"), "transform/pos", \
+		get_node("Physicals").get_pos(), old_height, time/2, Tween.TRANS_QUAD, Tween.EASE_IN)
 	get_node("Tween2").start()
 	yield(get_node("Tween2"), "tween_complete")
 	self.mid_leaping_animation = false
@@ -121,7 +121,7 @@ func jump_back(new_coords):
 
 func act(new_coords):
 	if _is_within_attack_range(new_coords):
-		get_node("/root/Combat").display_overlay(self.unit_name)
+		#get_node("/root/Combat").display_overlay(self.unit_name)
 		smash_attack(new_coords)
 	elif _is_within_movement_range(new_coords):
 		smash_move(new_coords)

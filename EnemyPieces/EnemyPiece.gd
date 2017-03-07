@@ -16,8 +16,12 @@ var coords #enemies move automatically each turn a certain number of spaces forw
 var hp
 var shielded = false
 var deadly = false
+var cloaked = false
+
 var burning = false
 var frozen = false
+
+
 
 var silenced = false
 
@@ -187,6 +191,24 @@ func animate_set_stunned():
 
 func animate_hide_stunned():
 	get_node("Physicals/EnemyEffects/StunSpiral").hide()
+	
+
+func set_cloaked(flag):
+	self.cloaked = flag
+	if flag:
+		get_node("SeenIcon").hide()
+		get_node("Physicals/AnimatedSprite").hide()
+		get_node("Physicals/HealthDisplay").hide()
+		get_node("Physicals/EnemyEffects").hide()
+		get_node("Physicals/EnemyOverlays/Cloaked").show()
+		get_node("Physicals/FogEffect").show()
+	else:
+		check_global_seen()
+		get_node("Physicals/AnimatedSprite").show()
+		get_node("Physicals/HealthDisplay").show()
+		get_node("Physicals/EnemyEffects").show()
+		get_node("Physicals/EnemyOverlays/Cloaked").hide()
+		get_node("Physicals/FogEffect").hide()
 
 
 func set_deadly(flag):
@@ -279,6 +301,7 @@ func heal(amount, delay=0.0):
 
 
 func attacked(amount):
+	set_cloaked(false)
 	if self.shielded:
 		set_shield(false)
 	else:
@@ -444,7 +467,7 @@ func turn_update():
 	if self.stunned:
 		set_stunned(false)
 	elif self.hp != 0:
-		self.push(movement_value)
+		self.move(movement_value)
 	
 	if self.silenced:
 		set_silenced(false)
