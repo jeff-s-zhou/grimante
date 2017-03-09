@@ -17,10 +17,14 @@ var mid_leaping_animation = false
 
 var stunned = false
 
-var unit_name
+var unit_name = "" setget , get_unit_name
+
+var coords #enemies move automatically each turn a certain number of spaces forward
 
 onready var grid = get_parent()
 
+func get_unit_name():
+	return unit_name
 
 func _ready():
 	get_node("CollisionArea").connect("area_enter", self, "collide")
@@ -28,7 +32,7 @@ func _ready():
 
 
 func get_new_action(coords_or_range, trigger_assassin_passive=true):
-	var action = self.Action.new(coords_or_range, trigger_assassin_passive)
+	var action = self.Action.new(coords_or_range, self, trigger_assassin_passive)
 	add_child(action)
 	return action
 
@@ -178,7 +182,7 @@ func shove(collide_coords, distance, animation_sequence):
 		
 		#push up against it
 		var location = self.grid.locations[collide_coords]
-		var difference = (location.get_pos() - get_pos()) - Vector2(0, 80)
+		var difference =  (location.get_pos() - get_pos())/3
 		var collide_pos = get_pos() + difference 
 		var new_distance = (self.coords + distance) - collide_coords + self.grid.hex_normalize(distance)
 		animation_sequence.add(self, "animate_move_to_pos", true, [collide_pos, 300, true])
@@ -196,8 +200,8 @@ func shove(collide_coords, distance, animation_sequence):
 			#get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords, 300, false])
 		else:
 			move_helper(self.coords + distance_shoved, animation_sequence)
-		
-		
+
+
 func receive_shove(pusher, distance, animation_sequence):
 	if dies_to_collision(pusher): #check if they're going to die from collision
 		delete_self()

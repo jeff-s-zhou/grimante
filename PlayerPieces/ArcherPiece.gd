@@ -11,7 +11,7 @@ var animation_state = ANIMATION_STATES.default
 const DEFAULT_SHOOT_DAMAGE = 3
 const DEFAULT_PASSIVE_DAMAGE = 3
 const DEFAULT_MOVEMENT_VALUE = 1
-const DEFAULT_ARMOR_VALUE = 1
+const DEFAULT_ARMOR_VALUE = 2
 
 var shoot_damage = DEFAULT_SHOOT_DAMAGE setget , get_shoot_damage
 var passive_damage = DEFAULT_PASSIVE_DAMAGE setget , get_passive_damage
@@ -45,13 +45,15 @@ func _ready():
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.ultimate_description = ULTIMATE_DESCRIPTION
+	self.assist_type = ASSIST_TYPES.movement
+	
 
 	
 func get_shoot_damage():
-	return self.attack_bonus + DEFAULT_SHOOT_DAMAGE
+	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_SHOOT_DAMAGE
 	
 func get_passive_damage():
-	return self.attack_bonus + DEFAULT_PASSIVE_DAMAGE
+	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_PASSIVE_DAMAGE
 	
 
 func get_attack_range():
@@ -101,6 +103,7 @@ func _is_within_attack_range(new_coords):
 func act(new_coords):
 	
 	if _is_within_movement_range(new_coords):
+		set_invulnerable()
 		var args = [self.coords, new_coords, self.pathed_range, 350]
 		get_node("/root/AnimationQueue").enqueue(self, "animate_stepped_move", true, args)
 		set_coords(new_coords)
@@ -112,11 +115,13 @@ func act(new_coords):
 
 	#elif the tile selected is within attack range
 	elif _is_within_attack_range(new_coords):
+		set_invulnerable()
 		#get_node("/root/Combat").display_overlay(self.unit_name)
 		ranged_attack(new_coords, self.shoot_damage)
 		placed()
 	
 	elif _is_within_ally_shove_range(new_coords):
+		set_invulnerable()
 		initiate_friendly_shove(new_coords)
 		placed()
 		
@@ -132,7 +137,6 @@ func ranged_attack(new_coords, damage):
 		var action = get_new_action(new_coords)
 		action.add_call("attacked", [damage])
 		action.execute()
-		
 
 
 func silver_arrow(new_coords):
@@ -250,7 +254,7 @@ func predict_ultimate_attack(position_coords, attack_coords):
 #	
 	
 func cast_ultimate():
-	get_node("OverlayLayers/UltimateWhite").show()
+	get_node("Physicals/OverlayLayers/UltimateWhite").show()
 	#first reset the highlighting on the parent nodes. Then call the new highlighting
 	self.ultimate_flag = true
 	self.attack_bonus += 2

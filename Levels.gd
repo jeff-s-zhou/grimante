@@ -8,6 +8,8 @@ const Fortifier = preload("res://EnemyPieces/FortifierPiece.tscn")
 const Grower = preload("res://EnemyPieces/GrowerPiece.tscn")
 const Drummer = preload("res://EnemyPieces/DrummerPiece.tscn")
 
+const King = preload("res://EnemyPieces/KingPiece.tscn")
+
 const Berserker = preload("res://PlayerPieces/BerserkerPiece.tscn")
 const Cavalier = preload("res://PlayerPieces/CavalierPiece.tscn")
 const Archer = preload("res://PlayerPieces/ArcherPiece.tscn")
@@ -34,7 +36,7 @@ func make_tip(tip_text, objective_text, arrow_coords, text):
 func make_complex_tip(tip_text, objective_text, tooltips):
 	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
 	
-var sandbox_allies = {1: Cavalier, 2: Berserker, 3: Archer, 4: Assassin}
+var sandbox_allies = {1: Cavalier, 2: Berserker, 3: Archer, 4: Assassin, 5: Stormdancer}
 
 class SandboxPowerGenerator:
 	var power_level = 200
@@ -45,22 +47,23 @@ class SandboxPowerGenerator:
 		
 	func reset():
 		self.power_level = 200
+		
+var finite_power_levels = [300, 300, 400, 400]
 
 
 var five_column_enemies = [
-{Vector2(1, 4): make(Drummer, 2, [cloaked])},
-{1: make(Grunt, 4), 2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous]), 6: make(Grunt, 3)},
-{4: make(Grower, 2, [shield]), 5: make(Fortifier, 4)},
-{0: make(Grower, 2), 2: make(Drummer, 2), 3: make(Grunt, 3), 6: make(Fortifier, 3)},
-{1: make(Grower, 2, [shield]), 3: make(Grunt, 5, [poisonous]), 4: make(Grunt, 4, [poisonous])},
-{0: make(Grower, 1), 4: make(Grunt, 7, [shield, poisonous])},
-{2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Drummer, 6, [poisonous])}
+{1: make(Grunt, 4), 2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Grunt, 6, [cloaked]), 6: make(Grunt, 3)},
+{2: make(Drummer, 2), 3: make(Drummer, 2, [shield]), 4: make(Drummer, 3)},
+{2: make(Drummer, 2), 3: make(Drummer, 2, [shield]), 4: make(Drummer, 3)},
+{2: make(Drummer, 2), 3: make(Drummer, 2, [shield]), 4: make(Drummer, 3)}
 ]
 
-#var sandbox_enemies = WaveWrappers.InfiniteGeneratedWrapper.new(SandboxPowerGenerator.new())
-var sandbox_enemies = WaveWrappers.FiniteWrapper.new(five_column_enemies)
+var sandbox_enemies = WaveWrappers.FiniteGeneratedWrapper.new(finite_power_levels)
+#var sandbox_enemies = WaveWrappers.FiniteWrapper.new(five_column_enemies)
 #var sandbox_extras = {"shadow_wall_tiles": [Vector2(3, 6)]}
-var Sandbox_Level = LevelTypes.RoomSeal.new(sandbox_allies, sandbox_enemies, 3, null) #sandbox_extras)
+var king_schematic = {"column_or_coords":3, "prototype":King}
+var sandbox_extras = {"king": king_schematic}
+var Sandbox_Level = LevelTypes.RoomSeal.new(sandbox_allies, sandbox_enemies, 1, null) #, sandbox_extras)
 
 
 var sandbox_allies2 = {1: Stormdancer, 2: Cavalier, 3:Archer, 4:Pyromancer, 5: Berserker}

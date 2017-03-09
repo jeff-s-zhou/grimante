@@ -25,7 +25,7 @@ func _ready():
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.ultimate_description = ULTIMATE_DESCRIPTION
-
+	self.assist_type = ASSIST_TYPES.invulnerable
 
 func get_movement_range():
 	self.pathed_range = get_parent().get_pathed_range(self.coords, self.movement_value)
@@ -86,15 +86,18 @@ func animate_directly_above_purify(attack_coords):
 
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
+		set_invulnerable()
 		var args = [self.coords, new_coords, self.pathed_range, 300]
 		get_node("/root/AnimationQueue").enqueue(self, "animate_stepped_move", true, args)
 		set_coords(new_coords)
 		imbue(new_coords)
 		placed()
 	elif _is_within_attack_range(new_coords):
+		set_invulnerable()
 		purify(new_coords)
 		placed()
 	elif _is_within_ally_shove_range(new_coords):
+		set_invulnerable()
 		initiate_friendly_shove(new_coords)
 	else:
 		invalid_move()

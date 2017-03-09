@@ -6,6 +6,12 @@ extends "res://Piece.gd"
 
 var States = {"LOCKED":0, "DEFAULT":1, "CLICKED": 2, "PLACED":3, "SELECTED":4}
 
+onready var AssistSystem = get_node("/root/Combat/AssistSystem")
+
+onready var ASSIST_TYPES = AssistSystem.ASSIST_TYPES
+
+var assist_type = null
+
 var deploying_flag = false
 
 var overview_description
@@ -14,10 +20,13 @@ var passive_description
 var ultimate_description
 
 var state = States.PLACED
-var coords
 var cursor_area
 
 var cooldown = 0
+
+var assist_flag = false
+
+var invulnerable_flag = false
 
 var ultimate_available_flag = false
 
@@ -26,7 +35,7 @@ var ultimate_flag = false
 var ultimate_used_flag = false
 
 var armor = 0
-var movement_value = 1
+var movement_value = 1 setget , get_movement_value
 var attack_bonus = 0
 
 const SHOVE_SPEED = 4
@@ -49,6 +58,23 @@ func _ready():
 	set_process_input(true)
 	self.side = "PLAYER"
 	
+func get_assist_bonus_attack():
+	return self.AssistSystem.get_bonus_attack()
+	
+func set_invulnerable():
+	self.invulnerable_flag =  self.AssistSystem.get_bonus_invulnerable()
+	#TODO: animations
+
+func handle_assist():
+	if self.assist_flag:
+		self.assist_flag = false
+		self.AssistSystem.activate_assist(self.assist_type)
+	else:
+		self.AssistSystem.clear_assist()
+
+func get_movement_value():
+	return self.AssistSystem.get_bonus_movement() + movement_value
+
 func set_armor(value):
 	self.armor = value
 	get_node("Physicals/ArmorDisplay/Label").set_text(str(value))
@@ -94,6 +120,11 @@ func turn_update():
 func set_coords(new_coords):
 	get_parent().move_piece(self.coords, new_coords)
 	self.coords = new_coords
+	var seen_range = get_parent().get_range(self.coords, [1, 2], "ENEMY")
+	for coords in seen_range:
+		if get_parent().pieces[coords].cloaked:
+			get_parent().pieces[coords].set_cloaked(false)
+	
 
 #ANIMATION FUNCTIONS
 
@@ -230,7 +261,8 @@ func select_action_target(target):
 		deploy_select_action_target(target)
 	else:
 		act(target.coords)
-		
+
+
 func start_deploy_phase():
 	print("met the start deploy phase thing?")
 	self.state = States.DEFAULT
@@ -267,6 +299,7 @@ func swap_coords_and_pos(target):
 
 #helper function for act
 func invalid_move():
+	self.triggered_invalid = true
 	get_parent().reset_highlighting()
 	get_parent().reset_prediction()
 	get_node("BlueGlow").hide()
@@ -277,12 +310,14 @@ func invalid_move():
 #helper function for act
 
 func placed():
+	self.handle_assist()
 	get_node("/root/AnimationQueue").enqueue(self, "animate_placed", false)
 	get_node("BlueGlow").hide()
 	self.state = States.PLACED
 	self.attack_bonus = 0
 	self.movement_value = self.DEFAULT_MOVEMENT_VALUE
 	get_parent().selected = null
+	
 
 func animate_placed():
 	get_node("Physicals/OverlayLayers/UltimateWhite").hide()
@@ -294,7 +329,10 @@ func animate_placed():
 
 func dies_to_collision(pusher):
 	if pusher != null and pusher.side != self.side:  #if there's a pusher and not on the same side
-		return pusher.deadly or pusher.hp >= self.armor #if the enemy has same or more hp than the pusher's armor, or the pusher enemy is deadly
+		if pusher.side == "KING":
+			return true
+		else:
+			return pusher.deadly or pusher.hp >= self.armor #if the enemy has same or more hp than the pusher's armor, or the pusher enemy is deadly
 		
 
 #shove is different than push

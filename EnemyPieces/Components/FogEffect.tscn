@@ -14,6 +14,7 @@ colors = ColorArray( 0.319748, 0.284668, 0.34375, 0, 0.348013, 0.320068, 0.35937
 config/amount = 128
 config/lifetime = 2.0
 config/time_scale = 0.5
+config/emitting = false
 config/half_extents = Vector2( 58, 52.5 )
 config/texture = ExtResource( 1 )
 params/direction = 180.0

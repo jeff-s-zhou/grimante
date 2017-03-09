@@ -38,6 +38,7 @@ func _ready():
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.ultimate_description = ULTIMATE_DESCRIPTION
+	self.assist_type = ASSIST_TYPES.movement
 
 func initialize(cursor_area):
 	.initialize(cursor_area)
@@ -49,11 +50,11 @@ func deploy():
 	.deploy()
 
 func get_bolt_damage():
-	return self.attack_bonus + DEFAULT_BOLT_DAMAGE
+	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_BOLT_DAMAGE
 
 #not a true getter
 func get_storm_damage():
-	return self.attack_bonus + DEFAULT_STORM_DAMAGE
+	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_STORM_DAMAGE
 	
 
 func set_coords(coords):
@@ -93,10 +94,12 @@ func _is_within_swap_range(new_coords):
 func act(new_coords):
 	#returns whether the act was successfully committed
 	if _is_within_swap_range(new_coords):
+		set_invulnerable()
 		tango(new_coords)
 		placed()
 		
 	elif _is_within_movement_range(new_coords):
+		set_invulnerable()
 		shunpo(new_coords)
 		get_parent().locations[new_coords].set_rain(true)
 		self.rain_coords_dict[new_coords] = true

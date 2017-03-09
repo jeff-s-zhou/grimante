@@ -1,13 +1,6 @@
-
 extends Node2D
 
-# member variables here, example:
-# var a=2
-# var b="textvar"
-
-
-
-const STATES = {"player_turn":0, "enemy_turn":1, "transitioning":2, "game_start":3, "instruction":4}
+const STATES = {"player_turn":0, "enemy_turn":1, "king_turn": 2, "transitioning":3, "game_start":4, "instruction":5}
 var state = STATES.game_start
 var enemy_waves = []
 var instructions = []
@@ -34,6 +27,8 @@ signal animation_done
 
 var archer = null
 var assassin = null
+
+var king = null
 
 func _ready():
 	set_process(true)
@@ -68,7 +63,6 @@ func _ready():
 	
 	self.enemy_waves = level.enemies
 
-	
 	self.reinforcements = level.reinforcements
 	
 	var temp_instructions = []
@@ -89,6 +83,9 @@ func _ready():
 	for i in range(0, initial_deploy_count):
 		deploy_wave(true)
 		
+	if level.king != null:
+		initialize_king(level.king)
+		
 	if level.shadow_wall_tiles.size() > 0:
 		get_node("Grid").initialize_shadow_wall_tiles(level.shadow_wall_tiles)
 			
@@ -104,9 +101,7 @@ func _ready():
 		get_node("Grid").reset_deployable_indicators()
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			player_piece.deploy()
-			
 
-			
 	get_node("Timer2").set_wait_time(0.3)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
@@ -115,7 +110,8 @@ func _ready():
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	
 	start_player_phase()
-	
+
+
 func start_deploy_phase():
 	get_node("Button").hide()
 	get_node("StartLevelButton").show()
@@ -151,7 +147,6 @@ func initialize_piece(piece, key):
 	new_piece.connect("pre_attack", self, "handle_archer_ultimate")
 	new_piece.connect("shake", self, "screen_shake")
 	
-	
 	var position
 	if typeof(key) == TYPE_INT:
 		position = get_node("Grid").get_bottom_of_column(key)
@@ -165,9 +160,71 @@ func initialize_piece(piece, key):
 	yield(new_piece.get_node("Tween"), "tween_complete")
 	emit_signal("done_initializing")
 	
+
+func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon):
+	var enemy_piece = prototype.instance()
+	enemy_piece.initialize(health)
+	
+	enemy_piece.connect("broke_defenses", self, "damage_defenses")
+
+	var position
+	if typeof(key) == TYPE_INT:
+		position = get_node("Grid").get_top_of_column(key)
+	else:
+		position = key #that way when we need to we can specify by coordinates
+	
+	var summon_flag = true
+	#if the spawn point is occupied
+	if(get_node("Grid").pieces.has(position)):
+		if !get_node("Grid").pieces.has(position + Vector2(0, 1)): #if the square below is occupied
+			get_node("Grid").pieces[position].push(Vector2(0, 1))
+		else:
+			summon_flag = false
+	if summon_flag:
+		get_node("Grid").add_piece(position, enemy_piece)
+		if modifiers != null:
+			for modifier in modifiers:
+				print(modifier)
+				if modifier == get_node("/root/constants").enemy_modifiers["Poisonous"]:
+					enemy_piece.set_deadly(true)
+				elif modifier == get_node("/root/constants").enemy_modifiers["Shield"]:
+					enemy_piece.set_shield(true)
+				elif modifier == get_node("/root/constants").enemy_modifiers["Cloaked"]:
+					enemy_piece.set_cloaked(true)
+	
+	
+		enemy_piece.get_node("Sprinkles").set_particle_endpoint(get_node("ComboSystem/ComboPointsLabel").get_global_pos())
+		enemy_piece.check_global_seen()
+		enemy_piece.animate_summon()
+		
+		if !mass_summon:
+			yield(enemy_piece.get_node("Tween"), "tween_complete" )
+			emit_signal("wave_deployed")
+
+
+func initialize_king(king_schematic):
+	print(king_schematic)
+	var king_prototype = king_schematic["prototype"]
+	var column_or_coords = king_schematic["column_or_coords"]
+	
+	var king = king_prototype.instance()
+	
+	var position
+	if typeof(column_or_coords) == TYPE_INT:
+		position = get_node("Grid").get_top_of_column(column_or_coords)
+	else:
+		position = column_or_coords #that way when we need to we can specify by coordinates
+	
+	if(get_node("Grid").pieces.has(position)):
+		get_node("Grid").pieces[position].push(Vector2(0, 1))
+	get_node("Grid").add_piece(position, king)
+	
+	self.king = king
+	king.set_opacity(0)
+	king.animate_summon()
+	
 	
 func end_turn():
-	
 	self.state = STATES.transitioning
 	
 	if get_node("/root/AnimationQueue").is_busy():
@@ -185,6 +242,7 @@ func end_turn():
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	get_node("ComboSystem").player_turn_ended()
 	self.state = STATES.enemy_turn
+
 
 func _input(event):
 	#select a unit
@@ -285,7 +343,6 @@ func _process(delta):
 		player_win()
 
 	if self.state == STATES.player_turn:
-		
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			if !player_piece.is_placed():
 				return
@@ -312,12 +369,17 @@ func _process(delta):
 	elif self.state == STATES.enemy_turn:
 		enemy_phase(enemy_pieces)
 		self.state = STATES.transitioning
+		
+	elif self.state == STATES.king_turn:
+		king_phase()
+		self.state = STATES.transitioning
 
 	elif self.state == STATES.transitioning:
 		pass
 		
 		
 func enemy_phase(enemy_pieces):
+	
 	get_node("TidesOfBattleSystem").adjust_tides(-1 * enemy_pieces.size())
 	enemy_pieces.sort_custom(self, "_sort_by_y_axis") #ensures the pieces in front move first
 	for enemy_piece in enemy_pieces:
@@ -325,13 +387,15 @@ func enemy_phase(enemy_pieces):
 	for enemy_piece in enemy_pieces:
 		enemy_piece.turn_update()
 	
+	
 	#if there are enemy pieces, wait for them to finish
 	if(get_tree().get_nodes_in_group("enemy_pieces").size() > 0):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-
+	print("did I get here 333")
 	if self.level.should_deploy():
 		deploy_wave()
 		yield(self, "wave_deployed")
+	
 	get_node("Timer2").set_wait_time(0.8)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
@@ -339,11 +403,25 @@ func enemy_phase(enemy_pieces):
 	if self.level.check_enemy_win(player_pieces): #logic would change based on game type
 		enemy_win()
 	
+	print("am I here now?")
+	if self.level.king != null:
+		self.state = STATES.king_turn
+		print("got in here?")
+	else:
+		print("did I get in here?")
+		get_node("PhaseShifter").player_phase_animation()
+		yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
+		start_player_phase()
+
+
+func king_phase():
+	self.king.update()
+	print("acting in king phase")
 	get_node("PhaseShifter").player_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
-	
+	print("got to this part of king phase")
 	start_player_phase()
-	
+
 
 func start_player_phase():
 	get_node("TidesOfBattleSystem").reset_enemy_killcount()
@@ -361,7 +439,8 @@ func start_player_phase():
 
 	self.state = STATES.player_turn
 	get_node("Button").set_disabled(false)
-	
+
+
 func reinforce():
 	var reinforcement_wave = self.reinforcements[self.turn_count]
 	for key in reinforcement_wave.keys():
@@ -369,6 +448,7 @@ func reinforce():
 		initialize_piece(prototype, key)
 		yield(self, "done_initializing")
 	emit_signal("reinforced")
+
 
 func handle_instructions():
 	get_node("Timer2").set_wait_time(0.3)
@@ -423,7 +503,8 @@ func _sort_by_y_axis(enemy_piece1, enemy_piece2):
 		if enemy_piece1.coords.y > enemy_piece2.coords.y:
 			return true
 		return false
-		
+
+
 func deploy_wave(mass_summon=false):
 	
 	var wave = null
@@ -441,45 +522,11 @@ func deploy_wave(mass_summon=false):
 			var prototype = prototype_parts["prototype"]
 			var health = prototype_parts["health"]
 			var modifiers = prototype_parts["modifiers"]
+			initialize_enemy_piece(key, prototype, health, modifiers, mass_summon)
 			
-			var enemy_piece = prototype.instance()
-			enemy_piece.initialize(health)
-			
-			
-			enemy_piece.connect("broke_defenses", self, "damage_defenses")
-	
-			var position
-			if typeof(key) == TYPE_INT:
-				position = get_node("Grid").get_top_of_column(key)
-			else:
-				position = key #that way when we need to we can specify by coordinates
-			
-			#push any player pieces if they're on the spawn point
-			if(get_node("Grid").pieces.has(position)):
-				get_node("Grid").pieces[position].push(Vector2(0, 1))
-			get_node("Grid").add_piece(position, enemy_piece)
-			
-			if modifiers != null:
-				print("caught modifiers!")
-				for modifier in modifiers:
-					print(modifier)
-					if modifier == get_node("/root/constants").enemy_modifiers["Poisonous"]:
-						enemy_piece.set_deadly(true)
-					elif modifier == get_node("/root/constants").enemy_modifiers["Shield"]:
-						enemy_piece.set_shield(true)
-					elif modifier == get_node("/root/constants").enemy_modifiers["Cloaked"]:
-						enemy_piece.set_cloaked(true)
-	
-	
-			enemy_piece.get_node("Sprinkles").set_particle_endpoint(get_node("ComboSystem/ComboPointsLabel").get_global_pos())
-			enemy_piece.check_global_seen()
-			enemy_piece.animate_summon()
-			if !mass_summon:
-				yield(enemy_piece.get_node("Tween"), "tween_complete" )
-			get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.get_remaining_waves_count()))
-		
+		get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.get_remaining_waves_count()))
 		display_wave_preview(self.next_wave)
-		emit_signal("wave_deployed")
+
 
 func display_wave_preview(wave):
 	get_node("Grid").reset_reinforcement_indicators()
@@ -491,6 +538,7 @@ func display_wave_preview(wave):
 			else:
 				position = key #that way when we need to we can specify by coordinates
 			get_node("Grid").locations[position].set_reinforcement_indicator(true)
+
 
 func player_win():
 	set_process(false)

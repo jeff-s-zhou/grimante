@@ -5,6 +5,8 @@ const DEFAULT_MOVEMENT_VALUE = 1
 const DEFAULT_ARMOR_VALUE = 1
 const UNIT_TYPE = "Pyromancer"
 
+const flask_prototype = preload("res://PlayerPieces/Components/PyromancerFlask.tscn")
+
 var wildfire_damage = DEFAULT_WILDFIRE_DAMAGE setget , get_wildfire_damage
 
 const OVERVIEW_DESCRIPTION = """
@@ -27,10 +29,10 @@ func _ready():
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.ultimate_description = ULTIMATE_DESCRIPTION
-
+	self.assist_type = ASSIST_TYPES.attack
 
 func get_wildfire_damage():
-	return self.attack_bonus + DEFAULT_WILDFIRE_DAMAGE
+	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_WILDFIRE_DAMAGE
 
 
 func get_movement_range():
@@ -58,18 +60,65 @@ func _is_within_movement_range(new_coords):
 
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
-		
+		set_invulnerable()
 		var args = [self.coords, new_coords, self.pathed_range, 350]
 		get_node("/root/AnimationQueue").enqueue(self, "animate_stepped_move", true, args)
 		set_coords(new_coords)
-		#placed()
+		placed()
 	elif _is_within_attack_range(new_coords):
+		set_invulnerable()
+		get_node("/root/AnimationQueue").enqueue(self, "animate_bomb", true, [new_coords])
 		bomb(new_coords)
+		placed()
 	elif _is_within_ally_shove_range(new_coords):
+		set_invulnerable()
 		initiate_friendly_shove(new_coords)
 	else:
 		invalid_move()
 		
+func animate_bomb(coords):
+	var flask = flask_prototype.instance()
+	add_child(flask)
+	var flask_components = flask.get_node("Components")
+	flask_components.set_rotd(-15)
+	flask_components.get_node("Flask").show()
+	
+	get_node("Tween").interpolate_property(flask_components, "visibility/opacity", 0, 1, 0.3, Tween.TRANS_LINEAR, Tween.EASE_OUT)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	
+	animate_toss(flask)
+	
+	var target_pos = (get_parent().locations[coords].get_pos() - get_pos())
+	var final_rotd = flask_components.get_rotd() - 45
+	
+	get_node("Tween").interpolate_property(flask_components, "transform/pos", flask_components.get_pos(), target_pos, 0.8, Tween.TRANS_LINEAR, Tween.EASE_OUT)
+	get_node("Tween").interpolate_property(flask_components, "transform/rot", flask_components.get_rotd(), final_rotd, 0.8, Tween.TRANS_LINEAR, Tween.EASE_OUT)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	
+	flask_components.get_node("Flask").hide()
+	flask_components.get_node("Glass").set_emitting(true)
+	get_node("Timer").set_wait_time(0.2)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
+	flask_components.get_node("Glass").set_emitting(false)
+	get_node("Timer").set_wait_time(0.3)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
+	remove_child(flask)
+	
+	emit_signal("animation_done")
+
+
+func animate_toss(flask):
+	var final_height = flask.get_pos() + Vector2(0, -300)
+	get_node("Tween 2").interpolate_property(flask, "transform/pos", Vector2(0, 0), final_height, 0.4, Tween.TRANS_QUAD, Tween.EASE_OUT)
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
+	get_node("Tween 2").interpolate_property(flask, "transform/pos", final_height, Vector2(0, 0), 0.4, Tween.TRANS_QUAD, Tween.EASE_IN)
+	get_node("Tween 2").start()
+
 
 func bomb(new_coords):
 	var action = get_new_action(new_coords)

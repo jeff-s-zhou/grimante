@@ -27,13 +27,13 @@ func _ready():
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.ultimate_description = ULTIMATE_DESCRIPTION
-
+	self.assist_type = ASSIST_TYPES.invulnerable
 
 func get_freeze_damage():
-	return self.attack_bonus + DEFAULT_FREEZE_DAMAGE
+	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_FREEZE_DAMAGE
 
 func get_shield_bash_damage():
-	return self.attack_bonus + DEFAULT_SHIELD_BASH_DAMAGE
+	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_SHIELD_BASH_DAMAGE
 
 func get_movement_range():
 	return get_parent().get_range(self.coords, [1, self.movement_value + 1]) #locations only
@@ -58,14 +58,17 @@ func _is_within_movement_range(new_coords):
 
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
+		set_invulnerable()
 		get_node("/root/AnimationQueue").enqueue(self, "animate_move", true, [new_coords, 250, true])
 		frostbringer(new_coords)
 		set_coords(new_coords)
 		placed()
 	elif _is_within_attack_range(new_coords):
+		set_invulnerable()
 		shield_bash(new_coords)
 		placed()
 	elif _is_within_ally_shove_range(new_coords):
+		set_invulnerable()
 		initiate_friendly_shove(new_coords)
 	else:
 		invalid_move()

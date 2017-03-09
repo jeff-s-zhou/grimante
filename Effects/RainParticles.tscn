@@ -28,5 +28,6 @@ params/final_size = 1.0
 params/hue_variation = 0.0
 params/anim_speed_scale = 1.0
 params/anim_initial_pos = 0.0
+color/color = Color( 0.828125, 0.983887, 1, 1 )
 
 

@@ -23,6 +23,7 @@ animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"default", "
 
 [node name="GruntPiece" type="KinematicBody2D"]
 
+visibility/opacity = 0.0
 transform/pos = Vector2( 0, -4 )
 input/pickable = true
 collision/layers = 1
@@ -46,6 +47,8 @@ frames = SubResource( 1 )
 animation = "damaged"
 
 [node name="EnemyOverlays" parent="Physicals" instance=ExtResource( 6 )]
+
+editor/display_folded = true
 
 [node name="HealthDisplay" parent="Physicals" instance=ExtResource( 7 )]
 

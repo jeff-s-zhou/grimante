@@ -8,7 +8,7 @@
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[  ], "loop":true, "name":"attack_range", "speed":5.0 }, { "frames":[  ], "loop":true, "name":"damaged", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[  ], "loop":true, "name":"damaged", "speed":5.0 }, { "frames":[  ], "loop":true, "name":"attack_range", "speed":5.0 } ]
 
 [node name="KingPiece" type="KinematicBody2D"]
 
@@ -23,7 +23,7 @@ script/script = ExtResource( 1 )
 
 [node name="Physicals" type="Node2D" parent="."]
 
-[node name="Sprite" type="Sprite" parent="Physicals"]
+[node name="Shadow" type="Sprite" parent="Physicals"]
 
 texture = ExtResource( 3 )
 
@@ -33,5 +33,19 @@ frames = SubResource( 1 )
 animation = "default"
 
 [node name="ClickArea" parent="." instance=ExtResource( 5 )]
+
+[node name="Tween" type="Tween" parent="."]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
+
+[node name="Tween2" type="Tween" parent="."]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
 
 

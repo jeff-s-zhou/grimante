@@ -38,12 +38,13 @@ func _ready():
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.ultimate_description = ULTIMATE_DESCRIPTION
+	self.assist_type = ASSIST_TYPES.attack
 	
 func get_damage():
-	return self.attack_bonus + DEFAULT_DAMAGE
+	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_DAMAGE
 	
 func get_aoe_damage():
-	return self.attack_bonus + DEFAULT_AOE_DAMAGE
+	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_AOE_DAMAGE
 
 func get_attack_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value + 1], "ENEMY")
@@ -121,11 +122,14 @@ func jump_back(new_coords):
 
 func act(new_coords):
 	if _is_within_attack_range(new_coords):
+		set_invulnerable()
 		#get_node("/root/Combat").display_overlay(self.unit_name)
 		smash_attack(new_coords)
 	elif _is_within_movement_range(new_coords):
+		set_invulnerable()
 		smash_move(new_coords)
 	elif _is_within_ally_shove_range(new_coords):
+		set_invulnerable()
 		initiate_friendly_shove(new_coords)
 	else:
 		invalid_move()
@@ -192,7 +196,7 @@ func predict_smash_move(new_coords):
 
 
 func cast_ultimate():
-	get_node("OverlayLayers/UltimateWhite").show()
+	get_node("Physicals/OverlayLayers/UltimateWhite").show()
 	self.ultimate_flag = true
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 		player_piece.attack_bonus += 1

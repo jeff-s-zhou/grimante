@@ -11,8 +11,6 @@ var default_movement_value = Vector2(0, 1)
 var mid_trailing_animation = false
 var predicting_hp = false
 
-
-var coords #enemies move automatically each turn a certain number of spaces forward
 var hp
 var shielded = false
 var deadly = false
@@ -20,9 +18,6 @@ var cloaked = false
 
 var burning = false
 var frozen = false
-
-
-
 var silenced = false
 
 var temp_display_hp #what we reset to when resetting prediction, in case original hp is already changed
@@ -35,9 +30,27 @@ const flyover_prototype = preload("res://EnemyPieces/Components/Flyover.tscn")
 
 signal broke_defenses
 
-var hover_description
+var hover_description = "" setget , get_hover_description
 
-var modifier_descriptions = {}
+var modifier_descriptions = {} setget , get_modifier_descriptions
+
+func get_hover_description():
+	if self.cloaked:
+		return ""
+	else:
+		return hover_description
+
+func get_modifier_descriptions():
+	if self.cloaked:
+		return {}
+	else:
+		return modifier_descriptions
+
+func get_unit_name():
+	if self.cloaked:
+		return "?"
+	else:
+		return unit_name
 
 
 func _ready():
@@ -151,7 +164,12 @@ func animate_predict_hp(hp, value, color):
 			value_text = "-" + value_text
 		text.set_opacity(1.0)
 		self.prediction_flyover.get_node("AnimationPlayer").play("OpacityHover")
-		text.set_text(value_text)
+		
+		if self.cloaked:
+			text.set_text("-?")
+		else:
+			text.set_text(value_text)
+			
 		var destination = text.get_pos() - Vector2(0, 85)
 		var tween = Tween.new()
 		add_child(tween)
@@ -194,21 +212,48 @@ func animate_hide_stunned():
 	
 
 func set_cloaked(flag):
-	self.cloaked = flag
-	if flag:
-		get_node("SeenIcon").hide()
-		get_node("Physicals/AnimatedSprite").hide()
-		get_node("Physicals/HealthDisplay").hide()
-		get_node("Physicals/EnemyEffects").hide()
-		get_node("Physicals/EnemyOverlays/Cloaked").show()
-		get_node("Physicals/FogEffect").show()
-	else:
-		check_global_seen()
-		get_node("Physicals/AnimatedSprite").show()
-		get_node("Physicals/HealthDisplay").show()
-		get_node("Physicals/EnemyEffects").show()
-		get_node("Physicals/EnemyOverlays/Cloaked").hide()
-		get_node("Physicals/FogEffect").hide()
+	if self.cloaked != flag:
+		self.cloaked = flag
+		if flag:
+			get_node("Physicals/FogEffect/Particles2D").set_emitting(true)
+			get_node("SeenIcon").set_opacity(0)
+			get_node("Physicals/AnimatedSprite").hide()
+			get_node("Physicals/HealthDisplay").hide()
+			get_node("Physicals/EnemyEffects").hide()
+			get_node("Physicals/EnemyOverlays/Cloaked").show()
+			get_node("Physicals/FogEffect").show()
+		else:
+			get_node("/root/AnimationQueue").enqueue(self, "animate_cloaked_hide", false)
+		
+func animate_cloaked_hide():
+	get_node("SeenIcon").set_opacity(1)
+	check_global_seen()
+	
+	var tween = get_node("Tween")
+	
+	var sprite = get_node("Physicals/AnimatedSprite")
+	sprite.set_opacity(0)
+	sprite.show()
+	
+	var health_display = get_node("Physicals/HealthDisplay")
+	health_display.set_opacity(0)
+	health_display.show()
+	
+	var enemy_effects = get_node("Physicals/EnemyEffects")
+	enemy_effects.set_opacity(0)
+	enemy_effects.show()
+	
+	var cloaked = get_node("Physicals/EnemyOverlays/Cloaked")
+	var fog = get_node("Physicals/FogEffect")
+	tween.interpolate_property(sprite, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.interpolate_property(health_display, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.interpolate_property(enemy_effects, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.interpolate_property(cloaked, "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	#tween.interpolate_property(fog, "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.start()
+	yield(tween, "tween_complete")
+	cloaked.hide()
+	fog.get_node("Particles2D").set_emitting(false)
 
 
 func set_deadly(flag):
@@ -239,9 +284,18 @@ func set_shield(flag):
 func set_burning(flag):
 	self.burning = flag
 	if flag:
-		get_node("Physicals/EnemyEffects/BurningEffect").show()
+		get_node("/root/AnimationQueue").enqueue(self,"animate_fire", true)
 	else:
 		get_node("/root/AnimationQueue").enqueue(self,"animate_burning_hide", false)
+		
+func animate_fire():
+	get_node("Physicals/EnemyEffects/FireEffect").set_emitting(true)
+	get_node("Timer").set_wait_time(0.3)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
+	get_node("Physicals/EnemyEffects/FireEffect").set_emitting(false)
+	get_node("Physicals/EnemyEffects/BurningEffect").show()
+	emit_signal("animation_done")
 		
 func set_frozen(flag):
 	self.frozen = flag
@@ -403,7 +457,9 @@ func animate_set_hp(hp, value, delay=0):
 	else:
 		get_node("AnimationPlayer").play("FlickerAnimation")
 	text.set_opacity(1.0)
+	
 	text.set_text(value_text)
+
 	var destination = text.get_pos() - Vector2(0, 200)
 	var tween = Tween.new()
 	add_child(tween)
@@ -443,8 +499,7 @@ func set_coords(new_coords):
 	if get_parent().locations[self.coords].raining:
 		get_parent().locations[self.coords].activate_lightning()
 		modify_hp(-1)
-	
-	
+
 
 func get_movement_value():
 	return self.movement_value

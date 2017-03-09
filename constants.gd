@@ -12,17 +12,17 @@ const Drummer = preload("res://EnemyPieces/DrummerPiece.tscn")
 var enemy_modifiers = {"Poisonous":"Poisonous", "Shield":"Shield", "Cloaked":"Cloaked"}
 
 var UNIT_POWER_LEVELS = {
-Grunt: 20,
+Grunt: 30,
 Fortifier: 35,
 Grower: 35,
-Drummer: 45
+Drummer: 40
 }
 
 #potential problem, we don't want Fortifiers with shield_modifiers do we?
 var MODIFIER_POWER_LEVELS = {
 enemy_modifiers["Shield"]: 10,
-enemy_modifiers["Poisonous"]: 20,
-enemy_modifiers["Cloaked"] : 15
+enemy_modifiers["Poisonous"]: 15,
+enemy_modifiers["Cloaked"] : 10
 }
 
 

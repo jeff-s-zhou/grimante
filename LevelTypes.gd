@@ -29,6 +29,8 @@ class BaseLevelType:
 	var free_deploy = true
 	var deploy_tiles = DEFAULT_DEPLOY_TILES
 	var shadow_wall_tiles = []
+	var king = null
+	
 	func _init(allies, enemies, initial_deploy_count=1, next_level=null, extras={}):
 		self.allies = allies
 		self.enemies = enemies
@@ -45,6 +47,8 @@ class BaseLevelType:
 			self.flags = extras["flags"]
 		if extras.has("shadow_wall_tiles"):
 			self.shadow_wall_tiles = extras["shadow_wall_tiles"]
+		if extras.has("king"):
+			self.king = extras["king"]
 
 	func check_enemy_win(player_pieces): #only checks part of the condition. other is in the game loop
 		return player_pieces.size() == 0

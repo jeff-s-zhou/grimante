@@ -38,6 +38,7 @@ func _ready():
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.ultimate_description = ULTIMATE_DESCRIPTION
+	self.assist_type = ASSIST_TYPES.attack
 
 func delete_self():
 	get_node("/root/Combat").assassin = null
@@ -45,10 +46,10 @@ func delete_self():
 
 
 func get_backstab_damage():
-	return self.attack_bonus + DEFAULT_BACKSTAB_DAMAGE
+	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_BACKSTAB_DAMAGE
 	
 func get_passive_damage():
-	return self.attack_bonus + DEFAULT_PASSIVE_DAMAGE
+	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_PASSIVE_DAMAGE
 
 
 func get_movement_range():
@@ -121,6 +122,7 @@ func _is_within_passive_range(new_coords):
 
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
+		set_invulnerable()
 		var args = [self.coords, new_coords, self.pathed_range, 350]
 		get_node("/root/AnimationQueue").enqueue(self, "animate_stepped_move", true, args)
 		set_coords(new_coords)
@@ -129,9 +131,11 @@ func act(new_coords):
 		else:
 			placed()
 	elif _is_within_attack_range(new_coords):
+		set_invulnerable()
 		#get_node("/root/Combat").display_overlay(self.unit_name)
 		backstab(new_coords)
 	elif _is_within_ally_shove_range(new_coords):
+		set_invulnerable()
 		initiate_friendly_shove(new_coords)
 	else:
 		invalid_move()
@@ -177,7 +181,7 @@ func predict(new_coords):
 		get_parent().pieces[new_coords].predict(self.backstab_damage)
 
 func cast_ultimate():
-	get_node("OverlayLayers/UltimateWhite").show()
+	get_node("Physicals/OverlayLayers/UltimateWhite").show()
 	self.ultimate_flag = true
 	get_parent().reset_highlighting()
 	display_action_range()
@@ -193,7 +197,7 @@ func soft_placed():
 #resets the assassin to be able to act again
 func unplaced():
 	self.state = States.DEFAULT
-	get_node("AnimatedSprite").play("default")
+	get_node("Physicals/AnimatedSprite").play("default")
 
 func placed():
 	self.bloodlust_flag = false

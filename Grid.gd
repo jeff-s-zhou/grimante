@@ -161,6 +161,27 @@ func reset_prediction():
 	for piece in pieces.values():
 		piece.reset_prediction_highlight()
 
+func get_location_range(coords, magnitude_range=[1, 2], direction_range = [0, 6]):
+	var return_set = [] #make this a dict?
+	var change_vector = Vector2(0, 0)
+	for direction in range(direction_range[0], direction_range[1]):
+		if direction == 0:
+			change_vector = Vector2(0, -1)
+		elif direction == 1:
+			change_vector = Vector2(1, 0)
+		elif direction == 2:
+			change_vector = Vector2(1, 1)
+		elif direction == 3:
+			change_vector = Vector2(0, 1)
+		elif direction == 4:
+			change_vector = Vector2(-1, 0)
+		elif direction == 5:
+			change_vector = Vector2(-1, -1)
+			
+		if self.locations.has(coords + change_vector):
+			return_set.append(coords + change_vector)
+	return return_set
+
 
 #direction goes from 0-5, clockwise from top
 #magnitude is 1 indexed

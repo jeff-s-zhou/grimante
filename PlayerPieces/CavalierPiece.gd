@@ -34,13 +34,14 @@ func _ready():
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.ultimate_description = ULTIMATE_DESCRIPTION
+	self.assist_type = ASSIST_TYPES.movement
 	
 func get_trample_damage():
-	return self.attack_bonus + DEFAULT_TRAMPLE_DAMAGE
+	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_TRAMPLE_DAMAGE
 
 #not a true getter function like the rest
 func get_charge_damage(distance_travelled):
-	return self.attack_bonus + distance_travelled
+	return get_assist_bonus_attack() + self.attack_bonus + distance_travelled
 
 func animate_attack(attack_coords):
 	print("animating attack")
@@ -52,6 +53,35 @@ func animate_attack(attack_coords):
 	animate_move_to_pos(new_position, 500, true, Tween.TRANS_SINE, Tween.EASE_IN)
 	yield(get_node("Tween"), "tween_complete")
 	emit_signal("shake")
+	
+
+func animate_hop(old_coords, new_coords, down=false):
+	self.mid_leaping_animation = true
+	set_z(3)
+	var old_location = get_parent().locations[old_coords]
+	var location = get_parent().locations[new_coords]
+	var new_position = location.get_pos()
+	var distance = old_location.get_pos().distance_to(new_position)
+	var time = distance/250
+	print(time)
+	var old_position = Vector2(0, -15)
+	if down:
+		old_position = Vector2(0, 0)
+	var new_position = Vector2(0, -60)
+	
+	get_node("Tween2").interpolate_property(get_node("Physicals"), "transform/pos", \
+		get_node("Physicals").get_pos(), new_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+	get_node("Tween2").start()
+	yield(get_node("Tween2"), "tween_complete")
+	
+	get_node("Tween2").interpolate_property(get_node("Physicals"), "transform/pos", \
+		get_node("Physicals").get_pos(), old_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_IN)
+	get_node("Tween2").start()
+	yield(get_node("Tween2"), "tween_complete")
+	if(down):
+		set_z(0)
+	self.mid_leaping_animation = false
+	emit_signal("animation_done")
 
 	
 func play_hit_sound():
@@ -101,12 +131,15 @@ func act(new_coords):
 	#returns whether the act was successfully committed
 	
 	if _is_within_attack_range(new_coords):
+		set_invulnerable()
 		#get_node("/root/Combat").display_overlay(self.unit_name)
 		charge_attack(new_coords)
 		
 	elif _is_within_movement_range(new_coords):
+		set_invulnerable()
 		trample(new_coords)
 	elif _is_within_ally_shove_range(new_coords):
+		set_invulnerable()
 		initiate_friendly_shove(new_coords)
 	else:
 		invalid_move()
@@ -141,35 +174,6 @@ func trample(new_coords):
 	placed()
 
 
-func animate_hop(old_coords, new_coords, down=false):
-	self.mid_leaping_animation = true
-	set_z(3)
-	var old_location = get_parent().locations[old_coords]
-	var location = get_parent().locations[new_coords]
-	var new_position = location.get_pos()
-	var distance = old_location.get_pos().distance_to(new_position)
-	var time = distance/250
-	print(time)
-	var old_position = Vector2(0, -15)
-	if down:
-		old_position = Vector2(0, 0)
-	var new_position = Vector2(0, -60)
-	
-	get_node("Tween2").interpolate_property(get_node("Physicals"), "transform/pos", \
-		get_node("Physicals").get_pos(), new_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_OUT)
-	get_node("Tween2").start()
-	yield(get_node("Tween2"), "tween_complete")
-	
-	get_node("Tween2").interpolate_property(get_node("Physicals"), "transform/pos", \
-		get_node("Physicals").get_pos(), old_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_IN)
-	get_node("Tween2").start()
-	yield(get_node("Tween2"), "tween_complete")
-	if(down):
-		set_z(0)
-	self.mid_leaping_animation = false
-	emit_signal("animation_done")
-
-
 func decrement_one(new_coords):
 	var difference = new_coords - self.coords
 	var increment = get_parent().hex_normalize(difference)
@@ -191,31 +195,31 @@ func charge_attack(new_coords, attack=false):
 
 func predict(new_coords):
 	if _is_within_attack_range(new_coords):
-		var decremented_coords = decrement_one(new_coords)
-		predict_charge_move(decremented_coords, true)
+		predict_charge_attack(new_coords)
 		
 	elif _is_within_movement_range(new_coords):
-		predict_charge_move(new_coords)
+		predict_trample(new_coords)
 
 
-func predict_charge_move(new_coords, attack=false):
+func predict_trample(new_coords):
 	var difference = new_coords - self.coords
 	var increment = get_parent().hex_normalize(difference)
-	var current_coords = self.coords + increment
+	var current_coords = self.coords
 	
-	var tiles_passed = 1
-	#deal damage to every tile you passed over
-	while(current_coords != new_coords):
+	while current_coords != new_coords:
+		current_coords = current_coords + increment
 		if get_parent().pieces.has(current_coords) and get_parent().pieces[current_coords].side == "ENEMY":
 			get_parent().pieces[current_coords].predict(self.trample_damage, true)
-		tiles_passed += 1
-		current_coords = current_coords + increment
 
-	if attack:
-		get_parent().pieces[new_coords + increment].predict(tiles_passed)
+
+func predict_charge_attack(new_coords):
+	var difference = new_coords - self.coords
+	var tiles_travelled = get_parent().hex_length(difference) - 1
+	get_parent().pieces[new_coords].predict(get_charge_damage(tiles_travelled))
+	
 
 func cast_ultimate():
-	get_node("OverlayLayers/UltimateWhite").show()
+	get_node("Physicals/OverlayLayers/UltimateWhite").show()
 	self.ultimate_flag = true
 	pass
 		
