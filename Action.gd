@@ -29,8 +29,6 @@ func execute():
 		pieces.append(piece)
 		
 	for piece in pieces:
-		print("executing")
-		print(is_inside_tree())
 		for func_call in func_calls:
 			var func_ref = func_call.func_ref
 			var args = func_call.args
@@ -71,6 +69,6 @@ func execute():
 
 		get_node("/root/Combat").handle_assassin_passive(assassin_passive_range)
 	
-
-	self.caller.assist_flag = death_flag
+	if self.caller.has_method("set_assist_flag"):
+		self.caller.set_assist_flag(death_flag)
 	queue_free()

@@ -21,11 +21,12 @@ func _ready():
 	
 func generate_wave(req_power_level, roster=constants.FULL_UNIT_ROSTER, modifier_roster=constants.FULL_MODIFIER_ROSTER):
 	randomize()
-	var wave = create_raw_wave(300, roster, modifier_roster)
+	var wave = create_raw_wave(req_power_level, roster, modifier_roster)
 	return get_wave_dict_with_positions(wave)
 
 #wave in list form, without coordinates
 func create_raw_wave(req_power_level, roster, modifier_roster):
+	print("req_power_level is" + str(req_power_level))
 	var return_wave = []
 	var total_power_level = 0
 	while abs(req_power_level - total_power_level) > EPSILON:
@@ -52,6 +53,7 @@ func create_raw_wave(req_power_level, roster, modifier_roster):
 		return_wave.append(unit_schematic)
 	if return_wave.size() > 6:
 		print("have too many units!")
+	print("power level is " + str(total_power_level))
 	return return_wave
 	
 func get_wave_dict_with_positions(wave):

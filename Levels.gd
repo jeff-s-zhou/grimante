@@ -48,18 +48,18 @@ class SandboxPowerGenerator:
 	func reset():
 		self.power_level = 200
 		
-var finite_power_levels = [300, 300, 400, 400]
+var finite_power_levels = [400, 450, 500, 550, 550]
 
 
 var five_column_enemies = [
-{1: make(Grunt, 4), 2: make(Grunt, 3), 3: make(Fortifier, 4), 4: make(Grunt, 6, [cloaked]), 6: make(Grunt, 3)},
-{2: make(Drummer, 2), 3: make(Drummer, 2, [shield]), 4: make(Drummer, 3)},
-{2: make(Drummer, 2), 3: make(Drummer, 2, [shield]), 4: make(Drummer, 3)},
-{2: make(Drummer, 2), 3: make(Drummer, 2, [shield]), 4: make(Drummer, 3)}
+{3: make(Grunt, 2)},
+#{2: make(Drummer, 2), 3: make(Drummer, 2, [shield]), 4: make(Drummer, 3)},
+#{2: make(Drummer, 2), 3: make(Drummer, 2, [shield]), 4: make(Drummer, 3)},
+#{2: make(Drummer, 2), 3: make(Drummer, 2, [shield]), 4: make(Drummer, 3)}
 ]
 
-var sandbox_enemies = WaveWrappers.FiniteGeneratedWrapper.new(finite_power_levels)
-#var sandbox_enemies = WaveWrappers.FiniteWrapper.new(five_column_enemies)
+#var sandbox_enemies = WaveWrappers.FiniteGeneratedWrapper.new(finite_power_levels)
+var sandbox_enemies = WaveWrappers.FiniteWrapper.new(five_column_enemies)
 #var sandbox_extras = {"shadow_wall_tiles": [Vector2(3, 6)]}
 var king_schematic = {"column_or_coords":3, "prototype":King}
 var sandbox_extras = {"king": king_schematic}

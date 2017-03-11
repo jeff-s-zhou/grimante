@@ -28,6 +28,8 @@ var prediction_flyover = null
 
 const flyover_prototype = preload("res://EnemyPieces/Components/Flyover.tscn")
 
+onready var grid = get_parent()
+
 signal broke_defenses
 
 var hover_description = "" setget , get_hover_description
@@ -188,9 +190,9 @@ func predict(damage, is_passive_damage=false):
 		if self.action_highlighted:
 			get_node("Physicals/EnemyOverlays/Red").hide()
 	if self.shielded:
-		get_node("/root/AnimationQueue").enqueue(self, "animate_predict_hp", false, [self.hp, 0, color])
+		add_animation(self, "animate_predict_hp", false, [self.hp, 0, color])
 	else:
-		get_node("/root/AnimationQueue").enqueue(self, "animate_predict_hp", false, [max(self.hp - damage, 0), -1 * damage, color])
+		add_animation(self, "animate_predict_hp", false, [max(self.hp - damage, 0), -1 * damage, color])
 		
 
 func animate_smash_killed():
@@ -200,9 +202,9 @@ func animate_smash_killed():
 func set_stunned(flag):
 	self.stunned = flag
 	if flag:
-		get_node("/root/AnimationQueue").enqueue(self, "animate_set_stunned", false)
+		add_animation(self, "animate_set_stunned", false)
 	else:
-		get_node("/root/AnimationQueue").enqueue(self, "animate_hide_stunned", false)
+		add_animation(self, "animate_hide_stunned", false)
 		
 func animate_set_stunned():
 	get_node("Physicals/EnemyEffects/StunSpiral").show()
@@ -223,7 +225,7 @@ func set_cloaked(flag):
 			get_node("Physicals/EnemyOverlays/Cloaked").show()
 			get_node("Physicals/FogEffect").show()
 		else:
-			get_node("/root/AnimationQueue").enqueue(self, "animate_cloaked_hide", false)
+			add_animation(self, "animate_cloaked_hide", false)
 		
 func animate_cloaked_hide():
 	get_node("SeenIcon").set_opacity(1)
@@ -265,7 +267,7 @@ func set_deadly(flag):
 	else:
 		if self.modifier_descriptions.has(name):
 			self.modifier_descriptions.erase(name)
-		get_node("/root/AnimationQueue").enqueue(self, "animate_deadly_hide", false)
+		add_animation(self, "animate_deadly_hide", false)
 		
 func animate_deadly_hide():
 	get_node("Physicals/EnemyEffects/DeathTouch").hide()
@@ -279,14 +281,14 @@ func set_shield(flag):
 	else:
 		if self.modifier_descriptions.has(name):
 			self.modifier_descriptions.erase(name)
-		get_node("/root/AnimationQueue").enqueue(self, "animate_bubble_hide", false)
+		add_animation(self, "animate_bubble_hide", false)
 		
 func set_burning(flag):
 	self.burning = flag
 	if flag:
-		get_node("/root/AnimationQueue").enqueue(self,"animate_fire", true)
+		add_animation(self,"animate_fire", true)
 	else:
-		get_node("/root/AnimationQueue").enqueue(self,"animate_burning_hide", false)
+		add_animation(self,"animate_burning_hide", false)
 		
 func animate_fire():
 	get_node("Physicals/EnemyEffects/FireEffect").set_emitting(true)
@@ -372,7 +374,7 @@ func opportunity_attacked(amount):
 
 #for the berserker's smash kill which should instantly remove
 func smash_killed(damage):
-	get_node("/root/AnimationQueue").enqueue(self, "animate_smash_killed", false)
+	add_animation(self, "animate_smash_killed", false)
 	attacked(damage)
 	
 	
@@ -383,7 +385,7 @@ func receive_shield_bash(destination_coords):
 		#var fall_off_distance = 30 * (fall_off_pos - get_pos()).normalized()
 		if get_parent().hex_normalize(destination_coords - self.coords) == Vector2(0, 1):
 				emit_signal("broke_defenses")
-		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
+		add_animation(self, "animate_delete_self", false)
 		
 	#if there's a piece in the destination coords
 	elif get_parent().pieces.has(destination_coords):
@@ -394,44 +396,34 @@ func receive_shield_bash(destination_coords):
 			var location = get_parent().locations[destination_coords]
 			var difference = (location.get_pos() - get_pos()) / 3
 			var collide_pos = get_pos() + difference 
-			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 300, true]) #push up against it
+			add_animation(self, "animate_move_to_pos", true, [collide_pos, 300, true]) #push up against it
 			
 			#then kill one or the other, depending on which has the higher hp
 			if self.hp >= other_enemy_piece.hp:
 				other_enemy_piece.receive_shield_bashed_enemy_bash()
-				get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [destination_coords, 300, false])
+				add_animation(self, "animate_move", false, [destination_coords, 300, false])
 				set_coords(destination_coords)
 			else:
 				delete_self()
-				get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
+				add_animation(self, "animate_delete_self", false)
 		#TODO: what do we do if it tries to shove an enemy into an ally?
 		
 	#otherwise just push it
 	else:
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [destination_coords, 300, false])
+		add_animation(self, "animate_move", false, [destination_coords, 300, false])
 		set_coords(destination_coords)
 
 #can't think of what to call this lol, it's when an enemy is shoved by another enemy that's shield bashed
 func receive_shield_bashed_enemy_bash():
 	delete_self()
-	get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
-
-
-#always leaves them with 1 hp
-func nonlethal_attacked(damage):
-	if self.shielded:
-		set_shield(false)
-	else:
-		var amount = damage * -1
-		self.hp = (max(1, self.hp + amount))
-		get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [self.hp, amount])
+	add_animation(self, "animate_delete_self", false)
 
 
 func modify_hp(amount, delay=0):
 	if self.hp != 0: #in the case that someone tries to modify hp after the unit is already in the process of dying
-		self.hp = (max(0, self.hp + amount))
+		self.hp = min((max(0, self.hp + amount)), 9) #has to be between 0 and 9
 		self.temp_display_hp = self.hp
-		get_node("/root/AnimationQueue").enqueue(self, "animate_set_hp", false, [self.hp, amount, delay])
+		add_animation(self, "animate_set_hp", false, [self.hp, amount, delay])
 		if self.hp == 0: #if aoe, then we manually do the delete self check afterwards
 			delete_self()
 			
@@ -492,13 +484,15 @@ func animate_delete_self():
 	get_node("/root/Combat/ComboSystem").increase_combo()
 	self.queue_free()
 
-func set_coords(new_coords):
+func set_coords(new_coords, sequence=null):
 	get_parent().move_piece(self.coords, new_coords)
 	self.coords = new_coords
-	#handle stepping on a lightning tile
-	if get_parent().locations[self.coords].raining:
-		get_parent().locations[self.coords].activate_lightning()
-		modify_hp(-1)
+	var location = get_parent().locations[self.coords]
+	if location.raining:
+		add_animation(location, "animate_lightning", true)
+		var action = get_new_action(self.coords)
+		action.add_call("attacked", [1])
+		action.execute()
 
 
 func get_movement_value():
@@ -528,3 +522,7 @@ func turn_update():
 		set_silenced(false)
 
 	reset_auras()
+	
+	#adjacent_allies = 
+	if true:
+		set_cloaked(false)

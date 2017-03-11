@@ -11,6 +11,8 @@ const AnimationSequence = preload("res://AnimationSequence.gd")
 
 signal animation_done
 
+var current_animation_sequence = null
+
 var mid_animation = false
 
 var mid_leaping_animation = false
@@ -35,6 +37,19 @@ func get_new_action(coords_or_range, trigger_assassin_passive=true):
 	var action = self.Action.new(coords_or_range, self, trigger_assassin_passive)
 	add_child(action)
 	return action
+
+
+func add_animation(node, func_ref, blocking, arguments=[]):
+	if self.current_animation_sequence != null:
+		if func_ref == "animate_set_hp":
+			print("adding animate_set_hp in add_animation")
+		self.current_animation_sequence.add(node, func_ref, blocking, arguments)
+	else:
+		get_node("/root/AnimationQueue").enqueue(node, func_ref, blocking, arguments)
+		
+func enqueue_animation_sequence():
+	get_node("/root/AnimationQueue").enqueue(self.current_animation_sequence, "execute", false)
+	self.current_animation_sequence = null
 
 
 func set_seen(flag):
@@ -119,6 +134,8 @@ func move(distance, passed_animation_sequence=null):
 	else:
 		animation_sequence = self.AnimationSequence.new()
 		
+	self.current_animation_sequence = animation_sequence
+		
 	var old_coords = self.coords
 	
 	var distance_length = self.grid.hex_length(distance)
@@ -144,7 +161,9 @@ func move(distance, passed_animation_sequence=null):
 		
 	#we'd execute the whole animation sequence here
 	if passed_animation_sequence == null: #otherwise this was called recursively in shove
-		get_node("/root/AnimationQueue").enqueue(animation_sequence, "execute", false)
+		enqueue_animation_sequence()
+		
+
 
 #helper function to either move a piece, or have it fall off the map
 func move_helper(coords, animation_sequence=null):

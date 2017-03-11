@@ -81,6 +81,7 @@ func jump_to(new_coords, speed=4):
 #	print(time)
 
 	var old_height = Vector2(0, 0)
+	#var new_height = Vector2(0, (-3 * distance/4))
 	var new_height = Vector2(0, (-3 * distance/4))
 	get_node("Tween2").interpolate_property(get_node("Physicals"), "transform/pos", \
 		get_node("Physicals").get_pos(), new_height, time/2, Tween.TRANS_CUBIC, Tween.EASE_OUT)

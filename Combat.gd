@@ -39,7 +39,7 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(300, 275))
 	#get_node("Grid").set_pos(Vector2(400, 250))
-	#debug_mode()
+	debug_mode()
 	ultimates_enabled()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
@@ -391,7 +391,6 @@ func enemy_phase(enemy_pieces):
 	#if there are enemy pieces, wait for them to finish
 	if(get_tree().get_nodes_in_group("enemy_pieces").size() > 0):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	print("did I get here 333")
 	if self.level.should_deploy():
 		deploy_wave()
 		yield(self, "wave_deployed")
@@ -403,12 +402,9 @@ func enemy_phase(enemy_pieces):
 	if self.level.check_enemy_win(player_pieces): #logic would change based on game type
 		enemy_win()
 	
-	print("am I here now?")
 	if self.level.king != null:
 		self.state = STATES.king_turn
-		print("got in here?")
 	else:
-		print("did I get in here?")
 		get_node("PhaseShifter").player_phase_animation()
 		yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 		start_player_phase()

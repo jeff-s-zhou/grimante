@@ -51,3 +51,4 @@ func execute():
 			yield(node, "animation_done")
 
 	emit_signal("animation_done")
+	queue_free()

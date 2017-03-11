@@ -184,7 +184,13 @@ func charge_attack(new_coords, attack=false):
 	var difference = new_coords - self.coords
 	var tiles_travelled = get_parent().hex_length(difference) - 1
 	get_node("/root/AnimationQueue").enqueue(self, "animate_attack", true, [new_coords])
-	var action = get_new_action(new_coords)
+	var increment = get_parent().hex_normalize(difference)
+	
+	var attack_range = [new_coords]
+	if get_parent().pieces.has(new_coords + increment): #if there's an enemy directly behind this one
+		if get_parent().pieces[new_coords + increment].side == "ENEMY":
+			attack_range.append(new_coords + increment)
+	var action = get_new_action(attack_range)
 	action.add_call("attacked", [get_charge_damage(tiles_travelled)])
 	action.execute()
 	var position_coords = decrement_one(new_coords)

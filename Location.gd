@@ -13,6 +13,8 @@ var deployable = false
 
 var shadow_wall = false
 
+signal animation_done
+
 signal is_targeted(location)
 
 func _ready():
@@ -60,9 +62,11 @@ func set_shadow_wall(flag):
 		get_node("WallBack").hide()
 		
 		
-func activate_lightning():
-	get_node("/root/AnimationQueue").enqueue(get_node("StormEffect"), "animate_lightning", true)
+func animate_lightning():
+	get_node("StormEffect").animate_lightning()
 	set_rain(false)
+	yield(get_node("StormEffect"), "animation_done")
+	emit_signal("animation_done")
 
 
 #when another unit is able to move to this location, it calls this function

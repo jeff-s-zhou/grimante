@@ -64,6 +64,9 @@ func get_assist_bonus_attack():
 func set_invulnerable():
 	self.invulnerable_flag =  self.AssistSystem.get_bonus_invulnerable()
 	#TODO: animations
+	
+func set_assist_flag(flag):
+	self.assist_flag = flag
 
 func handle_assist():
 	if self.assist_flag:
@@ -299,7 +302,6 @@ func swap_coords_and_pos(target):
 
 #helper function for act
 func invalid_move():
-	self.triggered_invalid = true
 	get_parent().reset_highlighting()
 	get_parent().reset_prediction()
 	get_node("BlueGlow").hide()
