@@ -222,4 +222,6 @@ transform/pos = Vector2( 50.5192, 1010.43 )
 
 [node name="AssistSystem" parent="." instance=ExtResource( 27 )]
 
+transform/pos = Vector2( 1301.41, 623.312 )
+
 

@@ -244,6 +244,7 @@ func end_turn():
 	get_node("Button").set_disabled(true)
 	get_node("TutorialTooltip").reset()
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
+		player_piece.finisher_flag = false
 		player_piece.placed()
 	get_node("PhaseShifter").enemy_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )

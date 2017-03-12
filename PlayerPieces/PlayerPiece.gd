@@ -81,12 +81,19 @@ func get_movement_value():
 	return self.AssistSystem.get_bonus_movement() + movement_value
 	
 func activate_finisher():
+	if !self.finisher_flag and self.cooldown == 0:
+		#TODO: sparkly effects
+		self.finisher_flag = true
+	
+func finisher_reactivate():
+	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
+	for player_piece in player_pieces:
+		self.finisher_flag = false
 	self.state = States.DEFAULT
-	#get_node("Cooldown").hide()
-	#get_node("Physicals/AnimatedSprite").play("default")
+	get_node("Cooldown").hide()
+	get_node("Physicals/AnimatedSprite").play("default")
 	if(get_node("CollisionArea").overlaps_area(self.cursor_area)):
 		self.hovered()
-	self.finisher_flag = true
 
 func set_armor(value):
 	self.armor = value
@@ -157,7 +164,6 @@ func animate_stepped_move(old_coords, new_coords, pathed_range, speed=250, block
 
 	if blocking:
 		emit_signal("animation_done")
-		
 
 	
 func attack_highlight():
@@ -231,12 +237,8 @@ func input_event(event):
 		if get_parent().selected == null and self.state != States.PLACED:
 			select()
 		
-		#can't begin casting ultimate if mid ultimate already, or ultimate already spent previously
-		elif get_parent().selected == self \
-		and !self.ultimate_used_flag \
-		and !self.ultimate_flag \
-		and get_node("/root/global").ultimates_enabled_flag: 
-			get_node("UltimateBar").begin_charging()
+		elif get_parent().selected == null and self.finisher_flag:
+			finisher_reactivate() #reactivate this piece for finishing
 
 		else: #if not selected and not self, then some piece is trying to act on this one
 			get_parent().set_target(self)
@@ -264,13 +266,11 @@ func deselect():
 
 
 func select_action_target(target):
-	print("selecting action target")
 	#deploy TODO
 	get_parent().reset_highlighting()
 	get_parent().reset_prediction()
 	get_node("BlueGlow").hide()
 	if self.deploying_flag:
-		print("deploying select action target")
 		deploy_select_action_target(target)
 	else:
 		act(target.coords)
