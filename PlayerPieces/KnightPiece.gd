@@ -30,6 +30,13 @@ func _ready():
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.ultimate_description = ULTIMATE_DESCRIPTION
 	
+	
+func handle_assist():
+	if self.assist_flag:
+		self.assist_flag = false
+	self.AssistSystem.activate_assist(self.assist_type)
+
+
 func get_movement_range():
 	return get_parent().get_range(self.coords)
 	

@@ -52,18 +52,18 @@ var finite_power_levels = [400, 450, 500, 550, 550]
 
 
 var five_column_enemies = [
-{3: make(Grunt, 2)},
+{3: make(Drummer, 2)},
 #{2: make(Drummer, 2), 3: make(Drummer, 2, [shield]), 4: make(Drummer, 3)},
 #{2: make(Drummer, 2), 3: make(Drummer, 2, [shield]), 4: make(Drummer, 3)},
 #{2: make(Drummer, 2), 3: make(Drummer, 2, [shield]), 4: make(Drummer, 3)}
 ]
 
-#var sandbox_enemies = WaveWrappers.FiniteGeneratedWrapper.new(finite_power_levels)
-var sandbox_enemies = WaveWrappers.FiniteWrapper.new(five_column_enemies)
+var sandbox_enemies = WaveWrappers.FiniteGeneratedWrapper.new(finite_power_levels)
+#var sandbox_enemies = WaveWrappers.FiniteWrapper.new(five_column_enemies)
 #var sandbox_extras = {"shadow_wall_tiles": [Vector2(3, 6)]}
 var king_schematic = {"column_or_coords":3, "prototype":King}
 var sandbox_extras = {"king": king_schematic}
-var Sandbox_Level = LevelTypes.RoomSeal.new(sandbox_allies, sandbox_enemies, 1, null) #, sandbox_extras)
+var Sandbox_Level = LevelTypes.RoomSeal.new(sandbox_allies, sandbox_enemies, 3, null) #, sandbox_extras)
 
 
 var sandbox_allies2 = {1: Stormdancer, 2: Cavalier, 3:Archer, 4:Pyromancer, 5: Berserker}

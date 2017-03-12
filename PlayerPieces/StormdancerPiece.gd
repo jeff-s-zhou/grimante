@@ -42,6 +42,11 @@ func _ready():
 
 func initialize(cursor_area):
 	.initialize(cursor_area)
+
+func handle_assist():
+	if self.assist_flag:
+		self.assist_flag = false
+	self.AssistSystem.activate_assist(self.assist_type)
 	
 
 func deploy():

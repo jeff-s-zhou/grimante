@@ -28,8 +28,6 @@ var prediction_flyover = null
 
 const flyover_prototype = preload("res://EnemyPieces/Components/Flyover.tscn")
 
-onready var grid = get_parent()
-
 signal broke_defenses
 
 var hover_description = "" setget , get_hover_description
@@ -70,7 +68,7 @@ func _ready():
 func input_event(event):
 	if event.is_action("select"):
 		if event.is_pressed():
-			get_parent().set_target(self)
+			self.grid.set_target(self)
 
 
 func hover_highlight():
@@ -81,8 +79,8 @@ func hover_highlight():
 
 	if self.action_highlighted:
 		get_node("Physicals/EnemyOverlays/White").show()
-		if get_parent().selected != null:
-			get_parent().selected.predict(self.coords)
+		if self.grid.selected != null:
+			self.grid.selected.predict(self.coords)
 
 func debug():
 	#get_node("DebugText").show()
@@ -92,15 +90,15 @@ func debug():
 func hover_unhighlight():
 	get_node("Physicals/EnemyOverlays/White").hide()
 	if self.action_highlighted:
-		if get_parent().selected != null:
-			get_parent().reset_prediction()
+		if self.grid.selected != null:
+			self.grid.reset_prediction()
 
 #when another unit is able to move to this location, it calls this function
 func movement_highlight():
 	self.action_highlighted = true
 	get_node("Physicals/EnemyOverlays/Red").show()
 
-#called from grid to reset highlighting over the whole board
+#called from self.grid to reset highlighting over the whole board
 func reset_highlight(right_click_flag=false):
 	self.action_highlighted = false
 	get_node("Physicals/EnemyOverlays/White").hide()
@@ -366,6 +364,7 @@ func attacked(amount):
 
 #called by the assassin's passive
 func opportunity_attacked(amount):
+	set_cloaked(false)
 	if self.shielded:
 		set_shield(false)
 	else:
@@ -380,20 +379,20 @@ func smash_killed(damage):
 	
 func receive_shield_bash(destination_coords):
 	#if it falls off the edge of map
-	if !get_parent().locations.has(destination_coords):
+	if !self.grid.locations.has(destination_coords):
 		delete_self()
 		#var fall_off_distance = 30 * (fall_off_pos - get_pos()).normalized()
-		if get_parent().hex_normalize(destination_coords - self.coords) == Vector2(0, 1):
+		if self.grid.hex_normalize(destination_coords - self.coords) == Vector2(0, 1):
 				emit_signal("broke_defenses")
 		add_animation(self, "animate_delete_self", false)
 		
 	#if there's a piece in the destination coords
-	elif get_parent().pieces.has(destination_coords):
-		if get_parent().pieces[destination_coords].side == "ENEMY":
-			var other_enemy_piece = get_parent().pieces[destination_coords]
+	elif self.grid.pieces.has(destination_coords):
+		if self.grid.pieces[destination_coords].side == "ENEMY":
+			var other_enemy_piece = self.grid.pieces[destination_coords]
 			#shove itself into the other piece
-			var offset = get_parent().hex_normalize(destination_coords - self.coords)
-			var location = get_parent().locations[destination_coords]
+			var offset = self.grid.hex_normalize(destination_coords - self.coords)
+			var location = self.grid.locations[destination_coords]
 			var difference = (location.get_pos() - get_pos()) / 3
 			var collide_pos = get_pos() + difference 
 			add_animation(self, "animate_move_to_pos", true, [collide_pos, 300, true]) #push up against it
@@ -466,10 +465,10 @@ func animate_set_hp(hp, value, delay=0):
 		animate_delete_self()
 
 
-#removes it from the grid, which prevents any interaction with other pieces
+#removes it from the self.grid, which prevents any interaction with other pieces
 func delete_self():
 	get_node("/root/Combat/TidesOfBattleSystem").track_enemy_death()
-	get_parent().remove_piece(self.coords)
+	self.grid.remove_piece(self.coords)
 
 
 #actually physically removes it from the board
@@ -485,9 +484,9 @@ func animate_delete_self():
 	self.queue_free()
 
 func set_coords(new_coords, sequence=null):
-	get_parent().move_piece(self.coords, new_coords)
+	self.grid.move_piece(self.coords, new_coords)
 	self.coords = new_coords
-	var location = get_parent().locations[self.coords]
+	var location = self.grid.locations[self.coords]
 	if location.raining:
 		add_animation(location, "animate_lightning", true)
 		var action = get_new_action(self.coords)
@@ -523,6 +522,6 @@ func turn_update():
 
 	reset_auras()
 	
-	#adjacent_allies = 
-	if true:
+	var adjacent_players_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
+	if adjacent_players_range != []:
 		set_cloaked(false)

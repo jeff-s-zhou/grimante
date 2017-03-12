@@ -19,7 +19,9 @@ func add(node, func_ref, blocking, args=[]):
 	func_calls.append(func_call)
 
 func set_mid_animation(flag):
-	pass
+	for func_call in self.func_calls:
+		if func_call.node.has_method("set_mid_animation"):
+			func_call.node.set_mid_animation(flag)
 
 func execute():
 	for func_call in func_calls:

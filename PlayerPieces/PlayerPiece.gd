@@ -34,6 +34,8 @@ var ultimate_flag = false
 
 var ultimate_used_flag = false
 
+var finisher_flag = false
+
 var armor = 0
 var movement_value = 1 setget , get_movement_value
 var attack_bonus = 0
@@ -77,6 +79,14 @@ func handle_assist():
 
 func get_movement_value():
 	return self.AssistSystem.get_bonus_movement() + movement_value
+	
+func activate_finisher():
+	self.state = States.DEFAULT
+	#get_node("Cooldown").hide()
+	#get_node("Physicals/AnimatedSprite").play("default")
+	if(get_node("CollisionArea").overlaps_area(self.cursor_area)):
+		self.hovered()
+	self.finisher_flag = true
 
 func set_armor(value):
 	self.armor = value

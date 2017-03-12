@@ -149,7 +149,7 @@ func move(distance, passed_animation_sequence=null):
 		collide_coords = collide_range[0]
 		#if the tile right before the one we want to collide with isn't the one we're on
 		if self.coords != collide_coords - distance_increment: 
-			move_helper(collide_coords - distance_increment, animation_sequence)
+			move_helper(collide_coords - distance_increment, animation_sequence, true)
 	else: #else just move forward all the way
 		move_helper(self.coords + distance, animation_sequence)
 	
@@ -166,7 +166,7 @@ func move(distance, passed_animation_sequence=null):
 
 
 #helper function to either move a piece, or have it fall off the map
-func move_helper(coords, animation_sequence=null):
+func move_helper(coords, animation_sequence=null, blocking=false):
 	var distance = coords - self.coords 
 	var distance_length = self.grid.hex_length(distance)
 	var distance_increment = self.grid.hex_normalize(distance)
@@ -180,7 +180,7 @@ func move_helper(coords, animation_sequence=null):
 			furthest_distance = (i + 1) * distance_increment
 
 	if furthest_distance != Vector2(0, 0):
-		animation_sequence.add(self, "animate_move", true, [self.coords + furthest_distance, 300, true])
+		animation_sequence.add(self, "animate_move", blocking, [self.coords + furthest_distance, 300, blocking])
 		set_coords(self.coords + furthest_distance)
 
 	if walked_off:
@@ -201,8 +201,9 @@ func shove(collide_coords, distance, animation_sequence):
 		
 		#push up against it
 		var location = self.grid.locations[collide_coords]
-		var difference =  (location.get_pos() - get_pos())/3
-		var collide_pos = get_pos() + difference 
+		var location_right_before = self.grid.locations[collide_coords - distance_increment]
+		var difference =  (location.get_pos() - location_right_before.get_pos())/4
+		var collide_pos = location_right_before.get_pos() + difference 
 		var new_distance = (self.coords + distance) - collide_coords + self.grid.hex_normalize(distance)
 		animation_sequence.add(self, "animate_move_to_pos", true, [collide_pos, 300, true])
 		#get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 300, true]) 

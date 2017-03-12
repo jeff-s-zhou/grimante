@@ -39,7 +39,7 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(300, 275))
 	#get_node("Grid").set_pos(Vector2(400, 250))
-	debug_mode()
+	#debug_mode()
 	ultimates_enabled()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
@@ -81,6 +81,13 @@ func _ready():
 				get_node("/root/global").ultimates_enabled_flag = true
 	
 	for i in range(0, initial_deploy_count):
+		if i != 0:
+			var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
+			enemy_pieces.sort_custom(self, "_sort_by_y_axis") #ensures the pieces in front move first
+			for enemy_piece in enemy_pieces:
+				enemy_piece.aura_update()
+			for enemy_piece in enemy_pieces:
+				enemy_piece.turn_update()
 		deploy_wave(true)
 		
 	if level.king != null:
@@ -421,6 +428,7 @@ func king_phase():
 
 func start_player_phase():
 	get_node("TidesOfBattleSystem").reset_enemy_killcount()
+	get_node("AssistSystem").reset_combo()
 	get_node("HeroSystem").update()
 	self.turn_count += 1
 	if self.reinforcements.has(self.turn_count):

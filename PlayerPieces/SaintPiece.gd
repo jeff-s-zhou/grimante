@@ -26,6 +26,11 @@ func _ready():
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.ultimate_description = ULTIMATE_DESCRIPTION
 	self.assist_type = ASSIST_TYPES.invulnerable
+	
+func handle_assist():
+	if self.assist_flag:
+		self.assist_flag = false
+	self.AssistSystem.activate_assist(self.assist_type)
 
 func get_movement_range():
 	self.pathed_range = get_parent().get_pathed_range(self.coords, self.movement_value)
