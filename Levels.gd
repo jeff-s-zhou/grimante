@@ -63,7 +63,7 @@ var sandbox_enemies = WaveWrappers.FiniteGeneratedWrapper.new(finite_power_level
 #var sandbox_extras = {"shadow_wall_tiles": [Vector2(3, 6)]}
 var king_schematic = {"column_or_coords":3, "prototype":King}
 var sandbox_extras = {"king": king_schematic}
-var Sandbox_Level = LevelTypes.RoomSeal.new(sandbox_allies, sandbox_enemies, 3, null) #, sandbox_extras)
+var Sandbox_Level = LevelTypes.RoomSeal.new(sandbox_allies, sandbox_enemies, 1, null) #, sandbox_extras)
 
 
 var sandbox_allies2 = {1: Stormdancer, 2: Cavalier, 3:Archer, 4:Pyromancer, 5: Berserker}

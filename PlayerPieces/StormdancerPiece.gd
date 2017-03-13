@@ -66,15 +66,15 @@ func set_coords(coords):
 	.set_coords(coords)
 
 func get_movement_range():
-	return get_parent().get_radial_range(self.coords, [1, self.movement_value + 1])
+	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
 	
 
 func get_ally_swap_range():
-	return get_parent().get_radial_range(self.coords, [1, self.movement_value + 1], "PLAYER")
+	return get_parent().get_radial_range(self.coords, [1, self.movement_value], "PLAYER")
 	
 	
 func get_enemy_swap_range():
-	return get_parent().get_radial_range(self.coords, [1, self.movement_value + 1], "ENEMY")
+	return get_parent().get_radial_range(self.coords, [1, self.movement_value], "ENEMY")
 
 
 #parameters to use for get_node("get_parent()").get_neighbors

@@ -467,7 +467,6 @@ func animate_set_hp(hp, value, delay=0):
 
 #removes it from the self.grid, which prevents any interaction with other pieces
 func delete_self():
-	get_node("/root/Combat/TidesOfBattleSystem").track_enemy_death()
 	self.grid.remove_piece(self.coords)
 
 

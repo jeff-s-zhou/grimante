@@ -11,6 +11,28 @@ const Drummer = preload("res://EnemyPieces/DrummerPiece.tscn")
 
 var enemy_modifiers = {"Poisonous":"Poisonous", "Shield":"Shield", "Cloaked":"Cloaked"}
 
+const y_coords_offsets = [0, 1, 1, 2, 2, 3, 3]
+
+
+const coords_vertical_prob_dist = {
+0: 1,
+1: 1,
+2: 1,
+3: 0.7,
+4: 0.4,
+5: 0.2,
+}
+
+const coords_horizontal_prob_dist = {
+0: 1,
+1: 1,
+2: 1,
+3: 1,
+4: 1,
+5: 1,
+6: 1
+}
+
 var UNIT_POWER_LEVELS = {
 Grunt: 30,
 Fortifier: 35,

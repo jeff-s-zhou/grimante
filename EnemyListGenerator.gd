@@ -58,14 +58,13 @@ func create_raw_wave(req_power_level, roster, modifier_roster):
 	
 func get_wave_dict_with_positions(wave):
 	var wave_dict = {}
-	#var available_positions = [0, 1, 2, 3, 4]
-	var available_positions = [0, 1, 2, 3, 4, 5, 6]
 	for unit_schematic in wave:
-		var position_selector = randi() % available_positions.size()
-		var position = available_positions[position_selector]
-		wave_dict[position] = unit_schematic
-		available_positions.remove(position_selector)
+		var coords = generate_random_coords()
+		while wave_dict.has(coords):
+			coords = generate_random_coords()
+		wave_dict[coords] = unit_schematic
 	return wave_dict
+
 		
 func generate_unit(roster, modifier_roster):
 	#TODO: implement max_power and min_power checks
@@ -110,19 +109,26 @@ func get_unit_health(prototype):
 		prob_dist = constants.DRUMMER_HEALTH_PROB_DIST
 	elif prototype == Grower:
 		prob_dist = constants.GROWER_HEALTH_PROB_DIST
+	return get_value_from_prob_dist(prob_dist)
+	
+	
+func generate_random_coords(vertical_prob_dist=constants.coords_vertical_prob_dist, horizontal_prob_dist=constants.coords_horizontal_prob_dist):
+	var x = get_value_from_prob_dist(horizontal_prob_dist)
+	var y = get_value_from_prob_dist(vertical_prob_dist) + constants.y_coords_offsets[x]
+	
+	return Vector2(x, y)
+	
+func get_value_from_prob_dist(prob_dist):
 	var total_weights = get_total_weights(prob_dist)
 	var random_value = total_weights * randf()
-	var weight_to_health_dict = get_weight_to_health_dict(prob_dist)
-	var sorted_weight_keys = weight_to_health_dict.keys()
+	var weight_to_values_dict = get_weight_to_values_dict(prob_dist)
+	var sorted_weight_keys = weight_to_values_dict.keys()
 	sorted_weight_keys.sort()
-	
-	#see what range the random_value falls into
-	var lower_bound = 0
+
 	for upper_bound in sorted_weight_keys:
-		if random_value >= lower_bound and random_value <= upper_bound:
-			return weight_to_health_dict[upper_bound] #returns the health in that range
-		else:
-			lower_bound = upper_bound
+		if random_value <= upper_bound:
+			print(weight_to_values_dict[upper_bound])
+			return weight_to_values_dict[upper_bound] #returns the health in that range
 	
 
 func get_total_weights(prob_dist):
@@ -131,7 +137,7 @@ func get_total_weights(prob_dist):
 		total_weights += prob_dist[key]
 	return total_weights
 
-func get_weight_to_health_dict(prob_dist):
+func get_weight_to_values_dict(prob_dist):
 	var new_dict = {}
 	var accumulator = 0
 	var sorted_keys = prob_dist.keys()
@@ -143,6 +149,7 @@ func get_weight_to_health_dict(prob_dist):
 		#we flip the dict so that the upper value of the range is the key, and the health value is the value
 		new_dict[accumulator] = key 
 	return new_dict
+
 	
 func get_power_level(unit_schematic):
 	var power_level = 0

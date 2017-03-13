@@ -9,19 +9,20 @@ signal test_signal1
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	print("starting")
-	signal_emitter_func()
-	yield(self, "test_signal1")
-	get_node("Timer").set_wait_time(5.0)
-	get_node("Timer").start()
-	yield(get_node("Timer"), "timeout")
-	print("reached right before end")
-	yield(self, "test_signal1")
-	print("reached end")
+	print(get_radial_range(Vector2(0, 0), [1, 1]))
+	
+func cube_to_hex(h): # axial
+	print("in cube to hex")
+	print(h)
+	return Vector2(h.x, -h.y)
 
-func signal_emitter_func():
-	get_node("Timer 2").set_wait_time(1.0)
-	get_node("Timer 2").start()
-	yield(get_node("Timer 2"), "timeout")
-	emit_signal("test_signal1")
-	emit_signal("test_signal1")
+
+func get_radial_range(coords, radial_range=[1, 3]):
+	var n = radial_range[1]
+	var results = []
+	for x in range(-n, n + 1):
+		for y in range(max(-n, -x - n), min(n, -x + n) + 1): 
+			var z = -x - y 
+			results.append(coords + cube_to_hex(Vector3(x, y, z)))
+	return results
+			

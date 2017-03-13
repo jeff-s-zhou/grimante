@@ -282,31 +282,32 @@ func get_range_helper(return_set, change_vector, coords, magnitude_range, side, 
 			elif locations.has(new_coords) and !pieces.has(new_coords)  and !(new_coords in self.shadow_wall_tile_range): #only return empty locations
 				return_set.append(new_coords)
 
-#calls both get_neighbors and get_diagonal_neighbors to provide a radial
-#TODO: broken with a radius 3 because hexagons. fix in case I ever need
-func get_radial_range(coords, radial_range=[1, 3], side=null, collision_check=false):
-	if radial_range[1] == 4:
-		#TODO: fix this hacky shit
-		if side != null:
-			print("getting radial range with " + side) 
-		var diagonal_radial_range = [radial_range[0], 2]
-		var diagonal_range = get_diagonal_range(coords, diagonal_radial_range)
-		var diagonal_surrounding_range = []
-		for coords in diagonal_range:
-			diagonal_surrounding_range += get_range(coords, [1, 2], side)
-		if side != null:
-			print("ending getting radial range with " + side) 
+func cube_to_hex(h): # axial
+	return Vector2(h.x, -h.y)
+#
+#func hex_to_cube(h): # axial
+#    var x = h.q
+#    var z = h.r
+#    var y = -x-z
+#    return Vector3(x, y, z)
+
+#range is inclusive
+func get_radial_range(coords, radial_range=[1, 1], side=null, collision_check=false):
+	var n = radial_range[1]
+	var results = []
+	for x in range(-n, n + 1):
+		for y in range(max(-n, -x - n), min(n, -x + n) + 1): 
+			var z = -x - y 
+			var hex_coords = coords + cube_to_hex(Vector3(x, y, z))
+			if self.locations.has(hex_coords):
+				if side==null and !pieces.has(hex_coords):
+					results.append(hex_coords)
+				
+				elif self.pieces.has(hex_coords) and self.pieces[hex_coords].side == side:
+					results.append(hex_coords)
+	return results
 			
-			
-		var diagonal_enemy_range = get_diagonal_range(coords, diagonal_radial_range, side)
-		return get_range(coords, radial_range, side, collision_check) \
-		+ diagonal_enemy_range + diagonal_surrounding_range
-	
-	var diagonal_radial_range = [radial_range[0], radial_range[1] - 1]
-	return get_range(coords, radial_range, side, collision_check) \
-	+ get_diagonal_range(coords, diagonal_radial_range, side, collision_check)
-	
-	
+
 #return all pieces on the board of a specified type
 func get_all_range(side=null):
 	var return_set = []

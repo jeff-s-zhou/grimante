@@ -39,7 +39,7 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(300, 250))
 	#get_node("Grid").set_pos(Vector2(400, 250))
-	#debug_mode()
+	debug_mode()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("Button").connect("pressed", self, "end_turn")

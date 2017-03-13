@@ -57,7 +57,7 @@ func get_movement_range():
 	return self.pathed_range.keys()
 	
 func get_attack_range():
-	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, self.movement_value + 1], "ENEMY")
+	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, self.movement_value], "ENEMY")
 	var attack_range = []
 	var directly_below_coords = self.coords + Vector2(0, 1)
 	if (directly_below_coords in unfiltered_range): #catch the piece immediately below the assassin
