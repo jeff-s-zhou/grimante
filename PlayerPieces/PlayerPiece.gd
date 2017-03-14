@@ -103,6 +103,11 @@ func set_armor(value):
 func deploy():
 	self.deploying_flag = false
 	
+func block_summon():
+	if !self.invulnerable_flag:
+		delete_self()
+		add_animation(self, "animate_delete_self", true)
+	
 func set_cooldown(cooldown):
 	self.cooldown = cooldown + 1 #offset for the first countdown tick
 	

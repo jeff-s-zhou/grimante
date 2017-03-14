@@ -2,12 +2,12 @@ extends Node2D
 
 const STATES = {"player_turn":0, "enemy_turn":1, "king_turn": 2, "transitioning":3, "game_start":4, "instruction":5}
 var state = STATES.game_start
-var enemy_waves = []
+var enemy_waves = null
 var instructions = []
 var reinforcements = {}
 var turn_count = 0
+var level_func = null
 var level = null
-var reload_level = null
 var next_level = null
 
 var next_wave #the wave that was used for reinforcement indication
@@ -49,35 +49,27 @@ func _ready():
 	get_node("ComboSystem/ComboPointsLabel").set_opacity(0)
 	get_node("WavesDisplay/WavesLabel").set_opacity(0)
 
-	
-	self.level = get_node("/root/global").get_param("level")
+	self.level_func = get_node("/root/global").get_param("level")
+	self.level = self.level_func.call_func()
 
-	var temp_allies = {}
-	soft_copy_dict(level.allies, temp_allies)
-	var allies = temp_allies
-	for key in allies.keys():
-		initialize_piece(allies[key], key)
+	for key in self.level.allies.keys():
+		initialize_piece(self.level.allies[key], key)
 	
-	self.enemy_waves = level.enemies
+	self.enemy_waves = self.level.enemies
 
-	self.reinforcements = level.reinforcements
-	
-	var temp_instructions = []
-	soft_copy_array(level.instructions, temp_instructions)
-	self.instructions = temp_instructions
-	
-	self.next_level = level.next_level
+	self.reinforcements = self.level.reinforcements
+
+	self.instructions = self.level.instructions
 	
 	#we store the initial wave count as the first value in the array
-	var initial_deploy_count = level.initial_deploy_count
-	
-	if level.flags != null:
-		var flags = level.flags
+
+	if self.level.flags != null:
+		var flags = self.level.flags
 		for flag in flags:
 			if flag == "ultimates_enabled_flag":
 				get_node("/root/global").ultimates_enabled_flag = true
 	
-	for i in range(0, initial_deploy_count):
+	for i in range(0, self.level.initial_deploy_count):
 		if i != 0:
 			var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
 			enemy_pieces.sort_custom(self, "_sort_by_y_axis") #ensures the pieces in front move first
@@ -166,37 +158,24 @@ func initialize_piece(piece, key):
 	
 
 func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon):
-	var enemy_piece = prototype.instance()
-	enemy_piece.initialize(health)
-	
-	enemy_piece.connect("broke_defenses", self, "damage_defenses")
-
 	var position
 	if typeof(key) == TYPE_INT:
 		position = get_node("Grid").get_top_of_column(key)
 	else:
 		position = key #that way when we need to we can specify by coordinates
-	
-	var summon_flag = true
-	#if the spawn point is occupied
+		
+	#if the spawn point is occupied, can't summon
 	if(get_node("Grid").pieces.has(position)):
-		if !get_node("Grid").pieces.has(position + Vector2(0, 1)): #if the square below is occupied
-			get_node("Grid").pieces[position].push(Vector2(0, 1))
-		else:
-			summon_flag = false
-	if summon_flag:
+		var occupant = get_node("Grid").pieces[position]
+		if occupant.side == "PLAYER":
+			occupant.block_summon()
+		elif occupant.side == "ENEMY":
+			occupant.summon_buff(health, modifiers)
+	else:
+		var enemy_piece = prototype.instance()
 		get_node("Grid").add_piece(position, enemy_piece)
-		if modifiers != null:
-			for modifier in modifiers:
-				print(modifier)
-				if modifier == get_node("/root/constants").enemy_modifiers["Poisonous"]:
-					enemy_piece.set_deadly(true)
-				elif modifier == get_node("/root/constants").enemy_modifiers["Shield"]:
-					enemy_piece.set_shield(true)
-				elif modifier == get_node("/root/constants").enemy_modifiers["Cloaked"]:
-					enemy_piece.set_cloaked(true)
-	
-	
+		enemy_piece.initialize(health, modifiers)
+		enemy_piece.connect("broke_defenses", self, "damage_defenses")
 		enemy_piece.get_node("Sprinkles").set_particle_endpoint(get_node("ComboSystem/ComboPointsLabel").get_global_pos())
 		enemy_piece.check_global_seen()
 		enemy_piece.animate_summon()
@@ -306,13 +285,12 @@ func _input(event):
 
 
 	elif event.is_action("debug_level_skip") and event.is_pressed():
-		if(self.next_level != null):
-			get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.next_level})
+		if(self.level.next_level_func != null):
+			get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level.next_level_func})
 			
 			
 	elif event.is_action("restart") and event.is_pressed():
-		self.level.reset()
-		get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level})
+		get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_func})
 	
 	elif event.is_action("toggle_fullscreen") and event.is_pressed():
 		if OS.is_window_fullscreen():
@@ -515,7 +493,6 @@ func deploy_wave(mass_summon=false):
 		
 	if wave != null:
 		for key in wave.keys():
-			
 			var prototype_parts = wave[key]
 			var prototype = prototype_parts["prototype"]
 			var health = prototype_parts["health"]
@@ -549,7 +526,7 @@ func player_win():
 	get_node("Timer2").set_wait_time(3.0)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
-	get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.next_level})
+	get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.level.next_level_func})
 	
 func enemy_win():
 	set_process(false)

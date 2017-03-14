@@ -2,7 +2,7 @@
 
 [ext_resource path="res://LEVELS.gd" type="Script" id=1]
 
-[node name="Node" type="Node"]
+[node name="Levels" type="Node"]
 
 script/script = ExtResource( 1 )
 

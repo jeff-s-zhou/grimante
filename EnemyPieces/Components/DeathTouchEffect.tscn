@@ -17,6 +17,7 @@ script/script = ExtResource( 1 )
 
 config/amount = 85
 config/lifetime = 5.0
+config/emitting = false
 config/half_extents = Vector2( 30, 20 )
 config/texture = ExtResource( 2 )
 params/direction = 180.0

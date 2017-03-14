@@ -63,7 +63,16 @@ func _ready():
 	#self.check_global_seen()
 	self.side = "ENEMY"
 	#set_opacity(0)
-
+	
+	
+func initialize(unit_name, hover_description, movement_value, max_hp, modifiers):
+	self.unit_name = unit_name
+	self.hover_description = hover_description
+	self.movement_value = movement_value
+	self.default_movement_value = movement_value
+	initialize_hp(max_hp)
+	if modifiers != null:
+		initialize_modifiers(modifiers)
 
 func input_event(event):
 	if event.is_action("select"):
@@ -211,20 +220,34 @@ func animate_hide_stunned():
 	get_node("Physicals/EnemyEffects/StunSpiral").hide()
 	
 
+
+func update_description(flag, name):
+	if flag:
+		self.modifier_descriptions[name] = get_node("Physicals/EnemyEffects").descriptions[name]
+	elif self.modifier_descriptions.has(name):
+		self.modifier_descriptions.erase(name)
+
 func set_cloaked(flag):
 	if self.cloaked != flag:
 		self.cloaked = flag
+		var name = get_node("/root/constants").enemy_modifiers["Cloaked"]
+		update_description(flag, name)
 		if flag:
-			get_node("Physicals/FogEffect/Particles2D").set_emitting(true)
-			get_node("SeenIcon").set_opacity(0)
-			get_node("Physicals/AnimatedSprite").hide()
-			get_node("Physicals/HealthDisplay").hide()
-			get_node("Physicals/EnemyEffects").hide()
-			get_node("Physicals/EnemyOverlays/Cloaked").show()
-			get_node("Physicals/FogEffect").show()
+			add_animation(self, "animate_cloaked_show", false)
 		else:
 			add_animation(self, "animate_cloaked_hide", false)
-		
+
+
+func animate_cloaked_show():
+	get_node("Physicals/FogEffect/Particles2D").set_emitting(true)
+	get_node("SeenIcon").set_opacity(0)
+	get_node("Physicals/AnimatedSprite").hide()
+	get_node("Physicals/HealthDisplay").hide()
+	get_node("Physicals/EnemyEffects").hide()
+	get_node("Physicals/EnemyOverlays/Cloaked").show()
+	get_node("Physicals/FogEffect").show()
+
+
 func animate_cloaked_hide():
 	get_node("SeenIcon").set_opacity(1)
 	check_global_seen()
@@ -254,32 +277,39 @@ func animate_cloaked_hide():
 	yield(tween, "tween_complete")
 	cloaked.hide()
 	fog.get_node("Particles2D").set_emitting(false)
-
+		
 
 func set_deadly(flag):
-	self.deadly = flag
-	var name = get_node("/root/constants").enemy_modifiers["Poisonous"]
-	if flag:
-		self.modifier_descriptions[name] = get_node("Physicals/EnemyEffects").descriptions[name]
-		get_node("Physicals/EnemyEffects/DeathTouch").show()
-	else:
-		if self.modifier_descriptions.has(name):
-			self.modifier_descriptions.erase(name)
-		add_animation(self, "animate_deadly_hide", false)
-		
+	if self.deadly != flag:
+		self.deadly = flag
+		var name = get_node("/root/constants").enemy_modifiers["Poisonous"]
+		update_description(flag, name)
+		if flag:
+			add_animation(self, "animate_deadly_show", false)
+		else:
+			add_animation(self, "animate_deadly_hide", false)
+
+func animate_deadly_show():
+	get_node("Physicals/EnemyEffects/DeathTouch/Particles2D").set_emitting(true)
+
 func animate_deadly_hide():
-	get_node("Physicals/EnemyEffects/DeathTouch").hide()
+	get_node("Physicals/EnemyEffects/DeathTouch/Particles2D").set_emitting(false)
+
 
 func set_shield(flag):
 	self.shielded = flag
 	var name = get_node("/root/constants").enemy_modifiers["Shield"]
+	update_description(flag, name)
 	if flag:
-		self.modifier_descriptions[name] = get_node("Physicals/EnemyEffects").descriptions[name]
-		get_node("Physicals/EnemyEffects/Bubble").show()
+		add_animation(self, "animate_bubble_show", false)
 	else:
-		if self.modifier_descriptions.has(name):
-			self.modifier_descriptions.erase(name)
 		add_animation(self, "animate_bubble_hide", false)
+		
+func animate_bubble_show():
+	get_node("Physicals/EnemyEffects/Bubble").show()
+
+func animate_bubble_hide():
+	get_node("Physicals/EnemyEffects/Bubble").hide()
 		
 func set_burning(flag):
 	self.burning = flag
@@ -309,8 +339,6 @@ func set_silenced(flag):
 func animate_burning_hide():
 	get_node("Physicals/EnemyEffects/BurningEffect").hide()
 
-func animate_bubble_hide():
-	get_node("Physicals/EnemyEffects/Bubble").hide()
 
 	
 func set_hp(hp):
@@ -321,6 +349,16 @@ func initialize_hp(hp):
 	self.hp = hp
 	self.temp_display_hp = self.hp
 	get_node("Physicals/HealthDisplay/Label").set_text(str(hp))
+	
+func initialize_modifiers(modifiers):
+	var enemy_modifiers = get_node("/root/constants").enemy_modifiers
+	for modifier in modifiers:
+		if modifier == enemy_modifiers["Poisonous"]:
+			self.set_deadly(true)
+		elif modifier == enemy_modifiers["Shield"]:
+			self.set_shield(true)
+		elif modifier == enemy_modifiers["Cloaked"]:
+			self.set_cloaked(true)
 
 
 func handle_pre_payload(payload):
@@ -524,3 +562,8 @@ func turn_update():
 	var adjacent_players_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
 	if adjacent_players_range != []:
 		set_cloaked(false)
+		
+func summon_buff(health, modifiers):
+	heal(health)
+	if modifiers != null:
+		initialize_modifiers(modifiers)

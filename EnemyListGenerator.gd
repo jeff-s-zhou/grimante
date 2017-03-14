@@ -42,7 +42,7 @@ func create_raw_wave(req_power_level, roster, modifier_roster):
 			power_level = get_power_level(unit_schematic)
 			
 			#if return_wave.size() == 4: #can only shove in one more unit
-			if return_wave.size() == 6: #can only shove in one more unit
+			if return_wave.size() == 14: #can only shove in one more unit
 				lower_bound = req_power_level - (total_power_level + EPSILON) #set minimum that the power level has to exceed
 
 			if iterations > 50:
@@ -51,7 +51,7 @@ func create_raw_wave(req_power_level, roster, modifier_roster):
 		
 		total_power_level += power_level
 		return_wave.append(unit_schematic)
-	if return_wave.size() > 6:
+	if return_wave.size() > 14:
 		print("have too many units!")
 	print("power level is " + str(total_power_level))
 	return return_wave
@@ -127,7 +127,6 @@ func get_value_from_prob_dist(prob_dist):
 
 	for upper_bound in sorted_weight_keys:
 		if random_value <= upper_bound:
-			print(weight_to_values_dict[upper_bound])
 			return weight_to_values_dict[upper_bound] #returns the health in that range
 	
 

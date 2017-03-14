@@ -6,12 +6,8 @@ extends "EnemyPiece.gd"
 
 var DESCRIPTION = "Causes all enemy pieces in the column in front of it (including itself) to move +1 tiles each turn."
 
-func initialize(max_hp):
-	initialize_hp(max_hp)
-	self.unit_name = "Shrieker"
-	self.hover_description = DESCRIPTION
-	self.movement_value = Vector2(0, 2)
-	self.default_movement_value = Vector2(0, 2)
+func initialize(max_hp, modifiers):
+	.initialize("Shrieker", DESCRIPTION, Vector2(0, 2), max_hp, modifiers)
 
 #okay, I think we need a system for temporary buffs?
 #every enemy turn, update all units in its column? after resetting all units? but then this update has to be called first...

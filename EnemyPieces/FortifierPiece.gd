@@ -6,14 +6,8 @@ extends "EnemyPiece.gd"
 
 var DESCRIPTION = "When this enemy dies, +2 hp to adjacent enemies."
 
-func initialize(max_hp):
-	initialize_hp(max_hp)
-	self.unit_name = "Seraph"
-	self.hover_description = DESCRIPTION
-	self.movement_value = Vector2(0, 1)
-	self.default_movement_value = Vector2(0, 1)
-	#self.set_shield(true)
-
+func initialize(max_hp, modifiers):
+	.initialize("Seraph", DESCRIPTION, Vector2(0, 1), max_hp, modifiers)
 
 func deathrattle():
 	if !self.silenced and self.hp == 0:

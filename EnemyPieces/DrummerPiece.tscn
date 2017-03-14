@@ -18,3 +18,5 @@ script/script = ExtResource( 2 )
 frames = SubResource( 1 )
 
 
+[editable path="Physicals/EnemyOverlays"]
+[editable path="Physicals/EnemyEffects"]

@@ -6,15 +6,10 @@ extends "EnemyPiece.gd"
 
 var DESCRIPTION = "This enemy gains +1 hp each turn."
 
-func initialize(max_hp):
-	initialize_hp(max_hp)
-	self.unit_name = "Absorber"
-	self.hover_description = DESCRIPTION
-	self.movement_value = Vector2(0, 1)
-	self.default_movement_value = Vector2(0, 1)
-	
+func initialize(max_hp, modifiers):
+	.initialize("Absorber", DESCRIPTION, Vector2(0, 1), max_hp, modifiers)
 #	
-#	
+
 func turn_update():
 	if !self.silenced:
 		heal(1)

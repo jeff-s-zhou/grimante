@@ -41,8 +41,6 @@ func get_new_action(coords_or_range, trigger_assassin_passive=true):
 
 func add_animation(node, func_ref, blocking, arguments=[]):
 	if self.current_animation_sequence != null:
-		if func_ref == "animate_set_hp":
-			print("adding animate_set_hp in add_animation")
 		self.current_animation_sequence.add(node, func_ref, blocking, arguments)
 	else:
 		get_node("/root/AnimationQueue").enqueue(node, func_ref, blocking, arguments)
@@ -254,9 +252,6 @@ func receive_shove(pusher, distance, animation_sequence):
 func push(distance, pusher=null):
 	if dies_to_collision(pusher): #check if they're going to die from collision
 		#print("deleting self")
-		print(self.unit_name + " is being pushed off by " + pusher.unit_name)
-		print(self.unit_name + " coords: " + str(self.coords))
-		print(pusher.unit_name + " coords: " + str(pusher.coords))
 		delete_self()
 		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
 	
@@ -286,10 +281,6 @@ func move_or_fall_off(distance, pusher):
 		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance, 300, false])
 		set_coords(self.coords + distance)
 	else:
-		if pusher != null:
-			print(self.unit_name + " is being pushed off by " + pusher.unit_name)
-			print(self.unit_name + " coords: " + str(self.coords))
-			print(pusher.unit_name + " coords: " + str(pusher.coords))
 		delete_self()
 		var distance_length = self.grid.hex_length(distance)
 		var direction = self.grid.get_direction_from_vector(distance)

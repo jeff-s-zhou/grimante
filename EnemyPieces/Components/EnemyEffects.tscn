@@ -34,7 +34,6 @@ texture = ExtResource( 2 )
 
 [node name="DeathTouch" parent="." instance=ExtResource( 3 )]
 
-visibility/visible = false
 z/z = 3
 
 [node name="StunSpiral" parent="." instance=ExtResource( 4 )]

@@ -61,6 +61,9 @@ class BaseLevelType:
 		
 	func reset():
 		self.enemies.reset()
+		
+		
+
 
 #infinite waves
 class RoomSeal extends BaseLevelType:
