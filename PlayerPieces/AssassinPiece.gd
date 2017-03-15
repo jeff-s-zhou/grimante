@@ -69,7 +69,7 @@ func get_attack_range():
 	return attack_range
 	
 func get_passive_range():
-	return get_parent().get_radial_range(self.coords, [1, 2], "ENEMY")
+	return get_parent().get_radial_range(self.coords, [1, 1], "ENEMY")
 
 
 func animate_backstab(attack_coords):

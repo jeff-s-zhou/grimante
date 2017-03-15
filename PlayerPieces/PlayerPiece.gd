@@ -122,9 +122,31 @@ func is_placed():
 	return self.state == States.PLACED
 
 func delete_self():
-	print("deleting_self in " + str(self.unit_name) + ":" + str(self.coords))
+	get_parent().locations[self.coords].add_corpse(self)
 	get_parent().remove_piece(self.coords)
 	remove_from_group("player_pieces")
+
+
+func animate_delete_self(blocking=true):
+	get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	if blocking:
+		emit_signal("animation_done")
+
+func resurrect():
+	add_to_group("player_pieces")
+	get_parent().add_piece(self.coords, self)
+	add_animation(self, "animate_summon", false)
+	
+func animate_resurrect(blocking=true):
+	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	if blocking:
+		emit_signal("animation_done")
+
+
 	
 
 func initialize(cursor_area):
@@ -149,6 +171,11 @@ func set_coords(new_coords):
 	for coords in seen_range:
 		if get_parent().pieces[coords].cloaked:
 			get_parent().pieces[coords].set_cloaked(false)
+			
+	var res_range = get_parent().get_location_range(self.coords)
+	for coords in res_range:
+		if get_parent().locations[coords].corpse != null:
+			get_parent().locations[coords].resurrect()
 	
 
 #ANIMATION FUNCTIONS

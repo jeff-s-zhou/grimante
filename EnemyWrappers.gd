@@ -74,25 +74,67 @@ class ProcGenPhase:
 	var wave_power_level
 	var reinforcement_power_level
 	var turn_count = 0
+	var max_turn_count = 0
 	
-	func _init(wave_power_level, reinforcement_power_level, piece_roster=constants.FULL_UNIT_ROSTER, modifier_roster=constants.FULL_MODIFIER_ROSTER):
+	func _init(wave_power_level, reinforcement_power_level, 
+	piece_roster=constants.FULL_UNIT_ROSTER, modifier_roster=constants.FULL_MODIFIER_ROSTER, max_turn_count=4):
 		self.piece_roster = piece_roster
 		self.modifier_roster = modifier_roster
 		self.wave_power_level = wave_power_level
 		self.reinforcement_power_level = reinforcement_power_level
+		self.max_turn_count = max_turn_count
 		
 	func get_next_wave():
-		print("turn count in ProcGenPhase is " + str(turn_count))
 		self.turn_count += 1
 		if turn_count == 1: #start of phase, generate a big wave
 			return enemy_wave_generator.generate_wave(self.wave_power_level, self.piece_roster, self.modifier_roster)
-		elif turn_count == 4:
+		elif turn_count == self.max_turn_count:
 			return null
 		else:
-			return enemy_wave_generator.generate_wave(self.reinforcement_power_level, self.piece_roster, self.modifier_roster)
+			return enemy_wave_generator.generate_reinforcements(self.reinforcement_power_level, self.piece_roster, self.modifier_roster)
 
-	func reset():
-		turn_count = 0
+
+class FinalProcGenPhase extends ProcGenPhase:
+	var escalation_amount = 0
+	
+	func _init(wave_power_level, reinforcement_power_level, 
+	piece_roster=constants.FULL_UNIT_ROSTER, 
+	modifier_roster=constants.FULL_MODIFIER_ROSTER,
+	escalation_amount=150).(wave_power_level, reinforcement_power_level, piece_roster, modifier_roster):
+		self.escalation_amount = escalation_amount
+
+	func get_next_wave():
+		self.turn_count += 1
+		if turn_count == 1: #start of phase, generate a big wave
+			return enemy_wave_generator.generate_wave(self.wave_power_level, self.piece_roster, self.modifier_roster)
+		else:
+			return enemy_wave_generator.generate_reinforcements(self.reinforcement_power_level, self.piece_roster, self.modifier_roster)
+			self.reinforcement_power_level += self.escalation_amount
+		
+class CuratedPhase:
+	var enemies = []
+	var turn_count = 0
+	var max_turn_count = 0
+	
+	func _init(max_turn_count=4, enemies=[]):
+		self.max_turn_count = max_turn_count
+		self.enemies = enemies
+		
+	func add_wave(wave):
+		self.enemies.append({"type":"wave", "enemies":wave})
+		
+	func add_reinforcements(reinforcements):
+		self.enemies.append({"type":"reinforcements", "enemies":reinforcements})
+		
+	func get_next_wave():
+		self.turn_count += 1
+		if turn_count == self.max_turn_count:
+			return null
+		elif turn_count <= self.enemies.size():
+			return self.enemies[turn_count-1]
+		else:
+			return null
+		
 
 
 class InfinitePhasedWrapper:
@@ -118,10 +160,31 @@ class InfinitePhasedWrapper:
 	
 	func get_remaining_waves_count():
 		return 999
-		
-	func reset():
-		pass
 
+
+class FinitePhasedWrapper:
+	var phases = []
+	var current_phase = null
+	
+	func _init(phases):
+		self.current_phase = phases[0]
+		phases.pop_front()
+		self.phases = phases
+
+	func get_next_wave():
+		var wave = current_phase.get_next_wave()
+		if wave == null: #that means this phase is done
+			if self.phases != []:
+				self.current_phase = self.phases[0]
+				self.phases.pop_front()
+			else:
+				return null
+		else:
+			return wave
+	
+	#TODO fix this
+	func get_remaining_waves_count():
+		return 3
 
 #class InfiniteGeneratedWrapper:
 #	var enemy_wave_generator = load("res://EnemyListGenerator.gd").new()

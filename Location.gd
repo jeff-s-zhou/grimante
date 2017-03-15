@@ -13,6 +13,8 @@ var deployable = false
 
 var shadow_wall = false
 
+var corpse = null
+
 signal animation_done
 
 signal is_targeted(location)
@@ -30,6 +32,22 @@ func debug():
 	
 func set_coords(coords):
 	self.coords = coords
+	
+func add_corpse(player_piece):
+	self.corpse = player_piece
+	get_node("/root/AnimationQueue").enqueue(self, "animate_add_corpse", false)
+
+func resurrect():
+	if !get_parent().pieces.has(coords):
+		self.corpse.resurrect()
+		self.corpse = null
+		get_node("/root/AnimationQueue").enqueue(self, "animate_hide_corpse", false)
+	
+func animate_add_corpse():
+	get_node("CorpseIndicator").show()
+	
+func animate_hide_corpse():
+	get_node("CorpseIndicator").hide()
 	
 func set_reinforcement_indicator(flag):
 	if flag:

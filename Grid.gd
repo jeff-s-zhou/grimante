@@ -35,6 +35,8 @@ const _LOCATION_Y_OFFSETS = [0, 1, 1, 2, 2, 3, 3]
 
 var selected = null
 
+var furthest_back_coords = Vector2(0, 0) #initialized to this because it's at the top of the map
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
@@ -90,6 +92,24 @@ func initialize_shadow_wall_tiles(shadow_wall_tile_range):
 func debug():
 	for key in self.locations.keys():
 		self.locations[key].debug()
+
+
+func is_offsides(coords):
+	var furthest_back_player_piece_pos = self.locations[self.furthest_back_coords].get_pos()
+	var summoned_pos = self.locations[coords].get_pos()
+	print("in is_offsides")
+	print(summoned_pos.y)
+	print(furthest_back_player_piece_pos.y)
+	print(summoned_pos.y > furthest_back_player_piece_pos.y)
+	return summoned_pos.y > furthest_back_player_piece_pos.y
+
+func update_furthest_back_coords():
+	self.furthest_back_coords = Vector2(0, 0) #reset to furthest up
+	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
+		var new_pos = self.locations[player_piece.coords].get_pos()
+		var old_pos = self.locations[self.furthest_back_coords].get_pos()
+		if new_pos.y > old_pos.y:
+			self.furthest_back_coords = player_piece.coords
 
 
 #so we know what target

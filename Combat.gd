@@ -69,6 +69,8 @@ func _ready():
 			if flag == "ultimates_enabled_flag":
 				get_node("/root/global").ultimates_enabled_flag = true
 	
+	get_node("Grid").update_furthest_back_coords()
+	
 	for i in range(0, self.level.initial_deploy_count):
 		if i != 0:
 			var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
@@ -171,7 +173,7 @@ func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon):
 			occupant.block_summon()
 		elif occupant.side == "ENEMY":
 			occupant.summon_buff(health, modifiers)
-	else:
+	elif !get_node("Grid").is_offsides(position):
 		var enemy_piece = prototype.instance()
 		get_node("Grid").add_piece(position, enemy_piece)
 		enemy_piece.initialize(health, modifiers)
@@ -368,6 +370,7 @@ func enemy_phase(enemy_pieces):
 	for enemy_piece in enemy_pieces:
 		enemy_piece.turn_update()
 	
+	get_node("Grid").update_furthest_back_coords()
 	
 	#if there are enemy pieces, wait for them to finish
 	if(get_tree().get_nodes_in_group("enemy_pieces").size() > 0):
@@ -376,6 +379,7 @@ func enemy_phase(enemy_pieces):
 		deploy_wave()
 		yield(self, "wave_deployed")
 	
+	
 	get_node("Timer2").set_wait_time(0.8)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
@@ -383,12 +387,10 @@ func enemy_phase(enemy_pieces):
 	if self.level.check_enemy_win(player_pieces): #logic would change based on game type
 		enemy_win()
 	
-	if self.level.king != null:
-		self.state = STATES.king_turn
-	else:
-		get_node("PhaseShifter").player_phase_animation()
-		yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
-		start_player_phase()
+	
+	get_node("PhaseShifter").player_phase_animation()
+	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
+	start_player_phase()
 
 
 func king_phase():
@@ -492,8 +494,10 @@ func deploy_wave(mass_summon=false):
 		self.next_wave = self.enemy_waves.get_next_wave()
 		
 	if wave != null:
-		for key in wave.keys():
-			var prototype_parts = wave[key]
+		var enemies = wave["enemies"]
+		var type = wave["type"]
+		for key in enemies.keys():
+			var prototype_parts = enemies[key]
 			var prototype = prototype_parts["prototype"]
 			var health = prototype_parts["health"]
 			var modifiers = prototype_parts["modifiers"]
@@ -506,7 +510,8 @@ func deploy_wave(mass_summon=false):
 func display_wave_preview(wave):
 	get_node("Grid").reset_reinforcement_indicators()
 	if wave != null:
-		for key in wave.keys():
+		var enemies = wave["enemies"]
+		for key in enemies.keys():
 			var position = null
 			if typeof(key) == TYPE_INT:
 				position = get_node("Grid").get_top_of_column(key)
