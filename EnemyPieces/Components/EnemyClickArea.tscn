@@ -2,7 +2,6 @@
 
 [ext_resource path="res://EnemyPieces/Components/EnemyClickArea.gd" type="Script" id=1]
 
-
 [sub_resource type="ConvexPolygonShape2D" id=1]
 
 custom_solver_bias = 0.0
@@ -10,6 +9,7 @@ points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
 
 [node name="ClickArea" type="Area2D"]
 
+transform/pos = Vector2( 0, -6 )
 transform/scale = Vector2( 1.0659, 1.0659 )
 input/pickable = true
 shapes/0/shape = SubResource( 1 )

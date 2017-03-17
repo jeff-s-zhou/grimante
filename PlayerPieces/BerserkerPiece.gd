@@ -75,16 +75,17 @@ func jump_to(new_coords, speed=4):
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
 	print(distance)
-	var speed = 300.0
+	var speed = 300
 	var one_tile_travelled = 115
 	var time = 100 * (distance/one_tile_travelled)/speed
-	print(time)
+	time = max(0.45, time)
 #	time = (distance) / (speed) 
 #	print(time)
 
 	var old_height = Vector2(0, 0)
 	#var new_height = Vector2(0, (-3 * distance/4))
-	var new_height = Vector2(0, (-3.0 * distance/4))
+	var vertical = min(-3.0 * distance/4, -100)
+	var new_height = Vector2(0, vertical)
 	get_node("Tween2").interpolate_property(get_node("Physicals"), "transform/pos", \
 		get_node("Physicals").get_pos(), new_height, time/2.0, Tween.TRANS_CUBIC, Tween.EASE_OUT)
 	get_node("Tween2").start()
@@ -125,14 +126,14 @@ func jump_back(new_coords):
 
 func act(new_coords):
 	if _is_within_attack_range(new_coords):
-		set_invulnerable()
+		handle_pre_assisted()
 		#get_node("/root/Combat").display_overlay(self.unit_name)
 		smash_attack(new_coords)
 	elif _is_within_movement_range(new_coords):
-		set_invulnerable()
+		handle_pre_assisted()
 		smash_move(new_coords)
 	elif _is_within_ally_shove_range(new_coords):
-		set_invulnerable()
+		handle_pre_assisted()
 		initiate_friendly_shove(new_coords)
 	else:
 		invalid_move()

@@ -37,17 +37,14 @@ func _ready():
 	get_node("Timer").set_active(false)
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Grid").set_pos(Vector2(300, 250))
+	get_node("Grid").set_pos(Vector2(300, 230))
 	#get_node("Grid").set_pos(Vector2(400, 250))
-	debug_mode()
+	#debug_mode()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("Button").connect("pressed", self, "end_turn")
 	
 	get_node("Button").set_disabled(true)
-	
-	get_node("ComboSystem/ComboPointsLabel").set_opacity(0)
-	get_node("WavesDisplay/WavesLabel").set_opacity(0)
 
 	self.level_func = get_node("/root/global").get_param("level")
 	self.level = self.level_func.call_func()
@@ -87,10 +84,7 @@ func _ready():
 	if level.shadow_wall_tiles.size() > 0:
 		get_node("Grid").initialize_shadow_wall_tiles(level.shadow_wall_tiles)
 			
-	get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.get_remaining_waves_count()))
-	get_node("WavesDisplay/WavesLabel").set_opacity(1)
-	get_node("ComboSystem/ComboPointsLabel").set_opacity(1)
-	
+
 	if self.level.free_deploy:
 		start_deploy_phase()
 		yield(get_node("StartLevelButton"), "pressed")
@@ -503,7 +497,6 @@ func deploy_wave(mass_summon=false):
 			var modifiers = prototype_parts["modifiers"]
 			initialize_enemy_piece(key, prototype, health, modifiers, mass_summon)
 			
-		get_node("WavesDisplay/WavesLabel").set_text(str(self.enemy_waves.get_remaining_waves_count()))
 		display_wave_preview(self.next_wave)
 
 

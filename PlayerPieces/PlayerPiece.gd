@@ -62,6 +62,11 @@ func _ready():
 	
 func get_assist_bonus_attack():
 	return self.AssistSystem.get_bonus_attack()
+
+#call this function right before being assisted
+func handle_pre_assisted():
+	self.AssistSystem.assist(self)
+	set_invulnerable()
 	
 func set_invulnerable():
 	self.invulnerable_flag =  self.AssistSystem.get_bonus_invulnerable()
@@ -73,9 +78,27 @@ func set_assist_flag(flag):
 func handle_assist():
 	if self.assist_flag:
 		self.assist_flag = false
-		self.AssistSystem.activate_assist(self.assist_type)
+		self.AssistSystem.activate_assist(self.assist_type, self)
+		add_animation(self, "animate_activate_assist", false)
 	else:
 		self.AssistSystem.clear_assist()
+
+#start emitting the particles
+func animate_activate_assist():
+	get_node("Physicals/ComboSparkleManager").animate_activate_assist(self.assist_type)
+	
+func assist(piece):
+	add_animation(self, "animate_assist", true, [piece])
+
+
+#direct the particles to a certain coords
+func animate_assist(piece):
+	print("reached this call")
+	var pos_difference = piece.get_pos() - get_pos()
+	get_node("Physicals/ComboSparkleManager").animate_assist(self.assist_type, pos_difference)
+	yield(get_node("Physicals/ComboSparkleManager"), "animation_done")
+	emit_signal("animation_done")
+
 
 func get_movement_value():
 	return self.AssistSystem.get_bonus_movement() + movement_value
@@ -370,13 +393,19 @@ func animate_placed():
 		get_node("Cooldown").show()
 		get_node("Cooldown/Label").set_text(str(self.cooldown))
 	get_node("Physicals/AnimatedSprite").play("cooldown")
+	
+func player_attacked(enemy, animation_sequence=null):
+	if dies_to_collision(enemy):
+		delete_self()
+		if animation_sequence != null: #if it's part of another unit's animation sequence
+			animation_sequence.add(self, "animate_delete_self", true)
+		else:
+			add_animation(self, "animate_delete_self", true)
+		
 
 func dies_to_collision(pusher):
 	if pusher != null and pusher.side != self.side:  #if there's a pusher and not on the same side
-		if pusher.side == "KING":
-			return true
-		else:
-			return pusher.deadly or pusher.hp >= self.armor #if the enemy has same or more hp than the pusher's armor, or the pusher enemy is deadly
+		return pusher.deadly or pusher.hp >= self.armor #if the enemy has same or more hp than the pusher's armor, or the pusher enemy is deadly
 		
 
 #shove is different than push

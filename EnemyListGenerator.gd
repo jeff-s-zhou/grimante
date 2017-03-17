@@ -8,6 +8,8 @@ const Grunt = preload("res://EnemyPieces/GruntPiece.tscn")
 const Fortifier = preload("res://EnemyPieces/FortifierPiece.tscn")
 const Grower = preload("res://EnemyPieces/GrowerPiece.tscn")
 const Drummer = preload("res://EnemyPieces/DrummerPiece.tscn")
+const Melee = preload("res://EnemyPieces/MeleePiece.tscn")
+const Ranged = preload("res://EnemyPieces/RangedPiece.tscn")
 
 var constants = load("res://constants.gd").new()
 
@@ -116,6 +118,10 @@ func get_unit_health(prototype):
 		prob_dist = constants.DRUMMER_HEALTH_PROB_DIST
 	elif prototype == Grower:
 		prob_dist = constants.GROWER_HEALTH_PROB_DIST
+	elif prototype == Melee:
+		prob_dist = constants.MELEE_HEALTH_PROB_DIST
+	elif prototype == Ranged:
+		prob_dist = constants.RANGED_HEALTH_PROB_DIST
 	return get_value_from_prob_dist(prob_dist)
 	
 	

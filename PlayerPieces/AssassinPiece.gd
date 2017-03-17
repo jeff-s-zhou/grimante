@@ -122,7 +122,7 @@ func _is_within_passive_range(new_coords):
 
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
-		set_invulnerable()
+		handle_pre_assisted()
 		var args = [self.coords, new_coords, self.pathed_range, 350]
 		get_node("/root/AnimationQueue").enqueue(self, "animate_stepped_move", true, args)
 		set_coords(new_coords)
@@ -131,11 +131,11 @@ func act(new_coords):
 		else:
 			placed()
 	elif _is_within_attack_range(new_coords):
-		set_invulnerable()
+		handle_pre_assisted()
 		#get_node("/root/Combat").display_overlay(self.unit_name)
 		backstab(new_coords)
 	elif _is_within_ally_shove_range(new_coords):
-		set_invulnerable()
+		handle_pre_assisted()
 		initiate_friendly_shove(new_coords)
 	else:
 		invalid_move()

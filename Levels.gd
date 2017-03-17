@@ -7,6 +7,8 @@ const Grunt = preload("res://EnemyPieces/GruntPiece.tscn")
 const Fortifier = preload("res://EnemyPieces/FortifierPiece.tscn")
 const Grower = preload("res://EnemyPieces/GrowerPiece.tscn")
 const Drummer = preload("res://EnemyPieces/DrummerPiece.tscn")
+const Melee = preload("res://EnemyPieces/MeleePiece.tscn")
+const Ranged = preload("res://EnemyPieces/RangedPiece.tscn")
 
 const King = preload("res://EnemyPieces/KingPiece.tscn")
 
@@ -60,13 +62,8 @@ func sandbox_phase3():
 	
 func curated_sandbox_phase1():
 	var phase = EnemyWrappers.CuratedPhase.new(3)
-	phase.add_wave({Vector2(3, 6): make(Grunt, 3)})
-	phase.add_reinforcements({Vector2(3, 4): make(Grunt, 3)})
-	phase.add_reinforcements({Vector2(3, 3): make(Grunt, 3)})
-	phase.add_reinforcements({Vector2(0, 0): make(Grunt, 3)})
-	phase.add_reinforcements({Vector2(0, 0): make(Grunt, 3)})
-	phase.add_reinforcements({Vector2(0, 0): make(Grunt, 3)})
-	phase.add_reinforcements({Vector2(0, 0): make(Grunt, 3)})
+	phase.add_wave({Vector2(3, 5): make(Ranged, 3), Vector2(0, 0): make(Grunt, 3)})
+	phase.add_reinforcements({Vector2(0, 0): make(Grunt, 3), Vector2(2, 3): make(Grunt, 3), Vector2(3, 3): make(Grunt, 3), Vector2(3, 5): make(Ranged, 3)})
 	phase.add_reinforcements({Vector2(0, 0): make(Grunt, 3)})
 	return phase
 
@@ -77,7 +74,7 @@ func sandbox_enemies2():
 	return EnemyWrappers.InfinitePhasedWrapper.new([curated_sandbox_phase1()])
 
 func sandbox_level():
-	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies2(), 1, null) #, sandbox_extras)
+	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies(), 1, null) #, sandbox_extras)
 
 var sandbox_level_ref = funcref(self, "sandbox_level")
 

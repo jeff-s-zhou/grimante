@@ -43,10 +43,12 @@ func _ready():
 func initialize(cursor_area):
 	.initialize(cursor_area)
 
+	
 func handle_assist():
 	if self.assist_flag:
 		self.assist_flag = false
-	self.AssistSystem.activate_assist(self.assist_type)
+	self.AssistSystem.activate_assist(self.assist_type, self)
+	add_animation(self, "animate_activate_assist", false)
 	
 
 func deploy():
@@ -99,12 +101,12 @@ func _is_within_swap_range(new_coords):
 func act(new_coords):
 	#returns whether the act was successfully committed
 	if _is_within_swap_range(new_coords):
-		set_invulnerable()
+		handle_pre_assisted()
 		tango(new_coords)
 		placed()
 		
 	elif _is_within_movement_range(new_coords):
-		set_invulnerable()
+		handle_pre_assisted()
 		shunpo(new_coords)
 		get_parent().locations[new_coords].set_rain(true)
 		self.rain_coords_dict[new_coords] = true

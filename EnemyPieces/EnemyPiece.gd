@@ -63,8 +63,8 @@ func _ready():
 	#self.check_global_seen()
 	self.side = "ENEMY"
 	#set_opacity(0)
-	
-	
+
+
 func initialize(unit_name, hover_description, movement_value, max_hp, modifiers):
 	self.unit_name = unit_name
 	self.hover_description = hover_description
@@ -290,10 +290,10 @@ func set_deadly(flag):
 			add_animation(self, "animate_deadly_hide", false)
 
 func animate_deadly_show():
-	get_node("Physicals/EnemyEffects/DeathTouch/Particles2D").set_emitting(true)
+	get_node("Physicals/EnemyEffects/DeathTouch").set_emitting(true)
 
 func animate_deadly_hide():
-	get_node("Physicals/EnemyEffects/DeathTouch/Particles2D").set_emitting(false)
+	get_node("Physicals/EnemyEffects/DeathTouch").set_emitting(false)
 
 
 func set_shield(flag):
@@ -510,13 +510,13 @@ func delete_self():
 
 #actually physically removes it from the board
 func animate_delete_self():
-	get_node("Sprinkles").update() #update particleattractor location after all have moved
+	#get_node("Sprinkles").update() #update particleattractor location after all have moved
 	remove_from_group("enemy_pieces")
 	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
-	get_node("Sprinkles").animate_sprinkles()
-	yield(get_node("Sprinkles"), "animation_done")
+	#get_node("Sprinkles").animate_sprinkles()
+	#yield(get_node("Sprinkles"), "animation_done")
 	get_node("/root/Combat/ComboSystem").increase_combo()
 	self.queue_free()
 
@@ -543,6 +543,11 @@ func reset_auras():
 
 #called at the start of enemy turn, after checking for aura effects
 func turn_update():
+	turn_update_helper()
+	enqueue_animation_sequence()
+
+#this is written so we can easily add more stuff to the end of the turn_update before executing the animation_sequence
+func turn_update_helper():
 	if self.burning:
 		var action = get_new_action(self.coords)
 		action.add_call("attacked", [1])
@@ -553,6 +558,7 @@ func turn_update():
 		set_stunned(false)
 	elif self.hp != 0:
 		self.move(movement_value)
+		
 	
 	if self.silenced:
 		set_silenced(false)
@@ -562,7 +568,8 @@ func turn_update():
 	var adjacent_players_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
 	if adjacent_players_range != []:
 		set_cloaked(false)
-		
+
+
 func summon_buff(health, modifiers):
 	heal(health)
 	if modifiers != null:

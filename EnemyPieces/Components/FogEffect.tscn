@@ -9,6 +9,8 @@ colors = ColorArray( 0.319748, 0.284668, 0.34375, 0, 0.348013, 0.320068, 0.35937
 
 [node name="FogEffect" type="Node2D"]
 
+transform/pos = Vector2( 0, 8 )
+
 [node name="Particles2D" type="Particles2D" parent="."]
 
 config/amount = 128

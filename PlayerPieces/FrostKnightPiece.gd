@@ -41,6 +41,14 @@ func get_movement_range():
 func get_attack_range():
 	return get_parent().get_range(self.coords, [1, self.movement_value + 1], "ENEMY")
 
+
+func handle_assist():
+	if self.assist_flag:
+		self.assist_flag = false
+	self.AssistSystem.activate_assist(self.assist_type, self)
+	add_animation(self, "animate_activate_assist", false)
+
+
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
 	var action_range = get_attack_range() + get_movement_range()
@@ -58,17 +66,17 @@ func _is_within_movement_range(new_coords):
 
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
-		set_invulnerable()
+		handle_pre_assisted()
 		get_node("/root/AnimationQueue").enqueue(self, "animate_move", true, [new_coords, 250, true])
 		frostbringer(new_coords)
 		set_coords(new_coords)
 		placed()
 	elif _is_within_attack_range(new_coords):
-		set_invulnerable()
+		handle_pre_assisted()
 		shield_bash(new_coords)
 		placed()
 	elif _is_within_ally_shove_range(new_coords):
-		set_invulnerable()
+		handle_pre_assisted()
 		initiate_friendly_shove(new_coords)
 	else:
 		invalid_move()

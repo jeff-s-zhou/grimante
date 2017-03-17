@@ -46,8 +46,9 @@ func add_animation(node, func_ref, blocking, arguments=[]):
 		get_node("/root/AnimationQueue").enqueue(node, func_ref, blocking, arguments)
 		
 func enqueue_animation_sequence():
-	get_node("/root/AnimationQueue").enqueue(self.current_animation_sequence, "execute", false)
-	self.current_animation_sequence = null
+	if self.current_animation_sequence != null:
+		get_node("/root/AnimationQueue").enqueue(self.current_animation_sequence, "execute", false)
+		self.current_animation_sequence = null
 
 
 func set_seen(flag):
@@ -149,18 +150,15 @@ func move(distance, passed_animation_sequence=null):
 		if self.coords != collide_coords - distance_increment: 
 			move_helper(collide_coords - distance_increment, animation_sequence, true)
 	else: #else just move forward all the way
-		move_helper(self.coords + distance, animation_sequence)
+		move_helper(self.coords + distance, animation_sequence, true)
 	
 	#if there was a collision
 	if collide_coords != null:
 		var distance_travelled  = self.coords - old_coords
 		var remaining_distance = distance - distance_travelled
 		self.shove(collide_coords, remaining_distance, animation_sequence)
-		
-	#we'd execute the whole animation sequence here
-	if passed_animation_sequence == null: #otherwise this was called recursively in shove
-		enqueue_animation_sequence()
-		
+	
+	#execute the whole sequence outside of the function
 
 
 #helper function to either move a piece, or have it fall off the map

@@ -3,9 +3,9 @@
 [ext_resource path="res://EnemyPieces/Components/Sprinkles.gd" type="Script" id=1]
 [ext_resource path="res://Assets/effects/sprinkles.png" type="Texture" id=2]
 
-
 [node name="Sprinkles" type="Node2D"]
 
+transform/pos = Vector2( 0, -6 )
 script/script = ExtResource( 1 )
 
 [node name="Particles2D" type="Particles2D" parent="."]

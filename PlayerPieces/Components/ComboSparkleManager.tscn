@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=1]
+
+[ext_resource path="res://PlayerPieces/Components/ComboSparkleManager.gd" type="Script" id=1]
+[ext_resource path="res://PlayerPieces/Components/ComboSparklesBlue.tscn" type="PackedScene" id=2]
+[ext_resource path="res://PlayerPieces/Components/ComboSparklesRed.tscn" type="PackedScene" id=3]
+[ext_resource path="res://PlayerPieces/Components/ComboSparklesYellow.tscn" type="PackedScene" id=4]
+
+[node name="ComboSparkleManager" type="Node2D"]
+
+script/script = ExtResource( 1 )
+
+[node name="ComboSparklesBlue" parent="." instance=ExtResource( 2 )]
+
+[node name="ComboSparklesRed" parent="." instance=ExtResource( 3 )]
+
+[node name="ComboSparklesYellow" parent="." instance=ExtResource( 4 )]
+
+[node name="Timer" type="Timer" parent="."]
+
+process_mode = 1
+wait_time = 1.0
+one_shot = false
+autostart = false
+
+

@@ -131,15 +131,15 @@ func act(new_coords):
 	#returns whether the act was successfully committed
 	
 	if _is_within_attack_range(new_coords):
-		set_invulnerable()
+		handle_pre_assisted()
 		#get_node("/root/Combat").display_overlay(self.unit_name)
 		charge_attack(new_coords)
 		
 	elif _is_within_movement_range(new_coords):
-		set_invulnerable()
+		handle_pre_assisted()
 		trample(new_coords)
 	elif _is_within_ally_shove_range(new_coords):
-		set_invulnerable()
+		handle_pre_assisted()
 		initiate_friendly_shove(new_coords)
 	else:
 		invalid_move()

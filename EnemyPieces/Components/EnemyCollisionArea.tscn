@@ -2,7 +2,6 @@
 
 [ext_resource path="res://EnemyPieces/Components/EnemyCollisionShape2D.tscn" type="PackedScene" id=1]
 
-
 [sub_resource type="ConvexPolygonShape2D" id=1]
 
 custom_solver_bias = 0.0
@@ -10,6 +9,7 @@ points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
 
 [node name="CollisionArea" type="Area2D"]
 
+transform/pos = Vector2( 0, -6 )
 input/pickable = false
 shapes/0/shape = SubResource( 1 )
 shapes/0/transform = Matrix32( 0.507232, 0, 0, 0.566107, 0, 0 )
