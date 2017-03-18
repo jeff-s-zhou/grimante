@@ -49,3 +49,15 @@ func animate_assist(assist_type, pos_difference):
 	yield(get_node("Timer"), "timeout")
 	sparkles.get_node("ParticleAttractor2D").set_enabled(false)
 	emit_signal("animation_done")
+	
+func animate_clear_assist(assist_type):
+	var sparkles = null
+	if assist_type == ASSIST_TYPES.attack:
+		sparkles = get_node("ComboSparklesRed")
+	elif assist_type == ASSIST_TYPES.movement:
+		sparkles = get_node("ComboSparklesYellow")
+	elif assist_type == ASSIST_TYPES.invulnerable:
+		sparkles = get_node("ComboSparklesBlue")
+	elif assist_type == ASSIST_TYPES.finisher:
+		sparkles = get_node("ComboSparklesBlue")
+	sparkles.set_emitting(false)

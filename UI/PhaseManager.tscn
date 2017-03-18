@@ -1,9 +1,9 @@
 [gd_scene load_steps=3 format=1]
 
-[ext_resource path="res://AssistSystem.gd" type="Script" id=1]
-[ext_resource path="res://Assets/processed_fonts/ui_large_text.fnt" type="BitmapFont" id=2]
+[ext_resource path="res://UI/PhaseManager.gd" type="Script" id=1]
+[ext_resource path="res://Assets/processed_fonts/ui_small_header.fnt" type="BitmapFont" id=2]
 
-[node name="AssistSystem" type="Node2D"]
+[node name="PhaseManager" type="Node2D"]
 
 script/script = ExtResource( 1 )
 
@@ -14,10 +14,11 @@ focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
 margin/left = -400.0
-margin/top = -75.0
+margin/top = -20.0
 margin/right = 400.0
-margin/bottom = 75.0
+margin/bottom = 20.0
 custom_fonts/font = ExtResource( 2 )
+text = "0"
 align = 1
 valign = 1
 percent_visible = 1.0

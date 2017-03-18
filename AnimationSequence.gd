@@ -52,5 +52,4 @@ func execute():
 		if blocking:
 			yield(node, "animation_done")
 
-	print("emitting signal animation done")
 	emit_signal("animation_done")

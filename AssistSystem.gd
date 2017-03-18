@@ -19,7 +19,9 @@ func _ready():
 	
 func reset_combo():
 	self.assist_type = null
-	self.assister = null
+	if self.assister != null:
+		self.assister.clear_assist()
+		self.assister = null
 	self.combo_chain = 0
 	get_node("/root/AnimationQueue").enqueue(self, "animate_activate_assist", false, [self.assist_type, self.combo_chain])
 	
@@ -39,16 +41,14 @@ func activate_assist(assist_type, assister):
 
 func animate_activate_assist(assist_type, combo_chain):
 	if assist_type == ASSIST_TYPES.attack:
-		get_node("Effect").set_text("Bonus: +1 Attack")
+		get_node("Label").set_text(str(combo_chain) + " Combo: +1 Attack")
 	elif assist_type == ASSIST_TYPES.movement:
-		get_node("Effect").set_text("Bonus: +1 Move")
+		get_node("Label").set_text(str(combo_chain) + " Combo: +1 Move")
 	elif assist_type == ASSIST_TYPES.invulnerable:
-		get_node("Effect").set_text("Bonus: Armor")
+		get_node("Label").set_text(str(combo_chain) + " Combo: Superarmor")
 	elif assist_type == null:
-		get_node("Effect").set_text("")
-	
-	get_node("Count").set_text("Combo: " +  str(combo_chain))
-
+		get_node("Label").set_text("")
+		
 
 func assist(piece):
 	if self.assister != null:
@@ -63,8 +63,7 @@ func clear_assist():
 
 
 func animate_clear_assist():
-	get_node("Effect").set_text("")
-	get_node("Count").set_text("Combo: 0")
+	get_node("Label").set_text("")
 	
 
 func get_bonus_attack():

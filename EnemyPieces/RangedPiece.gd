@@ -15,9 +15,10 @@ func initialize(max_hp, modifiers):
 
 func turn_update():
 	turn_update_helper()
-	var fireball_range = get_parent().get_range(self.coords, [1, 9], "PLAYER", false, [3, 4])
-	if fireball_range != []:
-		fireball(fireball_range[0])
+	if !self.stunned:
+		var fireball_range = get_parent().get_range(self.coords, [1, 9], "PLAYER", false, [3, 4])
+		if fireball_range != []:
+			fireball(fireball_range[0])
 	enqueue_animation_sequence()
 	
 func fireball(coords):

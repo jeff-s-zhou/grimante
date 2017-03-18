@@ -1,32 +1,26 @@
-[gd_scene load_steps=25 format=1]
+[gd_scene load_steps=19 format=1]
 
 [ext_resource path="res://Combat.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/textured_background.png" type="Texture" id=2]
 [ext_resource path="res://Grid.tscn" type="PackedScene" id=3]
 [ext_resource path="res://CursorArea.tscn" type="PackedScene" id=4]
-[ext_resource path="res://Assets/UI/turn_button.png" type="Texture" id=5]
-[ext_resource path="res://Assets/UI/turn_button_pressed.png" type="Texture" id=6]
-[ext_resource path="res://Assets/UI/turn_button_hovered.png" type="Texture" id=7]
-[ext_resource path="res://Assets/UI/turn_button_greyed.png" type="Texture" id=8]
-[ext_resource path="res://Assets/UI/start_level_button.png" type="Texture" id=9]
-[ext_resource path="res://Assets/UI/start_level_button_pressed.png" type="Texture" id=10]
-[ext_resource path="res://Assets/UI/start_level_button_hovered.png" type="Texture" id=11]
-[ext_resource path="res://UI/PhaseShifter.tscn" type="PackedScene" id=12]
-[ext_resource path="res://UI/ShakeCamera.tscn" type="PackedScene" id=13]
-[ext_resource path="res://UI/InvalidMoveIndicator.tscn" type="PackedScene" id=14]
-[ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=15]
-[ext_resource path="res://Assets/effects/darken_layer.png" type="Texture" id=16]
-[ext_resource path="res://UI/TutorialPopup.tscn" type="PackedScene" id=17]
-[ext_resource path="res://UI/TutorialTooltip.tscn" type="PackedScene" id=18]
-[ext_resource path="res://UI/Tooltip.tscn" type="PackedScene" id=19]
-[ext_resource path="res://UI/PlayerPieceInfo.tscn" type="PackedScene" id=20]
-[ext_resource path="res://OverlayDisplayer.tscn" type="PackedScene" id=21]
-[ext_resource path="res://AssistSystem.tscn" type="PackedScene" id=22]
-[ext_resource path="res://UI/ComboSystem.tscn" type="PackedScene" id=23]
+[ext_resource path="res://UI/PhaseShifter.tscn" type="PackedScene" id=5]
+[ext_resource path="res://UI/ShakeCamera.tscn" type="PackedScene" id=6]
+[ext_resource path="res://UI/InvalidMoveIndicator.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=8]
+[ext_resource path="res://Assets/effects/darken_layer.png" type="Texture" id=9]
+[ext_resource path="res://UI/TutorialPopup.tscn" type="PackedScene" id=10]
+[ext_resource path="res://UI/TutorialTooltip.tscn" type="PackedScene" id=11]
+[ext_resource path="res://UI/Tooltip.tscn" type="PackedScene" id=12]
+[ext_resource path="res://UI/PlayerPieceInfo.tscn" type="PackedScene" id=13]
+[ext_resource path="res://OverlayDisplayer.tscn" type="PackedScene" id=14]
+[ext_resource path="res://AssistSystem.tscn" type="PackedScene" id=15]
+[ext_resource path="res://UI/ComboSystem.tscn" type="PackedScene" id=16]
+[ext_resource path="res://UI/PhaseManager.tscn" type="PackedScene" id=17]
 
 [sub_resource type="SampleLibrary" id=1]
 
-samples/error = { "db":0.0, "pitch":1.0, "sample":ExtResource( 15 ) }
+samples/error = { "db":0.0, "pitch":1.0, "sample":ExtResource( 8 ) }
 
 [node name="Combat" type="Node2D"]
 
@@ -53,51 +47,14 @@ playback/active = false
 playback/repeat = false
 playback/speed = 1.0
 
-[node name="Button" type="TextureButton" parent="."]
+[node name="PhaseShifter" parent="." instance=ExtResource( 5 )]
 
-focus/ignore_mouse = false
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = 560.0
-margin/top = 13.0
-margin/right = 770.0
-margin/bottom = 113.0
-toggle_mode = false
-enabled_focus_mode = 2
-shortcut = null
-textures/normal = ExtResource( 5 )
-textures/pressed = ExtResource( 6 )
-textures/hover = ExtResource( 7 )
-textures/disabled = ExtResource( 8 )
-
-[node name="StartLevelButton" type="TextureButton" parent="."]
-
-visibility/visible = false
-focus/ignore_mouse = false
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = 558.0
-margin/top = 14.0
-margin/right = 768.0
-margin/bottom = 114.0
-toggle_mode = false
-enabled_focus_mode = 2
-shortcut = null
-textures/normal = ExtResource( 9 )
-textures/pressed = ExtResource( 10 )
-textures/hover = ExtResource( 11 )
-textures/disabled = ExtResource( 8 )
-
-[node name="PhaseShifter" parent="." instance=ExtResource( 12 )]
-
-[node name="ShakeCamera" parent="." instance=ExtResource( 13 )]
+[node name="ShakeCamera" parent="." instance=ExtResource( 6 )]
 
 transform/pos = Vector2( 599.829, 538 )
 current = true
 
-[node name="InvalidMoveIndicator" parent="." instance=ExtResource( 14 )]
+[node name="InvalidMoveIndicator" parent="." instance=ExtResource( 7 )]
 
 transform/pos = Vector2( 1270.14, 835.128 )
 
@@ -123,14 +80,14 @@ default/chorus_send = 0.0
 visibility/opacity = 0.0
 transform/pos = Vector2( 792.18, 555.558 )
 transform/scale = Vector2( 1.086, 1.07805 )
-texture = ExtResource( 16 )
+texture = ExtResource( 9 )
 
-[node name="TutorialPopup" parent="." instance=ExtResource( 17 )]
+[node name="TutorialPopup" parent="." instance=ExtResource( 10 )]
 
 visibility/opacity = 0.0
 transform/pos = Vector2( 585.636, 530.84 )
 
-[node name="TutorialTooltip" parent="." instance=ExtResource( 18 )]
+[node name="TutorialTooltip" parent="." instance=ExtResource( 11 )]
 
 visibility/visible = false
 
@@ -148,15 +105,15 @@ wait_time = 1.0
 one_shot = false
 autostart = false
 
-[node name="Tooltip" parent="." instance=ExtResource( 19 )]
+[node name="Tooltip" parent="." instance=ExtResource( 12 )]
 
 transform/pos = Vector2( -300, -300 )
 
-[node name="PlayerPieceInfo" parent="." instance=ExtResource( 20 )]
+[node name="PlayerPieceInfo" parent="." instance=ExtResource( 13 )]
 
 visibility/visible = false
 
-[node name="OverlayDisplayer" parent="." instance=ExtResource( 21 )]
+[node name="OverlayDisplayer" parent="." instance=ExtResource( 14 )]
 
 [node name="FpsLabel" type="Label" parent="."]
 
@@ -172,13 +129,17 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="AssistSystem" parent="." instance=ExtResource( 22 )]
+[node name="AssistSystem" parent="." instance=ExtResource( 15 )]
 
-transform/pos = Vector2( 751.57, 1005.02 )
+transform/pos = Vector2( 597.571, 981.02 )
 
-[node name="ComboSystem" parent="." instance=ExtResource( 23 )]
+[node name="ComboSystem" parent="." instance=ExtResource( 16 )]
 
 visibility/visible = false
 transform/pos = Vector2( 1195.11, 24.9927 )
+
+[node name="PhaseManager" parent="." instance=ExtResource( 17 )]
+
+transform/pos = Vector2( 598.149, 1047.89 )
 
 

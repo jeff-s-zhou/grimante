@@ -90,7 +90,6 @@ func animate_activate_assist():
 func assist(piece):
 	add_animation(self, "animate_assist", true, [piece])
 
-
 #direct the particles to a certain coords
 func animate_assist(piece):
 	print("reached this call")
@@ -98,6 +97,9 @@ func animate_assist(piece):
 	get_node("Physicals/ComboSparkleManager").animate_assist(self.assist_type, pos_difference)
 	yield(get_node("Physicals/ComboSparkleManager"), "animation_done")
 	emit_signal("animation_done")
+	
+func clear_assist():
+	add_animation(get_node("Physicals/ComboSparkleManager"), "animate_clear_assist", false, [self.assist_type])
 
 
 func get_movement_value():

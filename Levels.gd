@@ -74,7 +74,7 @@ func sandbox_enemies2():
 	return EnemyWrappers.InfinitePhasedWrapper.new([curated_sandbox_phase1()])
 
 func sandbox_level():
-	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies(), 1, null) #, sandbox_extras)
+	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies(), null) #, sandbox_extras)
 
 var sandbox_level_ref = funcref(self, "sandbox_level")
 

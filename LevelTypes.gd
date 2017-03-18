@@ -21,7 +21,6 @@ func _ready():
 class BaseLevelType:
 	var allies = null #maybe by default for the free deploy, it's your most recently used???
 	var enemies = null
-	var initial_deploy_count = null
 	var next_level = null
 	var instructions = []
 	var reinforcements = {}
@@ -31,10 +30,9 @@ class BaseLevelType:
 	var shadow_wall_tiles = []
 	var king = null
 	
-	func _init(allies, enemies, initial_deploy_count=1, next_level=null, extras={}):
+	func _init(allies, enemies, next_level=null, extras={}):
 		self.allies = allies
 		self.enemies = enemies
-		self.initial_deploy_count = initial_deploy_count
 		self.next_level = next_level
 		
 		if extras.has("free_deploy"):
@@ -67,8 +65,8 @@ class BaseLevelType:
 
 #infinite waves
 class RoomSeal extends BaseLevelType:
-	func _init(allies, enemies, initial_deploy_count=1, \
-	next_level=null, extras={}).(allies, enemies, initial_deploy_count, next_level, extras):
+	func _init(allies, enemies, \
+	next_level=null, extras={}).(allies, enemies, next_level, extras):
 		pass
 		
 	func check_player_win(enemy_pieces):
@@ -80,8 +78,8 @@ class RoomSeal extends BaseLevelType:
 
 
 class ClearWaves extends BaseLevelType:
-	func _init(allies, enemies, initial_deploy_count=1, \
-	next_level=null, extras={}).(allies, enemies, initial_deploy_count, next_level, extras):
+	func _init(allies, enemies, \
+	next_level=null, extras={}).(allies, enemies, next_level, extras):
 		pass
 	
 	func check_player_win(enemy_pieces):

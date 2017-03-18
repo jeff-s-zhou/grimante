@@ -37,14 +37,15 @@ func _ready():
 	get_node("Timer").set_active(false)
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Grid").set_pos(Vector2(300, 230))
+	get_node("Grid").set_pos(Vector2(300, 200))
 	#get_node("Grid").set_pos(Vector2(400, 250))
 	#debug_mode()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
-	get_node("Button").connect("pressed", self, "end_turn")
+	get_node("AssistSystem").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 130))
+	get_node("PhaseManager").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 50))
+	get_node("PhaseManager").connect("end_turn", self, "end_turn")
 	
-	get_node("Button").set_disabled(true)
 
 	self.level_func = get_node("/root/global").get_param("level")
 	self.level = self.level_func.call_func()
@@ -68,15 +69,8 @@ func _ready():
 	
 	get_node("Grid").update_furthest_back_coords()
 	
-	for i in range(0, self.level.initial_deploy_count):
-		if i != 0:
-			var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
-			enemy_pieces.sort_custom(self, "_sort_by_y_axis") #ensures the pieces in front move first
-			for enemy_piece in enemy_pieces:
-				enemy_piece.aura_update()
-			for enemy_piece in enemy_pieces:
-				enemy_piece.turn_update()
-		deploy_wave(true)
+	self.next_wave = self.enemy_waves.get_next_wave()
+	deploy_wave(true)
 		
 	if level.king != null:
 		initialize_king(level.king)
@@ -87,9 +81,7 @@ func _ready():
 
 	if self.level.free_deploy:
 		start_deploy_phase()
-		yield(get_node("StartLevelButton"), "pressed")
-		get_node("Button").show()
-		get_node("StartLevelButton").hide()
+		yield(get_node("PhaseManager"), "deployed")
 		get_node("Grid").reset_deployable_indicators()
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			player_piece.deploy()
@@ -105,8 +97,7 @@ func _ready():
 
 
 func start_deploy_phase():
-	get_node("Button").hide()
-	get_node("StartLevelButton").show()
+	get_node("PhaseManager").set_free_deploy()
 	for deploy_tile_coords in level.deploy_tiles:
 		get_node("Grid").locations[deploy_tile_coords].set_deployable_indicator(true)
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
@@ -174,11 +165,7 @@ func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon):
 		enemy_piece.connect("broke_defenses", self, "damage_defenses")
 		enemy_piece.get_node("Sprinkles").set_particle_endpoint(get_node("ComboSystem/ComboPointsLabel").get_global_pos())
 		enemy_piece.check_global_seen()
-		enemy_piece.animate_summon()
-		
-		if !mass_summon:
-			yield(enemy_piece.get_node("Tween"), "tween_complete" )
-			emit_signal("wave_deployed")
+		get_node("/root/AnimationQueue").enqueue(enemy_piece, "animate_summon", false)
 
 
 func initialize_king(king_schematic):
@@ -213,11 +200,12 @@ func end_turn():
 		get_node("Timer2").start()
 		yield(get_node("Timer2"), "timeout")
 	
-	get_node("Button").set_disabled(true)
+	get_node("PhaseManager").player_turn_end()
 	get_node("TutorialTooltip").reset()
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 		player_piece.finisher_flag = false
 		player_piece.placed()
+		player_piece.clear_assist()
 	get_node("PhaseShifter").enemy_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	get_node("ComboSystem").player_turn_ended()
@@ -369,14 +357,16 @@ func enemy_phase(enemy_pieces):
 	#if there are enemy pieces, wait for them to finish
 	if(get_tree().get_nodes_in_group("enemy_pieces").size() > 0):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	if self.level.should_deploy():
-		deploy_wave()
-		yield(self, "wave_deployed")
+		
+	deploy_wave()
+		
+	if(get_node("/root/AnimationQueue").is_busy()):
+		yield(get_node("/root/AnimationQueue"), "animations_finished")
 	
 	
-	get_node("Timer2").set_wait_time(0.8)
-	get_node("Timer2").start()
-	yield(get_node("Timer2"), "timeout")
+#	get_node("Timer2").set_wait_time(0.8)
+#	get_node("Timer2").start()
+#	yield(get_node("Timer2"), "timeout")
 	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
 	if self.level.check_enemy_win(player_pieces): #logic would change based on game type
 		enemy_win()
@@ -397,6 +387,7 @@ func king_phase():
 
 
 func start_player_phase():
+	get_node("PhaseManager").player_turn_start()
 	get_node("AssistSystem").reset_combo()
 	self.turn_count += 1
 	if self.reinforcements.has(self.turn_count):
@@ -410,7 +401,6 @@ func start_player_phase():
 		player_piece.turn_update()
 
 	self.state = STATES.player_turn
-	get_node("Button").set_disabled(false)
 
 
 func reinforce():
@@ -478,15 +468,10 @@ func _sort_by_y_axis(enemy_piece1, enemy_piece2):
 
 
 func deploy_wave(mass_summon=false):
+
+	var wave = self.next_wave
+	self.next_wave = self.enemy_waves.get_next_wave()
 	
-	var wave = null
-	if self.next_wave != null:
-		wave = self.next_wave
-		self.next_wave = self.enemy_waves.get_next_wave()
-	else:
-		wave = self.enemy_waves.get_next_wave()
-		self.next_wave = self.enemy_waves.get_next_wave()
-		
 	if wave != null:
 		var enemies = wave["enemies"]
 		var type = wave["type"]
