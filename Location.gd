@@ -16,6 +16,7 @@ var shadow_wall = false
 var corpse = null
 
 signal animation_done
+signal count_animation_done
 
 signal is_targeted(location)
 

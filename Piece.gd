@@ -10,6 +10,7 @@ const Action = preload("res://Action.gd")
 const AnimationSequence = preload("res://AnimationSequence.gd")
 
 signal animation_done
+signal count_animation_done
 
 var current_animation_sequence = null
 
@@ -31,6 +32,14 @@ func get_unit_name():
 func _ready():
 	get_node("CollisionArea").connect("area_enter", self, "collide")
 	get_node("CollisionArea").connect("area_exit", self, "uncollide")
+	
+func add_anim_count():
+	get_node("/root/AnimationQueue").update_animation_count(1)
+	self.mid_animation = true
+	
+func subtract_anim_count():
+	get_node("/root/AnimationQueue").update_animation_count(-1)
+	self.mid_animation = false
 
 
 func get_new_action(coords_or_range, trigger_assassin_passive=true):
@@ -44,7 +53,13 @@ func add_animation(node, func_ref, blocking, arguments=[]):
 		self.current_animation_sequence.add(node, func_ref, blocking, arguments)
 	else:
 		get_node("/root/AnimationQueue").enqueue(node, func_ref, blocking, arguments)
-		
+
+func update_animation_count(amount):
+	if self.current_animation_sequence != null:
+		self.current_animation_sequence.update_animation_count(amount)
+	else:
+		get_node("/root/AnimationQueue").update_animation_count(amount)
+
 func enqueue_animation_sequence():
 	if self.current_animation_sequence != null:
 		get_node("/root/AnimationQueue").enqueue(self.current_animation_sequence, "execute", false)
@@ -96,34 +111,48 @@ func set_mid_animation(flag):
 	self.mid_animation = flag
 
 func animate_summon():
+	add_anim_count()
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	subtract_anim_count()
+
 
 #this doesn't actually block properly if you intend to have it block
 func animate_delete_self(blocking=true):
+	add_anim_count()
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	if blocking:
 		emit_signal("animation_done")
+	subtract_anim_count()
 	self.queue_free()
 	
+
+	
 func animate_move_to_pos(position, speed, blocking=false, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
+	add_anim_count()
 	var distance = get_pos().distance_to(position)
 	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
 	get_node("Tween").start()
 	if blocking:
 		yield(get_node("Tween"), "tween_complete")
 		emit_signal("animation_done")
+	subtract_anim_count()
+
 	
 
 func animate_move(new_coords, speed=250, blocking=true, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
+	add_anim_count()
 	var location = self.grid.locations[new_coords]
 	var new_position = location.get_pos()
 	animate_move_to_pos(new_position, speed, false, trans_type, ease_type)
 	if(blocking):
 		yield(get_node("Tween"), "tween_complete")
 		emit_signal("animation_done")
+	subtract_anim_count()
+
 
 
 func move(distance, passed_animation_sequence=null):

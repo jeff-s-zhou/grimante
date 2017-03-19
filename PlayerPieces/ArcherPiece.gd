@@ -170,7 +170,7 @@ func silver_arrow(new_coords):
 	placed()
 
 func animate_ranged_attack(new_coords):
-	print("animating ranged attack")
+	add_anim_count()
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var angle = get_pos().angle_to_point(new_position)
@@ -204,6 +204,7 @@ func animate_ranged_attack(new_coords):
 	arrow.set_pos(offset)
 	
 	emit_signal("animation_done")
+	subtract_anim_count()
 
 func play_bow_hit():
 	get_node("SamplePlayer").play("bow_hit")

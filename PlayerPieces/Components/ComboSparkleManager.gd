@@ -5,6 +5,7 @@ extends Node2D
 # var b = "textvar"
 
 signal animation_done
+signal count_animation_done
 
 const ASSIST_TYPES = {"attack":1, "movement":2, "invulnerable":3, "finisher":4}
 
@@ -24,6 +25,7 @@ func animate_activate_assist(assist_type):
 		get_node("comboSparklesBlue").set_emitting(true)
 	elif assist_type == ASSIST_TYPES.finisher:
 		pass
+	emit_signal("count_animation_done")
 	
 	
 func animate_assist(assist_type, pos_difference):
@@ -49,6 +51,7 @@ func animate_assist(assist_type, pos_difference):
 	yield(get_node("Timer"), "timeout")
 	sparkles.get_node("ParticleAttractor2D").set_enabled(false)
 	emit_signal("animation_done")
+	emit_signal("count_animation_done")
 	
 func animate_clear_assist(assist_type):
 	var sparkles = null
@@ -61,3 +64,4 @@ func animate_clear_assist(assist_type):
 	elif assist_type == ASSIST_TYPES.finisher:
 		sparkles = get_node("ComboSparklesBlue")
 	sparkles.set_emitting(false)
+	emit_signal("count_animation_done")

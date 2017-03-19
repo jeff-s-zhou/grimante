@@ -137,6 +137,7 @@ func tango(new_coords):
 	swap_partner.set_coords(old_coords)
 	
 func animate_shunpo(new_coords):
+	add_anim_count()
 	get_node("AnimationPlayer").play("ShunpoOut")
 	yield(get_node("AnimationPlayer"), "finished")
 	var location = get_parent().locations[new_coords]
@@ -145,6 +146,7 @@ func animate_shunpo(new_coords):
 	get_node("AnimationPlayer").play("ShunpoIn")
 	yield(get_node("AnimationPlayer"), "finished")
 	emit_signal("animation_done")
+	subtract_anim_count()
 
 
 func predict(new_coords):

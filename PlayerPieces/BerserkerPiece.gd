@@ -69,6 +69,7 @@ func play_smash_sound():
 	get_node("SamplePlayer").play("explode3")
 
 func jump_to(new_coords, speed=4):
+	add_anim_count()
 	self.mid_leaping_animation = true
 	set_z(3)
 	var location = get_parent().locations[new_coords]
@@ -99,9 +100,11 @@ func jump_to(new_coords, speed=4):
 	set_z(0)
 	emit_signal("shake")
 	emit_signal("animation_done")
+	subtract_anim_count()
 
 	
 func jump_back(new_coords):
+	add_anim_count()
 	self.mid_leaping_animation = true
 	set_z(3)
 	var location = get_parent().locations[new_coords]
@@ -123,6 +126,7 @@ func jump_back(new_coords):
 	self.mid_leaping_animation = false
 	set_z(0)
 	emit_signal("animation_done")
+	subtract_anim_count()
 
 func act(new_coords):
 	if _is_within_attack_range(new_coords):

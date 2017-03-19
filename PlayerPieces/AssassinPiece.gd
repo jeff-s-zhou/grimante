@@ -71,8 +71,10 @@ func get_attack_range():
 func get_passive_range():
 	return get_parent().get_radial_range(self.coords, [1, 1], "ENEMY")
 
-
+#calls animate_move_to_pos as the last part of sequence
+#animate_move_to_pos is what emits the required signals
 func animate_backstab(attack_coords):
+	add_anim_count()
 	var position_coords = attack_coords + BEHIND
 
 	get_node("Tween 2").interpolate_property(self, "visibility/opacity", 1, 0, 0.7, Tween.TRANS_LINEAR, Tween.EASE_IN)
@@ -92,13 +94,15 @@ func animate_backstab(attack_coords):
 	get_node("Tween 2").interpolate_property(get_node("AssassinFade"), "visibility/opacity", 1, 0, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween 2").start()
 	animate_move_to_pos(attack_position, 200, true, Tween.TRANS_SINE, Tween.EASE_IN)
+	subtract_anim_count()
 	
 func animate_directly_below_backstab(attack_coords):
+	add_anim_count()
 	var attack_location = get_parent().locations[attack_coords]
 	var difference = 2 * (attack_location.get_pos() - get_pos())/3
 	var attack_position = attack_location.get_pos() - difference
 	animate_move_to_pos(attack_position, 200, true, Tween.TRANS_SINE, Tween.EASE_IN)
-
+	subtract_anim_count()
 
 
 #parameters to use for get_node("get_parent()").get_neighbors

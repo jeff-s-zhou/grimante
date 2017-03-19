@@ -71,6 +71,7 @@ func animate_jump(old_coords, new_coords):
 	set_z(0)
 	#self.mid_leaping_animation = false
 	emit_signal("animation_done")
+	emit_signal("count_animation_done")
 
 
 func input_event(event):

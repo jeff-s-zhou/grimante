@@ -18,10 +18,6 @@ func add(node, func_ref, blocking, args=[]):
 	var func_call = {"node":node, "func_ref":func_ref, "blocking":blocking, "args":args}
 	func_calls.append(func_call)
 
-func set_mid_animation(flag):
-	for func_call in self.func_calls:
-		if func_call.node.has_method("set_mid_animation"):
-			func_call.node.set_mid_animation(flag)
 
 func execute():
 	for func_call in func_calls:
@@ -29,7 +25,7 @@ func execute():
 		var func_ref = func_call.func_ref
 		var blocking = func_call.blocking
 		var args = func_call.args
-		#print("in animation_sequence executing: " + func_ref + "/ blocking : " + str(blocking))
+
 		if args == []:
 			node.call(func_ref)
 			#GIVE ME FUCKING SPREAD SYNTAX AAAAAAAAAGGGGGGGGHHHHHHHH

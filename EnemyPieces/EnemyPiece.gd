@@ -145,6 +145,7 @@ func reset_prediction_flyover():
 
 
 func animate_predict_hp(hp, value, color):
+	add_anim_count()
 	self.predicting_hp = true
 	self.temp_display_hp = self.hp
 	get_node("Physicals/HealthDisplay/AnimationPlayer").play("HealthFlicker")
@@ -187,6 +188,8 @@ func animate_predict_hp(hp, value, color):
 		tween.start()
 		yield(tween, "tween_complete") #this is the problem line...fuuuuck
 		tween.queue_free()
+	subtract_anim_count()
+
 
 
 func predict(damage, is_passive_damage=false):
@@ -205,6 +208,7 @@ func predict(damage, is_passive_damage=false):
 func animate_smash_killed():
 	get_node("Physicals").hide()
 
+
 	
 func set_stunned(flag):
 	self.stunned = flag
@@ -216,8 +220,10 @@ func set_stunned(flag):
 func animate_set_stunned():
 	get_node("Physicals/EnemyEffects/StunSpiral").show()
 
+
 func animate_hide_stunned():
 	get_node("Physicals/EnemyEffects/StunSpiral").hide()
+
 	
 
 
@@ -239,6 +245,7 @@ func set_cloaked(flag):
 
 
 func animate_cloaked_show():
+	add_anim_count()
 	get_node("Physicals/FogEffect/Particles2D").set_emitting(true)
 	get_node("SeenIcon").set_opacity(0)
 	get_node("Physicals/AnimatedSprite").hide()
@@ -246,9 +253,12 @@ func animate_cloaked_show():
 	get_node("Physicals/EnemyEffects").hide()
 	get_node("Physicals/EnemyOverlays/Cloaked").show()
 	get_node("Physicals/FogEffect").show()
+	subtract_anim_count()
+
 
 
 func animate_cloaked_hide():
+	add_anim_count()
 	get_node("SeenIcon").set_opacity(1)
 	check_global_seen()
 	
@@ -277,6 +287,8 @@ func animate_cloaked_hide():
 	yield(tween, "tween_complete")
 	cloaked.hide()
 	fog.get_node("Particles2D").set_emitting(false)
+	subtract_anim_count()
+
 		
 
 func set_deadly(flag):
@@ -292,8 +304,10 @@ func set_deadly(flag):
 func animate_deadly_show():
 	get_node("Physicals/EnemyEffects/DeathTouch").set_emitting(true)
 
+
 func animate_deadly_hide():
 	get_node("Physicals/EnemyEffects/DeathTouch").set_emitting(false)
+
 
 
 func set_shield(flag):
@@ -308,9 +322,11 @@ func set_shield(flag):
 func animate_bubble_show():
 	get_node("Physicals/EnemyEffects/Bubble").show()
 
+
 func animate_bubble_hide():
 	get_node("Physicals/EnemyEffects/Bubble").hide()
-		
+
+	
 func set_burning(flag):
 	self.burning = flag
 	if flag:
@@ -319,6 +335,7 @@ func set_burning(flag):
 		add_animation(self,"animate_burning_hide", false)
 		
 func animate_fire():
+	add_anim_count()
 	get_node("Physicals/EnemyEffects/FireEffect").set_emitting(true)
 	get_node("Timer").set_wait_time(0.3)
 	get_node("Timer").start()
@@ -326,6 +343,8 @@ func animate_fire():
 	get_node("Physicals/EnemyEffects/FireEffect").set_emitting(false)
 	get_node("Physicals/EnemyEffects/BurningEffect").show()
 	emit_signal("animation_done")
+	subtract_anim_count()
+	
 		
 func set_frozen(flag):
 	self.frozen = flag
@@ -460,13 +479,19 @@ func modify_hp(amount, delay=0):
 	if self.hp != 0: #in the case that someone tries to modify hp after the unit is already in the process of dying
 		self.hp = min((max(0, self.hp + amount)), 9) #has to be between 0 and 9
 		self.temp_display_hp = self.hp
+		
+		#create a new animation_sequence here
+		
 		add_animation(self, "animate_set_hp", false, [self.hp, amount, delay])
 		if self.hp == 0: #if aoe, then we manually do the delete self check afterwards
-			delete_self()
+			delete_self() #delete self would add to the animation_sequence
+			
+		#execute it
 			
 
 
 func animate_set_hp(hp, value, delay=0):
+	add_anim_count()
 	reset_prediction_flyover()
 	self.mid_trailing_animation = true
 	if delay > 0:
@@ -501,15 +526,17 @@ func animate_set_hp(hp, value, delay=0):
 	self.mid_trailing_animation = false
 	if hp == 0:
 		animate_delete_self()
+	subtract_anim_count()
 
 
 #removes it from the self.grid, which prevents any interaction with other pieces
 func delete_self():
 	self.grid.remove_piece(self.coords)
-
+	
 
 #actually physically removes it from the board
 func animate_delete_self():
+	add_anim_count()
 	#get_node("Sprinkles").update() #update particleattractor location after all have moved
 	remove_from_group("enemy_pieces")
 	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
@@ -519,6 +546,9 @@ func animate_delete_self():
 	#yield(get_node("Sprinkles"), "animation_done")
 	get_node("/root/Combat/ComboSystem").increase_combo()
 	self.queue_free()
+	subtract_anim_count()
+
+	#emit_signal("animation_done")
 
 func set_coords(new_coords, sequence=null):
 	self.grid.move_piece(self.coords, new_coords)

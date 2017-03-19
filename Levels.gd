@@ -39,7 +39,7 @@ func make_complex_tip(tip_text, objective_text, tooltips):
 	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
 	
 func sandbox_allies():
-	return {1: Cavalier, 2: Berserker, 3: Archer, 4: Assassin, 5: Stormdancer}
+	return {3: Cavalier}#, 2: Berserker, 3: Archer, 4: Assassin}
 #
 #class SandboxPowerGenerator:
 #	var power_level = 200
@@ -62,8 +62,8 @@ func sandbox_phase3():
 	
 func curated_sandbox_phase1():
 	var phase = EnemyWrappers.CuratedPhase.new(3)
-	phase.add_wave({Vector2(3, 5): make(Ranged, 3), Vector2(0, 0): make(Grunt, 3)})
-	phase.add_reinforcements({Vector2(0, 0): make(Grunt, 3), Vector2(2, 3): make(Grunt, 3), Vector2(3, 3): make(Grunt, 3), Vector2(3, 5): make(Ranged, 3)})
+	phase.add_wave({Vector2(3, 5): make(Grunt, 3)})
+	phase.add_reinforcements({Vector2(0, 0): make(Grunt, 3)})
 	phase.add_reinforcements({Vector2(0, 0): make(Grunt, 3)})
 	return phase
 
@@ -74,7 +74,7 @@ func sandbox_enemies2():
 	return EnemyWrappers.InfinitePhasedWrapper.new([curated_sandbox_phase1()])
 
 func sandbox_level():
-	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies(), null) #, sandbox_extras)
+	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies2(), null) #, sandbox_extras)
 
 var sandbox_level_ref = funcref(self, "sandbox_level")
 

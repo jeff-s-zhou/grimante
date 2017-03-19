@@ -77,6 +77,7 @@ func act(new_coords):
 		invalid_move()
 		
 func animate_bomb(coords):
+	add_anim_count()
 	var flask = flask_prototype.instance()
 	add_child(flask)
 	var flask_components = flask.get_node("Components")
@@ -87,7 +88,7 @@ func animate_bomb(coords):
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	
-	animate_toss(flask)
+	sub_animate_toss(flask)
 	
 	var target_pos = (get_parent().locations[coords].get_pos() - get_pos())
 	var final_rotd = flask_components.get_rotd() - 45
@@ -109,9 +110,10 @@ func animate_bomb(coords):
 	remove_child(flask)
 	
 	emit_signal("animation_done")
+	subtract_anim_count()
 
 
-func animate_toss(flask):
+func sub_animate_toss(flask):
 	var final_height = flask.get_pos() + Vector2(0, -300)
 	get_node("Tween 2").interpolate_property(flask, "transform/pos", Vector2(0, 0), final_height, 0.4, Tween.TRANS_QUAD, Tween.EASE_OUT)
 	get_node("Tween 2").start()

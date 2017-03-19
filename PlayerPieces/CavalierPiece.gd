@@ -43,19 +43,25 @@ func get_trample_damage():
 func get_charge_damage(distance_travelled):
 	return get_assist_bonus_attack() + self.attack_bonus + distance_travelled
 
-func animate_attack(attack_coords):
-	print("animating attack")
+func start_attack(attack_coords):
 	var location = get_parent().locations[attack_coords]
 	var decremented_coords = decrement_one(attack_coords)
 	
 	var difference = 2 * (location.get_pos() - get_parent().locations[decremented_coords].get_pos())/3
 	var new_position = location.get_pos() - difference
-	animate_move_to_pos(new_position, 500, true, Tween.TRANS_SINE, Tween.EASE_IN)
+	add_animation(self, "animation_move_to_pos", true, [new_position, 500, true, Tween.TRANS_SINE, Tween.EASE_IN])
 	yield(get_node("Tween"), "tween_complete")
 	emit_signal("shake")
 	
 
+func end_attack(original_coords):
+	var location = get_parent().locations[original_coords]
+	var new_position = location.get_pos()
+	add_animation(self, "animation_move_to_pos", true, [new_position, 300, true, Tween.TRANS_SINE, Tween.EASE_IN])
+	
+
 func animate_hop(old_coords, new_coords, down=false):
+	add_anim_count()
 	self.mid_leaping_animation = true
 	set_z(3)
 	var old_location = get_parent().locations[old_coords]
@@ -82,16 +88,11 @@ func animate_hop(old_coords, new_coords, down=false):
 		set_z(0)
 	self.mid_leaping_animation = false
 	emit_signal("animation_done")
+	subtract_anim_count()
 
 	
 func play_hit_sound():
 	get_node("SamplePlayer2D").play("hit")
-
-
-func animate_attack_end(original_coords):
-	var location = get_parent().locations[original_coords]
-	var new_position = location.get_pos()
-	animate_move_to_pos(new_position, 300, true)
 
 
 func get_movement_range():
@@ -183,7 +184,7 @@ func decrement_one(new_coords):
 func charge_attack(new_coords, attack=false):
 	var difference = new_coords - self.coords
 	var tiles_travelled = get_parent().hex_length(difference) - 1
-	get_node("/root/AnimationQueue").enqueue(self, "animate_attack", true, [new_coords])
+	start_attack()
 	var increment = get_parent().hex_normalize(difference)
 	
 	var attack_range = [new_coords]
@@ -194,7 +195,7 @@ func charge_attack(new_coords, attack=false):
 	action.add_call("attacked", [get_charge_damage(tiles_travelled)])
 	action.execute()
 	var position_coords = decrement_one(new_coords)
-	get_node("/root/AnimationQueue").enqueue(self, "animate_attack_end", true, [position_coords])
+	end_attack()
 	set_coords(position_coords)
 	placed()
 	

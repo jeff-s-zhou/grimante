@@ -7,6 +7,10 @@ var processing_queue = []
 
 var lock = Mutex.new()
 
+var count_lock = Mutex.new()
+
+var animation_count = 0
+
 signal animations_finished
 
 func _ready():
@@ -20,6 +24,22 @@ func enqueue(node, func_ref, blocking, args=[]):
 	
 func is_busy():
 	return self.queue != [] or self.mid_processing
+
+func is_animating():
+	return self.queue != [] or self.mid_processing or get_animation_count() > 0
+	
+func get_animation_count():
+	self.count_lock.lock()
+	var count = self.animation_count
+	self.count_lock.unlock()
+	return count
+	
+func update_animation_count(amount):
+	self.count_lock.lock()
+	self.animation_count += amount
+	if self.animation_count == 0:
+		emit_signal("animations_finished")
+	self.count_lock.unlock()
 
 
 func _process(delta):
@@ -40,8 +60,6 @@ func process_animations():
 		var blocking = animation_action["blocking"]
 		var func_ref = animation_action["func_ref"]
 		var args = animation_action["args"]
-		if node.has_method("set_mid_animation"):
-			node.set_mid_animation(true)
 		if args == []:
 			node.call(func_ref)
 			#GIVE ME FUCKING SPREAD SYNTAX AAAAAAAAAGGGGGGGGHHHHHHHH
@@ -64,12 +82,10 @@ func process_animations():
 
 		if blocking:
 			yield(node, "animation_done")
-		if node.has_method("set_mid_animation"):
-			node.set_mid_animation(false)
 	self.mid_processing = false
 	
-	if self.queue == [] and self.processing_queue == []:
-		emit_signal("animations_finished")
+#	if self.queue == [] and self.processing_queue == []:
+#		emit_signal("animations_finished")
 
 	
 #	if self.queue == [] and self.processing_queue == []:

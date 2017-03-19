@@ -79,24 +79,28 @@ func handle_assist():
 	if self.assist_flag:
 		self.assist_flag = false
 		self.AssistSystem.activate_assist(self.assist_type, self)
-		add_animation(self, "animate_activate_assist", false)
+		activate_assist()
 	else:
 		self.AssistSystem.clear_assist()
 
 #start emitting the particles
-func animate_activate_assist():
-	get_node("Physicals/ComboSparkleManager").animate_activate_assist(self.assist_type)
+func activate_assist():
+	add_animation(get_node("Physicals/ComboSparkleManager"), "animate_activate_assist", false, [self.assist_type])
+
 	
 func assist(piece):
 	add_animation(self, "animate_assist", true, [piece])
 
 #direct the particles to a certain coords
 func animate_assist(piece):
+	add_anim_count()
 	print("reached this call")
 	var pos_difference = piece.get_pos() - get_pos()
 	get_node("Physicals/ComboSparkleManager").animate_assist(self.assist_type, pos_difference)
 	yield(get_node("Physicals/ComboSparkleManager"), "animation_done")
 	emit_signal("animation_done")
+	subtract_anim_count()
+
 	
 func clear_assist():
 	add_animation(get_node("Physicals/ComboSparkleManager"), "animate_clear_assist", false, [self.assist_type])
@@ -153,25 +157,29 @@ func delete_self():
 
 
 func animate_delete_self(blocking=true):
+	add_anim_count()
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	if blocking:
 		emit_signal("animation_done")
+	subtract_anim_count()
+
 
 func resurrect():
 	add_to_group("player_pieces")
 	get_parent().add_piece(self.coords, self)
 	add_animation(self, "animate_summon", false)
-	
+
+
 func animate_resurrect(blocking=true):
+	add_anim_count()
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	if blocking:
 		emit_signal("animation_done")
-
-
+	subtract_anim_count()
 	
 
 func initialize(cursor_area):
@@ -208,6 +216,7 @@ func set_coords(new_coords):
 
 #move from tile to tile
 func animate_stepped_move(old_coords, new_coords, pathed_range, speed=250, blocking=true, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
+	add_anim_count()
 	var path = []
 	var current_pathed_coords = pathed_range[new_coords]
 	while(current_pathed_coords.coords != old_coords):
@@ -221,6 +230,8 @@ func animate_stepped_move(old_coords, new_coords, pathed_range, speed=250, block
 
 	if blocking:
 		emit_signal("animation_done")
+	subtract_anim_count()
+
 
 	
 func attack_highlight():
@@ -380,7 +391,7 @@ func invalid_move():
 
 func placed():
 	self.handle_assist()
-	get_node("/root/AnimationQueue").enqueue(self, "animate_placed", false)
+	add_animation(self, "animate_placed", false)
 	get_node("BlueGlow").hide()
 	self.state = States.PLACED
 	self.attack_bonus = 0
@@ -395,6 +406,7 @@ func animate_placed():
 		get_node("Cooldown").show()
 		get_node("Cooldown/Label").set_text(str(self.cooldown))
 	get_node("Physicals/AnimatedSprite").play("cooldown")
+	
 	
 func player_attacked(enemy, animation_sequence=null):
 	if dies_to_collision(enemy):

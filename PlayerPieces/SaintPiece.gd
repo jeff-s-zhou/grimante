@@ -62,7 +62,10 @@ func _is_within_attack_range(new_coords):
 func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
 
+#calls animate_move_to_pos as the last part of sequence
+#animate_move_to_pos is what emits the required signals
 func animate_purify(attack_coords):
+	add_anim_count()
 	var position_coords = attack_coords + Vector2(0, 1)
 
 	get_node("Tween 2").interpolate_property(self, "visibility/opacity", 1, 0, 0.7, Tween.TRANS_LINEAR, Tween.EASE_IN)
@@ -82,12 +85,15 @@ func animate_purify(attack_coords):
 	get_node("Tween 2").interpolate_property(get_node("SaintFlash"), "visibility/opacity", 1, 0, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween 2").start()
 	animate_move_to_pos(attack_position, 200, true, Tween.TRANS_SINE, Tween.EASE_IN)
+	subtract_anim_count()
 	
 func animate_directly_above_purify(attack_coords):
+	add_anim_count()
 	var attack_location = get_parent().locations[attack_coords]
 	var difference = 2 * (attack_location.get_pos() - get_pos())/3
 	var attack_position = attack_location.get_pos() - difference
 	animate_move_to_pos(attack_position, 200, true, Tween.TRANS_SINE, Tween.EASE_IN)
+	subtract_anim_count()
 
 func act(new_coords):
 	if _is_within_movement_range(new_coords):

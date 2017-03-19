@@ -29,6 +29,7 @@ func fireball(coords):
 		get_parent().pieces[coords].player_attacked(self)
 
 func animate_fireball(coords):
+	add_anim_count()
 	var fireball = fireball_prototype.instance()
 	add_child(fireball)
 	
@@ -44,3 +45,4 @@ func animate_fireball(coords):
 	
 	remove_child(fireball)
 	emit_signal("animation_done")
+	subtract_anim_count()

@@ -355,18 +355,19 @@ func enemy_phase(enemy_pieces):
 	get_node("Grid").update_furthest_back_coords()
 	
 	#if there are enemy pieces, wait for them to finish
-	if(get_tree().get_nodes_in_group("enemy_pieces").size() > 0):
+	if(get_node("/root/AnimationQueue").is_animating()):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 		
 	deploy_wave()
 		
-	if(get_node("/root/AnimationQueue").is_busy()):
+	if(get_node("/root/AnimationQueue").is_animating()):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 	
 	
-#	get_node("Timer2").set_wait_time(0.8)
-#	get_node("Timer2").start()
-#	yield(get_node("Timer2"), "timeout")
+	get_node("Timer2").set_wait_time(0.3)
+	get_node("Timer2").start()
+	yield(get_node("Timer2"), "timeout")
+	
 	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
 	if self.level.check_enemy_win(player_pieces): #logic would change based on game type
 		enemy_win()

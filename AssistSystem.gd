@@ -12,6 +12,8 @@ var assister = null
 
 var combo_chain = 0
 
+signal count_animation_done
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here

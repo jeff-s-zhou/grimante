@@ -22,21 +22,21 @@ func turn_update():
 
 		
 func swipe(coords):
-	add_animation(self, "animate_swipe", true, [coords])
+	start_swipe(coords)
 	if self.current_animation_sequence != null:
 		print("current_animation_sequence not equal to null")
 		get_parent().pieces[coords].player_attacked(self, self.current_animation_sequence)
 	else:
 		get_parent().pieces[coords].player_attacked(self)
-	add_animation(self, "animate_swipe_end", true, [self.coords])
+	end_swipe()
 
-func animate_swipe(attack_coords):
+func start_swipe(attack_coords):
 	var location = get_parent().locations[attack_coords]
 	var difference = 2 * (location.get_pos() - get_pos())/3
 	var new_position = location.get_pos() - difference
-	animate_move_to_pos(new_position, 450, true, Tween.TRANS_SINE, Tween.EASE_IN)
+	add_animation(self, "animate_move_to_pos", true, [new_position, 450, true])
 
-func animate_swipe_end(original_coords):
-	var location = get_parent().locations[original_coords]
+func end_swipe():
+	var location = get_parent().locations[self.coords]
 	var new_position = location.get_pos()
-	animate_move_to_pos(new_position, 300, true)
+	add_animation(self, "animate_move_to_pos", true, [new_position, 300, true])
