@@ -30,14 +30,14 @@ func _ready():
 func handle_assist():
 	if self.assist_flag:
 		self.assist_flag = false
-	self.AssistSystem.activate_assist(self.assist_type)
+	self.AssistSystem.activate_assist(self.assist_type, self)
 
 func get_movement_range():
 	self.pathed_range = get_parent().get_pathed_range(self.coords, self.movement_value)
 	return self.pathed_range.keys()
 	
 func get_attack_range():
-	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, self.movement_value + 1], "ENEMY")
+	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, self.movement_value], "ENEMY")
 	var attack_range = []
 	var directly_above_coords = self.coords + Vector2(0, -1)
 	if (directly_above_coords in unfiltered_range): #catch the piece immediately above the saint
@@ -126,6 +126,9 @@ func purify(new_coords):
 	get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [return_position, 200, true])
 	set_coords(new_coords + Vector2(0, 1))
 	imbue(return_position)
+	
+func armored_cross(new_coords):
+	pass
 
 	
 func imbue(new_coords):

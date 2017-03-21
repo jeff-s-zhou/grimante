@@ -145,7 +145,6 @@ func reset_prediction_flyover():
 
 
 func animate_predict_hp(hp, value, color):
-	add_anim_count()
 	self.predicting_hp = true
 	self.temp_display_hp = self.hp
 	get_node("Physicals/HealthDisplay/AnimationPlayer").play("HealthFlicker")
@@ -188,7 +187,6 @@ func animate_predict_hp(hp, value, color):
 		tween.start()
 		yield(tween, "tween_complete") #this is the problem line...fuuuuck
 		tween.queue_free()
-	subtract_anim_count()
 
 
 
@@ -433,14 +431,38 @@ func smash_killed(damage):
 	add_animation(self, "animate_smash_killed", false)
 	attacked(damage)
 	
-	
+func move_helper(coords, animation_sequence=null, blocking=false):
+	var distance = coords - self.coords 
+	var distance_length = self.grid.hex_length(distance)
+	var distance_increment = self.grid.hex_normalize(distance)
+	var furthest_distance = Vector2(0, 0)
+	var walked_off = false
+	for i in range(0, distance_length):
+		if !get_parent().locations.has(self.coords + (i + 1) * distance_increment):
+			walked_off = true
+			break
+		else:
+			furthest_distance = (i + 1) * distance_increment
+
+	if furthest_distance != Vector2(0, 0):
+		animation_sequence.add(self, "animate_move", blocking, [self.coords + furthest_distance, 300, blocking])
+		set_coords(self.coords + furthest_distance)
+
+	if walked_off:
+		print("deleting self after walking off")
+		delete_self()
+		animation_sequence.add(self, "animate_delete_self", true)
+		if distance_increment == Vector2(0, 1):
+			emit_signal("broke_defenses")
+
+
 func receive_shield_bash(destination_coords):
 	#if it falls off the edge of map
 	if !self.grid.locations.has(destination_coords):
 		delete_self()
 		#var fall_off_distance = 30 * (fall_off_pos - get_pos()).normalized()
 		if self.grid.hex_normalize(destination_coords - self.coords) == Vector2(0, 1):
-				emit_signal("broke_defenses")
+			emit_signal("broke_defenses")
 		add_animation(self, "animate_delete_self", false)
 		
 	#if there's a piece in the destination coords
@@ -524,9 +546,9 @@ func animate_set_hp(hp, value, delay=0):
 	flyover.queue_free()
 	tween.queue_free()
 	self.mid_trailing_animation = false
+	subtract_anim_count()
 	if hp == 0:
 		animate_delete_self()
-	subtract_anim_count()
 
 
 #removes it from the self.grid, which prevents any interaction with other pieces

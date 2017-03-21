@@ -22,46 +22,41 @@ func animate_activate_assist(assist_type):
 	elif assist_type == ASSIST_TYPES.movement:
 		get_node("ComboSparklesYellow").set_emitting(true)
 	elif assist_type == ASSIST_TYPES.invulnerable:
-		get_node("comboSparklesBlue").set_emitting(true)
+		get_node("ComboSparklesBlue").set_emitting(true)
 	elif assist_type == ASSIST_TYPES.finisher:
-		pass
+		get_node("ComboSparklesRed").set_emitting(true)
+		get_node("ComboSparklesYellow").set_emitting(true)
+		get_node("ComboSparklesBlue").set_emitting(true)
 	emit_signal("count_animation_done")
 	
 	
 func animate_assist(assist_type, pos_difference):
 	
-	var sparkles = null
+	var sparkles_list = null
 	if assist_type == ASSIST_TYPES.attack:
-		sparkles = get_node("ComboSparklesRed")
+		sparkles_list = [get_node("ComboSparklesRed")]
 	elif assist_type == ASSIST_TYPES.movement:
-		sparkles = get_node("ComboSparklesYellow")
+		sparkles_list = [get_node("ComboSparklesYellow")]
 	elif assist_type == ASSIST_TYPES.invulnerable:
-		sparkles = get_node("ComboSparklesBlue")
+		sparkles_list = [get_node("ComboSparklesBlue")]
 	elif assist_type == ASSIST_TYPES.finisher:
-		sparkles = get_node("ComboSparklesBlue")
-
-	sparkles.get_node("ParticleAttractor2D").set_pos(pos_difference)
-	sparkles.get_node("ParticleAttractor2D").set_enabled(true)
-#	get_node("Timer").set_wait_time(0.1)
-#	get_node("Timer").start()
-#	yield(get_node("Timer"), "timeout")
-	sparkles.set_emitting(false)
+		sparkles_list = [get_node("ComboSparklesRed"), get_node("ComboSparklesYellow"), get_node("ComboSparklesBlue")]
+	for sparkles in sparkles_list:
+		sparkles.get_node("ParticleAttractor2D").set_pos(pos_difference)
+		sparkles.get_node("ParticleAttractor2D").set_enabled(true)
+	#	get_node("Timer").set_wait_time(0.1)
+	#	get_node("Timer").start()
+	#	yield(get_node("Timer"), "timeout")
+		sparkles.set_emitting(false)
 	get_node("Timer").set_wait_time(0.4)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
-	sparkles.get_node("ParticleAttractor2D").set_enabled(false)
+	
+	for sparkles in sparkles_list:
+		sparkles.get_node("ParticleAttractor2D").set_enabled(false)
 	emit_signal("animation_done")
-	emit_signal("count_animation_done")
 	
 func animate_clear_assist(assist_type):
-	var sparkles = null
-	if assist_type == ASSIST_TYPES.attack:
-		sparkles = get_node("ComboSparklesRed")
-	elif assist_type == ASSIST_TYPES.movement:
-		sparkles = get_node("ComboSparklesYellow")
-	elif assist_type == ASSIST_TYPES.invulnerable:
-		sparkles = get_node("ComboSparklesBlue")
-	elif assist_type == ASSIST_TYPES.finisher:
-		sparkles = get_node("ComboSparklesBlue")
-	sparkles.set_emitting(false)
-	emit_signal("count_animation_done")
+	get_node("ComboSparklesRed").set_emitting(false)
+	get_node("ComboSparklesYellow").set_emitting(false)
+	get_node("ComboSparklesBlue").set_emitting(false)

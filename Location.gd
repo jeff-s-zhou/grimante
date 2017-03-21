@@ -36,15 +36,15 @@ func set_coords(coords):
 	
 func add_corpse(player_piece):
 	self.corpse = player_piece
-	get_node("/root/AnimationQueue").enqueue(self, "animate_add_corpse", false)
 
 func resurrect():
 	if !get_parent().pieces.has(coords):
 		self.corpse.resurrect()
 		self.corpse = null
-		get_node("/root/AnimationQueue").enqueue(self, "animate_hide_corpse", false)
+		
 	
 func animate_add_corpse():
+	get_node("CorpseIndicator").set_animation(self.corpse.unit_name.to_lower())
 	get_node("CorpseIndicator").show()
 	
 func animate_hide_corpse():

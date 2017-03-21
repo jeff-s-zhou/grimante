@@ -11,6 +11,10 @@ const Drummer = preload("res://EnemyPieces/DrummerPiece.tscn")
 const Melee = preload("res://EnemyPieces/MeleePiece.tscn")
 const Ranged = preload("res://EnemyPieces/RangedPiece.tscn")
 
+
+var end_conditions = {"Defend":0, "Escort":1, "Timed":2}
+
+
 var enemy_modifiers = {"Poisonous":"Poisonous", "Shield":"Shield", "Cloaked":"Cloaked"}
 
 const y_coords_offsets = [0, 1, 1, 2, 2, 3, 3]

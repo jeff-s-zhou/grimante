@@ -49,7 +49,7 @@ func start_attack(attack_coords):
 	
 	var difference = 2 * (location.get_pos() - get_parent().locations[decremented_coords].get_pos())/3
 	var new_position = location.get_pos() - difference
-	add_animation(self, "animation_move_to_pos", true, [new_position, 500, true, Tween.TRANS_SINE, Tween.EASE_IN])
+	add_animation(self, "animate_move_to_pos", true, [new_position, 500, true, Tween.TRANS_SINE, Tween.EASE_IN])
 	yield(get_node("Tween"), "tween_complete")
 	emit_signal("shake")
 	
@@ -57,7 +57,7 @@ func start_attack(attack_coords):
 func end_attack(original_coords):
 	var location = get_parent().locations[original_coords]
 	var new_position = location.get_pos()
-	add_animation(self, "animation_move_to_pos", true, [new_position, 300, true, Tween.TRANS_SINE, Tween.EASE_IN])
+	add_animation(self, "animate_move_to_pos", true, [new_position, 300, true, Tween.TRANS_SINE, Tween.EASE_IN])
 	
 
 func animate_hop(old_coords, new_coords, down=false):
@@ -69,7 +69,6 @@ func animate_hop(old_coords, new_coords, down=false):
 	var new_position = location.get_pos()
 	var distance = old_location.get_pos().distance_to(new_position)
 	var time = distance/250
-	print(time)
 	var old_position = Vector2(0, -15)
 	if down:
 		old_position = Vector2(0, 0)
@@ -184,7 +183,7 @@ func decrement_one(new_coords):
 func charge_attack(new_coords, attack=false):
 	var difference = new_coords - self.coords
 	var tiles_travelled = get_parent().hex_length(difference) - 1
-	start_attack()
+	start_attack(new_coords)
 	var increment = get_parent().hex_normalize(difference)
 	
 	var attack_range = [new_coords]
@@ -195,7 +194,7 @@ func charge_attack(new_coords, attack=false):
 	action.add_call("attacked", [get_charge_damage(tiles_travelled)])
 	action.execute()
 	var position_coords = decrement_one(new_coords)
-	end_attack()
+	end_attack(position_coords)
 	set_coords(position_coords)
 	placed()
 	
@@ -223,6 +222,11 @@ func predict_charge_attack(new_coords):
 	var difference = new_coords - self.coords
 	var tiles_travelled = get_parent().hex_length(difference) - 1
 	get_parent().pieces[new_coords].predict(get_charge_damage(tiles_travelled))
+	
+	var increment = get_parent().hex_normalize(difference)
+	if get_parent().pieces.has(new_coords + increment): #if there's an enemy directly behind this one
+		if get_parent().pieces[new_coords + increment].side == "ENEMY":
+			get_parent().pieces[new_coords + increment].predict(get_charge_damage(tiles_travelled))
 	
 
 func cast_ultimate():

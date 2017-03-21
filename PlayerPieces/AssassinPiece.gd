@@ -191,7 +191,7 @@ func cast_ultimate():
 	display_action_range()
 	
 	
-#same as regular placed() except doesn't reset the ultimate_flag
+#same as regular placed() except doesn't reset the ultimate_flag or bloodlust_flag
 func soft_placed(): 
 	get_node("/root/AnimationQueue").enqueue(self, "animate_placed", false)
 	self.state = States.PLACED

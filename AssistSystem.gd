@@ -39,6 +39,7 @@ func activate_assist(assist_type, assister):
 	else:
 		self.assist_type = assist_type
 	get_node("/root/AnimationQueue").enqueue(self, "animate_activate_assist", false, [self.assist_type, self.combo_chain])
+	self.assister.activate_assist(self.assist_type)
 
 
 func animate_activate_assist(assist_type, combo_chain):
@@ -48,13 +49,15 @@ func animate_activate_assist(assist_type, combo_chain):
 		get_node("Label").set_text(str(combo_chain) + " Combo: +1 Move")
 	elif assist_type == ASSIST_TYPES.invulnerable:
 		get_node("Label").set_text(str(combo_chain) + " Combo: Superarmor")
+	elif assist_type == ASSIST_TYPES.finisher:
+		get_node("Label").set_text(str(combo_chain) + " Combo Finisher!")
 	elif assist_type == null:
 		get_node("Label").set_text("")
 		
 
 func assist(piece):
 	if self.assister != null:
-		self.assister.assist(piece)
+		self.assister.assist(piece, self.assist_type)
 		
 
 func clear_assist():

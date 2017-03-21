@@ -26,7 +26,8 @@ func is_busy():
 	return self.queue != [] or self.mid_processing
 
 func is_animating():
-	return self.queue != [] or self.mid_processing or get_animation_count() > 0
+	#return self.queue != [] or self.mid_processing or get_animation_count() > 0
+	return get_animation_count() > 0
 	
 func get_animation_count():
 	self.count_lock.lock()
@@ -34,9 +35,15 @@ func get_animation_count():
 	self.count_lock.unlock()
 	return count
 	
+func reset_animation_count():
+	self.count_lock.lock()
+	var count = 0
+	self.count_lock.unlock()
+	
 func update_animation_count(amount):
 	self.count_lock.lock()
 	self.animation_count += amount
+#	print("animation_count: " + str(self.animation_count))
 	if self.animation_count == 0:
 		emit_signal("animations_finished")
 	self.count_lock.unlock()

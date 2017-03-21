@@ -97,10 +97,6 @@ func debug():
 func is_offsides(coords):
 	var furthest_back_player_piece_pos = self.locations[self.furthest_back_coords].get_pos()
 	var summoned_pos = self.locations[coords].get_pos()
-	print("in is_offsides")
-	print(summoned_pos.y)
-	print(furthest_back_player_piece_pos.y)
-	print(summoned_pos.y > furthest_back_player_piece_pos.y)
 	return summoned_pos.y > furthest_back_player_piece_pos.y
 
 func update_furthest_back_coords():

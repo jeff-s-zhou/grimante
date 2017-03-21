@@ -14,7 +14,7 @@ func initialize(max_hp, modifiers):
 
 func turn_update():
 	turn_update_helper()
-	if !self.stunned:
+	if !self.stunned and !self.silenced:
 		var swipe_range = get_parent().get_range(self.coords, [1, 2], "PLAYER")
 		for coords in swipe_range:
 			swipe(coords)

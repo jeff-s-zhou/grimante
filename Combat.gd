@@ -10,6 +10,8 @@ var level_func = null
 var level = null
 var next_level = null
 
+onready var Constants = get_node("/root/constants")
+
 var next_wave #the wave that was used for reinforcement indication
 
 var tabbed_flag #to check if a current description is tabbed in
@@ -25,6 +27,7 @@ signal done_initializing
 
 signal animation_done
 
+
 var archer = null
 var assassin = null
 
@@ -39,17 +42,18 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(300, 200))
 	#get_node("Grid").set_pos(Vector2(400, 250))
-	#debug_mode()
+	debug_mode()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
-	get_node("AssistSystem").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 130))
+	get_node("AssistSystem").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 110))
 	get_node("PhaseManager").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 50))
 	get_node("PhaseManager").connect("end_turn", self, "end_turn")
 	
+	get_node("/root/AnimationQueue").reset_animation_count()
 
 	self.level_func = get_node("/root/global").get_param("level")
 	self.level = self.level_func.call_func()
-
+		
 	for key in self.level.allies.keys():
 		initialize_piece(self.level.allies[key], key)
 	
@@ -69,8 +73,22 @@ func _ready():
 	
 	get_node("Grid").update_furthest_back_coords()
 	
-	self.next_wave = self.enemy_waves.get_next_wave()
+	self.next_wave = self.enemy_waves.get_next_summon()
 	deploy_wave(true)
+	
+	if self.level.end_conditions.has(constants.end_conditions.Defend):
+		var defend_system = load("res://UI/DefendSystem.tscn").instance()
+		add_child(defend_system)
+		defend_system.initialize(self.level.num_turns, self.level.enemies)
+		defend_system.set_pos(Vector2(get_viewport_rect().size.width/2, 30))
+		connect("enemy_turn_finished", defend_system, "update")
+		
+	else:
+		var clear_room_system = load("res://UI/ClearRoomSystem.tscn").instance()
+		add_child(clear_room_system)
+		clear_room_system.initialize(self.level.enemies)
+		clear_room_system.set_pos(Vector2(get_viewport_rect().size.width/2, 30))
+		connect("enemy_turn_finished", clear_room_system, "update")
 		
 	if level.king != null:
 		initialize_king(level.king)
@@ -85,7 +103,9 @@ func _ready():
 		get_node("Grid").reset_deployable_indicators()
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			player_piece.deploy()
-
+			player_piece.deploy_placed()
+	
+	
 	get_node("Timer2").set_wait_time(0.3)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
@@ -193,7 +213,7 @@ func initialize_king(king_schematic):
 func end_turn():
 	self.state = STATES.transitioning
 	
-	if get_node("/root/AnimationQueue").is_busy():
+	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 	else:
 		get_node("Timer2").set_wait_time(0.2)
@@ -269,8 +289,8 @@ func _input(event):
 
 
 	elif event.is_action("debug_level_skip") and event.is_pressed():
-		if(self.level.next_level_func != null):
-			get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level.next_level_func})
+		if(self.level.next_level != null):
+			get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level.next_level})
 			
 			
 	elif event.is_action("restart") and event.is_pressed():
@@ -301,38 +321,39 @@ func _input(event):
 		#print(get_node("Grid").pieces)
 
 
+func get_game_state():
+	var state = {}
+	state["enemy_pieces"] = get_tree().get_nodes_in_group("enemy_pieces")
+	if self.level.end_conditions.has(constants.end_conditions.Defend):
+		state["turns_left"] = get_node("DefendSystem").turns_left
+	if self.level.end_conditions.has(constants.end_conditions.Escort):
+		pass
+		
+	return state
+
+
 func _process(delta):
 	get_node('FpsLabel').set_text(str(OS.get_frames_per_second()))
 	
 	var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
 	
-	if self.level.check_player_win(enemy_pieces): 
+	if self.level.check_player_win(get_game_state()): 
 		player_win()
 
 	if self.state == STATES.player_turn:
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			if !player_piece.is_placed():
 				return
-				
-		if !get_node("Timer").is_active():
-			get_node("Timer").set_active(true)
-			get_node("Timer").set_wait_time(0.4)
-			get_node("Timer").start()
-			
-		elif get_node("Timer").get_time_left() <= 0.1:
-			
-			#make sure the animation queue is clear
-			if get_node("/root/AnimationQueue").is_busy():
+			if player_piece.finisher_flag:
 				return
 				
-			#make sure trailing, non-sequential animations are done like flyover text
-			for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
-				if enemy_piece.mid_trailing_animation:
-					return
-			get_node("Timer").set_active(false)
-			end_turn()
-			
-		
+		#make sure the animation queue is clear
+		if get_node("/root/AnimationQueue").is_animating():
+			return
+
+		end_turn()
+
+
 	elif self.state == STATES.enemy_turn:
 		enemy_phase(enemy_pieces)
 		self.state = STATES.transitioning
@@ -351,13 +372,13 @@ func enemy_phase(enemy_pieces):
 		enemy_piece.aura_update()
 	for enemy_piece in enemy_pieces:
 		enemy_piece.turn_update()
-	
 	get_node("Grid").update_furthest_back_coords()
 	
 	#if there are enemy pieces, wait for them to finish
 	if(get_node("/root/AnimationQueue").is_animating()):
+		print("is animating??")
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-		
+	print("got here")	
 	deploy_wave()
 		
 	if(get_node("/root/AnimationQueue").is_animating()):
@@ -375,6 +396,7 @@ func enemy_phase(enemy_pieces):
 	
 	get_node("PhaseShifter").player_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
+	emit_signal("enemy_turn_finished")
 	start_player_phase()
 
 
@@ -471,7 +493,7 @@ func _sort_by_y_axis(enemy_piece1, enemy_piece2):
 func deploy_wave(mass_summon=false):
 
 	var wave = self.next_wave
-	self.next_wave = self.enemy_waves.get_next_wave()
+	self.next_wave = self.enemy_waves.get_next_summon()
 	
 	if wave != null:
 		var enemies = wave["enemies"]
@@ -482,8 +504,8 @@ func deploy_wave(mass_summon=false):
 			var health = prototype_parts["health"]
 			var modifiers = prototype_parts["modifiers"]
 			initialize_enemy_piece(key, prototype, health, modifiers, mass_summon)
-			
-		display_wave_preview(self.next_wave)
+
+	display_wave_preview(self.next_wave)
 
 
 func display_wave_preview(wave):
@@ -502,31 +524,27 @@ func display_wave_preview(wave):
 func player_win():
 	set_process(false)
 	self.state = STATES.transitioning
-	if get_node("/root/AnimationQueue").is_busy():
+	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
-		if enemy_piece.mid_trailing_animation:
-			return
-	get_node("Timer2").set_wait_time(3.0)
+	get_node("Timer2").set_wait_time(0.5)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
 	get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.level.next_level_func})
-	
+
+
 func enemy_win():
 	set_process(false)
 	self.state = STATES.transitioning
-	if get_node("/root/AnimationQueue").is_busy():
+	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
-		if enemy_piece.mid_trailing_animation:
-			return
-	get_node("Timer2").set_wait_time(0.6)
+	get_node("Timer2").set_wait_time(0.5)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
-	get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level":self.level})
+	get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level": self.level_func})
 	
 	
 func damage_defenses():
+	print("caught damage defenses??")
 	enemy_win()
 		
 func display_overlay(unit_name):

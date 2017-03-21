@@ -62,15 +62,26 @@ func _ready():
 	
 func get_assist_bonus_attack():
 	return self.AssistSystem.get_bonus_attack()
+	
+func deploy_placed():
+	self.state = States.PLACED
 
 #call this function right before being assisted
 func handle_pre_assisted():
 	self.AssistSystem.assist(self)
-	set_invulnerable()
+	set_invulnerable(self.AssistSystem.get_bonus_invulnerable())
+
+func set_invulnerable(flag):
+	if self.invulnerable_flag != flag:
+		self.invulnerable_flag = flag
+		add_animation(self, "animate_set_invulnerable", false, [self.invulnerable_flag])
 	
-func set_invulnerable():
-	self.invulnerable_flag =  self.AssistSystem.get_bonus_invulnerable()
-	#TODO: animations
+func animate_set_invulnerable(flag):
+	if flag:
+		get_node("Physicals/OverlayLayers/UltimateWhite").show()
+	else:
+		get_node("Physicals/OverlayLayers/UltimateWhite").hide()
+	
 	
 func set_assist_flag(flag):
 	self.assist_flag = flag
@@ -78,25 +89,25 @@ func set_assist_flag(flag):
 func handle_assist():
 	if self.assist_flag:
 		self.assist_flag = false
+		#we specifically redirect it through the AssistSystem to call the function below in case it's an ultimate
 		self.AssistSystem.activate_assist(self.assist_type, self)
-		activate_assist()
 	else:
 		self.AssistSystem.clear_assist()
 
 #start emitting the particles
-func activate_assist():
-	add_animation(get_node("Physicals/ComboSparkleManager"), "animate_activate_assist", false, [self.assist_type])
+func activate_assist(assist_type):
+	add_animation(get_node("Physicals/ComboSparkleManager"), "animate_activate_assist", false, [assist_type])
 
 	
-func assist(piece):
-	add_animation(self, "animate_assist", true, [piece])
+func assist(piece, assist_type):
+	add_animation(self, "animate_assist", true, [piece, assist_type])
 
 #direct the particles to a certain coords
-func animate_assist(piece):
+func animate_assist(piece, assist_type):
 	add_anim_count()
 	print("reached this call")
 	var pos_difference = piece.get_pos() - get_pos()
-	get_node("Physicals/ComboSparkleManager").animate_assist(self.assist_type, pos_difference)
+	get_node("Physicals/ComboSparkleManager").animate_assist(assist_type, pos_difference)
 	yield(get_node("Physicals/ComboSparkleManager"), "animation_done")
 	emit_signal("animation_done")
 	subtract_anim_count()
@@ -151,7 +162,9 @@ func is_placed():
 	return self.state == States.PLACED
 
 func delete_self():
-	get_parent().locations[self.coords].add_corpse(self)
+	var location = get_parent().locations[self.coords]
+	location.add_corpse(self)
+	add_animation(location, "animate_add_corpse", false)
 	get_parent().remove_piece(self.coords)
 	remove_from_group("player_pieces")
 
@@ -187,6 +200,7 @@ func initialize(cursor_area):
 	add_to_group("player_pieces")
 	
 func turn_update():
+	set_invulnerable(false)
 	set_z(0)
 	if self.cooldown > 0:
 		pass
@@ -208,7 +222,9 @@ func set_coords(new_coords):
 	var res_range = get_parent().get_location_range(self.coords)
 	for coords in res_range:
 		if get_parent().locations[coords].corpse != null:
-			get_parent().locations[coords].resurrect()
+			var location = get_parent().locations[coords]
+			location.resurrect()
+			add_animation(location, "animate_hide_corpse", false)
 	
 
 #ANIMATION FUNCTIONS
@@ -400,7 +416,7 @@ func placed():
 	
 
 func animate_placed():
-	get_node("Physicals/OverlayLayers/UltimateWhite").hide()
+	#get_node("Physicals/OverlayLayers/UltimateWhite").hide()
 	if(self.cooldown > 0):
 		self.cooldown -= 1
 		get_node("Cooldown").show()
@@ -419,7 +435,8 @@ func player_attacked(enemy, animation_sequence=null):
 
 func dies_to_collision(pusher):
 	if pusher != null and pusher.side != self.side:  #if there's a pusher and not on the same side
-		return pusher.deadly or pusher.hp >= self.armor #if the enemy has same or more hp than the pusher's armor, or the pusher enemy is deadly
+		#if not invulnerable and the enemy has same or more hp than the pusher's armor, or the pusher enemy is deadly
+		return !self.invulnerable_flag and (pusher.deadly or pusher.hp >= self.armor) 
 		
 
 #shove is different than push
