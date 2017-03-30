@@ -13,13 +13,15 @@ const fireball_prototype = preload("res://EnemyPieces/Components/DragonFireball.
 func initialize(max_hp, modifiers):
 	.initialize("Dragon", DESCRIPTION, Vector2(0, 1), max_hp, modifiers)
 
-func turn_update():
-	turn_update_helper()
-	if !self.stunned and !self.silenced:
-		var fireball_range = get_parent().get_range(self.coords, [1, 9], "PLAYER", false, [3, 4])
-		if fireball_range != []:
-			fireball(fireball_range[0])
-	enqueue_animation_sequence()
+func turn_update_helper():
+	if self.stunned:
+		set_stunned(false)
+	elif self.hp != 0:
+		self.move(movement_value)
+		if !self.silenced:
+			var fireball_range = get_parent().get_range(self.coords, [1, 9], "PLAYER", false, [3, 4])
+			if fireball_range != []:
+				fireball(fireball_range[0])
 	
 func fireball(coords):
 	add_animation(self, "animate_fireball", true, [coords])

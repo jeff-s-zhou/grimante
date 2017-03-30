@@ -168,6 +168,8 @@ class InfinitePhasedWrapper:
 			
 		
 	func get_turns_til_next_wave():
+		if self.phases == []:
+			return null
 		return self.current_phase.get_turns_til_finished()
 
 
@@ -192,4 +194,6 @@ class FinitePhasedWrapper:
 			return summon
 		
 	func get_turns_til_next_wave():
+		if self.phases == []:
+			return null
 		return self.current_phase.get_turns_til_finished()

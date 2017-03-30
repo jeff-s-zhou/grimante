@@ -16,14 +16,16 @@ var animation_state = ANIMATION_STATES.default
 
 const UNIT_TYPE = "Berserker"
 
-const OVERVIEW_DESCRIPTION = """Armored.
+const OVERVIEW_DESCRIPTION = """4 Armor
 
-Movement: 2 range leap
+Movement: 2 Range Leap Move
+
+Inspire: +1 Attack
 """
 
-const ATTACK_DESCRIPTION = """Leap Strike. Deal 3 damage to an enemy within movement range. If the enemy is killed by the attack, move to its tile.
+const ATTACK_DESCRIPTION = """ Leap Strike. Deal 4 damage to an enemy within movement range. If the enemy is killed by the attack, move to its tile.
 """
-const PASSIVE_DESCRIPTION = """Ground Slam. Moving or attacking deals 2 damage to all units around your destination.
+const PASSIVE_DESCRIPTION = """Earthshatter.  Moving to an empty tile deals 2 damage to all enemies adjacent to the tile and stuns them.
 """
 
 const ULTIMATE_DESCRIPTION = """Earthshatter. Stun and attack all enemies in a line from the Berserker, damage starting at 5 and decreasing by 1 for each enemy hit.
@@ -136,9 +138,6 @@ func act(new_coords):
 	elif _is_within_movement_range(new_coords):
 		handle_pre_assisted()
 		smash_move(new_coords)
-	elif _is_within_ally_shove_range(new_coords):
-		handle_pre_assisted()
-		initiate_friendly_shove(new_coords)
 	else:
 		invalid_move()
 

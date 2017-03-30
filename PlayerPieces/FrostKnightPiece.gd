@@ -75,9 +75,6 @@ func act(new_coords):
 		handle_pre_assisted()
 		shield_bash(new_coords)
 		placed()
-	elif _is_within_ally_shove_range(new_coords):
-		handle_pre_assisted()
-		initiate_friendly_shove(new_coords)
 	else:
 		invalid_move()
 

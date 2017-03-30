@@ -16,6 +16,7 @@ func _input(event):
 	if event.is_action("select") and event.is_pressed(): 
 		if self.remaining_tooltips.size() > 0:
 			var tooltip = self.remaining_tooltips[0]
+			self.remaining_tooltips.pop_front()
 			tooltip_helper(tooltip)
 
 func set_tooltip(tooltip):

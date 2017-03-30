@@ -48,7 +48,6 @@ func handle_assist():
 	if self.assist_flag:
 		self.assist_flag = false
 	self.AssistSystem.activate_assist(self.assist_type, self)
-	add_animation(self, "animate_activate_assist", false)
 	
 
 func deploy():

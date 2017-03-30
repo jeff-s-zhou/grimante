@@ -16,11 +16,19 @@ func _ready():
 func initialize(enemies):
 	self.enemies = enemies
 	self.turns_til_wave = self.enemies.get_turns_til_next_wave()
-	get_node("Label").set_text("Clear the Board" + " (Turns Until Next Wave: " + str(self.turns_til_wave) + ")")
+	if self.turns_til_wave == null:
+		get_node("Label").set_text("Clear the Board")
+	else:
+		get_node("Label").set_text("Clear the Board" + " (Turns Until Next Wave: " + str(self.turns_til_wave) + ")")
 
 func update():
-	if self.turns_til_wave == 0:
-		self.turns_til_wave = self.enemies.get_turns_til_next_wave()
-	else:
-		self.turns_til_wave -= 1
-	get_node("Label").set_text("Clear the Board" + " (Turns Until Next Wave: " + str(self.turns_til_wave) + ")")
+	if self.turns_til_wave != null:
+		if self.turns_til_wave == 0:
+			self.turns_til_wave = self.enemies.get_turns_til_next_wave()
+		else:
+			self.turns_til_wave -= 1
+			
+		if self.turns_til_wave == null:
+				get_node("Label").set_text("Clear the Board")
+		else:
+			get_node("Label").set_text("Clear the Board" + " (Turns Until Next Wave: " + str(self.turns_til_wave) + ")")

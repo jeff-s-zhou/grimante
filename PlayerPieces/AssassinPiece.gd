@@ -2,21 +2,24 @@
 extends "PlayerPiece.gd"
 
 const DEFAULT_BACKSTAB_DAMAGE = 2
+const BLOODLUST_BONUS = 2
 const DEFAULT_PASSIVE_DAMAGE = 1
 const DEFAULT_MOVEMENT_VALUE = 2
 const DEFAULT_ARMOR_VALUE = 3
 const UNIT_TYPE = "Assassin"
-const OVERVIEW_DESCRIPTION = """Armored
+const OVERVIEW_DESCRIPTION = """3 Armor
 
-Movement: 2 range step
+Movement: 2 Range Step Move
+
+Inspire: +1 Attack
 """
 
 const ATTACK_DESCRIPTION = """Backstab. 2 range. Teleport behind an enemy and deal 2 damage. Will fail if there is a unit behind the enemy.
 """
 
-const PASSIVE_DESCRIPTION = """Opportunity Strikes. If an adjacent enemy takes direct damage (NOT passive), attack it for 1 damage.
+const PASSIVE_DESCRIPTION = """Opportunity Strikes. If an adjacent enemy is attacked and isn't killed, the Assassin attacks it for 1 damage. Will trigger Bloodlust if the Assassin is already on cooldown.
 
-Combo. Killing a unit builds 1 Combo Point."""
+Bloodlust. If the Assassin kills a unit, it may act again and its next Backstab deals +2 damage. May only activate once per turn."""
 
 const ULTIMATE_DESCRIPTION = """Danse Macabre. Requires and spends 3 Combo Points. During this Player Phase, the Assassin gains +2 damage and can act again if it kills an enemy. Can be used any number of times per level. 
 """
@@ -46,6 +49,8 @@ func delete_self():
 
 
 func get_backstab_damage():
+	if self.bloodlust_flag:
+		return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_BACKSTAB_DAMAGE + BLOODLUST_BONUS
 	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_BACKSTAB_DAMAGE
 	
 func get_passive_damage():
@@ -130,7 +135,7 @@ func act(new_coords):
 		var args = [self.coords, new_coords, self.pathed_range, 350]
 		get_node("/root/AnimationQueue").enqueue(self, "animate_stepped_move", true, args)
 		set_coords(new_coords)
-		if self.ultimate_flag:
+		if self.bloodlust_flag:
 			soft_placed() #in the case that it resets again using its passive
 		else:
 			placed()
@@ -138,9 +143,6 @@ func act(new_coords):
 		handle_pre_assisted()
 		#get_node("/root/Combat").display_overlay(self.unit_name)
 		backstab(new_coords)
-	elif _is_within_ally_shove_range(new_coords):
-		handle_pre_assisted()
-		initiate_friendly_shove(new_coords)
 	else:
 		invalid_move()
 
@@ -157,28 +159,19 @@ func backstab(new_coords):
 	var return_position = get_parent().locations[new_coords + BEHIND].get_pos()
 	get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [return_position, 200, true])
 	set_coords(new_coords + BEHIND)
-	
-	if self.ultimate_flag:
-		if get_parent().pieces.has(new_coords): #if it didn't kill
-			soft_placed() 
-		else:
-			if !self.bloodlust_flag:
-				self.attack_bonus += 2 #on the very first kill, get the +2 attack bonus
-				self.bloodlust_flag = true
-				
-			get_parent().selected = null
 		
-	elif !self.bloodlust_flag: #hasn't triggered bloodlust yet
+	if !self.bloodlust_flag: #hasn't triggered bloodlust yet
 		if get_parent().pieces.has(new_coords): #if it didn't kill
 			soft_placed()
 		else:
-			self.bloodlust_flag = true
-			get_parent().selected = null
-			self.attack_bonus += 2
+			activate_bloodlust()
 	
 	else: #already triggered bloodlust
 		placed()
 
+func activate_bloodlust():
+	self.bloodlust_flag = true
+	get_parent().selected = null
 
 func predict(new_coords):
 	if _is_within_attack_range(new_coords):
@@ -216,14 +209,9 @@ func trigger_passive(attack_range):
 			var action = get_new_action(attack_coords, false)
 			action.add_call("opportunity_attacked", [self.passive_damage])
 			action.execute()
-			if !get_parent().pieces.has(attack_coords) and self.ultimate_flag:
-				if !self.bloodlust_flag:
-					self.attack_bonus += 2 #on the very first kill, get the +2 attack bonus
-					self.bloodlust_flag = true
-				unplaced()
 	
-			elif !get_parent().pieces.has(attack_coords) and !self.bloodlust_flag:
-				self.attack_bonus += 2
+			if !get_parent().pieces.has(attack_coords) and !self.bloodlust_flag and self.state == States.PLACED:
+				activate_bloodlust()
 				unplaced()
 			get_node("/root/AnimationQueue").enqueue(self, "animate_passive_end", true, [self.coords])
 

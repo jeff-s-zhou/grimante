@@ -25,8 +25,7 @@ const coords_vertical_prob_dist = {
 1: 1,
 2: 1,
 3: 0.7,
-4: 0.4,
-5: 0.2,
+4: 0.4
 }
 
 const coords_horizontal_prob_dist = {

@@ -34,18 +34,16 @@ var assassin = null
 var king = null
 
 func _ready():
-	set_process(true)
-	set_process_input(true)
 	
 	get_node("Timer").set_active(false)
 	# Called every time the node is added to the scene.
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(300, 200))
 	#get_node("Grid").set_pos(Vector2(400, 250))
-	debug_mode()
+	#debug_mode()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
-	get_node("AssistSystem").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 110))
+	get_node("AssistSystem").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 100))
 	get_node("PhaseManager").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 50))
 	get_node("PhaseManager").connect("end_turn", self, "end_turn")
 	
@@ -56,6 +54,9 @@ func _ready():
 		
 	for key in self.level.allies.keys():
 		initialize_piece(self.level.allies[key], key)
+	
+	set_process(true)
+	set_process_input(true)
 	
 	self.enemy_waves = self.level.enemies
 
@@ -82,7 +83,16 @@ func _ready():
 		defend_system.initialize(self.level.num_turns, self.level.enemies)
 		defend_system.set_pos(Vector2(get_viewport_rect().size.width/2, 30))
 		connect("enemy_turn_finished", defend_system, "update")
-		
+
+
+	elif self.level.end_conditions.has(constants.end_conditions.Timed):
+		var timed_system = load("res://UI/TimedSystem.tscn").instance()
+		add_child(timed_system)
+		timed_system.initialize(self.level.num_turns, self.level.enemies)
+		timed_system.set_pos(Vector2(get_viewport_rect().size.width/2, 30))
+		connect("enemy_turn_finished", timed_system, "update")
+
+
 	else:
 		var clear_room_system = load("res://UI/ClearRoomSystem.tscn").instance()
 		add_child(clear_room_system)
@@ -99,6 +109,11 @@ func _ready():
 
 	if self.level.free_deploy:
 		start_deploy_phase()
+		
+		if (self.instructions.size() > 0):
+			handle_instructions()
+			yield(self, "next_pressed")
+		
 		yield(get_node("PhaseManager"), "deployed")
 		get_node("Grid").reset_deployable_indicators()
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
@@ -215,11 +230,11 @@ func end_turn():
 	
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	else:
-		get_node("Timer2").set_wait_time(0.2)
-		get_node("Timer2").start()
-		yield(get_node("Timer2"), "timeout")
-	
+		
+	get_node("Timer2").set_wait_time(0.3)
+	get_node("Timer2").start()
+	yield(get_node("Timer2"), "timeout")
+
 	get_node("PhaseManager").player_turn_end()
 	get_node("TutorialTooltip").reset()
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
@@ -323,9 +338,12 @@ func _input(event):
 
 func get_game_state():
 	var state = {}
+	state["player_pieces"] = get_tree().get_nodes_in_group("player_pieces")
 	state["enemy_pieces"] = get_tree().get_nodes_in_group("enemy_pieces")
 	if self.level.end_conditions.has(constants.end_conditions.Defend):
 		state["turns_left"] = get_node("DefendSystem").turns_left
+	elif self.level.end_conditions.has(constants.end_conditions.Timed):
+		state["turns_left"] = get_node("TimedSystem").turns_left
 	if self.level.end_conditions.has(constants.end_conditions.Escort):
 		pass
 		
@@ -385,12 +403,12 @@ func enemy_phase(enemy_pieces):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 	
 	
-	get_node("Timer2").set_wait_time(0.3)
+	get_node("Timer2").set_wait_time(0.5)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
 	
 	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
-	if self.level.check_enemy_win(player_pieces): #logic would change based on game type
+	if self.level.check_enemy_win(get_game_state()): #logic would change based on game type
 		enemy_win()
 	
 	
@@ -529,7 +547,7 @@ func player_win():
 	get_node("Timer2").set_wait_time(0.5)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
-	get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.level.next_level_func})
+	get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.level.next_level})
 
 
 func enemy_win():

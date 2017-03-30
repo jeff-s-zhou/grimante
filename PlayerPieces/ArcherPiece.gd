@@ -25,15 +25,18 @@ signal animation_finished
 
 const UNIT_TYPE = "Archer"
 
-const OVERVIEW_DESCRIPTION = """Unarmored.
+const OVERVIEW_DESCRIPTION = """2 Armor.
 
-Movement: 2 range step
+Movement: 1 Range Step Move
+
+Inspire: +1 Move
 """
 const ATTACK_DESCRIPTION = """Snipe. Fire an arrow at the first enemy in a line for 3 damage. Can target diagonally. Allies will block the shot.
 """
-const PASSIVE_DESCRIPTION = """Step Shot. After moving, the Archer fires a Snipe Attack directly north.
+const PASSIVE_DESCRIPTION = """ Running Fire. Whenever you move, attempt to Snipe down the column of your new position (failing if an ally is in the way).
+
 """
-const ULTIMATE_DESCRIPTION = """Envision Death. For the rest of this Player Phase, immediately before an enemy takes direct damage (NOT passive) within Snipe range, Snipe the enemy, but cannot kill.
+const ULTIMATE_DESCRIPTION = """Gain +2 damage for this turn. The next Snipe, if it kills the target, continues travelling in the same direction, dealing 1 less damage for each target it kills and passes through.
 """
 
 
@@ -119,12 +122,6 @@ func act(new_coords):
 		#get_node("/root/Combat").display_overlay(self.unit_name)
 		ranged_attack(new_coords, self.shoot_damage)
 		placed()
-	
-	elif _is_within_ally_shove_range(new_coords):
-		handle_pre_assisted()
-		initiate_friendly_shove(new_coords)
-		placed()
-		
 	else:
 		invalid_move()
 

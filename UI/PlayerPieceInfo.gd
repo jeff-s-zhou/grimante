@@ -22,5 +22,3 @@ func set_info(unit_name, overview_text, active_text, passive_text, ultimate_text
 	get_node("TabContainer/OVERVIEW").set_bbcode(overview_text)
 	get_node("TabContainer/ATTACK").set_bbcode(active_text)
 	get_node("TabContainer/PASSIVE").set_bbcode(passive_text)
-	if get_node("/root/global").ultimates_enabled_flag:
-		get_node("TabContainer/ULTIMATE").set_bbcode(ultimate_text)

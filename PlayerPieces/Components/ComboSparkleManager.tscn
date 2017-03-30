@@ -7,6 +7,8 @@
 
 [node name="ComboSparkleManager" type="Node2D"]
 
+z/z = 5
+z/relative = false
 script/script = ExtResource( 1 )
 
 [node name="ComboSparklesBlue" parent="." instance=ExtResource( 2 )]

@@ -6,6 +6,8 @@ extends Node
 
 var func_calls = []
 
+var blocking = false
+
 signal animation_done
 
 func _ready():

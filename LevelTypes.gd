@@ -54,10 +54,10 @@ class BaseLevelType:
 	func set_end_conditions(conditions):
 		self.end_conditions[conditions] = true
 
-	func check_enemy_win(player_pieces): #only checks part of the condition. other is in the game loop
-		return player_pieces.size() == 0
+	func check_enemy_win(state): #only checks part of the condition. other is in the game loop
+		return state.player_pieces.size() == 0
 		
-	func check_player_win(enemy_pieces):
+	func check_player_win(state):
 		return false
 		
 		
@@ -84,6 +84,19 @@ class Defend extends BaseLevelType:
 		self.num_turns = num_turns
 		set_end_conditions(Constants.end_conditions.Defend)
 
+class Timed extends BaseLevelType:
+	var Constants = preload("constants.gd").new()
+	var num_turns
+	func check_player_win(state):
+		return state.enemy_pieces.size() == 0
+		
+	func check_enemy_win(state): #only checks part of the condition. other is in the game loop
+		return state.player_pieces.size() == 0 or state.turns_left == 0
+	
+	func _init(allies, enemies, num_turns, \
+	next_level=null, extras={}).(allies, enemies, next_level, extras):
+		self.num_turns = num_turns
+		set_end_conditions(Constants.end_conditions.Timed)
 #	
 #class FogOfWar extends BaseLevelType:
 #	func check_player_win():

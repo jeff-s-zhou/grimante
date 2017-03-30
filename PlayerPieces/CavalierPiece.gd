@@ -12,15 +12,17 @@ var trample_damage = DEFAULT_TRAMPLE_DAMAGE setget , get_trample_damage
 
 
 const UNIT_TYPE = "Cavalier"
-const OVERVIEW_DESCRIPTION = """Armored.
+const OVERVIEW_DESCRIPTION = """5 Armor
 
-Movement: Able to move to any empty tile along a straight line.
+Movement: Leap Move. Able to move to any empty tile along a straight line.
+
+Inspire: +1 Move.
 """
 
 const PASSIVE_DESCRIPTION = """Trample. Moving through an enemy unit deals 2 damage to it.
 """
 
-const ATTACK_DESCRIPTION = """Charge. Run in a straight line, hitting the first enemy in the line for damage equal to the number of tiles travelled.
+const ATTACK_DESCRIPTION = """Move in a straight line, dealing 1 damage for each tile travelled to the first enemy it hits, as well as the enemy immediately behind it.
 """
 
 const ULTIMATE_DESCRIPTION = """Rally! For the rest of this Player Phase, all allied units have +1 movement and deal +1 damage.
@@ -85,7 +87,7 @@ func animate_hop(old_coords, new_coords, down=false):
 	yield(get_node("Tween2"), "tween_complete")
 	if(down):
 		set_z(0)
-	self.mid_leaping_animation = false
+		self.mid_leaping_animation = false
 	emit_signal("animation_done")
 	subtract_anim_count()
 
@@ -138,9 +140,6 @@ func act(new_coords):
 	elif _is_within_movement_range(new_coords):
 		handle_pre_assisted()
 		trample(new_coords)
-	elif _is_within_ally_shove_range(new_coords):
-		handle_pre_assisted()
-		initiate_friendly_shove(new_coords)
 	else:
 		invalid_move()
 

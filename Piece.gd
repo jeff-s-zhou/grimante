@@ -62,7 +62,8 @@ func update_animation_count(amount):
 
 func enqueue_animation_sequence():
 	if self.current_animation_sequence != null:
-		get_node("/root/AnimationQueue").enqueue(self.current_animation_sequence, "execute", false)
+		
+		get_node("/root/AnimationQueue").enqueue(self.current_animation_sequence, "execute", self.current_animation_sequence.blocking)
 		self.current_animation_sequence = null
 
 
@@ -91,19 +92,25 @@ func check_global_seen():
 
 
 func collide(area):
-	if self.mid_animation and !self.mid_leaping_animation: #If leaping, it'll set its own z above everythin else
-		print("this is the one moving: " + self.side )
-		var other_piece = area.get_parent()
-		print(other_piece)
-		if other_piece.get_pos().y > get_pos().y:
-			other_piece.set_z(get_z() + 1)
-		else:
-			other_piece.set_z(get_z() - 1)
-	
+	pass
+	if area.get_name() != "CursorArea":
+		print(self.unit_name)
+		print(self.mid_animation)
+		if self.mid_animation and !self.mid_leaping_animation: #If leaping, it'll set its own z above everythin else
+			print("this is the one moving: " + self.side )
+			var other_piece = area.get_parent()
+			print(other_piece)
+			if other_piece.get_pos().y > get_pos().y:
+				other_piece.set_z(get_z() + 1)
+			else:
+				other_piece.set_z(get_z() - 1)
+
+#a little buggy currently, since both the offender and receiver of a collision can both be mid animation
+#we just let them reset each other for now, and make sure neither are mid_leaping_animation
 func uncollide(area):
 	if area.get_name() != "CursorArea": #make sure it's not the thing that checks for mouse inside areas
-		if self.mid_animation:
-			var other_piece = area.get_parent()
+		var other_piece = area.get_parent()
+		if self.mid_animation and !self.mid_leaping_animation and !other_piece.mid_leaping_animation:
 			other_piece.set_z(0)
 		
 
@@ -139,7 +146,9 @@ func animate_move_to_pos(position, speed, blocking=false, trans_type=Tween.TRANS
 	if blocking:
 		yield(get_node("Tween"), "tween_complete")
 		emit_signal("animation_done")
-	subtract_anim_count()
+		subtract_anim_count()
+	else:
+		subtract_anim_count()
 
 	
 
@@ -186,7 +195,7 @@ func move(distance, passed_animation_sequence=null):
 		var distance_travelled  = self.coords - old_coords
 		var remaining_distance = distance - distance_travelled
 		self.shove(collide_coords, remaining_distance, animation_sequence)
-	
+		self.current_animation_sequence.blocking = true
 	#execute the whole sequence outside of the function
 
 

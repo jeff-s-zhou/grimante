@@ -9,13 +9,19 @@ const flask_prototype = preload("res://PlayerPieces/Components/PyromancerFlask.t
 
 var wildfire_damage = DEFAULT_WILDFIRE_DAMAGE setget , get_wildfire_damage
 
-const OVERVIEW_DESCRIPTION = """
+const OVERVIEW_DESCRIPTION = """1 Armor
+
+Movement: 1 Range Step
+
+Inspire: +1 Attack
+
 """
 
-const ATTACK_DESCRIPTION = """
+const ATTACK_DESCRIPTION = """Fire Bomb. Lob a bomb at any enemy unit within 2 range, inflicting it with Wildfire.
 """
 
-const PASSIVE_DESCRIPTION = """"""
+const PASSIVE_DESCRIPTION = """Wildfire. An enemy inflicted with Wildfire is dealt 2 damage immediately, and 1 damage at the start of every Player Turn. 
+"""
 
 const ULTIMATE_DESCRIPTION = """"""
 
@@ -40,7 +46,7 @@ func get_movement_range():
 	return self.pathed_range.keys()
 	
 func get_attack_range():
-	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, 3], "ENEMY")
+	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, 2], "ENEMY")
 	return unfiltered_range
 
 #parameters to use for get_node("get_parent()").get_neighbors
@@ -69,10 +75,8 @@ func act(new_coords):
 		handle_pre_assisted()
 		get_node("/root/AnimationQueue").enqueue(self, "animate_bomb", true, [new_coords])
 		bomb(new_coords)
+		reset_currently_burning()
 		placed()
-	elif _is_within_ally_shove_range(new_coords):
-		handle_pre_assisted()
-		initiate_friendly_shove(new_coords)
 	else:
 		invalid_move()
 		
@@ -131,13 +135,17 @@ func bomb(new_coords):
 	var nearby_enemy_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 	var nearby_enemy_range_filtered = []
 	for coords in nearby_enemy_range:
-		if !get_parent().pieces[coords].burning:
+		if !get_parent().pieces[coords].currently_burning:
 			nearby_enemy_range_filtered.append(coords)
 	if nearby_enemy_range_filtered.size() > 0:
 		var random_index = randi() % nearby_enemy_range_filtered.size()
 		var spread_coords = nearby_enemy_range_filtered[random_index]
 		bomb(spread_coords)
 		
+func reset_currently_burning():
+	var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
+	for enemy_piece in enemy_pieces:
+		enemy_piece.currently_burning = false
 
 func predict(new_coords):
 	if _is_within_attack_range(new_coords):

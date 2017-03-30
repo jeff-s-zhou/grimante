@@ -16,6 +16,7 @@ var shielded = false
 var deadly = false
 var cloaked = false
 
+var currently_burning = false
 var burning = false
 var frozen = false
 var silenced = false
@@ -36,7 +37,7 @@ var modifier_descriptions = {} setget , get_modifier_descriptions
 
 func get_hover_description():
 	if self.cloaked:
-		return ""
+		return "This unit is Cloaked. Attack it or move a Unit adjacent to it to reveal its identity."
 	else:
 		return hover_description
 
@@ -288,6 +289,12 @@ func animate_cloaked_hide():
 	subtract_anim_count()
 
 		
+			
+func is_deadly():
+	if self.silenced:
+		return false
+	else:
+		return self.deadly
 
 func set_deadly(flag):
 	if self.deadly != flag:
@@ -298,6 +305,7 @@ func set_deadly(flag):
 			add_animation(self, "animate_deadly_show", false)
 		else:
 			add_animation(self, "animate_deadly_hide", false)
+
 
 func animate_deadly_show():
 	get_node("Physicals/EnemyEffects/DeathTouch").set_emitting(true)
@@ -328,6 +336,7 @@ func animate_bubble_hide():
 func set_burning(flag):
 	self.burning = flag
 	if flag:
+		self.currently_burning = true
 		add_animation(self,"animate_fire", true)
 	else:
 		add_animation(self,"animate_burning_hide", false)
@@ -350,8 +359,18 @@ func set_frozen(flag):
 func set_silenced(flag):
 	if flag:
 		set_shield(false)
-		set_deadly(false)
+#		set_deadly(false)
+		set_cloaked(false)
+		add_animation(self, "animate_silenced", false)
+	else:
+		add_animation(self, "animate_unsilenced", false)
 	self.silenced = flag
+	
+func animate_silenced():
+	get_node("Physicals/EnemyOverlays/AnimationPlayer").play("Default")
+	
+func animate_unsilenced():
+	get_node("Physicals/EnemyOverlays/AnimationPlayer").play("Hide")
 
 func animate_burning_hide():
 	get_node("Physicals/EnemyEffects/BurningEffect").hide()
@@ -595,31 +614,28 @@ func reset_auras():
 
 #called at the start of enemy turn, after checking for aura effects
 func turn_update():
-	turn_update_helper()
-	enqueue_animation_sequence()
-
-#this is written so we can easily add more stuff to the end of the turn_update before executing the animation_sequence
-func turn_update_helper():
+	set_z(0)
 	if self.burning:
 		var action = get_new_action(self.coords)
 		action.add_call("attacked", [1])
 		action.execute()
-	
-	set_z(0)
-	if self.stunned:
-		set_stunned(false)
-	elif self.hp != 0:
-		self.move(movement_value)
-		
-	
-	if self.silenced:
-		set_silenced(false)
-
+	turn_update_helper()
 	reset_auras()
 	
 	var adjacent_players_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
 	if adjacent_players_range != []:
 		set_cloaked(false)
+	enqueue_animation_sequence()
+
+#this is written so we can easily add more stuff to the end of the turn_update before executing the animation_sequence
+func turn_update_helper():
+	if self.stunned:
+		set_stunned(false)
+	elif self.hp != 0:
+		self.move(movement_value)
+		if self.silenced:
+			set_silenced(false)
+	
 
 
 func summon_buff(health, modifiers):

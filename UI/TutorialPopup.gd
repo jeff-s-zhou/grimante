@@ -34,7 +34,7 @@ func transition_in():
 func transition_out():
 	get_node("Panel/TipText").set_opacity(0)
 	get_node("Panel/ObjectiveText").set_opacity(0)
-	get_node("Panel/ObjectiveText").set_pos(Vector2(30, 122))
+	get_node("Panel/ObjectiveText").set_pos(Vector2(30, 150))
 	get_node("Panel/TextureButton").set_opacity(0)
 	get_node("Panel/TextureButton").set_disabled(true)
 	

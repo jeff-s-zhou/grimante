@@ -14,14 +14,14 @@ func _ready():
 	# Initialization here
 	pass
 	
-func initialize(turns_to_hold, enemies):
-	self.turns_left = turns_to_hold
+func initialize(turns_left, enemies):
+	self.turns_left = turns_left
 	self.enemies = enemies
 	self.turns_til_wave = self.enemies.get_turns_til_next_wave()
 	if self.turns_til_wave == null:
-		get_node("Label").set_text("Hold the Line: " + str(self.turns_left) + " Turns Remaining")
+		get_node("Label").set_text("Timed Clear: " + str(self.turns_left) + " Turns Remaining")
 	else:
-		get_node("Label").set_text("Hold the Line: " + str(self.turns_left) + " Turns Remaining" + " (Turns Until Next Wave: " + str(self.turns_til_wave) + ")")
+		get_node("Label").set_text("Timed Clear: " + str(self.turns_left) + " Turns Remaining" + " (Turns Until Next Wave: " + str(self.turns_til_wave) + ")")
 
 func update():
 	self.turns_left -= 1
@@ -33,6 +33,6 @@ func update():
 			self.turns_til_wave -= 1
 	
 	if self.turns_til_wave == null:
-		get_node("Label").set_text("Hold the Line: " + str(self.turns_left) + " Turns Remaining")
+		get_node("Label").set_text("Timed Clear: " + str(self.turns_left) + " Turns Remaining")
 	else:	
-		get_node("Label").set_text("Hold the Line: " + str(self.turns_left) + " Turns Remaining" + " (Turns Until Next Wave: " + str(self.turns_til_wave) + ")")
+		get_node("Label").set_text("Timed Clear: " + str(self.turns_left) + " Turns Remaining" + " (Turns Until Next Wave: " + str(self.turns_til_wave) + ")")

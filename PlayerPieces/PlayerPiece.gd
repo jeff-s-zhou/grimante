@@ -83,8 +83,8 @@ func animate_set_invulnerable(flag):
 		get_node("Physicals/OverlayLayers/UltimateWhite").hide()
 	
 	
-func set_assist_flag(flag):
-	self.assist_flag = flag
+func trigger_assist_flag():
+	self.assist_flag = true
 
 func handle_assist():
 	if self.assist_flag:
@@ -279,7 +279,7 @@ func reset_prediction_highlight():
 func hover_highlight():
 	
 	if(self.state != States.PLACED):
-		get_node("SamplePlayer").play("tile_hover")
+		#get_node("SamplePlayer").play("tile_hover")
 		get_node("Physicals/OverlayLayers/White").show()
 	else:
 		print("is placed")
@@ -436,7 +436,7 @@ func player_attacked(enemy, animation_sequence=null):
 func dies_to_collision(pusher):
 	if pusher != null and pusher.side != self.side:  #if there's a pusher and not on the same side
 		#if not invulnerable and the enemy has same or more hp than the pusher's armor, or the pusher enemy is deadly
-		return !self.invulnerable_flag and (pusher.deadly or pusher.hp >= self.armor) 
+		return !self.invulnerable_flag and (pusher.is_deadly() or pusher.hp >= self.armor) 
 		
 
 #shove is different than push
@@ -465,8 +465,9 @@ func act(new_coords):
 	return false
 
 func display_action_range():
-	for coords in get_ally_shove_range():
-		get_parent().get_at_location(coords).assist_highlight()
+	pass
+#	for coords in get_ally_shove_range():
+#		get_parent().get_at_location(coords).assist_highlight()
 	
 func cast_ultimate():
 	pass

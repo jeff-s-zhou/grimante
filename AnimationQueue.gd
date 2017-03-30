@@ -26,8 +26,8 @@ func is_busy():
 	return self.queue != [] or self.mid_processing
 
 func is_animating():
-	#return self.queue != [] or self.mid_processing or get_animation_count() > 0
-	return get_animation_count() > 0
+	return self.queue != [] or self.mid_processing or get_animation_count() > 0
+	#return get_animation_count() > 0
 	
 func get_animation_count():
 	self.count_lock.lock()
@@ -37,7 +37,7 @@ func get_animation_count():
 	
 func reset_animation_count():
 	self.count_lock.lock()
-	var count = 0
+	self.animation_count = 0
 	self.count_lock.unlock()
 	
 func update_animation_count(amount):
@@ -90,7 +90,8 @@ func process_animations():
 		if blocking:
 			yield(node, "animation_done")
 	self.mid_processing = false
-	
+	if self.queue == [] and !self.mid_processing and get_animation_count() == 0:
+		emit_signal("animations_finished")
 #	if self.queue == [] and self.processing_queue == []:
 #		emit_signal("animations_finished")
 
