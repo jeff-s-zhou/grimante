@@ -11,6 +11,6 @@ onready var LEVELS = preload("res://Levels.tscn").instance()
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("/root/global").goto_scene("res://Combat.tscn", {"level":LEVELS.sandbox_level_ref})
+	get_node("/root/global").goto_scene("res://Combat.tscn", {"level":LEVELS.level9_ref})
 
 

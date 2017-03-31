@@ -6,9 +6,10 @@ var enemy_waves = null
 var instructions = []
 var reinforcements = {}
 var turn_count = 0
-var level_func = null
-var level = null
-var next_level = null
+var level_schematic_func = null
+var level_schematic = null
+
+var state_manager = null
 
 onready var Constants = get_node("/root/constants")
 
@@ -49,25 +50,22 @@ func _ready():
 	
 	get_node("/root/AnimationQueue").reset_animation_count()
 
-	self.level_func = get_node("/root/global").get_param("level")
-	self.level = self.level_func.call_func()
+	self.level_schematic_func = get_node("/root/global").get_param("level")
+	self.level_schematic = self.level_schematic_func.call_func()
 		
-	for key in self.level.allies.keys():
-		initialize_piece(self.level.allies[key], key)
+	for key in self.level_schematic.allies.keys():
+		initialize_piece(self.level_schematic.allies[key], key)
 	
-	set_process(true)
-	set_process_input(true)
-	
-	self.enemy_waves = self.level.enemies
+	self.enemy_waves = self.level_schematic.enemies
 
-	self.reinforcements = self.level.reinforcements
+	self.reinforcements = self.level_schematic.reinforcements
 
-	self.instructions = self.level.instructions
+	self.instructions = self.level_schematic.instructions
 	
 	#we store the initial wave count as the first value in the array
 
-	if self.level.flags != null:
-		var flags = self.level.flags
+	if self.level_schematic.flags != null:
+		var flags = self.level_schematic.flags
 		for flag in flags:
 			if flag == "ultimates_enabled_flag":
 				get_node("/root/global").ultimates_enabled_flag = true
@@ -75,39 +73,35 @@ func _ready():
 	get_node("Grid").update_furthest_back_coords()
 	
 	self.next_wave = self.enemy_waves.get_next_summon()
+	
 	deploy_wave(true)
 	
-	if self.level.end_conditions.has(constants.end_conditions.Defend):
-		var defend_system = load("res://UI/DefendSystem.tscn").instance()
-		add_child(defend_system)
-		defend_system.initialize(self.level.num_turns, self.level.enemies)
-		defend_system.set_pos(Vector2(get_viewport_rect().size.width/2, 30))
-		connect("enemy_turn_finished", defend_system, "update")
-
-
-	elif self.level.end_conditions.has(constants.end_conditions.Timed):
-		var timed_system = load("res://UI/TimedSystem.tscn").instance()
-		add_child(timed_system)
-		timed_system.initialize(self.level.num_turns, self.level.enemies)
-		timed_system.set_pos(Vector2(get_viewport_rect().size.width/2, 30))
-		connect("enemy_turn_finished", timed_system, "update")
-
-
+	if self.level_schematic.end_conditions.has(constants.end_conditions.Defend):
+		self.state_manager = load("res://UI/DefendSystem.tscn").instance()
+	elif self.level_schematic.end_conditions.has(constants.end_conditions.Timed):
+		self.state_manager = load("res://UI/TimedSystem.tscn").instance()
 	else:
-		var clear_room_system = load("res://UI/ClearRoomSystem.tscn").instance()
-		add_child(clear_room_system)
-		clear_room_system.initialize(self.level.enemies)
-		clear_room_system.set_pos(Vector2(get_viewport_rect().size.width/2, 30))
-		connect("enemy_turn_finished", clear_room_system, "update")
+		self.state_manager= load("res://UI/ClearRoomSystem.tscn").instance()
+
+	add_child(self.state_manager)
+	self.state_manager.initialize(self.level_schematic)
+	self.state_manager.set_pos(Vector2(get_viewport_rect().size.width/2, 30))
+	connect("enemy_turn_finished", self.state_manager, "update")
+
+	set_process(true)
+	set_process_input(true)	
+#	
+
+#	if self.level_schematic.king != null:
+#		initialize_king(self.level_schematic.king)
 		
-	if level.king != null:
-		initialize_king(level.king)
-		
-	if level.shadow_wall_tiles.size() > 0:
-		get_node("Grid").initialize_shadow_wall_tiles(level.shadow_wall_tiles)
+	if self.level_schematic.shadow_wall_tiles.size() > 0:
+		get_node("Grid").initialize_shadow_wall_tiles(self.level_schematic.shadow_wall_tiles)
 			
 
-	if self.level.free_deploy:
+	
+	
+	if self.level_schematic.free_deploy:
 		start_deploy_phase()
 		
 		if (self.instructions.size() > 0):
@@ -129,15 +123,22 @@ func _ready():
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	
 	start_player_phase()
+	
+	
 
 
 func start_deploy_phase():
 	get_node("PhaseManager").set_free_deploy()
-	for deploy_tile_coords in level.deploy_tiles:
+	for deploy_tile_coords in self.level_schematic.deploy_tiles:
 		get_node("Grid").locations[deploy_tile_coords].set_deployable_indicator(true)
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 		player_piece.start_deploy_phase()
-	
+
+func is_within_deploy_range(coords):
+	print(coords in self.level_schematic.deploy_tiles)
+	print(self.level_schematic.deploy_tiles)
+	return coords in self.level_schematic.deploy_tiles
+
 func debug_mode():
 	get_node("Grid").debug()
 	get_node("/root/global").ultimates_enabled_flag = true
@@ -304,12 +305,12 @@ func _input(event):
 
 
 	elif event.is_action("debug_level_skip") and event.is_pressed():
-		if(self.level.next_level != null):
-			get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level.next_level})
+		if(self.level_schematic.next_level != null):
+			get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.next_level})
 			
 			
 	elif event.is_action("restart") and event.is_pressed():
-		get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_func})
+		get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic_func})
 	
 	elif event.is_action("toggle_fullscreen") and event.is_pressed():
 		if OS.is_window_fullscreen():
@@ -336,26 +337,12 @@ func _input(event):
 		#print(get_node("Grid").pieces)
 
 
-func get_game_state():
-	var state = {}
-	state["player_pieces"] = get_tree().get_nodes_in_group("player_pieces")
-	state["enemy_pieces"] = get_tree().get_nodes_in_group("enemy_pieces")
-	if self.level.end_conditions.has(constants.end_conditions.Defend):
-		state["turns_left"] = get_node("DefendSystem").turns_left
-	elif self.level.end_conditions.has(constants.end_conditions.Timed):
-		state["turns_left"] = get_node("TimedSystem").turns_left
-	if self.level.end_conditions.has(constants.end_conditions.Escort):
-		pass
-		
-	return state
-
-
 func _process(delta):
 	get_node('FpsLabel').set_text(str(OS.get_frames_per_second()))
 	
 	var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
 	
-	if self.level.check_player_win(get_game_state()): 
+	if self.state_manager.check_player_win(): 
 		player_win()
 
 	if self.state == STATES.player_turn:
@@ -408,7 +395,7 @@ func enemy_phase(enemy_pieces):
 	yield(get_node("Timer2"), "timeout")
 	
 	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
-	if self.level.check_enemy_win(get_game_state()): #logic would change based on game type
+	if self.state_manager.check_enemy_win(): #logic would change based on game type
 		enemy_win()
 	
 	
@@ -547,7 +534,7 @@ func player_win():
 	get_node("Timer2").set_wait_time(0.5)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
-	get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.level.next_level})
+	get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.level_schematic.next_level})
 
 
 func enemy_win():
@@ -558,7 +545,7 @@ func enemy_win():
 	get_node("Timer2").set_wait_time(0.5)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
-	get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level": self.level_func})
+	get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level": self.level_schematic_func})
 	
 	
 func damage_defenses():

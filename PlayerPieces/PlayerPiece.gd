@@ -367,7 +367,8 @@ func start_deploy_phase():
 
 	
 func _is_within_deploy_range(coords):
-	return coords in get_node("/root/Combat").level.deploy_tiles
+	return get_node("/root/Combat").is_within_deploy_range(coords)
+	
 	
 func deploy_select_action_target(target):
 	if _is_within_deploy_range(target.coords):

@@ -97,6 +97,15 @@ class Timed extends BaseLevelType:
 	next_level=null, extras={}).(allies, enemies, next_level, extras):
 		self.num_turns = num_turns
 		set_end_conditions(Constants.end_conditions.Timed)
+		
+class MultiTimed extends BaseLevelType:
+	var Constants = preload("constants.gd").new()
+	
+	func check_player_win(state):
+		return state.enemy_pieces.size() == 0
+		
+	func check_enemy_win(state): #only checks part of the condition. other is in the game loop
+		return state.player_pieces.size() == 0 or state.turns_left == 0
 #	
 #class FogOfWar extends BaseLevelType:
 #	func check_player_win():
