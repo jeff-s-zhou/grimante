@@ -25,13 +25,8 @@ func generate_wave(req_power_level, roster=constants.FULL_UNIT_ROSTER, modifier_
 	randomize()
 	var wave = create_raw_wave(req_power_level, roster, modifier_roster)
 	var enemies = get_wave_dict_with_positions(wave)
-	return  {"type":"wave", "enemies":enemies}
+	return enemies
 	
-func generate_reinforcements(req_power_level, roster=constants.FULL_UNIT_ROSTER, modifier_roster=constants.FULL_MODIFIER_ROSTER):
-	randomize()
-	var wave = create_raw_wave(req_power_level, roster, modifier_roster)
-	var enemies = get_wave_dict_with_positions(wave)
-	return {"type":"reinforcements", "enemies":enemies}
 
 #wave in list form, without coordinates
 func create_raw_wave(req_power_level, roster, modifier_roster):

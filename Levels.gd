@@ -42,27 +42,12 @@ func sandbox_allies():
 	return {3: Cavalier, 2: Saint} #2: Cavalier, 3: Archer, 4: Assassin}
 #
 
-func sandbox_phase1():
-	return EnemyWrappers.ProcGenPhase.new(1400, 200)
-func sandbox_phase2():
-	return EnemyWrappers.ProcGenPhase.new(1600, 250)
-func sandbox_phase3():
-	return EnemyWrappers.ProcGenPhase.new(1700, 300)
-	
-func curated_sandbox_phase1():
-	var phase = EnemyWrappers.CuratedPhase.new(2)
-	phase.add_wave({Vector2(3, 6): make(Grunt, 3), Vector2(3, 5): make(Grunt, 3), Vector2(3, 4): make(Grunt, 3)})
-	phase.add_wave({Vector2(2, 5): make(Grunt, 5)})
-	return phase
-
 func sandbox_enemies():
-	return EnemyWrappers.InfinitePhasedWrapper.new([sandbox_phase1(), sandbox_phase2(), sandbox_phase3()])
-	
-func sandbox_enemies2():
-	return EnemyWrappers.InfinitePhasedWrapper.new([curated_sandbox_phase1()])
+	var turn_power_levels = [1400, 200, 1400]
+	return EnemyWrappers.FiniteGeneratedWrapper.new(turn_power_levels)
 
 func sandbox_level():
-	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies2(), null) #, sandbox_extras)
+	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies(), null) #, sandbox_extras)
 
 var sandbox_level_ref = funcref(self, "sandbox_level")
 

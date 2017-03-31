@@ -14,21 +14,15 @@ func _ready():
 func initialize(level_schematic):
 	self.turns_left = level_schematic.num_turns
 	self.enemies = level_schematic.enemies
-	self.turns_til_wave = self.enemies.get_turns_til_next_wave()
+	self.turns_til_wave = self.enemies.get_turns_til_next_wave() 
 	if self.turns_til_wave == null:
 		get_node("Label").set_text("Hold the Line: " + str(self.turns_left) + " Turns Remaining")
 	else:
 		get_node("Label").set_text("Hold the Line: " + str(self.turns_left) + " Turns Remaining" + " (Turns Until Next Wave: " + str(self.turns_til_wave) + ")")
 
 func update():
-	self.turns_left -= 1
-	
-	if self.turns_til_wave != null:
-		if self.turns_til_wave == 0:
-			self.turns_til_wave = self.enemies.get_turns_til_next_wave()
-		else:
-			self.turns_til_wave -= 1
-	
+	self.turns_til_wave = self.enemies.get_turns_til_next_wave()
+
 	if self.turns_til_wave == null:
 		get_node("Label").set_text("Hold the Line: " + str(self.turns_left) + " Turns Remaining")
 	else:	

@@ -23,12 +23,8 @@ func initialize(level_schematic):
 
 
 func update():
-	if self.turns_til_wave != null:
-		if self.turns_til_wave == 0:
-			self.turns_til_wave = self.enemies.get_turns_til_next_wave()
-		else:
-			self.turns_til_wave -= 1
-			
+		self.turns_til_wave = self.enemies.get_turns_til_next_wave()
+
 		if self.turns_til_wave == null:
 				get_node("Label").set_text("Clear the Board")
 		else:

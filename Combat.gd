@@ -501,10 +501,8 @@ func deploy_wave(mass_summon=false):
 	self.next_wave = self.enemy_waves.get_next_summon()
 	
 	if wave != null:
-		var enemies = wave["enemies"]
-		var type = wave["type"]
-		for key in enemies.keys():
-			var prototype_parts = enemies[key]
+		for key in wave.keys():
+			var prototype_parts = wave[key]
 			var prototype = prototype_parts["prototype"]
 			var health = prototype_parts["health"]
 			var modifiers = prototype_parts["modifiers"]
@@ -516,8 +514,7 @@ func deploy_wave(mass_summon=false):
 func display_wave_preview(wave):
 	get_node("Grid").reset_reinforcement_indicators()
 	if wave != null:
-		var enemies = wave["enemies"]
-		for key in enemies.keys():
+		for key in wave.keys():
 			var position = null
 			if typeof(key) == TYPE_INT:
 				position = get_node("Grid").get_top_of_column(key)
