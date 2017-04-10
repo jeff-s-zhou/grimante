@@ -31,13 +31,13 @@ func reset_combo():
 func activate_assist(assist_type, assister):
 	self.assister = assister
 	self.combo_chain += 1
-	if self.combo_chain == 5:
-		self.assist_type = ASSIST_TYPES.finisher
-		var player_pieces = get_tree().get_nodes_in_group("player_pieces")
-		for player_piece in player_pieces:
-			player_piece.activate_finisher()
-	else:
-		self.assist_type = assist_type
+#	if self.combo_chain == 5:
+#		self.assist_type = ASSIST_TYPES.finisher
+#		var player_pieces = get_tree().get_nodes_in_group("player_pieces")
+#		for player_piece in player_pieces:
+#			player_piece.activate_finisher()
+#	else:
+	self.assist_type = assist_type
 	get_node("/root/AnimationQueue").enqueue(self, "animate_activate_assist", false, [self.assist_type, self.combo_chain])
 	self.assister.activate_assist(self.assist_type)
 

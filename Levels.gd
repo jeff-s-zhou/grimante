@@ -39,11 +39,11 @@ func make_complex_tip(tip_text, objective_text, tooltips):
 	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
 	
 func sandbox_allies():
-	return {3: Cavalier, 2: Saint} #2: Cavalier, 3: Archer, 4: Assassin}
+	return {1: Saint, 2: Archer, 3: Berserker, 4: Cavalier, 5: Assassin} #2: Cavalier, 3: Archer, 4: Assassin}
 #
 
 func sandbox_enemies():
-	var turn_power_levels = [1400, 200, 1400]
+	var turn_power_levels = [1800, 0, 400, 0, 500, 0, 600, 0, 700]
 	return EnemyWrappers.FiniteGeneratedWrapper.new(turn_power_levels)
 
 func sandbox_level():

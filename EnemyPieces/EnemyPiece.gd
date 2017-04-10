@@ -74,6 +74,9 @@ func initialize(unit_name, hover_description, movement_value, max_hp, modifiers)
 	initialize_hp(max_hp)
 	if modifiers != null:
 		initialize_modifiers(modifiers)
+	var adjacent_players_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
+	if adjacent_players_range != []:
+		set_cloaked(false)
 
 func input_event(event):
 	if event.is_action("select"):
@@ -633,8 +636,8 @@ func turn_update_helper():
 		set_stunned(false)
 	elif self.hp != 0:
 		self.move(movement_value)
-		if self.silenced:
-			set_silenced(false)
+#		if self.silenced:
+#			set_silenced(false)
 	
 
 

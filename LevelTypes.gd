@@ -54,13 +54,6 @@ class BaseLevelType:
 	func set_end_conditions(conditions):
 		self.end_conditions[conditions] = true
 
-	func check_enemy_win(state): #only checks part of the condition. other is in the game loop
-		return state.player_pieces.size() == 0
-		
-	func check_player_win(state):
-		return false
-		
-		
 
 
 #infinite waves
@@ -68,9 +61,6 @@ class RoomSeal extends BaseLevelType:
 	func _init(allies, enemies, \
 	next_level=null, extras={}).(allies, enemies, next_level, extras):
 		pass
-		
-	func check_player_win(state):
-		return state.enemy_pieces.size() == 0
 
 
 class Defend extends BaseLevelType:
@@ -87,11 +77,6 @@ class Defend extends BaseLevelType:
 class Timed extends BaseLevelType:
 	var Constants = preload("constants.gd").new()
 	var num_turns
-	func check_player_win(state):
-		return state.enemy_pieces.size() == 0
-		
-	func check_enemy_win(state): #only checks part of the condition. other is in the game loop
-		return state.player_pieces.size() == 0 or state.turns_left == 0
 	
 	func _init(allies, enemies, num_turns, \
 	next_level=null, extras={}).(allies, enemies, next_level, extras):
@@ -100,12 +85,14 @@ class Timed extends BaseLevelType:
 		
 class MultiTimed extends BaseLevelType:
 	var Constants = preload("constants.gd").new()
+	var enemy_phases = []
 	
-	func check_player_win(state):
-		return state.enemy_pieces.size() == 0
+	func _init(allies, first_phase, enemy_phases, next_level=null, extras={}).(allies, enemies, next_level, extras):
+		self.enemy_phases = enemy_phases
+		set_end_conditions(Constants.end_conditions.MultiTimed)
 		
-	func check_enemy_win(state): #only checks part of the condition. other is in the game loop
-		return state.player_pieces.size() == 0 or state.turns_left == 0
+	
+	
 #	
 #class FogOfWar extends BaseLevelType:
 #	func check_player_win():

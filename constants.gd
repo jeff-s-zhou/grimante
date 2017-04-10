@@ -12,7 +12,7 @@ const Melee = preload("res://EnemyPieces/MeleePiece.tscn")
 const Ranged = preload("res://EnemyPieces/RangedPiece.tscn")
 
 
-var end_conditions = {"Defend":0, "Escort":1, "Timed":2}
+var end_conditions = {"Defend":0, "Escort":1, "Timed":2, "MultiTimed":3}
 
 
 var enemy_modifiers = {"Poisonous":"Poisonous", "Shield":"Shield", "Cloaked":"Cloaked"}

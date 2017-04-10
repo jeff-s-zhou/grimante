@@ -39,7 +39,7 @@ func _ready():
 	get_node("Timer").set_active(false)
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Grid").set_pos(Vector2(300, 200))
+	get_node("Grid").set_pos(Vector2(100, 250))
 	#get_node("Grid").set_pos(Vector2(400, 250))
 	#debug_mode()
 	
@@ -72,7 +72,7 @@ func _ready():
 	
 	get_node("Grid").update_furthest_back_coords()
 	
-	self.next_wave = self.enemy_waves.get_next_summon()
+	#self.next_wave = self.enemy_waves.get_next_summon()
 	
 	deploy_wave(true)
 	
@@ -135,8 +135,6 @@ func start_deploy_phase():
 		player_piece.start_deploy_phase()
 
 func is_within_deploy_range(coords):
-	print(coords in self.level_schematic.deploy_tiles)
-	print(self.level_schematic.deploy_tiles)
 	return coords in self.level_schematic.deploy_tiles
 
 func debug_mode():
@@ -306,10 +304,14 @@ func _input(event):
 
 	elif event.is_action("debug_level_skip") and event.is_pressed():
 		if(self.level_schematic.next_level != null):
+			if get_node("/root/AnimationQueue").is_animating():
+				yield(get_node("/root/AnimationQueue"), "animations_finished")
 			get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.next_level})
 			
 			
 	elif event.is_action("restart") and event.is_pressed():
+		if get_node("/root/AnimationQueue").is_animating():
+			yield(get_node("/root/AnimationQueue"), "animations_finished")
 		get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic_func})
 	
 	elif event.is_action("toggle_fullscreen") and event.is_pressed():
@@ -381,9 +383,9 @@ func enemy_phase(enemy_pieces):
 	
 	#if there are enemy pieces, wait for them to finish
 	if(get_node("/root/AnimationQueue").is_animating()):
-		print("is animating??")
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	print("got here")	
+
+	
 	deploy_wave()
 		
 	if(get_node("/root/AnimationQueue").is_animating()):
@@ -496,9 +498,13 @@ func _sort_by_y_axis(enemy_piece1, enemy_piece2):
 
 
 func deploy_wave(mass_summon=false):
+	
+	#check if cleared for multitimed system
+	#self.state_manager.pre_deploy_wave_check()
 
-	var wave = self.next_wave
-	self.next_wave = self.enemy_waves.get_next_summon()
+	#var wave = self.next_wave
+	#self.next_wave = self.enemy_waves.get_next_summon()
+	var wave = self.enemy_waves.get_next_summon()
 	
 	if wave != null:
 		for key in wave.keys():
@@ -508,7 +514,7 @@ func deploy_wave(mass_summon=false):
 			var modifiers = prototype_parts["modifiers"]
 			initialize_enemy_piece(key, prototype, health, modifiers, mass_summon)
 
-	display_wave_preview(self.next_wave)
+	display_wave_preview(self.enemy_waves.preview_next_summon())
 
 
 func display_wave_preview(wave):

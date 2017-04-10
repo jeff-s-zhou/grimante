@@ -194,7 +194,11 @@ func soft_placed():
 #resets the assassin to be able to act again
 func unplaced():
 	self.state = States.DEFAULT
+	get_node("/root/AnimationQueue").enqueue(self, "animate_unplaced", false)
+	
+func animate_unplaced():
 	get_node("Physicals/AnimatedSprite").play("default")
+	
 
 func placed():
 	self.bloodlust_flag = false
