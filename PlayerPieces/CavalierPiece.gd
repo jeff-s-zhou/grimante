@@ -16,7 +16,7 @@ const OVERVIEW_DESCRIPTION = """5 Armor
 
 Movement: Leap Move. Able to move to any empty tile along a straight line.
 
-Inspire: +1 Move.
+Inspire: +1 Range.
 """
 
 const PASSIVE_DESCRIPTION = """Trample. Moving through an enemy unit deals 2 damage to it.
@@ -76,15 +76,15 @@ func animate_hop(old_coords, new_coords, down=false):
 		old_position = Vector2(0, 0)
 	var new_position = Vector2(0, -60)
 	
-	get_node("Tween2").interpolate_property(get_node("Physicals"), "transform/pos", \
+	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
 		get_node("Physicals").get_pos(), new_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_OUT)
-	get_node("Tween2").start()
-	yield(get_node("Tween2"), "tween_complete")
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
 	
-	get_node("Tween2").interpolate_property(get_node("Physicals"), "transform/pos", \
+	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
 		get_node("Physicals").get_pos(), old_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_IN)
-	get_node("Tween2").start()
-	yield(get_node("Tween2"), "tween_complete")
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
 	if(down):
 		set_z(0)
 		self.mid_leaping_animation = false

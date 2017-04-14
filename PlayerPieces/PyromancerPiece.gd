@@ -46,7 +46,7 @@ func get_movement_range():
 	return self.pathed_range.keys()
 	
 func get_attack_range():
-	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, 2], "ENEMY")
+	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, self.movement_value + 1], "ENEMY")
 	return unfiltered_range
 
 #parameters to use for get_node("get_parent()").get_neighbors

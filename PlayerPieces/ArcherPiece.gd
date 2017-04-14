@@ -29,7 +29,7 @@ const OVERVIEW_DESCRIPTION = """2 Armor.
 
 Movement: 1 Range Step Move
 
-Inspire: +1 Move
+Inspire: +1 Range
 """
 const ATTACK_DESCRIPTION = """Snipe. Fire an arrow at the first enemy in a line for 3 damage. Can target diagonally. Allies will block the shot.
 """

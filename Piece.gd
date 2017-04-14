@@ -94,12 +94,8 @@ func check_global_seen():
 func collide(area):
 	pass
 	if area.get_name() != "CursorArea":
-		print(self.unit_name)
-		print(self.mid_animation)
 		if self.mid_animation and !self.mid_leaping_animation: #If leaping, it'll set its own z above everythin else
-			print("this is the one moving: " + self.side )
 			var other_piece = area.get_parent()
-			print(other_piece)
 			if other_piece.get_pos().y > get_pos().y:
 				other_piece.set_z(get_z() + 1)
 			else:
@@ -141,6 +137,7 @@ func animate_delete_self(blocking=true):
 func animate_move_to_pos(position, speed, blocking=false, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
 	add_anim_count()
 	var distance = get_pos().distance_to(position)
+	print("time in animate_move_to_pos: " + str(distance/speed))
 	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
 	get_node("Tween").start()
 	if blocking:
@@ -161,8 +158,38 @@ func animate_move(new_coords, speed=250, blocking=true, trans_type=Tween.TRANS_L
 		yield(get_node("Tween"), "tween_complete")
 		emit_signal("animation_done")
 	subtract_anim_count()
+	
+func animate_short_hop(speed, new_coords):
+	add_anim_count()
+	self.mid_leaping_animation = true
+	set_z(3)
+	var location = get_parent().locations[new_coords]
+	var new_position = location.get_pos()
+	var distance = get_pos().distance_to(new_position)
+	var time = distance/speed
+	print("time in short hop: " + str(time))
+	var old_position = Vector2(0, 0)
+	var new_position = Vector2(0, -40)
+	
+	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
+		get_node("Physicals").get_pos(), new_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
+	
+	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
+		get_node("Physicals").get_pos(), old_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_IN)
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
+	set_z(0)
+	self.mid_leaping_animation = false
+	#emit_signal("animation_done")
+	subtract_anim_count()
 
 
+
+func hooked(new_coords):
+	add_animation(self, "animate_move", true, [new_coords, 300, true])
+	set_coords(new_coords)
 
 func move(distance, passed_animation_sequence=null):
 	var animation_sequence

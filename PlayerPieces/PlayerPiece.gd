@@ -238,11 +238,20 @@ func animate_stepped_move(old_coords, new_coords, pathed_range, speed=250, block
 	while(current_pathed_coords.coords != old_coords):
 		path.push_front(current_pathed_coords.coords)
 		current_pathed_coords = current_pathed_coords.previous
+	
+	var previous_coords = old_coords
+	
 	for coords in path:
 		var location = get_parent().locations[coords]
 		var new_position = location.get_pos()
+		
+		animate_short_hop(speed, coords)
 		animate_move_to_pos(new_position, speed, trans_type, ease_type)
+		previous_coords = coords
 		yield(get_node("Tween"), "tween_complete")
+		get_node("Timer").set_wait_time(0.1)
+		get_node("Timer").start()
+		yield(get_node("Timer"), "timeout")
 
 	if blocking:
 		emit_signal("animation_done")
@@ -361,7 +370,6 @@ func select_action_target(target):
 
 
 func start_deploy_phase():
-	print("met the start deploy phase thing?")
 	self.state = States.DEFAULT
 	self.deploying_flag = true
 

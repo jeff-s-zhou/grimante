@@ -15,6 +15,8 @@ func _ready():
 	
 func initialize(level_schematic):
 	self.enemies = level_schematic.enemies
+	get_node("ReinforcementDisplay").display_waves(self.enemies.turn_power_levels, self.enemies.big_wave_threshold)
+	get_node("ReinforcementDisplay").set_pos(Vector2(-150, 25))
 	self.turns_til_wave = self.enemies.get_turns_til_next_wave()
 	if self.turns_til_wave == null:
 		get_node("Label").set_text("Clear the Board")

@@ -19,11 +19,4 @@ visibility/opacity = 0.0
 transform/pos = Vector2( 0, -4 )
 texture = ExtResource( 4 )
 
-[node name="Tween 2" type="Tween" parent="."]
-
-playback/process_mode = 1
-playback/active = false
-playback/repeat = false
-playback/speed = 1.0
-
 

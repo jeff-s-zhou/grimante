@@ -1,0 +1,52 @@
+[gd_scene load_steps=5 format=1]
+
+[ext_resource path="res://PlayerPieces/Components/CorsairHook.gd" type="Script" id=1]
+[ext_resource path="res://Assets/Allies/corsair_hook.png" type="Texture" id=2]
+[ext_resource path="res://Assets/effects/hook_mask.png" type="Texture" id=3]
+
+[sub_resource type="CanvasItemMaterial" id=1]
+
+shader/shading_mode = 0
+
+[node name="CorsairHook" type="Node2D"]
+
+script/script = ExtResource( 1 )
+
+[node name="Tween" type="Tween" parent="."]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
+
+[node name="Sprite" type="Sprite" parent="."]
+
+visibility/light_mask = 2
+material/material = SubResource( 1 )
+transform/pos = Vector2( 0, -208.311 )
+texture = ExtResource( 2 )
+
+[node name="Light2D" type="Light2D" parent="."]
+
+visibility/light_mask = 2
+enabled = true
+editor_only = false
+texture = ExtResource( 3 )
+offset = Vector2( 0, 0 )
+scale = 1.0
+color = Color( 1, 1, 1, 1 )
+energy = 1.0
+mode = 3
+range/height = 0.0
+range/z_min = -1024
+range/z_max = 1024
+range/layer_min = 0
+range/layer_max = 0
+range/item_mask = 2
+shadow/enabled = false
+shadow/color = Color( 0, 0, 0, 0 )
+shadow/buffer_size = 2048
+shadow/esm_multiplier = 80.0
+shadow/item_mask = 2
+
+

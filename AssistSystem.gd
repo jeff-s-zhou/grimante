@@ -46,7 +46,7 @@ func animate_activate_assist(assist_type, combo_chain):
 	if assist_type == ASSIST_TYPES.attack:
 		get_node("Label").set_text(str(combo_chain) + " Inspire: +1 Attack")
 	elif assist_type == ASSIST_TYPES.movement:
-		get_node("Label").set_text(str(combo_chain) + " Inspire: +1 Move")
+		get_node("Label").set_text(str(combo_chain) + " Inspire: +1 Range")
 	elif assist_type == ASSIST_TYPES.invulnerable:
 		get_node("Label").set_text(str(combo_chain) + " Inspire: Protect")
 	elif assist_type == ASSIST_TYPES.finisher:
