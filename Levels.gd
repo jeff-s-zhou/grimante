@@ -40,7 +40,7 @@ func make_complex_tip(tip_text, objective_text, tooltips):
 	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
 	
 func sandbox_allies():
-	return {1: Corsair, 2: Archer, 3: Berserker, 4: Cavalier, 5: Assassin} #2: Cavalier, 3: Archer, 4: Assassin}
+	return {1: Saint, 2: Archer, 3: Berserker, 4: Cavalier, 5: Assassin} #2: Cavalier, 3: Archer, 4: Assassin}
 #
 
 func sandbox_enemies():

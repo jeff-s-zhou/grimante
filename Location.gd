@@ -9,6 +9,8 @@ var coords
 
 var raining = false
 
+var has_crystal = false
+
 var deployable = false
 
 var shadow_wall = false
@@ -69,6 +71,19 @@ func set_rain(flag):
 		get_node("/root/AnimationQueue").enqueue(get_node("StormEffect"), "animate_set_rain", false)
 	else:
 		get_node("/root/AnimationQueue").enqueue(get_node("StormEffect"), "animate_hide_rain", false)
+		
+func set_crystal(flag):
+	self.has_crystal = flag
+	if flag:
+		get_node("/root/AnimationQueue").enqueue(self, "animate_set_crystal", false)
+	else:
+		get_node("/root/AnimationQueue").enqueue(self, "animate_hide_crystal", false)
+	
+func animate_set_crystal():
+	get_node("Crystal").show()
+	
+func animate_hide_crystal():
+	get_node("Crystal").hide()
 	
 		
 func set_shadow_wall(flag):

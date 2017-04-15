@@ -473,7 +473,7 @@ func move_helper(coords, animation_sequence=null, blocking=false):
 	if walked_off:
 		print("deleting self after walking off")
 		delete_self()
-		animation_sequence.add(self, "animate_delete_self", true)
+		#animation_sequence.add(self, "animate_delete_self", true)
 		if distance_increment == Vector2(0, 1):
 			emit_signal("broke_defenses")
 
@@ -524,13 +524,12 @@ func modify_hp(amount, delay=0):
 		self.hp = min((max(0, self.hp + amount)), 9) #has to be between 0 and 9
 		self.temp_display_hp = self.hp
 		
-		#create a new animation_sequence here
-		
-		add_animation(self, "animate_set_hp", false, [self.hp, amount, delay])
-		if self.hp == 0: #if aoe, then we manually do the delete self check afterwards
-			delete_self() #delete self would add to the animation_sequence
+		self.current_animation_sequence = self.AnimationSequence.new()
+		add_animation(self, "animate_set_hp", true, [self.hp, amount, delay])
+		if self.hp == 0: 
+			delete_self() 
 			
-		#execute it
+		enqueue_animation_sequence()
 			
 
 
@@ -565,21 +564,27 @@ func animate_set_hp(hp, value, delay=0):
 	tween.interpolate_property(text, "visibility/opacity", 1, 0, 1.3, Tween.TRANS_EXPO, Tween.EASE_IN)
 	tween.start()
 	yield(tween, "tween_complete") #this is the problem line...fuuuuck
+	emit_signal("animation_done")
 	flyover.queue_free()
 	tween.queue_free()
 	self.mid_trailing_animation = false
 	subtract_anim_count()
-	if hp == 0:
-		animate_delete_self()
+#	if hp == 0:
+#		animate_delete_self()
 
 
 #removes it from the self.grid, which prevents any interaction with other pieces
 func delete_self():
+	print("hit the delete_self code?")
+	add_animation(self, "animate_delete_self", true)
+	self.grid.locations[self.coords].set_crystal(true)
 	self.grid.remove_piece(self.coords)
+	
 	
 
 #actually physically removes it from the board
 func animate_delete_self():
+	print("animating delete self")
 	add_anim_count()
 	#get_node("Sprinkles").update() #update particleattractor location after all have moved
 	remove_from_group("enemy_pieces")
@@ -598,6 +603,8 @@ func set_coords(new_coords, sequence=null):
 	self.grid.move_piece(self.coords, new_coords)
 	self.coords = new_coords
 	var location = self.grid.locations[self.coords]
+	if location.has_crystal:
+		location.set_crystal(false)
 	if location.raining:
 		add_animation(location, "animate_lightning", true)
 		var action = get_new_action(self.coords)

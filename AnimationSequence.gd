@@ -14,6 +14,9 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	pass
+	
+func _init(blocking=false):
+	self.blocking = blocking
 
 func add(node, func_ref, blocking, args=[]):
 	#print("adding " + func_ref)

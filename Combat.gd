@@ -347,18 +347,18 @@ func _process(delta):
 	if self.state_manager.check_player_win(): 
 		player_win()
 
-	if self.state == STATES.player_turn:
-		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
-			if !player_piece.is_placed():
-				return
-			if player_piece.finisher_flag:
-				return
-				
-		#make sure the animation queue is clear
-		if get_node("/root/AnimationQueue").is_animating():
-			return
-
-		end_turn()
+#	if self.state == STATES.player_turn:
+#		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
+#			if !player_piece.is_placed():
+#				return
+#			if player_piece.finisher_flag:
+#				return
+#				
+#		#make sure the animation queue is clear
+#		if get_node("/root/AnimationQueue").is_animating():
+#			return
+#
+#		end_turn()
 
 
 	elif self.state == STATES.enemy_turn:
