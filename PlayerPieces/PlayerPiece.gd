@@ -211,12 +211,10 @@ func turn_update():
 		if(get_node("CollisionArea").overlaps_area(self.cursor_area)):
 			self.hovered()
 
+
 func set_coords(new_coords):
 	get_parent().move_piece(self.coords, new_coords)
 	self.coords = new_coords
-	if get_parent().locations[self.coords].has_crystal:
-		get_parent().locations[self.coords].set_crystal(false)
-		get_node("/root/Combat/CrystalSystem").add_crystal()
 	
 	var seen_range = get_parent().get_range(self.coords, [1, 2], "ENEMY")
 	for coords in seen_range:

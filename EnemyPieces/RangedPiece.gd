@@ -6,7 +6,7 @@ extends "EnemyPiece.gd"
 # var b="textvar"
 
 var max_hp = 5
-var DESCRIPTION = "After moving, shoots a Fireball forward, which hits the first Player Unit in the column. If the Dragon's health is greater than or equal to the Player Units shield, it is KOed."
+var DESCRIPTION = "After moving, shoots a Fireball forward, which hits the first Player Unit in the column. Enemy Units will block the Fireball. If the Dragon's health is greater than or equal to the Player Units shield, it is KOed."
 
 const fireball_prototype = preload("res://EnemyPieces/Components/DragonFireball.tscn")
 
@@ -19,7 +19,7 @@ func turn_update_helper():
 	elif self.hp != 0:
 		self.move(movement_value)
 		if !self.silenced:
-			var fireball_range = get_parent().get_range(self.coords, [1, 9], "PLAYER", false, [3, 4])
+			var fireball_range = get_parent().get_range(self.coords, [1, 9], "PLAYER", true, [3, 4])
 			if fireball_range != []:
 				fireball(fireball_range[0])
 	

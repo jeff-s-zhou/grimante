@@ -577,10 +577,8 @@ func animate_set_hp(hp, value, delay=0):
 func delete_self():
 	print("hit the delete_self code?")
 	add_animation(self, "animate_delete_self", true)
-	self.grid.locations[self.coords].set_crystal(true)
 	self.grid.remove_piece(self.coords)
-	
-	
+
 
 #actually physically removes it from the board
 func animate_delete_self():
@@ -603,8 +601,6 @@ func set_coords(new_coords, sequence=null):
 	self.grid.move_piece(self.coords, new_coords)
 	self.coords = new_coords
 	var location = self.grid.locations[self.coords]
-	if location.has_crystal:
-		location.set_crystal(false)
 	if location.raining:
 		add_animation(location, "animate_lightning", true)
 		var action = get_new_action(self.coords)

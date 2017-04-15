@@ -128,6 +128,7 @@ func _ready():
 
 
 func start_deploy_phase():
+	
 	get_node("PhaseManager").set_free_deploy()
 	for deploy_tile_coords in self.level_schematic.deploy_tiles:
 		get_node("Grid").locations[deploy_tile_coords].set_deployable_indicator(true)
@@ -418,6 +419,7 @@ func king_phase():
 
 func start_player_phase():
 	get_node("PhaseManager").player_turn_start()
+	get_node("CrystalSystem").update()
 	get_node("AssistSystem").reset_combo()
 	self.turn_count += 1
 	if self.reinforcements.has(self.turn_count):

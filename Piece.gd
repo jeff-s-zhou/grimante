@@ -137,7 +137,6 @@ func animate_delete_self(blocking=true):
 func animate_move_to_pos(position, speed, blocking=false, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
 	add_anim_count()
 	var distance = get_pos().distance_to(position)
-	print("time in animate_move_to_pos: " + str(distance/speed))
 	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
 	get_node("Tween").start()
 	if blocking:
@@ -167,7 +166,6 @@ func animate_short_hop(speed, new_coords):
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
 	var time = distance/speed
-	print("time in short hop: " + str(time))
 	var old_position = Vector2(0, 0)
 	var new_position = Vector2(0, -40)
 	
