@@ -26,6 +26,8 @@ signal next_pressed
 signal reinforced
 signal done_initializing
 
+signal deployed
+
 signal animation_done
 
 
@@ -46,7 +48,6 @@ func _ready():
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("AssistSystem").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 100))
 	get_node("PhaseManager").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 50))
-	get_node("PhaseManager").connect("end_turn", self, "end_turn")
 	
 	get_node("/root/AnimationQueue").reset_animation_count()
 
@@ -108,7 +109,7 @@ func _ready():
 			handle_instructions()
 			yield(self, "next_pressed")
 		
-		yield(get_node("PhaseManager"), "deployed")
+		yield(self, "deployed")
 		get_node("Grid").reset_deployable_indicators()
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			player_piece.deploy()
@@ -245,13 +246,26 @@ func end_turn():
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	get_node("ComboSystem").player_turn_ended()
 	self.state = STATES.enemy_turn
+	
+func is_select(event):
+	var is_mouse = event.is_action("select") and event.is_pressed()
+	var is_touch = event.type == InputEvent.SCREEN_TOUCH and event.is_pressed()
+	return is_mouse or is_touch
+	
+func is_deselect(event):
+	var is_mouse = event.is_action("deselect") and event.is_pressed()
+	return is_mouse
+	
+func is_ui_accept(event):
+	var is_mouse = event.is_action("ui_accept") and event.is_pressed()
+	var is_touch = event.type == InputEvent.SCREEN_DRAG
+	return is_mouse or is_touch
 
 
 func _input(event):
 	#select a unit
 	
-	if event.is_action("select") and event.is_pressed():
-		get_node("OverlayDisplayer").skip_animation()
+	if is_select(event):
 		var hovered = get_node("CursorArea").get_piece_or_location_hovered()
 		if hovered:
 			hovered.input_event(event)
@@ -260,13 +274,21 @@ func _input(event):
 			get_node("Grid").selected.invalid_move()
 	
 	#deselect a unit
-	if event.is_action("deselect") and event.is_pressed(): 
+	if is_deselect(event): 
 		if get_node("Grid").selected:
 			get_node("Grid").selected.deselect()
 			
 			get_node("Grid").selected = null
 			get_node("Grid").reset_highlighting(true)
 			get_node("Grid").reset_prediction()
+	
+	
+	elif is_ui_accept(event):
+		if self.state == self.STATES.game_start:
+			get_node("PhaseManager").clear()
+			emit_signal("deployed")
+		if self.state == self.STATES.player_turn:
+			end_turn()
 			
 			
 	elif event.is_action("detailed_description") :

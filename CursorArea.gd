@@ -13,7 +13,7 @@ func _ready():
 	
 	
 func _input(ev):
-	if (ev.type==InputEvent.MOUSE_MOTION):
+	if ev.type==InputEvent.MOUSE_MOTION or ev.type==InputEvent.SCREEN_TOUCH:
 		set_pos(ev.pos)
 
 

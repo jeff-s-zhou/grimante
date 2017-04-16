@@ -115,8 +115,14 @@ func _mouse_exited():
 	if get_parent().selected != null:
 		get_parent().reset_prediction()
 
+func is_select(event):
+	var is_mouse = event.is_action("select") and event.is_pressed()
+	var is_touch = event.type == InputEvent.SCREEN_TOUCH and event.is_pressed()
+	return is_mouse or is_touch
+
+
 func input_event(event):
-	if event.is_action("select") and event.is_pressed():
+	if is_select(event):
 		get_parent().set_target(self)
 
 func external_set_opacity(value=1.0):

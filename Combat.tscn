@@ -34,7 +34,12 @@ draw_bg = true
 
 [sub_resource type="SampleLibrary" id=2]
 
-samples/error = { "db":0.0, "pitch":1.0, "sample":ExtResource( 8 ) }
+samples/error = {
+"db": 0.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 8 )
+}
 
 [node name="Combat" type="Node2D"]
 
