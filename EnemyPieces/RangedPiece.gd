@@ -22,6 +22,7 @@ func turn_update_helper():
 			var fireball_range = get_parent().get_range(self.coords, [1, 9], "PLAYER", true, [3, 4])
 			if fireball_range != []:
 				fireball(fireball_range[0])
+				
 	
 func fireball(coords):
 	add_animation(self, "animate_fireball", true, [coords])

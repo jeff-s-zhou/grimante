@@ -632,6 +632,8 @@ func turn_update():
 	if adjacent_players_range != []:
 		set_cloaked(false)
 	enqueue_animation_sequence()
+	get_parent().handle_sand_shifts(self.coords)
+
 
 #this is written so we can easily add more stuff to the end of the turn_update before executing the animation_sequence
 func turn_update_helper():

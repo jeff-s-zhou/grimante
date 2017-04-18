@@ -13,6 +13,8 @@ var deployable = false
 
 var shadow_wall = false
 
+var shifting_direction = null
+
 var corpse = null
 
 signal animation_done
@@ -79,6 +81,11 @@ func set_shadow_wall(flag):
 	else:
 		get_node("WallFront").hide()
 		get_node("WallBack").hide()
+
+
+func set_shifting_sands(direction):
+	self.shifting_direction = direction
+	get_node("ShiftingSands").show()
 		
 		
 func animate_lightning():

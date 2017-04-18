@@ -69,6 +69,6 @@ func execute():
 
 		get_node("/root/Combat").handle_assassin_passive(assassin_passive_range)
 	
-	if  death_flag and self.caller.has_method("trigger_assist_flag"):
+	if death_flag and self.caller.has_method("trigger_assist_flag"):
 		self.caller.trigger_assist_flag()
 	queue_free()

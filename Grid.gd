@@ -9,6 +9,7 @@ var locations = {}
 var pieces = {}
 
 var shadow_wall_tile_range = []
+var shifting_sands_tiles = []
 
 
 
@@ -88,6 +89,19 @@ func initialize_shadow_wall_tiles(shadow_wall_tile_range):
 	self.shadow_wall_tile_range = shadow_wall_tile_range
 	for coords in shadow_wall_tile_range:
 		self.locations[coords].set_shadow_wall(true)
+		
+func initialize_shifting_sands_tiles(shifting_sands_tiles):
+	self.shifting_sands_tiles = shifting_sands_tiles
+	for coords in shifting_sands_tiles:
+		#self.locations[coords].set_shifting_sands(3)
+		self.locations[coords].set_shifting_sands(self.shifting_sands_tiles[coords])
+		
+func handle_sand_shifts(new_coords):
+	if new_coords in self.shifting_sands_tiles:
+		var direction = self.locations[new_coords].shifting_direction
+		var change_vector = get_change_vector(direction)
+		var piece = self.pieces[new_coords].shift(change_vector)
+		
 
 func debug():
 	for key in self.locations.keys():
@@ -110,7 +124,7 @@ func update_furthest_back_coords():
 
 #so we know what target
 func set_target(target):
-	if self.selected != null:
+	if self.selected != null and !(target.coords in self.shadow_wall_tile_range):
 		self.selected.select_action_target(target)
 
 
@@ -197,6 +211,22 @@ func get_location_range(coords, magnitude_range=[1, 2], direction_range = [0, 6]
 		if self.locations.has(coords + change_vector):
 			return_set.append(coords + change_vector)
 	return return_set
+	
+func get_change_vector(direction):
+	var change_vector = null
+	if direction == 0:
+		change_vector = Vector2(0, -1)
+	elif direction == 1:
+		change_vector = Vector2(1, 0)
+	elif direction == 2:
+		change_vector = Vector2(1, 1)
+	elif direction == 3:
+		change_vector = Vector2(0, 1)
+	elif direction == 4:
+		change_vector = Vector2(-1, 0)
+	elif direction == 5:
+		change_vector = Vector2(-1, -1)
+	return change_vector
 
 
 #direction goes from 0-5, clockwise from top
@@ -205,19 +235,7 @@ func get_range(coords, magnitude_range=[1,2], side=null, collision_check=false, 
 	var return_set = [] #make this a dict?
 	var change_vector = Vector2(0, 0)
 	for direction in range(direction_range[0], direction_range[1]):
-		if direction == 0:
-			change_vector = Vector2(0, -1)
-		elif direction == 1:
-			change_vector = Vector2(1, 0)
-		elif direction == 2:
-			change_vector = Vector2(1, 1)
-		elif direction == 3:
-			change_vector = Vector2(0, 1)
-		elif direction == 4:
-			change_vector = Vector2(-1, 0)
-		elif direction == 5:
-			change_vector = Vector2(-1, -1)
-			
+		change_vector = get_change_vector(direction)
 		get_range_helper(return_set, change_vector, coords, magnitude_range, side, collision_check)
 	return return_set
 	

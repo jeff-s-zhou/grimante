@@ -98,7 +98,9 @@ func _ready():
 		
 	if self.level_schematic.shadow_wall_tiles.size() > 0:
 		get_node("Grid").initialize_shadow_wall_tiles(self.level_schematic.shadow_wall_tiles)
-			
+	
+	if self.level_schematic.shifting_sands_tiles.size() > 0:
+		get_node("Grid").initialize_shifting_sands_tiles(self.level_schematic.shifting_sands_tiles)	
 
 	
 	
@@ -113,7 +115,6 @@ func _ready():
 		get_node("Grid").reset_deployable_indicators()
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			player_piece.deploy()
-			player_piece.deploy_placed()
 	
 	
 	get_node("Timer2").set_wait_time(0.3)

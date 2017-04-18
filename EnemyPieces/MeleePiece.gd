@@ -21,7 +21,6 @@ func turn_update_helper():
 			var swipe_range = get_parent().get_range(self.coords, [1, 2], "PLAYER")
 			for coords in swipe_range:
 				swipe(coords)
-	enqueue_animation_sequence()
 
 		
 func swipe(coords):

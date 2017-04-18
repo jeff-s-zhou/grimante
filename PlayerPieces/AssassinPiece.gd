@@ -170,6 +170,7 @@ func backstab(new_coords):
 		placed()
 
 func activate_bloodlust():
+	self.handle_assist()
 	self.bloodlust_flag = true
 	get_parent().selected = null
 
@@ -186,6 +187,7 @@ func cast_ultimate():
 	
 #same as regular placed() except doesn't reset the ultimate_flag or bloodlust_flag
 func soft_placed(): 
+	self.handle_assist()
 	get_node("/root/AnimationQueue").enqueue(self, "animate_placed", false)
 	self.state = States.PLACED
 	get_parent().selected = null

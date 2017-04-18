@@ -63,8 +63,6 @@ func _ready():
 func get_assist_bonus_attack():
 	return self.AssistSystem.get_bonus_attack()
 	
-func deploy_placed():
-	self.state = States.PLACED
 
 #call this function right before being assisted
 func handle_pre_assisted():
@@ -84,6 +82,7 @@ func animate_set_invulnerable(flag):
 	
 	
 func trigger_assist_flag():
+	print("triggered")
 	self.assist_flag = true
 
 func handle_assist():
@@ -142,6 +141,7 @@ func set_armor(value):
 #called once the unit positions are finalized in the deployment phase
 func deploy():
 	self.deploying_flag = false
+	self.state = States.PLACED
 	
 func block_summon():
 	if !self.invulnerable_flag:
@@ -324,9 +324,6 @@ func input_event(event):
 	if self.deploying_flag: #if in deploy phase
 		deploy_input_event(event)
 		return
-	#deploy TODO
-	if event.is_action("select") and !event.is_pressed() and get_node("UltimateBar").ultimate_charging:
-		get_node("UltimateBar").end_charging()
 
 	if event.is_action("select") and event.is_pressed():
 		if get_parent().selected == null and self.state != States.PLACED:
@@ -369,6 +366,9 @@ func select_action_target(target):
 		deploy_select_action_target(target)
 	else:
 		act(target.coords)
+		get_parent().handle_sand_shifts(self.coords)
+		
+		
 
 
 func start_deploy_phase():

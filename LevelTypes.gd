@@ -30,6 +30,7 @@ class BaseLevelType:
 	var free_deploy = true
 	var deploy_tiles = DEFAULT_DEPLOY_TILES
 	var shadow_wall_tiles = []
+	var shifting_sands_tiles = []
 	var king = null
 	var end_conditions = {}
 	
@@ -48,6 +49,8 @@ class BaseLevelType:
 			self.flags = extras["flags"]
 		if extras.has("shadow_wall_tiles"):
 			self.shadow_wall_tiles = extras["shadow_wall_tiles"]
+		if extras.has("shifting_sands_tiles"):
+			self.shifting_sands_tiles = extras["shifting_sands_tiles"]
 		if extras.has("king"):
 			self.king = extras["king"]
 			

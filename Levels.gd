@@ -40,15 +40,18 @@ func make_complex_tip(tip_text, objective_text, tooltips):
 	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
 	
 func sandbox_allies():
-	return {1: Saint, 2: Archer, 3: Berserker, 4: Cavalier, 5: Assassin} #2: Cavalier, 3: Archer, 4: Assassin}
+	return {1: Corsair, 2: Archer, 3: Berserker, 4: Cavalier, 5: Assassin} #2: Cavalier, 3: Archer, 4: Assassin}
 #
 
 func sandbox_enemies():
-	var turn_power_levels = [1800, 0, 400, 0, 500, 0, 600, 0, 700]
+	var turn_power_levels = [1500, 0, 400, 0, 500, 0, 600, 0, 700]
 	return EnemyWrappers.FiniteGeneratedWrapper.new(turn_power_levels)
+	
+func sandbox_extras():
+	return {"shifting_sands_tiles": {Vector2(3, 6): 4}}
 
 func sandbox_level():
-	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies(), null) #, sandbox_extras)
+	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies(), null, sandbox_extras()) 
 
 var sandbox_level_ref = funcref(self, "sandbox_level")
 #

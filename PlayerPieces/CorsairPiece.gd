@@ -56,6 +56,7 @@ func placed():
 	if self.moves_remaining == 0:
 		.placed()
 	else:
+		self.handle_assist()
 		get_parent().selected = null
 	
 

@@ -10,8 +10,6 @@ var assist_type = null
 
 var assister = null
 
-var combo_chain = 0
-
 signal count_animation_done
 
 func _ready():
@@ -24,33 +22,23 @@ func reset_combo():
 	if self.assister != null:
 		self.assister.clear_assist()
 		self.assister = null
-	self.combo_chain = 0
-	get_node("/root/AnimationQueue").enqueue(self, "animate_activate_assist", false, [self.assist_type, self.combo_chain])
+	get_node("/root/AnimationQueue").enqueue(self, "animate_activate_assist", false, [self.assist_type])
 	
 	
 func activate_assist(assist_type, assister):
 	self.assister = assister
-	self.combo_chain += 1
-#	if self.combo_chain == 5:
-#		self.assist_type = ASSIST_TYPES.finisher
-#		var player_pieces = get_tree().get_nodes_in_group("player_pieces")
-#		for player_piece in player_pieces:
-#			player_piece.activate_finisher()
-#	else:
 	self.assist_type = assist_type
-	get_node("/root/AnimationQueue").enqueue(self, "animate_activate_assist", false, [self.assist_type, self.combo_chain])
+	get_node("/root/AnimationQueue").enqueue(self, "animate_activate_assist", false, [self.assist_type])
 	self.assister.activate_assist(self.assist_type)
 
 
-func animate_activate_assist(assist_type, combo_chain):
+func animate_activate_assist(assist_type):
 	if assist_type == ASSIST_TYPES.attack:
-		get_node("Label").set_text(str(combo_chain) + " Inspire: +1 Attack")
+		get_node("Label").set_text("Inspire: +1 Attack")
 	elif assist_type == ASSIST_TYPES.movement:
-		get_node("Label").set_text(str(combo_chain) + " Inspire: +1 Range")
+		get_node("Label").set_text("Inspire: +1 Range")
 	elif assist_type == ASSIST_TYPES.invulnerable:
-		get_node("Label").set_text(str(combo_chain) + " Inspire: Protect")
-	elif assist_type == ASSIST_TYPES.finisher:
-		get_node("Label").set_text(str(combo_chain) + " Inspire Finisher!")
+		get_node("Label").set_text("Inspire: Protect")
 	elif assist_type == null:
 		get_node("Label").set_text("")
 		
@@ -61,10 +49,9 @@ func assist(piece):
 		
 
 func clear_assist():
-	self.combo_chain = 0
 	self.assister = null
 	self.assist_type = null
-	get_node("/root/AnimationQueue").enqueue(self, "animate_activate_assist", false, [self.assist_type, self.combo_chain])
+	get_node("/root/AnimationQueue").enqueue(self, "animate_activate_assist", false, [self.assist_type])
 
 
 func animate_clear_assist():

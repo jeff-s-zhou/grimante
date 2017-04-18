@@ -183,7 +183,9 @@ func animate_short_hop(speed, new_coords):
 	#emit_signal("animation_done")
 	subtract_anim_count()
 
-
+func shift(change_vector):
+	self.move(change_vector)
+	self.enqueue_animation_sequence()
 
 func hooked(new_coords):
 	add_animation(self, "animate_move", true, [new_coords, 300, true])
