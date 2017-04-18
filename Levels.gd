@@ -51,7 +51,7 @@ func sandbox_extras():
 	return {"shifting_sands_tiles": {Vector2(3, 6): 4}}
 
 func sandbox_level():
-	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies(), null, sandbox_extras()) 
+	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies(), null) 
 
 var sandbox_level_ref = funcref(self, "sandbox_level")
 #
