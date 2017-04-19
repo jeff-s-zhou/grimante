@@ -44,7 +44,7 @@ func sandbox_allies():
 #
 
 func sandbox_enemies():
-	var turn_power_levels = [1500, 0, 400, 0, 500, 0, 600, 0, 700]
+	var turn_power_levels = [1700, 0, 400, 0, 500, 0, 600, 0, 700]
 	return EnemyWrappers.FiniteGeneratedWrapper.new(turn_power_levels)
 	
 func sandbox_extras():

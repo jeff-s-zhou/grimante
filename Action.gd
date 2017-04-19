@@ -71,4 +71,5 @@ func execute():
 	
 	if death_flag and self.caller.has_method("trigger_assist_flag"):
 		self.caller.trigger_assist_flag()
+		
 	queue_free()

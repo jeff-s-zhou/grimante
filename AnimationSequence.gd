@@ -54,4 +54,5 @@ func execute():
 			yield(node, "animation_done")
 
 	emit_signal("animation_done")
-	queue_free()
+
+	free() #call this instead of queue_free() because queue_free requires us to add it to the tree

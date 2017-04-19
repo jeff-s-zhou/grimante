@@ -190,8 +190,63 @@ func shift(change_vector):
 func hooked(new_coords):
 	add_animation(self, "animate_move", true, [new_coords, 300, true])
 	set_coords(new_coords)
-
+	
 func move(distance, passed_animation_sequence=null):
+	var animation_sequence
+	if passed_animation_sequence != null:
+		animation_sequence = passed_animation_sequence
+	else:
+		animation_sequence = self.AnimationSequence.new()
+		
+	self.current_animation_sequence = animation_sequence
+		
+	var old_coords = self.coords
+	
+	var distance_length = self.grid.hex_length(distance)
+	var distance_increment = self.grid.hex_normalize(distance)
+	var direction = self.grid.get_direction_from_vector(distance)
+	var collide_range = self.grid.get_range(self.coords, [1, distance_length + 1], "ANY", true, [direction, direction + 1])
+	var collide_coords = null
+	
+	#if there's something in front, we shove it
+	if collide_range.size() > 0:
+		collide_coords = collide_range[0]
+		#if the tile right before the one we want to collide with isn't the one we're on
+		if self.coords != collide_coords - distance_increment: 
+			move_helper(collide_coords - distance_increment, animation_sequence, true)
+	else: #else just move forward all the way
+		move_helper(self.coords + distance, animation_sequence, true)
+	
+	#if there was a collision
+	if collide_coords != null:
+		self.move_attack(collide_coords, animation_sequence)
+		self.current_animation_sequence.blocking = true
+	#execute the whole sequence outside of the function
+
+
+func move_attack(collide_coords, animation_sequence):
+	var location = self.grid.locations[collide_coords]
+	var location_right_before = self.grid.locations[collide_coords - Vector2(0, 1)]
+	var difference =  (location.get_pos() - location_right_before.get_pos())/4
+	var collide_pos = location_right_before.get_pos() + difference 
+	animation_sequence.add(self, "animate_move_to_pos", true, [collide_pos, 300, true])
+
+	var piece_killed = get_parent().pieces[collide_coords].receive_move_attack(self, animation_sequence)
+	if piece_killed:
+		move_helper(collide_coords, animation_sequence)
+	else:
+		animation_sequence.add(self, "animate_move", true, [self.coords, 300, true])
+
+
+func receive_move_attack(pusher, animation_sequence):
+	if dies_to_collision(pusher): #check if they're going to die from collision
+		delete_self()
+		animation_sequence.add(self, "animate_delete_self", true)
+		return true
+	return false
+
+
+func move2(distance, passed_animation_sequence=null):
 	var animation_sequence
 	if passed_animation_sequence != null:
 		animation_sequence = passed_animation_sequence

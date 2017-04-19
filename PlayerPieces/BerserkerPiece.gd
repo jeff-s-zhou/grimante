@@ -3,7 +3,7 @@ extends "PlayerPiece.gd"
 #extends KinematicBody2D
 const DEFAULT_DAMAGE = 4
 const DEFAULT_AOE_DAMAGE = 2
-const DEFAULT_ARMOR_VALUE = 4
+const DEFAULT_ARMOR_VALUE = 3
 const DEFAULT_MOVEMENT_VALUE = 2
 
 var damage = DEFAULT_DAMAGE setget , get_damage
@@ -16,7 +16,7 @@ var animation_state = ANIMATION_STATES.default
 
 const UNIT_TYPE = "Berserker"
 
-const OVERVIEW_DESCRIPTION = """4 Armor
+const OVERVIEW_DESCRIPTION = """3 Armor
 
 Movement: 2 Range Leap Move
 
