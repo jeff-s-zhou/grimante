@@ -25,9 +25,13 @@ const _GRID_X_OFFSET = 0
 const _GRID_Y_OFFSET = 0
 
 #const TILE_X_OFFSET = 8
-const TILE_X_OFFSET = -4
+#const TILE_X_OFFSET = -4
+#const TILE_X_OFFSET = -14
+const TILE_X_OFFSET = -10
 #const TILE_Y_OFFSET = 34
-const TILE_Y_OFFSET = 21
+#const TILE_Y_OFFSET = 21
+#const TILE_Y_OFFSET = 11
+const TILE_Y_OFFSET = 14
 
 const _Z_PIECE_OFFSET = Vector2(0, -0) #this is to offset for the pseudo-3d vertical distance of pieces
 
@@ -49,7 +53,9 @@ func _ready():
 		var column_count = self.tiles_y
 		if i % 2 == 0:
 			#offset = -56
-			offset = -50
+			#offset = -50
+			#offset = -45
+			offset = -49
 			column_count = self.tiles_y
 		for j in range(0, column_count):
 			var location1 = location.instance()
