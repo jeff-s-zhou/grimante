@@ -19,7 +19,7 @@
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ), ExtResource( 5 ) ], "loop":true, "name":"damaged", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"attack_range", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"attack_range", "speed":5.0 }, { "frames":[ ExtResource( 4 ), ExtResource( 5 ) ], "loop":true, "name":"damaged", "speed":5.0 } ]
 
 [node name="GruntPiece" type="KinematicBody2D"]
 
@@ -48,8 +48,6 @@ frames = SubResource( 1 )
 animation = "damaged"
 
 [node name="EnemyOverlays" parent="Physicals" instance=ExtResource( 6 )]
-
-editor/display_folded = true
 
 [node name="HealthDisplay" parent="Physicals" instance=ExtResource( 7 )]
 
