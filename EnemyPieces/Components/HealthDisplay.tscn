@@ -1,11 +1,11 @@
 [gd_scene load_steps=5 format=1]
 
 [ext_resource path="res://Assets/Enemies/health_piece_new.png" type="Texture" id=1]
-[ext_resource path="res://Assets/processed_fonts/enemy_health.fnt" type="BitmapFont" id=2]
+[ext_resource path="res://Assets/processed_fonts/mobile_enemy_health.fnt" type="BitmapFont" id=2]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 1 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 1 ) ], "loop":true, "name":"attack_range", "speed":5.0 }, { "frames":[ ExtResource( 1 ) ], "loop":true, "name":"damaged", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 1 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 1 ) ], "loop":true, "name":"damaged", "speed":5.0 }, { "frames":[ ExtResource( 1 ) ], "loop":true, "name":"attack_range", "speed":5.0 } ]
 
 [sub_resource type="Animation" id=2]
 
@@ -25,6 +25,7 @@ transform/pos = Vector2( 0, 32 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 
+visibility/visible = false
 frames = SubResource( 1 )
 animation = "default"
 
@@ -34,11 +35,15 @@ focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
-margin/left = -7.0
-margin/top = -10.0
-margin/right = 33.0
-margin/bottom = 16.0
+margin/left = -11.0
+margin/top = -14.0
+margin/right = 29.0
+margin/bottom = 28.0
 custom_fonts/font = ExtResource( 2 )
+custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
+custom_constants/shadow_offset_x = 2
+custom_constants/shadow_offset_y = 2
+custom_constants/shadow_as_outline = 0
 text = "3"
 percent_visible = 1.0
 lines_skipped = 0

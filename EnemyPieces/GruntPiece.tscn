@@ -53,8 +53,6 @@ editor/display_folded = true
 
 [node name="HealthDisplay" parent="Physicals" instance=ExtResource( 7 )]
 
-visibility/visible = false
-
 [node name="EnemyEffects" parent="Physicals" instance=ExtResource( 8 )]
 
 editor/display_folded = true
