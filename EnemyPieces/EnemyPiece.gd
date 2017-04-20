@@ -617,6 +617,29 @@ func aura_update():
 	
 func reset_auras():
 	self.movement_value = self.default_movement_value
+	
+
+func move_attack(collide_coords, animation_sequence):
+	var location = self.grid.locations[collide_coords]
+	var location_right_before = self.grid.locations[collide_coords - Vector2(0, 1)]
+	var difference =  (location.get_pos() - location_right_before.get_pos())/4
+	var collide_pos = location_right_before.get_pos() + difference 
+	animation_sequence.add(self, "animate_move_to_pos", true, [collide_pos, 300, true])
+	
+	var collide_piece = get_parent().pieces[collide_coords]
+	
+	if collide_piece.side == "ENEMY":
+		pass
+#		collide_piece.receive_fusion(self, animation_sequence)
+#		delete_self()
+	else:
+		var piece_killed = collide_piece.receive_move_attack(self, animation_sequence)
+		if piece_killed:
+			move_helper(collide_coords, animation_sequence)
+		else:
+			animation_sequence.add(self, "animate_move", true, [self.coords, 300, true])
+			
+
 
 #called at the start of enemy turn, after checking for aura effects
 func turn_update():

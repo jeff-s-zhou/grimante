@@ -146,7 +146,7 @@ func deploy():
 func block_summon():
 	if !self.invulnerable_flag:
 		delete_self()
-		add_animation(self, "animate_delete_self", true)
+		#add_animation(self, "animate_delete_self", true)
 	
 func set_cooldown(cooldown):
 	self.cooldown = cooldown + 1 #offset for the first countdown tick
@@ -161,10 +161,16 @@ func _is_within_ally_shove_range(coords):
 func is_placed():
 	return self.state == States.PLACED
 
-func delete_self():
+func delete_self(animation_sequence=null):
 	var location = get_parent().locations[self.coords]
 	location.add_corpse(self)
-	add_animation(location, "animate_add_corpse", false)
+	if animation_sequence != null: #part of some other unit's animation sequence
+		animation_sequence.add(self, "animate_delete_self", true)
+		animation_sequence.add(location, "animate_add_corpse", false)
+	else:
+		add_animation(self, "animate_delete_self", true)
+		add_animation(location, "animate_add_corpse", false)
+		
 	get_parent().remove_piece(self.coords)
 	remove_from_group("player_pieces")
 
@@ -437,11 +443,11 @@ func animate_placed():
 	
 func player_attacked(enemy, animation_sequence=null):
 	if dies_to_collision(enemy):
-		delete_self()
-		if animation_sequence != null: #if it's part of another unit's animation sequence
-			animation_sequence.add(self, "animate_delete_self", true)
-		else:
-			add_animation(self, "animate_delete_self", true)
+		delete_self(animation_sequence)
+#		if animation_sequence != null: #if it's part of another unit's animation sequence
+#			animation_sequence.add(self, "animate_delete_self", true)
+#		else:
+#			add_animation(self, "animate_delete_self", true)
 		
 
 func dies_to_collision(pusher):

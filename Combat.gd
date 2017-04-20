@@ -41,7 +41,7 @@ func _ready():
 	get_node("Timer").set_active(false)
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Grid").set_pos(Vector2(90, 250))
+	get_node("Grid").set_pos(Vector2(95, 250))
 	#get_node("Grid").set_pos(Vector2(400, 250))
 	#debug_mode()
 	

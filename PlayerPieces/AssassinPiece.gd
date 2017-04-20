@@ -43,9 +43,9 @@ func _ready():
 	self.ultimate_description = ULTIMATE_DESCRIPTION
 	self.assist_type = ASSIST_TYPES.attack
 
-func delete_self():
+func delete_self(animation_sequence=null):
 	get_node("/root/Combat").assassin = null
-	.delete_self()
+	.delete_self(animation_sequence)
 
 
 func get_backstab_damage():

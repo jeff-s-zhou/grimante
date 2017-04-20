@@ -240,8 +240,7 @@ func move_attack(collide_coords, animation_sequence):
 
 func receive_move_attack(pusher, animation_sequence):
 	if dies_to_collision(pusher): #check if they're going to die from collision
-		delete_self()
-		animation_sequence.add(self, "animate_delete_self", true)
+		delete_self(animation_sequence)
 		return true
 	return false
 
@@ -302,7 +301,7 @@ func move_helper(coords, animation_sequence=null, blocking=false):
 	if walked_off:
 		print("deleting self after walking off")
 		delete_self()
-		animation_sequence.add(self, "animate_delete_self", true)
+		#animation_sequence.add(self, "animate_delete_self", true)
 
 #at this point we've moved forward to cover all empty spaces
 #with remaining moves, try to push the obstacle immediately in front
@@ -341,7 +340,7 @@ func shove(collide_coords, distance, animation_sequence):
 func receive_shove(pusher, distance, animation_sequence):
 	if dies_to_collision(pusher): #check if they're going to die from collision
 		delete_self()
-		animation_sequence.add(self, "animate_delete_self", true)
+		#animation_sequence.add(self, "animate_delete_self", true)
 		return null
 
 
