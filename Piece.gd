@@ -191,7 +191,7 @@ func hooked(new_coords):
 	add_animation(self, "animate_move", true, [new_coords, 300, true])
 	set_coords(new_coords)
 	
-func move(distance, passed_animation_sequence=null):
+func move2(distance, passed_animation_sequence=null):
 	var animation_sequence
 	if passed_animation_sequence != null:
 		animation_sequence = passed_animation_sequence
@@ -245,7 +245,7 @@ func receive_move_attack(pusher, animation_sequence):
 	return false
 
 
-func move2(distance, passed_animation_sequence=null):
+func move(distance, passed_animation_sequence=null):
 	var animation_sequence
 	if passed_animation_sequence != null:
 		animation_sequence = passed_animation_sequence
@@ -295,6 +295,8 @@ func move_helper(coords, animation_sequence=null, blocking=false):
 			furthest_distance = (i + 1) * distance_increment
 
 	if furthest_distance != Vector2(0, 0):
+		animation_sequence.add(self, "animate_short_hop", false, [300, self.coords + furthest_distance])
+		#animate_short_hop(300, self.coords + furthest_distance)
 		animation_sequence.add(self, "animate_move", blocking, [self.coords + furthest_distance, 300, blocking])
 		set_coords(self.coords + furthest_distance)
 

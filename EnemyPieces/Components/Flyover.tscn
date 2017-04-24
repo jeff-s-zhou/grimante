@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=1]
 
-[ext_resource path="res://Assets/processed_fonts/flyover.fnt" type="BitmapFont" id=1]
+[ext_resource path="res://Assets/processed_fonts/mobile_enemy_health.fnt" type="BitmapFont" id=1]
 
 [sub_resource type="Animation" id=1]
 
@@ -20,7 +20,6 @@ transform/pos = Vector2( 0, -6 )
 
 [node name="FlyoverText" type="Label" parent="."]
 
-visibility/opacity = 0.0
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2

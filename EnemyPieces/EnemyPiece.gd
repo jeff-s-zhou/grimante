@@ -25,6 +25,8 @@ var temp_display_hp #what we reset to when resetting prediction, in case origina
 
 var type
 
+var prototype = null
+
 var prediction_flyover = null
 
 const flyover_prototype = preload("res://EnemyPieces/Components/Flyover.tscn")
@@ -66,17 +68,30 @@ func _ready():
 	#set_opacity(0)
 
 
-func initialize(unit_name, hover_description, movement_value, max_hp, modifiers):
+func initialize(unit_name, hover_description, movement_value, max_hp, modifiers, prototype):
 	self.unit_name = unit_name
 	self.hover_description = hover_description
 	self.movement_value = movement_value
 	self.default_movement_value = movement_value
+	self.prototype = prototype
 	initialize_hp(max_hp)
 	if modifiers != null:
 		initialize_modifiers(modifiers)
 	var adjacent_players_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
 	if adjacent_players_range != []:
 		set_cloaked(false)
+		
+func get_modifiers():
+	var modifiers = {}
+	var enemy_modifiers = get_node("/root/constants").enemy_modifiers
+	if self.deadly:
+		modifiers["Poisonous"] = enemy_modifiers["Poisonous"]
+	if self.shielded:
+		modifiers["Shield"] = enemy_modifiers["Shield"]
+	if self.cloaked:
+		modifiers["Cloaked"] = enemy_modifiers["Cloaked"]
+	return modifiers
+
 
 func input_event(event):
 	if event.is_action("select"):
@@ -183,11 +198,11 @@ func animate_predict_hp(hp, value, color):
 		else:
 			text.set_text(value_text)
 			
-		var destination = text.get_pos() - Vector2(0, 85)
+		var destination = text.get_pos() - Vector2(0, 65)
 		var tween = Tween.new()
 		add_child(tween)
 		
-		tween.interpolate_property(text, "rect/pos", text.get_pos(), destination, 1.5, Tween.TRANS_EXPO, Tween.EASE_OUT)
+		tween.interpolate_property(text, "rect/pos", text.get_pos(), destination, 1.2, Tween.TRANS_EXPO, Tween.EASE_OUT)
 		tween.start()
 		yield(tween, "tween_complete") #this is the problem line...fuuuuck
 		tween.queue_free()
@@ -576,7 +591,7 @@ func animate_set_hp(hp, value, delay=0):
 #removes it from the self.grid, which prevents any interaction with other pieces
 func delete_self():
 	print("hit the delete_self code?")
-	add_animation(self, "animate_delete_self", true)
+	add_animation(self, "animate_delete_self", false)
 	self.grid.remove_piece(self.coords)
 
 
@@ -591,9 +606,10 @@ func animate_delete_self():
 	yield(get_node("Tween"), "tween_complete")
 	#get_node("Sprinkles").animate_sprinkles()
 	#yield(get_node("Sprinkles"), "animation_done")
-	get_node("/root/Combat/ComboSystem").increase_combo()
-	self.queue_free()
+	#get_node("/root/Combat/ComboSystem").increase_combo()
 	subtract_anim_count()
+	self.queue_free()
+	
 
 	#emit_signal("animation_done")
 
@@ -629,9 +645,9 @@ func move_attack(collide_coords, animation_sequence):
 	var collide_piece = get_parent().pieces[collide_coords]
 	
 	if collide_piece.side == "ENEMY":
-		pass
-#		collide_piece.receive_fusion(self, animation_sequence)
-#		delete_self()
+		animation_sequence.add(self, "animate_move", true, [self.coords, 300, true])
+		collide_piece.receive_fusion(self, animation_sequence)
+		delete_self()
 	else:
 		var piece_killed = collide_piece.receive_move_attack(self, animation_sequence)
 		if piece_killed:
@@ -639,7 +655,25 @@ func move_attack(collide_coords, animation_sequence):
 		else:
 			animation_sequence.add(self, "animate_move", true, [self.coords, 300, true])
 			
+func receive_fusion(other_piece, animation_sequence):
+	self.grid.remove_piece(self.coords)
+	var new_health = min(other_piece.hp + self.hp, 9)
+	var combined_modifiers = add_modifier_sets(self.get_modifiers(), other_piece.get_modifiers())
+	
+	get_node("/root/Combat").initialize_enemy_piece(self.coords, other_piece.prototype, 
+	new_health, other_piece.get_modifiers(), false, animation_sequence)
+	animation_sequence.add(self, "animate_delete_self", false)
+	
 
+	#heal(other_piece.hp)
+	#initialize_modifiers(other_piece.get_modifiers())
+
+func add_modifier_sets(set1, set2):
+	for key in set1:
+		if !set2.has(key):
+			set2[key] = set1[key]
+			
+	return set2
 
 #called at the start of enemy turn, after checking for aura effects
 func turn_update():

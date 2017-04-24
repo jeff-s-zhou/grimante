@@ -10,8 +10,8 @@ var DESCRIPTION = "After moving, shoots a Fireball forward, which hits the first
 
 const fireball_prototype = preload("res://EnemyPieces/Components/DragonFireball.tscn")
 
-func initialize(max_hp, modifiers):
-	.initialize("Dragon", DESCRIPTION, Vector2(0, 1), max_hp, modifiers)
+func initialize(max_hp, modifiers, prototype):
+	.initialize("Dragon", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype)
 
 func turn_update_helper():
 	if self.stunned:

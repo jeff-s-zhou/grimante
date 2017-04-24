@@ -20,7 +20,6 @@ var tabbed_flag #to check if a current description is tabbed in
 var enemy_tooltip_flag
 var player_info_flag
 
-signal enemy_turn_finished
 signal wave_deployed
 signal next_pressed
 signal reinforced
@@ -41,7 +40,7 @@ func _ready():
 	get_node("Timer").set_active(false)
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Grid").set_pos(Vector2(88, 250))
+	get_node("Grid").set_pos(Vector2(73, 250))
 	#get_node("Grid").set_pos(Vector2(400, 250))
 	#debug_mode()
 	
@@ -87,7 +86,7 @@ func _ready():
 	add_child(self.state_manager)
 	self.state_manager.initialize(self.level_schematic)
 	self.state_manager.set_pos(Vector2(get_viewport_rect().size.width/2, 30))
-	connect("enemy_turn_finished", self.state_manager, "update")
+	
 
 	set_process(true)
 	set_process_input(true)	
@@ -181,7 +180,7 @@ func initialize_piece(piece, key):
 	emit_signal("done_initializing")
 	
 
-func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon):
+func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon, animation_sequence=null):
 	var position
 	if typeof(key) == TYPE_INT:
 		position = get_node("Grid").get_top_of_column(key)
@@ -198,11 +197,14 @@ func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon):
 	elif !get_node("Grid").is_offsides(position):
 		var enemy_piece = prototype.instance()
 		get_node("Grid").add_piece(position, enemy_piece)
-		enemy_piece.initialize(health, modifiers)
+		enemy_piece.initialize(health, modifiers, prototype)
 		enemy_piece.connect("broke_defenses", self, "damage_defenses")
 		enemy_piece.get_node("Sprinkles").set_particle_endpoint(get_node("ComboSystem/ComboPointsLabel").get_global_pos())
 		enemy_piece.check_global_seen()
-		get_node("/root/AnimationQueue").enqueue(enemy_piece, "animate_summon", false)
+		if animation_sequence != null:
+			animation_sequence.add(enemy_piece, "animate_summon", false)
+		else:
+			enemy_piece.add_animation(enemy_piece, "animate_summon", false)
 
 
 func initialize_king(king_schematic):
@@ -411,6 +413,8 @@ func enemy_phase(enemy_pieces):
 
 	
 	deploy_wave()
+	
+	self.state_manager.update_reinforcement_display()
 		
 	if(get_node("/root/AnimationQueue").is_animating()):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
@@ -427,7 +431,7 @@ func enemy_phase(enemy_pieces):
 	
 	get_node("PhaseShifter").player_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
-	emit_signal("enemy_turn_finished")
+	self.state_manager.update()
 	start_player_phase()
 
 

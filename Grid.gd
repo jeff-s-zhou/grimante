@@ -25,7 +25,7 @@ const _GRID_X_OFFSET = 0
 const _GRID_Y_OFFSET = 0
 
 #const TILE_X_OFFSET = -16
-const TILE_X_OFFSET = -7
+const TILE_X_OFFSET = -5
 #const TILE_Y_OFFSET = 8
 const TILE_Y_OFFSET = 20
 

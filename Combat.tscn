@@ -78,7 +78,7 @@ playback/speed = 1.0
 
 [node name="ShakeCamera" parent="." instance=ExtResource( 6 )]
 
-transform/pos = Vector2( 349, 540 )
+transform/pos = Vector2( 335, 540 )
 current = true
 
 [node name="InvalidMoveIndicator" parent="." instance=ExtResource( 7 )]

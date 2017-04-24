@@ -24,9 +24,12 @@ func initialize(level_schematic):
 		get_node("Label").set_text("Clear the Board" + " (Turns Until Next Wave: " + str(self.turns_til_wave) + ")")
 
 
+func update_reinforcement_display():
+	get_node("ReinforcementDisplay").update_waves()
+
 func update():
 		self.turns_til_wave = self.enemies.get_turns_til_next_wave()
-
+		
 		if self.turns_til_wave == null:
 				get_node("Label").set_text("Clear the Board")
 		else:

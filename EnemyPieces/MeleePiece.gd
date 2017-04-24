@@ -8,8 +8,8 @@ extends "EnemyPiece.gd"
 var max_hp = 5
 var DESCRIPTION = "After moving, attacks all nearby Player Units. If its health is greater than or equal to the Player Units shield, The Player is KOed."
 
-func initialize(max_hp, modifiers):
-	.initialize("Werewolf", DESCRIPTION, Vector2(0, 1), max_hp, modifiers)
+func initialize(max_hp, modifiers, prototype):
+	.initialize("Werewolf", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype)
 
 
 func turn_update_helper():

@@ -453,9 +453,11 @@ func player_attacked(enemy, animation_sequence=null):
 func dies_to_collision(pusher):
 	if pusher != null and pusher.side != self.side:  #if there's a pusher and not on the same side
 		#if not invulnerable and the enemy has same or more hp than the pusher's armor, or the pusher enemy is deadly
+		#set_armor(self.armor - 1)
+		#return !self.invulnerable_flag and (pusher.is_deadly() or self.armor == 0)
 		return !self.invulnerable_flag and (pusher.is_deadly() or pusher.hp >= self.armor) 
 		
-
+		
 #shove is different than push
 func initiate_friendly_shove(coords):
 	var offset = get_parent().hex_normalize(coords - self.coords)
