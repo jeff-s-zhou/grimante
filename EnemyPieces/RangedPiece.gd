@@ -14,14 +14,24 @@ func initialize(max_hp, modifiers, prototype):
 	.initialize("Dragon", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype)
 
 func turn_update_helper():
+	if !self.stunned and self.hp != 0:
+		self.move(movement_value)
+		
+				
+func turn_attack_update():
+	
 	if self.stunned:
 		set_stunned(false)
-	elif self.hp != 0:
-		self.move(movement_value)
-		if !self.silenced:
-			var fireball_range = get_parent().get_range(self.coords, [1, 9], "PLAYER", true, [3, 4])
-			if fireball_range != []:
-				fireball(fireball_range[0])
+	
+	elif self.hp != 0 and !self.silenced:
+		if self.current_animation_sequence == null:
+			self.current_animation_sequence = self.AnimationSequence.new()
+		var fireball_range = get_parent().get_range(self.coords, [1, 9], "PLAYER", true, [3, 4])
+		if fireball_range != []:
+			fireball(fireball_range[0])
+	
+		enqueue_animation_sequence()
+	get_parent().handle_sand_shifts(self.coords)
 				
 	
 func fireball(coords):

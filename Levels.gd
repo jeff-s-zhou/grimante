@@ -44,17 +44,19 @@ func sandbox_allies():
 #
 
 func sandbox_enemies():
-	var turn_power_levels = [1800, 0, 500, 0, 600, 0, 650, 0, 700]
+	var turn_power_levels = [1200, 0, 0, 500, 600, 0, 650, 0, 700]
 	return EnemyWrappers.FiniteGeneratedWrapper.new(turn_power_levels)
 	
 func sandbox_enemies2():
-	return null
+	var turn_power_levels = [300, 0, 0, 0, 0]
+	var enemies = [{Vector2(3, 5): make(Drummer, 5), Vector2(3, 6): make(Ranged, 5, [shield])}]
+	return EnemyWrappers.FiniteCuratedWrapper.new(turn_power_levels, enemies)
 	
 func sandbox_extras():
 	return {"shifting_sands_tiles": {Vector2(3, 6): 4}}
 
 func sandbox_level():
-	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies(), null) 
+	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies2(), null) 
 
 var sandbox_level_ref = funcref(self, "sandbox_level")
 #

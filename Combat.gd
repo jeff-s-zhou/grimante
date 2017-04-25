@@ -40,9 +40,9 @@ func _ready():
 	get_node("Timer").set_active(false)
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Grid").set_pos(Vector2(73, 250))
+	get_node("Grid").set_pos(Vector2(73, 270))
 	#get_node("Grid").set_pos(Vector2(400, 250))
-	#debug_mode()
+	debug_mode()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("AssistSystem").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 100))
@@ -368,8 +368,6 @@ func _input(event):
 func _process(delta):
 	get_node('FpsLabel').set_text(str(OS.get_frames_per_second()))
 	
-	var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
-	
 	if self.state_manager.check_player_win(): 
 		player_win()
 
@@ -388,7 +386,8 @@ func _process(delta):
 
 
 	elif self.state == STATES.enemy_turn:
-		enemy_phase(enemy_pieces)
+		
+		enemy_phase()
 		self.state = STATES.transitioning
 		
 	elif self.state == STATES.king_turn:
@@ -399,12 +398,21 @@ func _process(delta):
 		pass
 		
 		
-func enemy_phase(enemy_pieces):
+func enemy_phase():
+	var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
+	
 	enemy_pieces.sort_custom(self, "_sort_by_y_axis") #ensures the pieces in front move first
 	for enemy_piece in enemy_pieces:
 		enemy_piece.aura_update()
 	for enemy_piece in enemy_pieces:
 		enemy_piece.turn_update()
+	
+	if(get_node("/root/AnimationQueue").is_animating()):
+		yield(get_node("/root/AnimationQueue"), "animations_finished")
+	
+	for enemy_piece in enemy_pieces:
+		enemy_piece.turn_attack_update()
+		
 	get_node("Grid").update_furthest_back_coords()
 	
 	#if there are enemy pieces, wait for them to finish

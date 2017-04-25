@@ -19,7 +19,7 @@
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"attack_range", "speed":5.0 }, { "frames":[ ExtResource( 4 ), ExtResource( 5 ) ], "loop":true, "name":"damaged", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ), ExtResource( 5 ) ], "loop":true, "name":"damaged", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"attack_range", "speed":5.0 } ]
 
 [node name="GruntPiece" type="KinematicBody2D"]
 
@@ -134,6 +134,13 @@ custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
+
+[node name="Tween 2" type="Tween" parent="."]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
 
 
 [editable path="Physicals/EnemyOverlays"]

@@ -16,7 +16,7 @@ func _ready():
 	pass
 
 func display_waves(wave_power_levels, horde_threshold):
-	wave_power_levels.pop_front()
+	#wave_power_levels.pop_front()
 	for power_level in wave_power_levels:
 		var circle = Sprite.new()
 		
@@ -30,6 +30,10 @@ func display_waves(wave_power_levels, horde_threshold):
 		self.waves_display.append(circle)
 		circle.set_pos(Vector2(get_pos().x + 30 * self.waves_display.size(), get_pos().y))
 		add_child(circle)
+	
+	var circle = self.waves_display[0]
+	self.waves_display.pop_front()
+	circle.queue_free()
 
 func update_waves():
 	var circle = self.waves_display[0]

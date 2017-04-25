@@ -13,14 +13,21 @@ func initialize(max_hp, modifiers, prototype):
 
 
 func turn_update_helper():
-	if self.stunned:
-			set_stunned(false)
-	elif self.hp != 0:
+	if !self.stunned and self.hp != 0:
 		self.move(movement_value)
-		if !self.silenced:
-			var swipe_range = get_parent().get_range(self.coords, [1, 2], "PLAYER")
-			for coords in swipe_range:
-				swipe(coords)
+
+func turn_attack_update():
+	if self.stunned:
+		set_stunned(false)
+	elif self.hp != 0 and !self.silenced:
+		if self.current_animation_sequence == null:
+			self.current_animation_sequence = self.AnimationSequence.new()
+		var swipe_range = get_parent().get_range(self.coords, [1, 2], "PLAYER")
+		for coords in swipe_range:
+			swipe(coords)
+		enqueue_animation_sequence()
+	get_parent().handle_sand_shifts(self.coords)
+	
 
 		
 func swipe(coords):

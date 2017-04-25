@@ -17,6 +17,9 @@ func _ready():
 	
 func _init(blocking=false):
 	self.blocking = blocking
+	
+func is_empty():
+	return self.func_calls == []
 
 func add(node, func_ref, blocking, args=[]):
 	#print("adding " + func_ref)

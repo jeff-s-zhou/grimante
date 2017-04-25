@@ -309,10 +309,7 @@ func animate_cloaked_hide():
 		
 			
 func is_deadly():
-	if self.silenced:
-		return false
-	else:
-		return self.deadly
+	return self.deadly
 
 func set_deadly(flag):
 	if self.deadly != flag:
@@ -377,7 +374,7 @@ func set_frozen(flag):
 func set_silenced(flag):
 	if flag:
 		set_shield(false)
-#		set_deadly(false)
+		set_deadly(false)
 		set_cloaked(false)
 		add_animation(self, "animate_silenced", false)
 	else:
@@ -467,71 +464,6 @@ func opportunity_attacked(amount):
 func smash_killed(damage):
 	add_animation(self, "animate_smash_killed", false)
 	attacked(damage)
-	
-func move_helper(coords, animation_sequence=null, blocking=false):
-	var distance = coords - self.coords 
-	var distance_length = self.grid.hex_length(distance)
-	var distance_increment = self.grid.hex_normalize(distance)
-	var furthest_distance = Vector2(0, 0)
-	var walked_off = false
-	for i in range(0, distance_length):
-		if !get_parent().locations.has(self.coords + (i + 1) * distance_increment):
-			walked_off = true
-			break
-		else:
-			furthest_distance = (i + 1) * distance_increment
-
-	if furthest_distance != Vector2(0, 0):
-		animation_sequence.add(self, "animate_move", blocking, [self.coords + furthest_distance, 300, blocking])
-		set_coords(self.coords + furthest_distance)
-
-	if walked_off:
-		print("deleting self after walking off")
-		delete_self()
-		#animation_sequence.add(self, "animate_delete_self", true)
-		if distance_increment == Vector2(0, 1):
-			emit_signal("broke_defenses")
-
-
-func receive_shield_bash(destination_coords):
-	#if it falls off the edge of map
-	if !self.grid.locations.has(destination_coords):
-		delete_self()
-		#var fall_off_distance = 30 * (fall_off_pos - get_pos()).normalized()
-		if self.grid.hex_normalize(destination_coords - self.coords) == Vector2(0, 1):
-			emit_signal("broke_defenses")
-		add_animation(self, "animate_delete_self", false)
-		
-	#if there's a piece in the destination coords
-	elif self.grid.pieces.has(destination_coords):
-		if self.grid.pieces[destination_coords].side == "ENEMY":
-			var other_enemy_piece = self.grid.pieces[destination_coords]
-			#shove itself into the other piece
-			var offset = self.grid.hex_normalize(destination_coords - self.coords)
-			var location = self.grid.locations[destination_coords]
-			var difference = (location.get_pos() - get_pos()) / 3
-			var collide_pos = get_pos() + difference 
-			add_animation(self, "animate_move_to_pos", true, [collide_pos, 300, true]) #push up against it
-			
-			#then kill one or the other, depending on which has the higher hp
-			if self.hp >= other_enemy_piece.hp:
-				other_enemy_piece.receive_shield_bashed_enemy_bash()
-				add_animation(self, "animate_move", false, [destination_coords, 300, false])
-				set_coords(destination_coords)
-			else:
-				delete_self()
-				add_animation(self, "animate_delete_self", false)
-		#TODO: what do we do if it tries to shove an enemy into an ally?
-		
-	#otherwise just push it
-	else:
-		add_animation(self, "animate_move", false, [destination_coords, 300, false])
-		set_coords(destination_coords)
-
-#can't think of what to call this lol, it's when an enemy is shoved by another enemy that's shield bashed
-func receive_shield_bashed_enemy_bash():
-	delete_self()
-	add_animation(self, "animate_delete_self", false)
 
 
 func modify_hp(amount, delay=0):
@@ -590,7 +522,6 @@ func animate_set_hp(hp, value, delay=0):
 
 #removes it from the self.grid, which prevents any interaction with other pieces
 func delete_self():
-	print("hit the delete_self code?")
 	add_animation(self, "animate_delete_self", false)
 	self.grid.remove_piece(self.coords)
 
@@ -633,40 +564,7 @@ func aura_update():
 	
 func reset_auras():
 	self.movement_value = self.default_movement_value
-	
 
-func move_attack(collide_coords, animation_sequence):
-	var location = self.grid.locations[collide_coords]
-	var location_right_before = self.grid.locations[collide_coords - Vector2(0, 1)]
-	var difference =  (location.get_pos() - location_right_before.get_pos())/4
-	var collide_pos = location_right_before.get_pos() + difference 
-	animation_sequence.add(self, "animate_move_to_pos", true, [collide_pos, 300, true])
-	
-	var collide_piece = get_parent().pieces[collide_coords]
-	
-	if collide_piece.side == "ENEMY":
-		animation_sequence.add(self, "animate_move", true, [self.coords, 300, true])
-		collide_piece.receive_fusion(self, animation_sequence)
-		delete_self()
-	else:
-		var piece_killed = collide_piece.receive_move_attack(self, animation_sequence)
-		if piece_killed:
-			move_helper(collide_coords, animation_sequence)
-		else:
-			animation_sequence.add(self, "animate_move", true, [self.coords, 300, true])
-			
-func receive_fusion(other_piece, animation_sequence):
-	self.grid.remove_piece(self.coords)
-	var new_health = min(other_piece.hp + self.hp, 9)
-	var combined_modifiers = add_modifier_sets(self.get_modifiers(), other_piece.get_modifiers())
-	
-	get_node("/root/Combat").initialize_enemy_piece(self.coords, other_piece.prototype, 
-	new_health, other_piece.get_modifiers(), false, animation_sequence)
-	animation_sequence.add(self, "animate_delete_self", false)
-	
-
-	#heal(other_piece.hp)
-	#initialize_modifiers(other_piece.get_modifiers())
 
 func add_modifier_sets(set1, set2):
 	for key in set1:
@@ -689,17 +587,18 @@ func turn_update():
 	if adjacent_players_range != []:
 		set_cloaked(false)
 	enqueue_animation_sequence()
+
+#called after all pieces finish moving
+func turn_attack_update():
+	if self.stunned:
+		set_stunned(false)
 	get_parent().handle_sand_shifts(self.coords)
 
 
 #this is written so we can easily add more stuff to the end of the turn_update before executing the animation_sequence
 func turn_update_helper():
-	if self.stunned:
-		set_stunned(false)
-	elif self.hp != 0:
+	if !self.stunned and self.hp != 0:
 		self.move(movement_value)
-#		if self.silenced:
-#			set_silenced(false)
 	
 
 

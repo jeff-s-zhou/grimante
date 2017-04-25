@@ -31,8 +31,7 @@ const TILE_Y_OFFSET = 20
 
 const _Z_PIECE_OFFSET = Vector2(0, -0) #this is to offset for the pseudo-3d vertical distance of pieces
 
-const _LOCATION_Y_OFFSETS = [0, 1, 1, 2, 2, 3, 3]
-#const _LOCATION_Y_OFFSETS = [0, 1, 1, 2, 2]
+const _LOCATION_Y_OFFSETS = [0, 0, 1, 1, 2, 2, 3]
 
 var selected = null
 
@@ -47,7 +46,7 @@ func _ready():
 	for i in range(0, self.tiles_x):
 		var offset = 0
 		var column_count = self.tiles_y
-		if i % 2 == 0:
+		if i % 2 != 0:
 			#offset = -44
 			offset = -50
 			column_count = self.tiles_y
@@ -302,7 +301,6 @@ func get_range_helper(return_set, change_vector, coords, magnitude_range, side, 
 			if collision_check:
 				if pieces.has(new_coords):
 					if side == "ANY":
-						print("caught any check")
 						return_set.append(new_coords)
 					
 					elif pieces[new_coords].side == side:

@@ -6,7 +6,7 @@
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"attack_range", "speed":5.0 }, { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"damaged", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"damaged", "speed":5.0 }, { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"attack_range", "speed":5.0 }, { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 } ]
 
 [sub_resource type="Animation" id=2]
 
@@ -18,7 +18,12 @@ tracks/0/type = "value"
 tracks/0/path = NodePath("Label:visibility/visible")
 tracks/0/interp = 1
 tracks/0/imported = false
-tracks/0/keys = { "times":FloatArray( 0, 0.2, 0.4, 0.6 ), "transitions":FloatArray( 1, 1, 1, 1 ), "update":1, "values":[ true, false, true, false ] }
+tracks/0/keys = { "times":FloatArray( 0, 0.2, 0.4, 0.6, 0.8 ), "transitions":FloatArray( 1, 1, 1, 1, 1 ), "update":1, "values":[ true, false, true, false, true ] }
+tracks/1/type = "value"
+tracks/1/path = NodePath("Sprite:visibility/visible")
+tracks/1/interp = 1
+tracks/1/imported = false
+tracks/1/keys = { "times":FloatArray( 0, 0.2, 0.4, 0.6, 0.8 ), "transitions":FloatArray( 1, 1, 1, 1, 1 ), "update":1, "values":[ true, false, true, false, true ] }
 
 [node name="HealthDisplay" type="Node2D"]
 
@@ -26,7 +31,7 @@ transform/pos = Vector2( 0, 20 )
 
 [node name="Sprite" type="Sprite" parent="."]
 
-visibility/opacity = 0.8
+visibility/opacity = 0.7
 transform/pos = Vector2( 1, 16 )
 texture = ExtResource( 1 )
 

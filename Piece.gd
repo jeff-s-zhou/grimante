@@ -62,9 +62,9 @@ func update_animation_count(amount):
 
 func enqueue_animation_sequence():
 	if self.current_animation_sequence != null:
-		
-		get_node("/root/AnimationQueue").enqueue(self.current_animation_sequence, "execute", self.current_animation_sequence.blocking)
-		self.current_animation_sequence = null
+		if !self.current_animation_sequence.is_empty():
+			get_node("/root/AnimationQueue").enqueue(self.current_animation_sequence, "execute", self.current_animation_sequence.blocking)
+			self.current_animation_sequence = null
 
 
 func set_seen(flag):
@@ -146,20 +146,45 @@ func animate_move_to_pos(position, speed, blocking=false, trans_type=Tween.TRANS
 	else:
 		subtract_anim_count()
 
-	
 
 func animate_move(new_coords, speed=250, blocking=true, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
 	add_anim_count()
 	var location = self.grid.locations[new_coords]
-	var new_position = location.get_pos()
-	animate_move_to_pos(new_position, speed, false, trans_type, ease_type)
-	if(blocking):
+	var position = location.get_pos()
+	
+	var distance = get_pos().distance_to(position)
+	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
+	get_node("Tween").start()
+	if blocking:
 		yield(get_node("Tween"), "tween_complete")
 		emit_signal("animation_done")
-	subtract_anim_count()
+		subtract_anim_count()
+	else:
+		pass
+		subtract_anim_count()
+	
+func animate_move_and_hop(new_coords, speed=250, blocking=true, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
+	add_anim_count()
+	var location = self.grid.locations[new_coords]
+	var position = location.get_pos()
+	animate_short_hop(speed, new_coords)
+	
+	var distance = get_pos().distance_to(position)
+	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
+	get_node("Tween").start()
+	if blocking:
+		yield(get_node("Tween"), "tween_complete")
+		get_node("Timer").set_wait_time(0.1)
+		get_node("Timer").start()
+		yield(get_node("Timer"), "timeout")
+		emit_signal("animation_done")
+		subtract_anim_count()
+	else:
+		subtract_anim_count()
+		
 	
 func animate_short_hop(speed, new_coords):
-	add_anim_count()
+	#add_anim_count()
 	self.mid_leaping_animation = true
 	set_z(3)
 	var location = get_parent().locations[new_coords]
@@ -167,7 +192,7 @@ func animate_short_hop(speed, new_coords):
 	var distance = get_pos().distance_to(new_position)
 	var time = distance/speed
 	var old_position = Vector2(0, 0)
-	var new_position = Vector2(0, -40)
+	var new_position = Vector2(0, -60)
 	
 	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
 		get_node("Physicals").get_pos(), new_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_OUT)
@@ -181,7 +206,7 @@ func animate_short_hop(speed, new_coords):
 	set_z(0)
 	self.mid_leaping_animation = false
 	#emit_signal("animation_done")
-	subtract_anim_count()
+	#subtract_anim_count()
 
 func shift(change_vector):
 	self.move(change_vector)
@@ -191,59 +216,6 @@ func hooked(new_coords):
 	add_animation(self, "animate_move", true, [new_coords, 300, true])
 	set_coords(new_coords)
 	
-func move2(distance, passed_animation_sequence=null):
-	var animation_sequence
-	if passed_animation_sequence != null:
-		animation_sequence = passed_animation_sequence
-	else:
-		animation_sequence = self.AnimationSequence.new()
-		
-	self.current_animation_sequence = animation_sequence
-		
-	var old_coords = self.coords
-	
-	var distance_length = self.grid.hex_length(distance)
-	var distance_increment = self.grid.hex_normalize(distance)
-	var direction = self.grid.get_direction_from_vector(distance)
-	var collide_range = self.grid.get_range(self.coords, [1, distance_length + 1], "ANY", true, [direction, direction + 1])
-	var collide_coords = null
-	
-	#if there's something in front, we shove it
-	if collide_range.size() > 0:
-		collide_coords = collide_range[0]
-		#if the tile right before the one we want to collide with isn't the one we're on
-		if self.coords != collide_coords - distance_increment: 
-			move_helper(collide_coords - distance_increment, animation_sequence, true)
-	else: #else just move forward all the way
-		move_helper(self.coords + distance, animation_sequence, true)
-	
-	#if there was a collision
-	if collide_coords != null:
-		self.move_attack(collide_coords, animation_sequence)
-		self.current_animation_sequence.blocking = true
-	#execute the whole sequence outside of the function
-
-
-func move_attack(collide_coords, animation_sequence):
-	var location = self.grid.locations[collide_coords]
-	var location_right_before = self.grid.locations[collide_coords - Vector2(0, 1)]
-	var difference =  (location.get_pos() - location_right_before.get_pos())/4
-	var collide_pos = location_right_before.get_pos() + difference 
-	animation_sequence.add(self, "animate_move_to_pos", true, [collide_pos, 300, true])
-
-	var piece_killed = get_parent().pieces[collide_coords].receive_move_attack(self, animation_sequence)
-	if piece_killed:
-		move_helper(collide_coords, animation_sequence)
-	else:
-		animation_sequence.add(self, "animate_move", true, [self.coords, 300, true])
-
-
-func receive_move_attack(pusher, animation_sequence):
-	if dies_to_collision(pusher): #check if they're going to die from collision
-		delete_self(animation_sequence)
-		return true
-	return false
-
 
 func move(distance, passed_animation_sequence=null):
 	var animation_sequence
@@ -293,17 +265,20 @@ func move_helper(coords, animation_sequence=null, blocking=false):
 			break
 		else:
 			furthest_distance = (i + 1) * distance_increment
-
-	if furthest_distance != Vector2(0, 0):
-		animation_sequence.add(self, "animate_short_hop", false, [300, self.coords + furthest_distance])
-		#animate_short_hop(300, self.coords + furthest_distance)
-		animation_sequence.add(self, "animate_move", blocking, [self.coords + furthest_distance, 300, blocking])
-		set_coords(self.coords + furthest_distance)
+			
+	var furthest_distance_length = self.grid.hex_length(furthest_distance)
+	
+	for i in range(0, furthest_distance_length):
+		animation_sequence.add(self, "animate_move_and_hop", blocking, [self.coords + distance_increment, 300, blocking])
+		set_coords(self.coords + distance_increment)
 
 	if walked_off:
 		print("deleting self after walking off")
 		delete_self()
 		#animation_sequence.add(self, "animate_delete_self", true)
+		if self.side == "ENEMY" and distance_increment == Vector2(0, 1):
+			emit_signal("broke_defenses")
+
 
 #at this point we've moved forward to cover all empty spaces
 #with remaining moves, try to push the obstacle immediately in front
@@ -320,9 +295,13 @@ func shove(collide_coords, distance, animation_sequence):
 		var location = self.grid.locations[collide_coords]
 		var location_right_before = self.grid.locations[collide_coords - distance_increment]
 		var difference =  (location.get_pos() - location_right_before.get_pos())/4
-		var collide_pos = location_right_before.get_pos() + difference 
+		var old_pos = location_right_before.get_pos()
+		var collide_pos = old_pos + difference 
 		var new_distance = (self.coords + distance) - collide_coords + self.grid.hex_normalize(distance)
+		
+		
 		animation_sequence.add(self, "animate_move_to_pos", true, [collide_pos, 300, true])
+		animation_sequence.add(self, "animate_move_to_pos", true, [old_pos, 300, true])
 		#get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 300, true]) 
 		
 		var distance_shoved = get_parent().pieces[collide_coords].receive_shove(self, distance, animation_sequence)
@@ -341,8 +320,7 @@ func shove(collide_coords, distance, animation_sequence):
 
 func receive_shove(pusher, distance, animation_sequence):
 	if dies_to_collision(pusher): #check if they're going to die from collision
-		delete_self()
-		#animation_sequence.add(self, "animate_delete_self", true)
+		delete_self(animation_sequence)
 		return null
 
 
@@ -356,66 +334,17 @@ func receive_shove(pusher, distance, animation_sequence):
 	if collide_range.size() > 0:
 		collide_coords = collide_range[0]
 		if self.coords != collide_coords - distance_increment: 
-			move_helper(collide_coords - distance_increment, animation_sequence)
+			move_helper(collide_coords - distance_increment, animation_sequence, true)
 			return (self.coords - old_coords)
 		else:
+			#TODO make it brace up against the piece behind it
 			return Vector2(0, 0)
 	else:
-		move_helper(self.coords + distance, animation_sequence)
+		move_helper(self.coords + distance, animation_sequence, true)
 		
 		return distance
 
 
-
-#the unit that calls this moves too, as part of the act of pushing
-func push(distance, pusher=null):
-	if dies_to_collision(pusher): #check if they're going to die from collision
-		#print("deleting self")
-		delete_self()
-		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
-	
-	else:
-		var distance_length = self.grid.hex_length(distance)
-		var direction = self.grid.get_direction_from_vector(distance)
-		var collide_range = self.grid.get_range(self.coords, [1, distance_length + 1], "ANY", true, [direction, direction + 1])
-		#if there's something in front, push that
-		if collide_range.size() > 0:
-			#print("found collido")
-			var collide_coords = collide_range[0]
-			#print(collide_coords)
-			var location = self.grid.locations[collide_coords]
-			var difference = (location.get_pos() - get_pos()) - Vector2(0, 80)
-			#print(difference)
-			var collide_pos = get_pos() + difference 
-			var new_distance = (self.coords + distance) - collide_coords + self.grid.hex_normalize(distance)
-			#print("new_distance is" + str(new_distance))
-			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 300, true]) #push up against it
-			self.grid.pieces[collide_coords].push(new_distance, self)
-
-		move_or_fall_off(distance, pusher)
-
-
-func move_or_fall_off(distance, pusher):
-	if self.grid.locations.has(self.coords + distance):
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords + distance, 300, false])
-		set_coords(self.coords + distance)
-	else:
-		delete_self()
-		var distance_length = self.grid.hex_length(distance)
-		var direction = self.grid.get_direction_from_vector(distance)
-		var falloff_range = self.grid.get_range(self.coords, [1, distance_length + 1], null, false, [direction, direction + 1])
-		var fall_off_pos = get_pos()
-		if falloff_range.size() != 0:
-			#print("caught the fall_off new check")
-			var fall_off_coords = falloff_range[falloff_range.size() - 1]
-			fall_off_pos = self.grid.locations[fall_off_coords].get_pos() 
-			#var fall_off_distance = 30 * (fall_off_pos - get_pos()).normalized()
-			get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [fall_off_pos, 300, true])
-		get_node("/root/AnimationQueue").enqueue(self, "animate_delete_self", false)
-
-		if self.side == "ENEMY" and self.grid.hex_normalize(distance) == Vector2(0, 1):
-				emit_signal("broke_defenses")
-			
 func dies_to_collision(pusher):
 	return false
 	

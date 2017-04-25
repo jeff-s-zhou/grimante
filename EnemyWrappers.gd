@@ -77,10 +77,12 @@ class FiniteCuratedWrapper:
 	var current_turn_index = 0
 	var turn_power_levels
 	var waves
+	var big_wave_threshold = 0
 	
-	func _init(turn_power_levels, waves):
+	func _init(turn_power_levels, waves, big_wave_threshold=1400):
 		self.turn_power_levels = turn_power_levels
 		self.waves = waves
+		self.big_wave_threshold = big_wave_threshold
 		
 	func get_next_summon():
 		if self.current_turn_index < self.waves.size():
@@ -101,36 +103,3 @@ class FiniteCuratedWrapper:
 			if self.turn_power_levels[i] >= self.big_wave_threshold:
 				return (i - self.current_turn_index)
 		return null
-		
-		
-class PhasedWrapper:
-	var current_phase = null
-	var phases = []
-	
-	func _init(phases):
-		self.current_phase = phases[0]
-		phases.pop_front()
-		self.phases = phases
-		
-	func get_next_summon():
-		var next_summon = self.current_phase.get_next_summon()
-		if next_summon == null:
-			self.current_phase = self.phases[0]
-			self.phases.pop_front()
-			var next_summon = self.current_phase.get_next_summon()
-		return next_summon
-		
-	func skip_phase():
-		self.current_phase = self.phases[0]
-		self.phases.pop_front()
-	
-	func is_last_phase():
-		return self.phases == []
-	
-	func preview_next_summon():
-		self.current_phase.preview_next_summon()
-		
-	func get_turns_til_next_wave():
-		self.current_phase.get_turns_til_next_wave()
-		
-		
