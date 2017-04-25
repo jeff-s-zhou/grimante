@@ -30,3 +30,4 @@ playback/repeat = false
 playback/speed = 1.0
 
 
+[editable path="Physicals/ArmorDisplay"]

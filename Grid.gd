@@ -19,7 +19,7 @@ var shifting_sands_tiles = []
 #in order, (0, 8), (1, 8), (1, 9), (2, 9), (2, 10), (3, 10), (3, 11), (4, 11), (4, 12)
 
 var tiles_x = 7 #x
-var tiles_y = 7 #y
+var tiles_y = 6 #y
 
 const _GRID_X_OFFSET = 0
 const _GRID_Y_OFFSET = 0
@@ -45,11 +45,11 @@ func _ready():
 	# place location tiles
 	for i in range(0, self.tiles_x):
 		var offset = 0
-		var column_count = self.tiles_y
-		if i % 2 != 0:
+		var column_count = self.tiles_y 
+		if i % 2 == 1:
 			#offset = -44
 			offset = -50
-			column_count = self.tiles_y
+			column_count = self.tiles_y + 1
 		for j in range(0, column_count):
 			var location1 = location.instance()
 			var tile_x_spacing = location1.get_size().width + TILE_X_OFFSET
@@ -411,7 +411,7 @@ func get_top_of_column(column):
 
 #utility function for player unit deployment
 func get_bottom_of_column(column):
-	var column_count = 7
+	var column_count = 6
 	if column % 2 == 1:
 		column_count = 7
 			

@@ -8,7 +8,8 @@ extends Node
 var current_scene = null
 var _params = null
 
-var seen_units = {"Pawn":true, "Berserker":true, "Cavalier":true}
+var seen_units = {"Pawn":true, "Berserker":true, "Cavalier":true, 
+"Archer": true, "Corsair": true, "Saint":true, "Assassin":true, "Pyromancer":true, "Frost Knight": true}
 var seen_effect = {}
 
 var ultimates_enabled_flag = false

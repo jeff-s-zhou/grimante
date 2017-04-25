@@ -40,9 +40,9 @@ func _ready():
 	get_node("Timer").set_active(false)
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Grid").set_pos(Vector2(73, 270))
+	get_node("Grid").set_pos(Vector2(73, 280))
 	#get_node("Grid").set_pos(Vector2(400, 250))
-	debug_mode()
+	#debug_mode()
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("AssistSystem").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 100))
@@ -349,19 +349,8 @@ func _input(event):
 			OS.set_window_fullscreen(true)
 			
 	elif event.is_action("test_action") and event.is_pressed():
-		var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
-		for enemy_piece in enemy_pieces:
-			enemy_piece.debug()
-		var player_pieces = get_tree().get_nodes_in_group("player_pieces")
-		for player_piece in player_pieces:
-			print(player_piece.unit_name + ": " + str(player_piece.coords))
-			if get_node("Grid").pieces[player_piece.coords] != null:
-				print("found a piece here: " + get_node("Grid").pieces[player_piece.coords].unit_name)
-		
-		print("going through the pieces dict")
-		for key in get_node("Grid").pieces:
-			var piece = get_node("Grid").pieces[key]
-			print(str(key) + ": " + piece.unit_name + "/" + str(piece.coords))
+		get_node("/root/AnimationQueue").debug()
+
 		#print(get_node("Grid").pieces)
 
 

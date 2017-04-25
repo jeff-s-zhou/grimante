@@ -17,7 +17,7 @@ var end_conditions = {"Defend":0, "Escort":1, "Timed":2, "MultiTimed":3}
 
 var enemy_modifiers = {"Poisonous":"Poisonous", "Shield":"Shield", "Cloaked":"Cloaked"}
 
-const y_coords_offsets = [0, 1, 1, 2, 2, 3, 3]
+const y_coords_offsets = [0, 0, 1, 1, 2, 2, 3]
 
 
 const coords_vertical_prob_dist = {

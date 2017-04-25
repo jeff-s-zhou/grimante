@@ -136,7 +136,8 @@ func finisher_reactivate():
 
 func set_armor(value):
 	self.armor = value
-	get_node("Physicals/ArmorDisplay/Label").set_text(str(value))
+	#get_node("Physicals/ArmorDisplay/Label").set_text(str(value))
+	get_node("Physicals/ArmorDisplay").set_armor(self.armor)
 
 #called once the unit positions are finalized in the deployment phase
 func deploy():

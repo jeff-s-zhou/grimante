@@ -20,3 +20,4 @@ transform/pos = Vector2( 0, -4 )
 texture = ExtResource( 4 )
 
 
+[editable path="Physicals/ArmorDisplay"]

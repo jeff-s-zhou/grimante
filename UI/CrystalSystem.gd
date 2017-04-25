@@ -14,7 +14,6 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	set_process_input(true)	
-	add_crystal()
 	
 func update():
 	self.turn_count += 1

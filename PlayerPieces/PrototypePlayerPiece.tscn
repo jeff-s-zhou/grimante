@@ -35,7 +35,7 @@ visibility/visible = false
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="Physicals"]
 
-transform/pos = Vector2( 0, -4 )
+transform/pos = Vector2( 0, -5 )
 animation = "default"
 
 [node name="OverlayLayers" parent="Physicals" instance=ExtResource( 4 )]

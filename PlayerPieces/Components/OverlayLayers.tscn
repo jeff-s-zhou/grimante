@@ -18,7 +18,7 @@ tracks/0/keys = { "times":FloatArray( 0, 0.7, 0.9, 1.1, 1.8 ), "transitions":Flo
 
 [node name="OverlayLayers" type="Node2D"]
 
-transform/pos = Vector2( 0, -4 )
+transform/pos = Vector2( 0, -5 )
 
 [node name="Red" type="Sprite" parent="."]
 

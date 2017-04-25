@@ -6,9 +6,14 @@ extends Node
 
 
 
-const DEFAULT_DEPLOY_TILES = [
+#const DEFAULT_DEPLOY_TILES = [
 #Vector2(0, 6), Vector2(1, 6), Vector2(1, 7), Vector2(2, 7), Vector2(3, 7), 
 #Vector2(3, 8), Vector2(4, 8), Vector2(5, 8), Vector2(5, 9), Vector2(6, 9)
+#]
+
+const DEFAULT_DEPLOY_TILES = [
+Vector2(0, 5), Vector2(1, 5), Vector2(1, 6), Vector2(2, 6), Vector2(3, 6), 
+Vector2(3, 7), Vector2(4, 7), Vector2(5, 7), Vector2(5, 8), Vector2(6, 8)
 ]
 
 func _ready():
