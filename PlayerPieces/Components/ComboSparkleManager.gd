@@ -23,10 +23,6 @@ func animate_activate_assist(assist_type):
 		get_node("ComboSparklesYellow").set_emitting(true)
 	elif assist_type == ASSIST_TYPES.invulnerable:
 		get_node("ComboSparklesBlue").set_emitting(true)
-	elif assist_type == ASSIST_TYPES.finisher:
-		get_node("ComboSparklesRed").set_emitting(true)
-		get_node("ComboSparklesYellow").set_emitting(true)
-		get_node("ComboSparklesBlue").set_emitting(true)
 	emit_signal("count_animation_done")
 	
 	

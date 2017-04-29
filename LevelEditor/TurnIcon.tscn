@@ -1,0 +1,55 @@
+[gd_scene load_steps=6 format=1]
+
+[ext_resource path="res://LevelEditor/TurnIcon.gd" type="Script" id=1]
+[ext_resource path="res://Assets/UI/editor_turn_selector.png" type="Texture" id=2]
+[ext_resource path="res://Assets/processed_fonts/editor_turn_icon.fnt" type="BitmapFont" id=3]
+[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=4]
+
+[sub_resource type="CircleShape2D" id=1]
+
+custom_solver_bias = 0.0
+radius = 25.0
+
+[node name="TurnIcon" type="Area2D"]
+
+visibility/opacity = 0.8
+input/pickable = true
+shapes/0/shape = SubResource( 1 )
+shapes/0/transform = Matrix32( 1, 0, 0, 1, 0, 0 )
+shapes/0/trigger = false
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+script/script = ExtResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+
+texture = ExtResource( 2 )
+
+[node name="Label" type="Label" parent="."]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = -10.0
+margin/top = -15.0
+margin/right = 30.0
+margin/bottom = 21.0
+custom_fonts/font = ExtResource( 3 )
+custom_colors/font_color = Color( 0.415686, 0.87451, 0.317647, 1 )
+text = "5"
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+
+shape = SubResource( 1 )
+trigger = false
+_update_shape_index = 0
+
+[node name="InputHandler" parent="." instance=ExtResource( 4 )]
+
+

@@ -78,10 +78,6 @@ visibility/blend_mode = 1
 transform/pos = Vector2( 0, -50 )
 texture = ExtResource( 4 )
 
-[node name="RainParticles" parent="." instance=ExtResource( 5 )]
-
-visibility/visible = false
-
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 playback/process_mode = 1
@@ -100,4 +96,9 @@ playback/active = false
 playback/repeat = false
 playback/speed = 1.0
 
+[node name="RainParticles" parent="." instance=ExtResource( 5 )]
 
+config/emitting = false
+
+
+[editable path="RainParticles"]

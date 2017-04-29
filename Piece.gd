@@ -46,6 +46,12 @@ func get_new_action(coords_or_range, trigger_assassin_passive=true):
 	var action = self.Action.new(coords_or_range, self, trigger_assassin_passive)
 	add_child(action)
 	return action
+	
+func get_new_animation_sequence(blocking=false):
+	self.current_animation_sequence = self.AnimationSequence.new(blocking)
+	add_child(self.current_animation_sequence)
+	return self.current_animation_sequence
+	
 
 
 func add_animation(node, func_ref, blocking, arguments=[]):
@@ -64,7 +70,10 @@ func enqueue_animation_sequence():
 	if self.current_animation_sequence != null:
 		if !self.current_animation_sequence.is_empty():
 			get_node("/root/AnimationQueue").enqueue(self.current_animation_sequence, "execute", self.current_animation_sequence.blocking)
-			self.current_animation_sequence = null
+		self.current_animation_sequence = null
+			
+	else:
+		print("called enqueue_animation_sequence when there is none")
 
 
 func set_seen(flag):
@@ -221,10 +230,11 @@ func move(distance, passed_animation_sequence=null):
 	var animation_sequence
 	if passed_animation_sequence != null:
 		animation_sequence = passed_animation_sequence
+		self.current_animation_sequence = animation_sequence
 	else:
-		animation_sequence = self.AnimationSequence.new()
+		animation_sequence = get_new_animation_sequence()
 		
-	self.current_animation_sequence = animation_sequence
+	
 		
 	var old_coords = self.coords
 	

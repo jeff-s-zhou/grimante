@@ -17,6 +17,9 @@ var end_conditions = {"Defend":0, "Escort":1, "Timed":2, "MultiTimed":3}
 
 var enemy_modifiers = {"Poisonous":"Poisonous", "Shield":"Shield", "Cloaked":"Cloaked"}
 
+#used in the level editor
+var enemy_roster = {"grunt":Grunt, "fortifier":Fortifier, "grower":Grower, "drummer":Drummer, "melee":Melee, "ranged":Ranged}
+
 const y_coords_offsets = [0, 0, 1, 1, 2, 2, 3]
 
 
@@ -54,7 +57,7 @@ enemy_modifiers["Poisonous"]: 15,
 enemy_modifiers["Cloaked"] : 10
 }
 
-
+#used in the generator
 var FULL_UNIT_ROSTER = {
 0: Grunt,
 1: Fortifier,
@@ -64,6 +67,7 @@ var FULL_UNIT_ROSTER = {
 5: Ranged
 }
 
+#used in the generator
 var FULL_MODIFIER_ROSTER = {
 0: enemy_modifiers["Shield"],
 1: enemy_modifiers["Poisonous"],

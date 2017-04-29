@@ -12,7 +12,6 @@ var shadow_wall_tile_range = []
 var shifting_sands_tiles = []
 
 
-
 #starts at 1, 2, 2, 3, 3, 4, 4, 5, 5,
 #ends at 8, 8, 9, 9, 10, 10, 11, 11, 12
 
@@ -82,6 +81,13 @@ func _ready():
 #				add_child(selector)
 #				selector.triangulate_set_pos()
 #				self.pyromancer_selectors[tri_coords] = selector
+
+func deselect():
+	self.selected.deselect()
+	self.selected = null
+	self.reset_highlighting(true)
+	self.reset_prediction()
+	
 
 		
 func initialize_shadow_wall_tiles(shadow_wall_tile_range):

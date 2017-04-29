@@ -17,6 +17,8 @@ tracks/0/keys = { "times":FloatArray( 0, 0.3, 0.7, 1, 1.4 ), "transitions":Float
 [node name="Flyover" type="Node2D"]
 
 transform/pos = Vector2( 0, -6 )
+z/z = 99
+z/relative = false
 
 [node name="FlyoverText" type="Label" parent="."]
 

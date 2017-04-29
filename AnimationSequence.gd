@@ -58,4 +58,4 @@ func execute():
 
 	emit_signal("animation_done")
 
-	free() #call this instead of queue_free() because queue_free requires us to add it to the tree
+	queue_free() 

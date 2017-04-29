@@ -21,7 +21,7 @@ func turn_attack_update():
 		set_stunned(false)
 	elif self.hp != 0 and !self.silenced:
 		if self.current_animation_sequence == null:
-			self.current_animation_sequence = self.AnimationSequence.new()
+			get_new_animation_sequence()
 		var swipe_range = get_parent().get_range(self.coords, [1, 2], "PLAYER")
 		for coords in swipe_range:
 			swipe(coords)

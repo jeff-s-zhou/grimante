@@ -28,7 +28,6 @@ func _ready():
 	get_node("Sprite").set_self_opacity(0.4)
 	connect("mouse_enter", self, "_mouse_entered")
 	connect("mouse_exit", self, "_mouse_exited")
-	set_process_input(true)
 	
 func debug():
 	get_node("Label").set_text(str(coords.x) + "," + str(coords.y))
@@ -122,14 +121,9 @@ func _mouse_exited():
 	if get_parent().selected != null:
 		get_parent().reset_prediction()
 
-func is_select(event):
-	var is_mouse = event.is_action("select") and event.is_pressed()
-	var is_touch = event.type == InputEvent.SCREEN_TOUCH and event.is_pressed()
-	return is_mouse or is_touch
-
 
 func input_event(event):
-	if is_select(event):
+	if get_node("InputHandler").is_select(event):
 		get_parent().set_target(self)
 
 func external_set_opacity(value=1.0):
@@ -137,4 +131,3 @@ func external_set_opacity(value=1.0):
 	
 func get_size():
 	return get_node("Sprite").get_item_rect().size
-	

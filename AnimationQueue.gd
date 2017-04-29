@@ -11,6 +11,8 @@ var count_lock = Mutex.new()
 
 var animation_count = 0
 
+signal animation_count_update(count)
+
 signal animations_finished
 
 func _ready():
@@ -50,6 +52,7 @@ func update_animation_count(amount):
 	self.count_lock.lock()
 	self.animation_count += amount
 #	print("animation_count: " + str(self.animation_count))
+	emit_signal("animation_count_update", self.animation_count)
 	if self.animation_count == 0:
 		emit_signal("animations_finished")
 	self.count_lock.unlock()

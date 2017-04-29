@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=1]
+[gd_scene load_steps=28 format=1]
 
 [ext_resource path="res://Location.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/location.png" type="Texture" id=2]
@@ -12,15 +12,16 @@
 [ext_resource path="res://Assets/Objects/wall_behind.png" type="Texture" id=10]
 [ext_resource path="res://Assets/Objects/wall_front.png" type="Texture" id=11]
 [ext_resource path="res://UI/ReinforcementIndicator.tscn" type="PackedScene" id=12]
-[ext_resource path="res://Assets/Allies/corsair_corpse.png" type="Texture" id=13]
-[ext_resource path="res://Assets/Allies/cavalier_corpse.png" type="Texture" id=14]
-[ext_resource path="res://Assets/Allies/saint_corpse.png" type="Texture" id=15]
+[ext_resource path="res://Assets/Allies/assassin_corpse.png" type="Texture" id=13]
+[ext_resource path="res://Assets/Allies/saint_corpse.png" type="Texture" id=14]
+[ext_resource path="res://Assets/Allies/cavalier_corpse.png" type="Texture" id=15]
 [ext_resource path="res://Assets/Allies/archer_corpse.png" type="Texture" id=16]
-[ext_resource path="res://Assets/Allies/pyromancer_corpse.png" type="Texture" id=17]
-[ext_resource path="res://Assets/Allies/stormdancer_corpse.png" type="Texture" id=18]
-[ext_resource path="res://Assets/Allies/berserker_corpse.png" type="Texture" id=19]
-[ext_resource path="res://Assets/Allies/assassin_corpse.png" type="Texture" id=20]
+[ext_resource path="res://Assets/Allies/corsair_corpse.png" type="Texture" id=17]
+[ext_resource path="res://Assets/Allies/pyromancer_corpse.png" type="Texture" id=18]
+[ext_resource path="res://Assets/Allies/stormdancer_corpse.png" type="Texture" id=19]
+[ext_resource path="res://Assets/Allies/berserker_corpse.png" type="Texture" id=20]
 [ext_resource path="res://Assets/UI/pyromancer_selector.png" type="Texture" id=21]
+[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=22]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 
@@ -42,7 +43,7 @@ samples/tile_hover = { "db":-20.0, "pitch":0.9, "sample":ExtResource( 7 ) }
 
 [sub_resource type="SpriteFrames" id=5]
 
-animations = [ { "frames":[ ExtResource( 13 ) ], "loop":true, "name":"corsair", "speed":5.0 }, { "frames":[ ExtResource( 14 ) ], "loop":true, "name":"cavalier", "speed":5.0 }, { "frames":[ ExtResource( 15 ) ], "loop":true, "name":"saint", "speed":5.0 }, { "frames":[ ExtResource( 16 ) ], "loop":true, "name":"archer", "speed":5.0 }, { "frames":[ ExtResource( 17 ) ], "loop":true, "name":"pyromancer", "speed":5.0 }, { "frames":[ ExtResource( 18 ) ], "loop":true, "name":"stormdancer", "speed":5.0 }, { "frames":[ ExtResource( 19 ) ], "loop":true, "name":"berserker", "speed":5.0 }, { "frames":[ ExtResource( 20 ) ], "loop":true, "name":"assassin", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 13 ) ], "loop":true, "name":"assassin", "speed":5.0 }, { "frames":[ ExtResource( 14 ) ], "loop":true, "name":"saint", "speed":5.0 }, { "frames":[ ExtResource( 15 ) ], "loop":true, "name":"cavalier", "speed":5.0 }, { "frames":[ ExtResource( 16 ) ], "loop":true, "name":"archer", "speed":5.0 }, { "frames":[ ExtResource( 17 ) ], "loop":true, "name":"corsair", "speed":5.0 }, { "frames":[ ExtResource( 18 ) ], "loop":true, "name":"pyromancer", "speed":5.0 }, { "frames":[ ExtResource( 19 ) ], "loop":true, "name":"stormdancer", "speed":5.0 }, { "frames":[ ExtResource( 20 ) ], "loop":true, "name":"berserker", "speed":5.0 } ]
 
 [node name="Location" type="Area2D"]
 
@@ -167,5 +168,7 @@ animation = "berserker"
 
 visibility/visible = false
 texture = ExtResource( 21 )
+
+[node name="InputHandler" parent="." instance=ExtResource( 22 )]
 
 

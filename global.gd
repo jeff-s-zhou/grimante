@@ -12,7 +12,10 @@ var seen_units = {"Pawn":true, "Berserker":true, "Cavalier":true,
 "Archer": true, "Corsair": true, "Saint":true, "Assassin":true, "Pyromancer":true, "Frost Knight": true}
 var seen_effect = {}
 
-var ultimates_enabled_flag = false
+var PLATFORMS = {"Android":1, "iOS":2, "PC":3} 
+
+var platform = PLATFORMS.PC
+
 
 func _ready():
 	# Called every time the node is added to the scene.

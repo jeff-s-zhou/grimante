@@ -13,7 +13,7 @@ func _ready():
 	pass
 
 func animate_set_rain():
-	get_node("RainParticles").show()
+	get_node("RainParticles").set_emitting(true)
 	get_node("Tween").interpolate_property(get_node("RainParticles"), "visibility/opacity", 0, 1, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	emit_signal("count_animation_done")
@@ -27,6 +27,6 @@ func animate_lightning():
 func animate_hide_rain():
 	get_node("Tween").interpolate_property(get_node("RainParticles"), "visibility/opacity", 1, 0, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	yield(get_node("Tween"), "tween_complete")
-	get_node("RainParticles").hide()
+	get_node("RainParticles").set_emitting(false)
 	emit_signal("count_animation_done")
 	

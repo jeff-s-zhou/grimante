@@ -1,0 +1,28 @@
+[gd_scene load_steps=6 format=1]
+
+[ext_resource path="res://LevelEditor/ModifierMock.gd" type="Script" id=1]
+[ext_resource path="res://Assets/Enemies/grunt_piece.png" type="Texture" id=2]
+[ext_resource path="res://EnemyPieces/Components/EnemyCollisionArea.tscn" type="PackedScene" id=3]
+[ext_resource path="res://EnemyPieces/Components/EnemyEffects.tscn" type="PackedScene" id=4]
+[ext_resource path="res://EnemyPieces/Components/EnemyOverlayLayers.tscn" type="PackedScene" id=5]
+
+[node name="ModifierMock" type="KinematicBody2D"]
+
+input/pickable = false
+collision/layers = 1
+collision/mask = 1
+collision/margin = 0.08
+script/script = ExtResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+
+transform/pos = Vector2( 0, -6 )
+texture = ExtResource( 2 )
+
+[node name="ModifierCollisionArea" parent="." instance=ExtResource( 3 )]
+
+[node name="EnemyEffects" parent="." instance=ExtResource( 4 )]
+
+[node name="EnemyOverlays" parent="." instance=ExtResource( 5 )]
+
+

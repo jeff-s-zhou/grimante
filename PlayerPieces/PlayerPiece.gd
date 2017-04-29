@@ -300,7 +300,7 @@ func hover_highlight():
 		#get_node("SamplePlayer").play("tile_hover")
 		get_node("Physicals/OverlayLayers/White").show()
 	else:
-		print("is placed")
+		pass
 
 
 #called on mouse exiting the ClickArea

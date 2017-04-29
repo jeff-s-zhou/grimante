@@ -112,7 +112,7 @@ func hover_highlight():
 
 func debug():
 	#get_node("DebugText").show()
-	get_node("DebugText").set_text(str(self.coords))
+	get_node("DebugText").set_text(str(get_z()))
 	
 	
 func hover_unhighlight():
@@ -155,7 +155,7 @@ func will_die_to(damage):
 	
 func reset_prediction_flyover():
 	get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
-	get_node("Physicals/HealthDisplay/Label").set_text(str(self.temp_display_hp))
+	get_node("Physicals/HealthDisplay").set_health(self.temp_display_hp)
 	get_node("Physicals/HealthDisplay/Label").show()
 	self.predicting_hp = false
 	if self.prediction_flyover != null:
@@ -169,18 +169,17 @@ func animate_predict_hp(hp, value, color):
 	get_node("Physicals/HealthDisplay/AnimationPlayer").play("HealthFlicker")
 	yield(get_node("Physicals/HealthDisplay/AnimationPlayer"), "finished")
 	
-	get_node("Physicals/HealthDisplay/Label").set_text(str(hp))
+	get_node("Physicals/HealthDisplay").set_health(hp)
 	get_node("Physicals/HealthDisplay/Label").show()
 	
 	if self.prediction_flyover != null:
 		self.prediction_flyover.queue_free()
 		self.prediction_flyover = null
-		get_node("Physicals/HealthDisplay/Label").set_text(str(hp))
+		get_node("Physicals/HealthDisplay").set_health(hp)
 	
 	if self.predicting_hp:
 		#right here is the conditional check
 		self.prediction_flyover = self.flyover_prototype.instance()
-		self.prediction_flyover.set_z(4)
 		add_child(self.prediction_flyover)
 		var text = self.prediction_flyover.get_node("FlyoverText")
 		var value_text = str(value)
@@ -228,10 +227,11 @@ func animate_smash_killed():
 
 	
 func set_stunned(flag):
-	self.stunned = flag
-	if flag:
+	if flag and !self.shielded:
+		self.stunned = flag
 		add_animation(self, "animate_set_stunned", false)
 	else:
+		self.stunned = flag
 		add_animation(self, "animate_hide_stunned", false)
 		
 func animate_set_stunned():
@@ -349,11 +349,12 @@ func animate_bubble_hide():
 
 	
 func set_burning(flag):
-	self.burning = flag
-	if flag:
+	if flag and !self.shielded:
+		self.burning = flag
 		self.currently_burning = true
 		add_animation(self,"animate_fire", true)
 	else:
+		self.burning = flag
 		add_animation(self,"animate_burning_hide", false)
 		
 func animate_fire():
@@ -370,6 +371,8 @@ func animate_fire():
 		
 func set_frozen(flag):
 	self.frozen = flag
+	
+	#if flag and !self.shielded:
 	
 func set_silenced(flag):
 	if flag:
@@ -399,9 +402,12 @@ func set_hp(hp):
 func initialize_hp(hp):
 	self.hp = hp
 	self.temp_display_hp = self.hp
-	get_node("Physicals/HealthDisplay/Label").set_text(str(hp))
+	get_node("Physicals/HealthDisplay").set_health(hp)
 	
 func initialize_modifiers(modifiers):
+	#it'll be a dict when created through the level editor, array when programmed for convenience
+	if typeof(modifiers) == TYPE_DICTIONARY:
+		modifiers = modifiers.values()
 	var enemy_modifiers = get_node("/root/constants").enemy_modifiers
 	for modifier in modifiers:
 		if modifier == enemy_modifiers["Poisonous"]:
@@ -471,7 +477,7 @@ func modify_hp(amount, delay=0):
 		self.hp = min((max(0, self.hp + amount)), 9) #has to be between 0 and 9
 		self.temp_display_hp = self.hp
 		
-		self.current_animation_sequence = self.AnimationSequence.new()
+		get_new_animation_sequence()
 		add_animation(self, "animate_set_hp", true, [self.hp, amount, delay])
 		if self.hp == 0: 
 			delete_self() 
@@ -488,10 +494,9 @@ func animate_set_hp(hp, value, delay=0):
 		get_node("Timer").set_wait_time(delay)
 		get_node("Timer").start()
 		yield(get_node("Timer"), "timeout")
-	get_node("Physicals/HealthDisplay/Label").set_text(str(hp))
+	get_node("Physicals/HealthDisplay").set_health(hp)
 	
 	var flyover = self.flyover_prototype.instance()
-	flyover.set_z(4)
 	add_child(flyover)
 	var text = flyover.get_node("FlyoverText")
 	var value_text = str(value)

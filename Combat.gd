@@ -29,11 +29,8 @@ signal deployed
 
 signal animation_done
 
-
-var archer = null
 var assassin = null
 
-var king = null
 
 func _ready():
 	
@@ -43,12 +40,15 @@ func _ready():
 	get_node("Grid").set_pos(Vector2(73, 280))
 	#get_node("Grid").set_pos(Vector2(400, 250))
 	#debug_mode()
+	get_node("/root/AnimationQueue").connect("animation_count_update", self, "update_animation_count_display")
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("AssistSystem").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 100))
 	get_node("PhaseManager").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 50))
 	
 	get_node("/root/AnimationQueue").reset_animation_count()
+	
+	
 
 	self.level_schematic_func = get_node("/root/global").get_param("level")
 	self.level_schematic = self.level_schematic_func.call_func()
@@ -125,6 +125,9 @@ func _ready():
 	
 	start_player_phase()
 	
+
+func update_animation_count_display(count):
+	get_node("AnimationCountLabel").set_text(str(count))
 	
 
 
@@ -157,9 +160,7 @@ func soft_copy_array(source, target):
 	
 func initialize_piece(piece, key):
 	var new_piece = piece.instance()
-	if new_piece.UNIT_TYPE == "Archer":
-		self.archer = new_piece
-	elif new_piece.UNIT_TYPE == "Assassin":
+	if new_piece.UNIT_TYPE == "Assassin":
 		self.assassin = new_piece
 	new_piece.set_opacity(0)
 	new_piece.connect("invalid_move", self, "handle_invalid_move")
@@ -249,26 +250,11 @@ func end_turn():
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	get_node("ComboSystem").player_turn_ended()
 	self.state = STATES.enemy_turn
-	
-func is_select(event):
-	var is_mouse = event.is_action("select") and event.is_pressed()
-	var is_touch = event.type == InputEvent.SCREEN_TOUCH and event.is_pressed()
-	return is_mouse or is_touch
-	
-func is_deselect(event):
-	var is_mouse = event.is_action("deselect") and event.is_pressed()
-	return is_mouse
-	
-func is_ui_accept(event):
-	var is_mouse = event.is_action("ui_accept") and event.is_pressed()
-	var is_touch = event.type == InputEvent.SCREEN_DRAG
-	return is_mouse or is_touch
-
 
 func _input(event):
 	#select a unit
 	
-	if is_select(event):
+	if get_node("InputHandler").is_select(event):
 		var hovered = get_node("CursorArea").get_piece_or_location_hovered()
 		if hovered:
 			hovered.input_event(event)
@@ -277,22 +263,16 @@ func _input(event):
 			get_node("Grid").selected.invalid_move()
 	
 	#deselect a unit
-	if is_deselect(event): 
+	if get_node("InputHandler").is_deselect(event): 
 		if get_node("Grid").selected:
-			get_node("Grid").selected.deselect()
-			
-			get_node("Grid").selected = null
-			get_node("Grid").reset_highlighting(true)
-			get_node("Grid").reset_prediction()
+			get_node("Grid").deselect()
 	
-	
-	elif is_ui_accept(event):
+	elif get_node("InputHandler").is_ui_accept(event):
 		if self.state == self.STATES.game_start:
 			get_node("PhaseManager").clear()
 			emit_signal("deployed")
 		if self.state == self.STATES.player_turn:
 			end_turn()
-			
 			
 	elif event.is_action("detailed_description") :
 		if event.is_pressed() and !event.is_echo():
@@ -350,6 +330,8 @@ func _input(event):
 			
 	elif event.is_action("test_action") and event.is_pressed():
 		get_node("/root/AnimationQueue").debug()
+		for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
+			enemy_piece.debug()
 
 		#print(get_node("Grid").pieces)
 
@@ -375,12 +357,7 @@ func _process(delta):
 
 
 	elif self.state == STATES.enemy_turn:
-		
 		enemy_phase()
-		self.state = STATES.transitioning
-		
-	elif self.state == STATES.king_turn:
-		king_phase()
 		self.state = STATES.transitioning
 
 	elif self.state == STATES.transitioning:
@@ -398,7 +375,8 @@ func enemy_phase():
 	
 	if(get_node("/root/AnimationQueue").is_animating()):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	
+		
+	enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
 	for enemy_piece in enemy_pieces:
 		enemy_piece.turn_attack_update()
 		

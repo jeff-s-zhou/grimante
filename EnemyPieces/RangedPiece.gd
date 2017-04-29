@@ -25,7 +25,7 @@ func turn_attack_update():
 	
 	elif self.hp != 0 and !self.silenced:
 		if self.current_animation_sequence == null:
-			self.current_animation_sequence = self.AnimationSequence.new()
+			get_new_animation_sequence()
 		var fireball_range = get_parent().get_range(self.coords, [1, 9], "PLAYER", true, [3, 4])
 		if fireball_range != []:
 			fireball(fireball_range[0])

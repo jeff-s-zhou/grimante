@@ -20,11 +20,43 @@ const Pyromancer = preload("res://PlayerPieces/PyromancerPiece.tscn")
 const FrostKnight = preload("res://PlayerPieces/FrostKnightPiece.tscn")
 const Saint = preload("res://PlayerPieces/SaintPiece.tscn")
 const Corsair = preload("res://PlayerPieces/CorsairPiece.tscn")
+
+var enemy_roster = load("res://constants.gd").new().enemy_roster
 #
 var enemy_modifiers = load("res://constants.gd").new().enemy_modifiers
 var shield = enemy_modifiers["Shield"]
 var poisonous = enemy_modifiers["Poisonous"]
 var cloaked = enemy_modifiers["Cloaked"]
+
+func load_level(file_name):
+	var enemy_waves = {}
+	for i in range(0, 9): #TODO: don't hardcode this in, so you can have varied game lengths
+		#initialize a subdict for each wave
+		enemy_waves[i] = {}
+
+	var save = File.new()
+	if !save.file_exists("user://" + file_name):
+		return #Error!  We don't have a save to load
+
+	# Load the file line by line and process that dictionary to restore the object it represents
+	var current_line = {} # dict.parse_json() requires a declared dict.
+	save.open("user://" + file_name, File.READ)
+	while (!save.eof_reached()):
+		current_line.parse_json(save.get_line())
+		# First we need to create the object and add it to the tree and set its position.
+		var name = current_line["name"]
+		var coords = Vector2(int(current_line["pos_x"]), int(current_line["pos_y"]))
+		var hp = int(current_line["hp"])
+		var modifiers = current_line["modifiers"]
+		var turn = int(current_line["turn"])
+		
+		var prototype = self.enemy_roster[name]
+		
+		var enemy_wave = enemy_waves[turn]
+		enemy_wave[coords] = make(prototype, hp, modifiers)
+	save.close()
+	
+	return enemy_waves
 
 func make(prototype, health, modifiers=null):
 	return {"prototype": prototype, "health": health, "modifiers":modifiers}
@@ -38,7 +70,7 @@ func make_complex_tip(tip_text, objective_text, tooltips):
 	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
 	
 func sandbox_allies():
-	return { 1:Saint, 2: Archer, 3: Berserker, 4: Cavalier, 5: Assassin} #2: Cavalier, 3: Archer, 4: Assassin}
+	return {2:Cavalier, 4: Berserker} #2: Cavalier, 3: Archer, 4: Assassin}
 #
 
 func sandbox_enemies():
@@ -47,14 +79,15 @@ func sandbox_enemies():
 	
 func sandbox_enemies2():
 	var turn_power_levels = [300, 0, 0, 0, 0]
-	var enemies = [{Vector2(3, 5): make(Melee, 5), Vector2(3, 6): make(Ranged, 5, [shield])}]
+	#var enemies = [{Vector2(3, 5): make(Melee, 5), Vector2(3, 6): make(Ranged, 5, [shield])}]
+	var enemies = load_level("test.save")
 	return EnemyWrappers.FiniteCuratedWrapper.new(turn_power_levels, enemies)
 	
 func sandbox_extras():
 	return {"shifting_sands_tiles": {Vector2(3, 6): 4}}
 
 func sandbox_level():
-	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies(), null) 
+	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies2(), null) 
 
 var sandbox_level_ref = funcref(self, "sandbox_level")
 #
