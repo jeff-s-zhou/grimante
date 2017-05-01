@@ -19,6 +19,8 @@ var STATES = {"bar":0, "instanced":1}
 
 var state = null
 
+var is_selected = false
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
@@ -46,15 +48,33 @@ func initialize(name, turn, coords, hp, modifiers=null):
 	set_pos(pos)
 	self.state = STATES.instanced
 	
-func input_event(event):
-	if self.state == STATES.bar:
-		get_node("/root/LevelEditor").selected = self
-	print("detected piece click here")
+func edit(hp, modifiers=null):
+	set_health(hp)
+	set_modifiers(modifiers)
 	
+func delete():
+	get_node("/root/LevelEditor").get_current_editor_grid().pieces[coords] = null
+	queue_free()
+	
+func input_event(event):
+	if get_node("/root/LevelEditor").selected == null:
+		get_node("/root/LevelEditor").selected = self
+	
+	#if we're already selected, and tapped again
+	elif get_node("/root/LevelEditor").selected == self and self.is_instanced():
+		get_node("/root/LevelEditor").modify_unit()
+		
 func is_instanced():
 	return self.state == STATES.instanced
 	
-		
+#called when the piece is already instanced and we're moving it on the grid
+func move(coords):
+	get_node("/root/LevelEditor").get_current_editor_grid().pieces[self.coords] = null
+	self.coords = coords
+	get_node("/root/LevelEditor").get_current_editor_grid().pieces[self.coords] = self
+	var pos = get_node("/root/LevelEditor").get_current_editor_grid().locations[coords].get_pos()
+	set_pos(pos)
+
 func set_health(hp):
 	self.hp = hp
 	get_node("HealthDisplay").set_health(hp)

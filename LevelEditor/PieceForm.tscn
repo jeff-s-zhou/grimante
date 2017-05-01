@@ -93,20 +93,53 @@ focus_mode = 2
 caret/caret_blink = false
 caret/caret_blink_speed = 0.65
 
-[node name="Button" type="Button" parent="."]
+[node name="DoneButton" type="Button" parent="."]
 
 focus/ignore_mouse = false
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
-margin/left = 254.0
-margin/top = 201.0
-margin/right = 332.0
-margin/bottom = 221.0
+margin/left = 319.0
+margin/top = 223.0
+margin/right = 397.0
+margin/bottom = 243.0
 toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
 text = "Done"
+flat = false
+
+[node name="CancelButton" type="Button" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 187.0
+margin/top = 223.0
+margin/right = 265.0
+margin/bottom = 243.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+text = "Cancel"
+flat = false
+
+[node name="DeleteButton" type="Button" parent="."]
+
+visibility/visible = false
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 467.0
+margin/top = 11.0
+margin/right = 545.0
+margin/bottom = 31.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+text = "Delete"
 flat = false
 
 

@@ -123,8 +123,7 @@ func _mouse_exited():
 
 
 func input_event(event):
-	if get_node("InputHandler").is_select(event):
-		get_parent().set_target(self)
+	get_parent().set_target(self)
 
 func external_set_opacity(value=1.0):
 	get_node("Sprite").set_self_opacity(value)

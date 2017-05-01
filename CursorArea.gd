@@ -54,7 +54,7 @@ func get_piece_or_location_hovered():
 			return area
 	return null
 
-func get_modifier_display_hovered():
+func get_modifier_mock_hovered():
 	var areas = get_overlapping_areas()
 	for area in areas:
 		if area.get_name() == "ModifierCollisionArea": #hackey, since CollisionArea is the one that has monitorable enabled but ClickArea doesn't

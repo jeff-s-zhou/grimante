@@ -74,14 +74,23 @@ class FiniteGeneratedWrapper:
 
 
 class FiniteCuratedWrapper:
+	var generator = load("res://EnemyListGenerator.gd").new()
 	var current_turn_index = 0
 	var turn_power_levels
 	var waves
 	var big_wave_threshold = 0
 	
-	func _init(turn_power_levels, waves, big_wave_threshold=1400):
+	func _init(turn_power_levels, new_waves, big_wave_threshold=1400):
 		self.turn_power_levels = turn_power_levels
-		self.waves = waves
+		
+		if typeof(new_waves) == TYPE_DICTIONARY:
+			var keys = new_waves.keys()
+			self.waves = []
+			keys.sort()
+			for key in keys:
+				self.waves.append(new_waves[key])
+		else:
+			self.waves = new_waves
 		self.big_wave_threshold = big_wave_threshold
 		
 	func get_next_summon():
@@ -103,3 +112,9 @@ class FiniteCuratedWrapper:
 			if self.turn_power_levels[i] >= self.big_wave_threshold:
 				return (i - self.current_turn_index)
 		return null
+
+
+class FiniteAlteredWrapper extends FiniteCuratedWrapper:
+	func _init(turn_power_levels, waves, big_wave_threshold=1400).(turn_power_levels, waves, big_wave_threshold):
+		for wave in self.waves:
+			generator.alter_wave(wave)

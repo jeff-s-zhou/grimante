@@ -29,7 +29,28 @@ func generate_wave(req_power_level, roster=constants.FULL_UNIT_ROSTER, modifier_
 		return enemies
 	else:
 		return null
+		
+		
+func alter_wave(wave, health_variance=null, additional_req_power_level=null, 
+roster=constants.FULL_UNIT_ROSTER, modifier_roster=constants.FULL_MODIFIER_ROSTER):
+	randomize()
 	
+	#if wave isn't empty
+	if wave != null and wave.keys().size() > 0:
+		var balance = 999
+		var hp_alteration_dict = {}
+		while abs(balance) > 3: #if we either made the enemies too strong or too weak, keep generating
+			print("balancing")
+			hp_alteration_dict = {}
+			balance = 0
+			for coords in wave.keys():
+				var change = (randi() % 3) - 1 #should give either -1, 0, 1
+				hp_alteration_dict[coords] = change
+				balance += change
+			print(balance)
+		for coords in wave.keys():
+			wave[coords].hp += hp_alteration_dict[coords]
+
 
 #wave in list form, without coordinates
 func create_raw_wave(req_power_level, roster, modifier_roster):
@@ -77,18 +98,18 @@ func generate_unit(roster, modifier_roster):
 	#TODO: implement max_power and min_power checks
 	var random_unit_selector = randi() % roster.size()
 	var random_unit_prototype = roster[random_unit_selector]
-	var health = get_unit_health(random_unit_prototype)
+	var hp = get_unit_hp(random_unit_prototype)
 	
 	var modifier_selector = randf()
 	# chance to just try to find a unit without modifiers
 	if modifier_selector < 0.60:
-		return {"prototype": random_unit_prototype, "health":health, "modifiers":null}
+		return {"prototype": random_unit_prototype, "hp":hp, "modifiers":null}
 		
 	# chance to try to boost it up with modifiers
 	elif modifier_selector >= 0.60 and modifier_selector < 0.94:
 		var random_modifier_selector = randi() % modifier_roster.size()
 		var random_modifier = modifier_roster[random_modifier_selector]
-		return {"prototype": random_unit_prototype, "health":health, "modifiers":[random_modifier]}
+		return {"prototype": random_unit_prototype, "hp":hp, "modifiers":[random_modifier]}
 	
 	# chance to try to boost it up with 2 modifiers
 	elif modifier_selector >= 0.94:
@@ -100,13 +121,13 @@ func generate_unit(roster, modifier_roster):
 			random_modifier_selector2 = randi() % modifier_roster.size()
 		
 		var random_modifier2 = modifier_roster[random_modifier_selector2]
-		return {"prototype": random_unit_prototype, "health":health, "modifiers":[random_modifier1, random_modifier2]}
+		return {"prototype": random_unit_prototype, "hp":hp, "modifiers":[random_modifier1, random_modifier2]}
 	
 	else:
 		print("shouldn't reach here in EnemyGenerator")
 
 
-func get_unit_health(prototype):
+func get_unit_hp(prototype):
 	var prob_dist = null
 	if prototype == Grunt:
 		prob_dist = constants.GRUNT_HEALTH_PROB_DIST
@@ -171,8 +192,10 @@ func get_power_level(unit_schematic):
 		for modifier in modifiers:
 			power_level += constants.MODIFIER_POWER_LEVELS[modifier]
 	
-	power_level = power_level * unit_schematic["health"]
+	power_level = power_level * unit_schematic["hp"]
 	
 	return power_level
+
+
 	
 	

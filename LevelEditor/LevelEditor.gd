@@ -43,8 +43,8 @@ func get_current_editor_grid():
 	
 func _input(event):
 	if get_node("InputHandler").is_select(event):
-		if self.in_menu:
-			var hovered = get_node("CursorArea").get_modifier_display_hovered()
+		if self.in_menu: #we do this so it doesn't pick up the other things beneath the menu
+			var hovered = get_node("CursorArea").get_modifier_mock_hovered()
 			if hovered:
 				hovered.input_event(event)
 		else:
@@ -66,21 +66,43 @@ func _input(event):
 func set_target(target):
 	self.target = target
 	if self.selected != null:
+		print("setting target")
 		if self.selected.is_instanced(): #if already placed on the map, switch up positions
-			self.selected.set_coords(target.coords)
+			print("just shifted coords")
+			self.selected.move(target.coords)
 			self.selected = null
 		else:
 			get_node("PieceForm").show()
 			self.in_menu = true
 			var values = (yield(get_node("PieceForm"), "finished"))
-			var hp = values[0]
-			var modifiers = values[1]
-			var name = self.selected.name
-			var instanced = self.selected.duplicate()
-			self.current_editor_grid.add_piece(name, self.current_turn, target.coords, instanced, hp, modifiers)
+			if values != null: #if not cancelled
+				var hp = values[0]
+				var modifiers = values[1]
+				var name = self.selected.name
+				var instanced = self.selected.duplicate()
+				self.current_editor_grid.add_piece(name, self.current_turn, target.coords, instanced, hp, modifiers)
+			
 			self.in_menu = false
 			self.selected = null
 			
+			
+func modify_unit():
+	get_node("PieceForm").show(true)
+	self.in_menu = true
+	var values = (yield(get_node("PieceForm"), "finished"))
+	
+	if values != null: #if not cancelled
+		if typeof(values) == TYPE_ARRAY:
+			var hp = values[0]
+			var modifiers = values[1]
+			self.selected.edit(hp, modifiers)
+			self.selected = null
+		else:
+			var deleted_unit = self.selected
+			self.selected = null
+			deleted_unit.delete()
+	
+	self.in_menu = false
 
 func save_level(file_name):
 	var save = File.new()

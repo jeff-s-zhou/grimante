@@ -15,7 +15,9 @@ var modifier_mock_prototype = preload("res://LevelEditor/ModifierMock.tscn")
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Button").connect("pressed", self, "form_finished")
+	get_node("DoneButton").connect("pressed", self, "form_finished")
+	get_node("CancelButton").connect("pressed", self, "form_cancelled")
+	get_node("DeleteButton").connect("pressed", self, "deleted")
 	
 	var x_pos = 60
 	
@@ -27,12 +29,21 @@ func _ready():
 		self.selected_modifiers[modifier] = false
 		x_pos += 115
 		
+func show(modify_flag=false):
+	if modify_flag:
+		get_node("DeleteButton").show()
+	.show()
+		
 func reset_modifiers():
 	for modifier in enemy_modifiers:
 		self.selected_modifiers[modifier] = false
 
 func toggle_modifier(modifier):
 	selected_modifiers[modifier] = !selected_modifiers[modifier]
+	
+func form_cancelled():
+	emit_signal("finished", null)
+	form_reset()
 	
 func form_finished():
 	var text = get_node("LineEdit").get_text()
@@ -41,6 +52,14 @@ func form_finished():
 		if self.selected_modifiers[modifier]:
 			cleaned_modifiers[modifier] = true
 	emit_signal("finished", text, cleaned_modifiers)
+	form_reset()
+	
+func deleted():
+	emit_signal("finished", true)
+	form_reset()
+	
+func form_reset():
 	self.hide()
+	get_node("DeleteButton").hide()
 	get_node("LineEdit").clear()
 	reset_modifiers()

@@ -26,6 +26,7 @@ transform/pos = Vector2( 0, -9 )
 
 [node name="EnemyOverlays" parent="." instance=ExtResource( 4 )]
 
+editor/display_folded = true
 transform/pos = Vector2( 0, -5 )
 
 [node name="ModifierCollisionArea" parent="." instance=ExtResource( 5 )]

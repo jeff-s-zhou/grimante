@@ -58,8 +58,8 @@ func load_level(file_name):
 	
 	return enemy_waves
 
-func make(prototype, health, modifiers=null):
-	return {"prototype": prototype, "health": health, "modifiers":modifiers}
+func make(prototype, hp, modifiers=null):
+	return {"prototype": prototype, "hp": hp, "modifiers":modifiers}
 	
 	
 func make_tip(tip_text, objective_text, arrow_coords, text):
@@ -70,7 +70,7 @@ func make_complex_tip(tip_text, objective_text, tooltips):
 	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
 	
 func sandbox_allies():
-	return {2:Cavalier, 4: Berserker} #2: Cavalier, 3: Archer, 4: Assassin}
+	return {3: Berserker} #2: Cavalier, 3: Archer, 4: Assassin}
 #
 
 func sandbox_enemies():
@@ -79,9 +79,9 @@ func sandbox_enemies():
 	
 func sandbox_enemies2():
 	var turn_power_levels = [300, 0, 0, 0, 0]
-	#var enemies = [{Vector2(3, 5): make(Melee, 5), Vector2(3, 6): make(Ranged, 5, [shield])}]
-	var enemies = load_level("test.save")
-	return EnemyWrappers.FiniteCuratedWrapper.new(turn_power_levels, enemies)
+	var enemies = [{Vector2(3, 2): make(Grunt, 5)}]
+	#var enemies = load_level("test.save")
+	return EnemyWrappers.FiniteAlteredWrapper.new(turn_power_levels, enemies)
 	
 func sandbox_extras():
 	return {"shifting_sands_tiles": {Vector2(3, 6): 4}}

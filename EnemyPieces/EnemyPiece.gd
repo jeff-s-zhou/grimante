@@ -94,9 +94,8 @@ func get_modifiers():
 
 
 func input_event(event):
-	if event.is_action("select"):
-		if event.is_pressed():
-			self.grid.set_target(self)
+	if event.is_pressed():
+		self.grid.set_target(self)
 
 
 func hover_highlight():
@@ -156,7 +155,7 @@ func will_die_to(damage):
 func reset_prediction_flyover():
 	get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
 	get_node("Physicals/HealthDisplay").set_health(self.temp_display_hp)
-	get_node("Physicals/HealthDisplay/Label").show()
+	
 	self.predicting_hp = false
 	if self.prediction_flyover != null:
 		self.prediction_flyover.queue_free()
@@ -170,7 +169,6 @@ func animate_predict_hp(hp, value, color):
 	yield(get_node("Physicals/HealthDisplay/AnimationPlayer"), "finished")
 	
 	get_node("Physicals/HealthDisplay").set_health(hp)
-	get_node("Physicals/HealthDisplay/Label").show()
 	
 	if self.prediction_flyover != null:
 		self.prediction_flyover.queue_free()

@@ -332,23 +332,21 @@ func input_event(event):
 		deploy_input_event(event)
 		return
 
-	if event.is_action("select") and event.is_pressed():
-		if get_parent().selected == null and self.state != States.PLACED:
-			select()
-		
-		elif get_parent().selected == null and self.finisher_flag:
-			finisher_reactivate() #reactivate this piece for finishing
+	if get_parent().selected == null and self.state != States.PLACED:
+		select()
+	
+	elif get_parent().selected == null and self.finisher_flag:
+		finisher_reactivate() #reactivate this piece for finishing
 
-		else: #if not selected and not self, then some piece is trying to act on this one
-			get_parent().set_target(self)
-			
-			
+	else: #if not selected and not self, then some piece is trying to act on this one
+		get_parent().set_target(self)
+
+
 func deploy_input_event(event):
-	if event.is_action("select") and event.is_pressed():
-		if get_parent().selected == null:
-			select()
-		else:
-			get_parent().set_target(self)
+	if get_parent().selected == null:
+		select()
+	else:
+		get_parent().set_target(self)
 
 
 func select():

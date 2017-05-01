@@ -47,15 +47,15 @@ func _ready():
 	get_node("PhaseManager").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 50))
 	
 	get_node("/root/AnimationQueue").reset_animation_count()
-	
-	
-
+#	
+#	
+#
 	self.level_schematic_func = get_node("/root/global").get_param("level")
 	self.level_schematic = self.level_schematic_func.call_func()
-		
+#		
 	for key in self.level_schematic.allies.keys():
 		initialize_piece(self.level_schematic.allies[key], key)
-	
+#	
 	self.enemy_waves = self.level_schematic.enemies
 
 	self.reinforcements = self.level_schematic.reinforcements
@@ -72,7 +72,7 @@ func _ready():
 	
 	get_node("Grid").update_furthest_back_coords()
 	
-	#self.next_wave = self.enemy_waves.get_next_summon()
+#	#self.next_wave = self.enemy_waves.get_next_summon()
 	
 	deploy_wave(true)
 	
@@ -86,14 +86,11 @@ func _ready():
 	add_child(self.state_manager)
 	self.state_manager.initialize(self.level_schematic)
 	self.state_manager.set_pos(Vector2(get_viewport_rect().size.width/2, 30))
-	
-
+#	
+#
 	set_process(true)
 	set_process_input(true)	
 #	
-
-#	if self.level_schematic.king != null:
-#		initialize_king(self.level_schematic.king)
 		
 	if self.level_schematic.shadow_wall_tiles.size() > 0:
 		get_node("Grid").initialize_shadow_wall_tiles(self.level_schematic.shadow_wall_tiles)
@@ -124,8 +121,8 @@ func _ready():
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	
 	start_player_phase()
-	
-
+#	
+#
 func update_animation_count_display(count):
 	get_node("AnimationCountLabel").set_text(str(count))
 	
@@ -156,8 +153,8 @@ func soft_copy_dict(source, target):
 func soft_copy_array(source, target):
 	for item in source:
 		target.push_back(item)
-
-	
+#
+#	
 func initialize_piece(piece, key):
 	var new_piece = piece.instance()
 	if new_piece.UNIT_TYPE == "Assassin":
@@ -179,8 +176,8 @@ func initialize_piece(piece, key):
 	new_piece.animate_summon()
 	yield(new_piece.get_node("Tween"), "tween_complete")
 	emit_signal("done_initializing")
-	
-
+#	
+#
 func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon, animation_sequence=null):
 	var position
 	if typeof(key) == TYPE_INT:
@@ -207,28 +204,6 @@ func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon, anim
 		else:
 			enemy_piece.add_animation(enemy_piece, "animate_summon", false)
 
-
-func initialize_king(king_schematic):
-	print(king_schematic)
-	var king_prototype = king_schematic["prototype"]
-	var column_or_coords = king_schematic["column_or_coords"]
-	
-	var king = king_prototype.instance()
-	
-	var position
-	if typeof(column_or_coords) == TYPE_INT:
-		position = get_node("Grid").get_top_of_column(column_or_coords)
-	else:
-		position = column_or_coords #that way when we need to we can specify by coordinates
-	
-	if(get_node("Grid").pieces.has(position)):
-		get_node("Grid").pieces[position].push(Vector2(0, 1))
-	get_node("Grid").add_piece(position, king)
-	
-	self.king = king
-	king.set_opacity(0)
-	king.animate_summon()
-	
 	
 func end_turn():
 	self.state = STATES.transitioning
@@ -259,7 +234,6 @@ func _input(event):
 		if hovered:
 			hovered.input_event(event)
 		elif get_node("Grid").selected != null:
-			print("caught the invalid move here")
 			get_node("Grid").selected.invalid_move()
 	
 	#deselect a unit
@@ -514,9 +488,9 @@ func deploy_wave(mass_summon=false):
 		for key in wave.keys():
 			var prototype_parts = wave[key]
 			var prototype = prototype_parts["prototype"]
-			var health = prototype_parts["health"]
+			var hp = prototype_parts["hp"]
 			var modifiers = prototype_parts["modifiers"]
-			initialize_enemy_piece(key, prototype, health, modifiers, mass_summon)
+			initialize_enemy_piece(key, prototype, hp, modifiers, mass_summon)
 
 	display_wave_preview(self.enemy_waves.preview_next_summon())
 
