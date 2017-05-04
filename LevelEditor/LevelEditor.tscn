@@ -28,4 +28,19 @@ transform/pos = Vector2( 43.1693, 374.892 )
 
 transform/pos = Vector2( -2.27203, 59.0739 )
 
+[node name="Title" type="LineEdit" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 249.0
+margin/top = 26.0
+margin/right = 384.0
+margin/bottom = 53.0
+placeholder/alpha = 0.6
+focus_mode = 2
+caret/caret_blink = false
+caret/caret_blink_speed = 0.65
+
 

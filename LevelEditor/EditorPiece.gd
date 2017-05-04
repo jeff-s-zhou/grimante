@@ -53,7 +53,7 @@ func edit(hp, modifiers=null):
 	set_modifiers(modifiers)
 	
 func delete():
-	get_node("/root/LevelEditor").get_current_editor_grid().pieces[coords] = null
+	get_node("/root/LevelEditor").get_current_editor_grid().pieces.erase(coords)
 	queue_free()
 	
 func input_event(event):

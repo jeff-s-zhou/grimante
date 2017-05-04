@@ -49,7 +49,7 @@ roster=constants.FULL_UNIT_ROSTER, modifier_roster=constants.FULL_MODIFIER_ROSTE
 				balance += change
 			print(balance)
 		for coords in wave.keys():
-			wave[coords].hp += hp_alteration_dict[coords]
+			wave[coords].hp = max(wave[coords].hp + hp_alteration_dict[coords], 1)
 
 
 #wave in list form, without coordinates

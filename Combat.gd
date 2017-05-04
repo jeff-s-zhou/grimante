@@ -3,6 +3,9 @@ extends Node2D
 const STATES = {"player_turn":0, "enemy_turn":1, "king_turn": 2, "transitioning":3, "game_start":4, "instruction":5}
 var state = STATES.game_start
 var enemy_waves = null
+
+var tutorial = null
+
 var instructions = []
 var reinforcements = {}
 var turn_count = 0
@@ -39,7 +42,9 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(73, 280))
 	#get_node("Grid").set_pos(Vector2(400, 250))
-	#debug_mode()
+	debug_mode()
+	
+	get_node("EndTurnButton").connect("pressed", self, "end_turn_pressed")
 	get_node("/root/AnimationQueue").connect("animation_count_update", self, "update_animation_count_display")
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
@@ -59,8 +64,10 @@ func _ready():
 	self.enemy_waves = self.level_schematic.enemies
 
 	self.reinforcements = self.level_schematic.reinforcements
-
-	self.instructions = self.level_schematic.instructions
+	
+	self.tutorial = self.level_schematic.tutorial
+	if self.tutorial != null:
+		add_child(self.tutorial)
 	
 	#we store the initial wave count as the first value in the array
 
@@ -121,6 +128,10 @@ func _ready():
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	
 	start_player_phase()
+	
+	
+func get_turn_count():
+	return self.turn_count
 #	
 #
 func update_animation_count_display(count):
@@ -141,10 +152,6 @@ func is_within_deploy_range(coords):
 
 func debug_mode():
 	get_node("Grid").debug()
-	get_node("/root/global").ultimates_enabled_flag = true
-	
-func ultimates_enabled():
-	get_node("/root/global").ultimates_enabled_flag = true
 
 func soft_copy_dict(source, target):
     for k in source.keys():
@@ -208,6 +215,12 @@ func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon, anim
 func end_turn():
 	self.state = STATES.transitioning
 	
+	if self.tutorial.has_player_turn_end_rule(get_turn_count()):
+		self.tutorial.display_player_turn_end_rule(get_turn_count())
+		set_process_input(false)
+		yield(self.tutorial, "rule_finished")
+		set_process_input(true)
+	
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 		
@@ -225,14 +238,26 @@ func end_turn():
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	get_node("ComboSystem").player_turn_ended()
 	self.state = STATES.enemy_turn
+	
+func end_turn_pressed():
+	if self.state == self.STATES.game_start:
+		get_node("PhaseManager").clear()
+		emit_signal("deployed")
+	if self.state == self.STATES.player_turn:
+		end_turn()
 
 func _input(event):
 	#select a unit
-	
 	if get_node("InputHandler").is_select(event):
 		var hovered = get_node("CursorArea").get_piece_or_location_hovered()
 		if hovered:
-			hovered.input_event(event)
+			#if during a tutorial level, make sure move is as intended
+			if self.tutorial != null:
+				if self.tutorial.move_is_valid(get_turn_count(), hovered.coords):
+					hovered.input_event(event)
+			else:
+				hovered.input_event(event)
+				
 		elif get_node("Grid").selected != null:
 			get_node("Grid").selected.invalid_move()
 	
@@ -316,18 +341,6 @@ func _process(delta):
 	if self.state_manager.check_player_win(): 
 		player_win()
 
-#	if self.state == STATES.player_turn:
-#		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
-#			if !player_piece.is_placed():
-#				return
-#			if player_piece.finisher_flag:
-#				return
-#				
-#		#make sure the animation queue is clear
-#		if get_node("/root/AnimationQueue").is_animating():
-#			return
-#
-#		end_turn()
 
 
 	elif self.state == STATES.enemy_turn:
@@ -377,28 +390,34 @@ func enemy_phase():
 	if self.state_manager.check_enemy_win(): #logic would change based on game type
 		enemy_win()
 	
+	if self.tutorial.has_enemy_turn_end_rule(get_turn_count()):
+		self.tutorial.display_enemy_turn_end_rule(get_turn_count())
+		set_process_input(false)
+		yield(self.tutorial, "rule_finished")
+		set_process_input(true)
 	
 	get_node("PhaseShifter").player_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	self.state_manager.update()
+	self.turn_count += 1
 	start_player_phase()
 
-
-func king_phase():
-	self.king.update()
-	print("acting in king phase")
-	get_node("PhaseShifter").player_phase_animation()
-	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
-	print("got to this part of king phase")
-	start_player_phase()
 
 
 func start_player_phase():
+	if self.tutorial.has_player_turn_start_rule(get_turn_count()):
+		self.tutorial.display_player_turn_start_rule(get_turn_count())
+		set_process_input(false)
+		yield(self.tutorial, "rule_finished")
+		set_process_input(true)
+	
+	
 	get_node("PhaseManager").player_turn_start()
-	get_node("CrystalSystem").update()
+	get_node("CrystalSystem").update(get_turn_count())
+	self.tutorial.display_forced_action(get_turn_count())
+	
 	get_node("AssistSystem").reset_combo()
-	self.turn_count += 1
-	if self.reinforcements.has(self.turn_count):
+	if self.reinforcements.has(get_turn_count()):
 		reinforce()
 		yield(self, "reinforced")
 	if (self.instructions.size() > 0):
@@ -412,7 +431,7 @@ func start_player_phase():
 
 
 func reinforce():
-	var reinforcement_wave = self.reinforcements[self.turn_count]
+	var reinforcement_wave = self.reinforcements[get_turn_count()]
 	for key in reinforcement_wave.keys():
 		var prototype = reinforcement_wave[key]
 		initialize_piece(prototype, key)

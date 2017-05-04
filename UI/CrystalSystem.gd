@@ -4,7 +4,6 @@ extends Node2D
 # var a = 2
 # var b = "textvar"
 
-var turn_count = 0
 
 var crystals = []
 
@@ -15,9 +14,8 @@ func _ready():
 	# Initialization here
 	set_process_input(true)	
 	
-func update():
-	self.turn_count += 1
-	if self.turn_count % 3 == 0:
+func update(turn_count):
+	if turn_count + 1 % 3 == 0:
 		add_crystal()
 
 func add_crystal():

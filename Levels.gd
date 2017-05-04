@@ -3,6 +3,10 @@ extends Node
 var EnemyWrappers = load("res://EnemyWrappers.gd").new()
 var LevelTypes = load("res://LevelTypes.gd").new()
 
+var ForcedActionPrototype = load("res://UI/ForcedAction.tscn")
+var RulePrototype = load("res://UI/TutorialRule.tscn")
+var TutorialPrototype = load("res://UI/TutorialManager.tscn")
+
 const Grunt = preload("res://EnemyPieces/GruntPiece.tscn")
 const Fortifier = preload("res://EnemyPieces/FortifierPiece.tscn")
 const Grower = preload("res://EnemyPieces/GrowerPiece.tscn")
@@ -79,15 +83,34 @@ func sandbox_enemies():
 	
 func sandbox_enemies2():
 	var turn_power_levels = [300, 0, 0, 0, 0]
-	var enemies = [{Vector2(3, 2): make(Grunt, 5)}]
-	#var enemies = load_level("test.save")
-	return EnemyWrappers.FiniteAlteredWrapper.new(turn_power_levels, enemies)
+	#var enemies = [{Vector2(3, 2): make(Grunt, 5)}]
+	var enemies = load_level("level1.save")
+	return EnemyWrappers.FiniteCuratedWrapper.new(turn_power_levels, enemies)
 	
 func sandbox_extras():
-	return {"shifting_sands_tiles": {Vector2(3, 6): 4}}
+	var tutorial = TutorialPrototype.instance()
+
+	var turn0_player_start_rule = RulePrototype.instance()
+	turn0_player_start_rule.initialize(["Here's some test text.", "Here's the next line"])
+	tutorial.add_player_turn_start_rule(turn0_player_start_rule, 0)
+	
+	var turn0_player_end_rule = RulePrototype.instance()
+	turn0_player_end_rule.initialize(["End of player's turn.", "More lines."])
+	tutorial.add_player_turn_end_rule(turn0_player_end_rule, 0)
+	
+	var forced_action = ForcedActionPrototype.instance()
+	forced_action.initialize(Vector2(3, 7), " Click on the Berserker to select it.", Vector2(3, 5), "Click on this tile to move the Berserker here.")
+	tutorial.add_forced_action(forced_action, 0)
+	
+	var turn0_enemy_rule = RulePrototype.instance()
+	turn0_enemy_rule.initialize(["Here's some enemy phase text.", "Here's more of it!"])
+	tutorial.add_enemy_turn_end_rule(turn0_enemy_rule, 0)
+	
+	#return {"shifting_sands_tiles": {Vector2(3, 6): 4}, "tutorial":tutorial}
+	return {"tutorial":tutorial, "free_deploy":false}
 
 func sandbox_level():
-	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies2(), null) 
+	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies2(), null, sandbox_extras()) 
 
 var sandbox_level_ref = funcref(self, "sandbox_level")
 #

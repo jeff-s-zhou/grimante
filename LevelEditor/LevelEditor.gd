@@ -55,10 +55,10 @@ func _input(event):
 				selected.invalid_move()
 				
 	elif event.is_action("test_action") and event.is_pressed():
-		save_level("test.save")
+		save_level()
 		
 	elif event.is_action("test_action2") and event.is_pressed():
-		load_level("test.save")
+		load_level()
 	
 	elif event.is_action("test_action3") and event.is_pressed():
 		reset_grids()
@@ -66,9 +66,7 @@ func _input(event):
 func set_target(target):
 	self.target = target
 	if self.selected != null:
-		print("setting target")
 		if self.selected.is_instanced(): #if already placed on the map, switch up positions
-			print("just shifted coords")
 			self.selected.move(target.coords)
 			self.selected = null
 		else:
@@ -104,7 +102,11 @@ func modify_unit():
 	
 	self.in_menu = false
 
-func save_level(file_name):
+
+func save_level():
+	var first_line = true
+	
+	var file_name = get_node("Title").get_text()
 	var save = File.new()
 	save.open("user://" + file_name, File.WRITE)
 	for editor_grid in self.editor_grids:
@@ -112,8 +114,14 @@ func save_level(file_name):
 		for key in enemy_pieces:
 			var enemy_piece = enemy_pieces[key]
 			var data = enemy_piece.save()
-			save.store_line(data.to_json())
-		
+			
+			#have to do this instead of store_line because loading bugs out on the last linebreak
+			if first_line:
+				first_line = false
+			else:
+				save.store_string("\n")
+			save.store_string(data.to_json()) 
+			
 	save.close()
 	
 	
@@ -138,8 +146,8 @@ func initialize_grids():
 	get_node("EditorTurnSelector").select(0)
 
 
-func load_level(file_name):
-	print("how many times am I resetting?")
+func load_level():
+	var file_name = get_node("Title").get_text()
 	reset_grids()
 	
 	var save = File.new()
@@ -160,6 +168,7 @@ func load_level(file_name):
 		var modifiers = current_line["modifiers"]
 		var turn = current_line["turn"]
 		self.editor_grids[turn].add_piece(name, turn, coords, new_piece, hp, modifiers)
-			
+
+
 	save.close()
 

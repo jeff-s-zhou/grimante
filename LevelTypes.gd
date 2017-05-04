@@ -29,7 +29,7 @@ class BaseLevelType:
 	var allies = null #maybe by default for the free deploy, it's your most recently used???
 	var enemies = null
 	var next_level = null
-	var instructions = []
+	var tutorial = null
 	var reinforcements = {}
 	var flags = null
 	var free_deploy = true
@@ -46,8 +46,8 @@ class BaseLevelType:
 		
 		if extras.has("free_deploy"):
 			self.free_deploy = extras["free_deploy"]
-		if extras.has("instructions"):
-			self.instructions = extras["instructions"]
+		if extras.has("tutorial"):
+			self.tutorial = extras["tutorial"]
 		if extras.has("reinforcements"):
 			self.reinforcements = extras["reinforcements"]
 		if extras.has("flags"):
