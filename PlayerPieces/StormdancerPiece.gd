@@ -126,14 +126,10 @@ func shunpo(new_coords):
 
 func tango(new_coords):
 	get_node("/root/AnimationQueue").enqueue(self, "animate_shunpo", true, [new_coords])
-	var swap_partner = get_parent().pieces[new_coords]
-	get_parent().remove_piece(new_coords)
-	var old_coords = self.coords
+	var target = self.grid.pieces[new_coords]
+	swap_coords_and_pos(target)
 	get_parent().locations[new_coords].set_rain(true)
 	self.rain_coords_dict[new_coords] = true
-	set_coords(new_coords)
-	get_parent().add_piece(old_coords, swap_partner)
-	swap_partner.set_coords(old_coords)
 	
 func animate_shunpo(new_coords):
 	add_anim_count()

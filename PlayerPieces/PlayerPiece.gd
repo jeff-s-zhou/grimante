@@ -394,22 +394,17 @@ func start_deploy_phase():
 func _is_within_deploy_range(coords):
 	return get_node("/root/Combat").is_within_deploy_range(coords)
 	
-func _is_within_bar_range(coords):
-	return false
-	
 	
 func deploy_select_action_target(target):
 	if _is_within_deploy_range(target.coords):
-		if get_parent().pieces.has(target.coords) and target.side == "PLAYER":
+		if get_parent().has_piece(target.coords) and target.side == "PLAYER":
 			swap_coords_and_pos(target)
 			get_parent().selected = null
 		else:
 			set_coords(target.coords)
 			set_pos(target.get_pos())
 			get_parent().selected = null
-			
-	elif _is_within_bar_range(target.coords):
-		pass
+
 	else:
 		invalid_move()
 		
@@ -420,8 +415,8 @@ func swap_coords_and_pos(target):
 	target.coords = temp_coords
 	
 	#set the positions
-	set_pos(get_parent().locations[self.coords].get_pos())
-	target.set_pos(get_parent().locations[target.coords].get_pos())
+	set_pos(get_parent().get_location(self.coords).get_pos())
+	target.set_pos(get_parent().get_location(target.coords).get_pos())
 	
 
 

@@ -1,4 +1,3 @@
-
 extends Area2D
 
 # member variables here, example:
@@ -111,15 +110,11 @@ func _mouse_entered():
 	get_node("Timer").set_wait_time(0.01)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
-	if get_parent().selected != null:
-		get_parent().selected.predict(self.coords)
+	get_parent().predict(self.coords)
 
 func _mouse_exited():
-	#get_parent().current_location = null
-	#emit_signal("location_is", null)
 	get_node("Sprite").set_self_opacity(0.4)
-	if get_parent().selected != null:
-		get_parent().reset_prediction()
+	get_parent().reset_prediction()
 
 
 func input_event(event):

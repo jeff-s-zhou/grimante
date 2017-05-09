@@ -14,7 +14,7 @@ var seen_effect = {}
 
 var PLATFORMS = {"Android":1, "iOS":2, "PC":3} 
 
-var platform = PLATFORMS.iOS
+var platform = PLATFORMS.PC
 
 
 func _ready():

@@ -106,15 +106,13 @@ func hover_highlight():
 
 	if self.action_highlighted:
 		get_node("Physicals/EnemyOverlays/White").show()
-		if self.grid.selected != null:
-			self.grid.selected.predict(self.coords)
+		self.grid.predict(self.coords)
 	
 	
 func hover_unhighlight():
 	get_node("Physicals/EnemyOverlays/White").hide()
 	if self.action_highlighted:
-		if self.grid.selected != null:
-			self.grid.reset_prediction()
+		self.grid.reset_prediction()
 
 #when another unit is able to move to this location, it calls this function
 func movement_highlight():

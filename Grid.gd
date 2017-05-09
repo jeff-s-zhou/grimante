@@ -88,6 +88,11 @@ func deselect():
 	self.reset_highlighting(true)
 	self.reset_prediction()
 	
+	
+func predict(coords):
+	if self.selected != null:
+		self.selected.predict(coords)
+	
 
 		
 func initialize_shadow_wall_tiles(shadow_wall_tile_range):
@@ -145,12 +150,41 @@ func remove_piece(coords):
 	self.pieces[coords].set_pickable(false)
 	self.pieces.erase(coords)
 	locations[coords].set_pickable(true)
+	
+
 
 func swap_pieces(coords1, coords2):
 	var temp = self.pieces[coords1]
 	self.pieces[coords1] = self.pieces[coords2]
 	self.pieces[coords2] = temp
+	
+func deploy_swap_pieces(coords1, coords2):
+	var temp = self.get_piece(coords1)
+	self.set_piece(coords1, self.get_piece(coords2))
+	self.set_piece(coords2, temp)
+	
+func get_location(coords):
+	if get_node("UnitSelectBar").locations.has(coords):
+		return get_node("UnitSelectBar").locations[coords]
+	else:
+		return self.locations[coords]
 
+func has_piece(coords):
+	return get_node("UnitSelectBar").pieces.has(coords) or self.pieces.has(coords)
+
+func set_piece(coords, piece):
+	if get_node("UnitSelectBar").locations.has(coords):
+		get_node("UnitSelectBar").pieces[coords] = piece
+	else:
+		self.pieces[coords] = piece
+
+func get_piece(coords):
+	if get_node("UnitSelectBar").pieces.has(coords):
+		return get_node("UnitSelectBar").pieces[coords]
+	else:
+		return self.pieces[coords]
+	
+	
 #moves the piece's location on grid. doesn't actually physically move the sprite
 func move_piece(old_coords, new_coords):
 	locations[old_coords].set_pickable(true)
@@ -193,8 +227,9 @@ func reset_highlighting(right_click_flag=false):
 
 #called when moved off of a tile while a player unit is selected
 func reset_prediction():
-	for piece in pieces.values():
-		piece.reset_prediction_highlight()
+	if self.selected != null:
+		for piece in pieces.values():
+			piece.reset_prediction_highlight()
 
 func get_location_range(coords, magnitude_range=[1, 2], direction_range = [0, 6]):
 	var return_set = [] #make this a dict?

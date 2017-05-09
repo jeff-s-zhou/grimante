@@ -4,6 +4,7 @@
 
 [node name="UnitSelectBar" type="Node2D"]
 
+transform/pos = Vector2( 93.1017, 79.803 )
 script/script = ExtResource( 1 )
 
 
