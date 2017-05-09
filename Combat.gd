@@ -162,14 +162,31 @@ func soft_copy_array(source, target):
 	for item in source:
 		target.push_back(item)
 #
-#	
+
+func initialize_piece_on_bar(piece_prototype):
+	var piece = piece_prototype.instance()
+	piece.set_opacity(0)
+	piece.initialize(get_node("CursorArea"))
+	piece.check_global_seen()
+	piece.animate_summon()
+
+func deploy_piece(piece, coords):
+	if piece.UNIT_TYPE == "Assassin":
+		self.assassin = piece
+		
+	piece.connect("invalid_move", self, "handle_invalid_move")
+	piece.connect("shake", self, "screen_shake")
+	if self.tutorial != null:
+		piece.connect("animated_placed", self, "handle_hero_cooldown_rules")
+
+	
+
 func initialize_piece(piece, key):
 	var new_piece = piece.instance()
 	if new_piece.UNIT_TYPE == "Assassin":
 		self.assassin = new_piece
 	new_piece.set_opacity(0)
 	new_piece.connect("invalid_move", self, "handle_invalid_move")
-	new_piece.connect("pre_attack", self, "handle_archer_ultimate")
 	new_piece.connect("shake", self, "screen_shake")
 	if self.tutorial != null:
 		new_piece.connect("animated_placed", self, "handle_hero_cooldown_rules")
@@ -583,10 +600,6 @@ func lighten(time=0.4):
 func handle_invalid_move():
 	get_node("SamplePlayer").play("error")
 	get_node("InvalidMoveIndicator/AnimationPlayer").play("flash")
-	
-func handle_archer_ultimate(attack_coords):
-	if self.archer != null and self.archer.ultimate_flag:
-		self.archer.trigger_ultimate(attack_coords)
 		
 func handle_assassin_passive(attack_range):
 	if self.assassin != null:

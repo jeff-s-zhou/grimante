@@ -84,8 +84,8 @@ func sandbox_enemies():
 	
 func sandbox_enemies2():
 	var turn_power_levels = [300, 0, 0, 0, 0]
-	#var enemies = [{Vector2(3, 3): make(Grunt, 4), Vector2(3, 5): make(Slime, 2)}]
-	var enemies = load_level("level2.save")
+	var enemies = [{Vector2(3, 3): make(Grunt, 4), Vector2(3, 5): make(Slime, 2)}]
+	#var enemies = load_level("level2.save")
 	return EnemyWrappers.FiniteCuratedWrapper.new(turn_power_levels, enemies)
 	
 func sandbox_extras():

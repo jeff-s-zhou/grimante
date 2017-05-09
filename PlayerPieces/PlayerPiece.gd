@@ -394,6 +394,9 @@ func start_deploy_phase():
 func _is_within_deploy_range(coords):
 	return get_node("/root/Combat").is_within_deploy_range(coords)
 	
+func _is_within_bar_range(coords):
+	return false
+	
 	
 func deploy_select_action_target(target):
 	if _is_within_deploy_range(target.coords):
@@ -404,6 +407,9 @@ func deploy_select_action_target(target):
 			set_coords(target.coords)
 			set_pos(target.get_pos())
 			get_parent().selected = null
+			
+	elif _is_within_bar_range(target.coords):
+		pass
 	else:
 		invalid_move()
 		
