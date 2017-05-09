@@ -28,10 +28,15 @@ onready var grid = get_parent()
 
 func get_unit_name():
 	return unit_name
+	
+func debug():
+	#get_node("DebugText").show()
+	get_node("DebugText").set_text(str(self.mid_animation))
 
 func _ready():
-	get_node("CollisionArea").connect("area_enter", self, "collide")
-	get_node("CollisionArea").connect("area_exit", self, "uncollide")
+	pass
+#	get_node("CollisionArea").connect("area_enter", self, "collide")
+#	get_node("CollisionArea").connect("area_exit", self, "uncollide")
 	
 func add_anim_count():
 	get_node("/root/AnimationQueue").update_animation_count(1)
@@ -100,23 +105,23 @@ func check_global_seen():
 		get_node("SeenIcon").show()
 
 
-func collide(area):
-	pass
-	if area.get_name() != "CursorArea":
-		if self.mid_animation and !self.mid_leaping_animation: #If leaping, it'll set its own z above everythin else
-			var other_piece = area.get_parent()
-			if other_piece.get_pos().y > get_pos().y:
-				other_piece.set_z(get_z() + 1)
-			else:
-				other_piece.set_z(get_z() - 1)
-
+#func collide(area):
+#	pass
+#	if area.get_name() != "CursorArea":
+#		if self.mid_animation and !self.mid_leaping_animation: #If leaping, it'll set its own z above everythin else
+#			var other_piece = area.get_parent()
+#			if other_piece.get_pos().y > get_pos().y:
+#				other_piece.set_z(get_z() + 1)
+#			else:
+#				other_piece.set_z(get_z() - 1)
+#
 #a little buggy currently, since both the offender and receiver of a collision can both be mid animation
 #we just let them reset each other for now, and make sure neither are mid_leaping_animation
-func uncollide(area):
-	if area.get_name() != "CursorArea": #make sure it's not the thing that checks for mouse inside areas
-		var other_piece = area.get_parent()
-		if self.mid_animation and !self.mid_leaping_animation and !other_piece.mid_leaping_animation:
-			other_piece.set_z(0)
+#func uncollide(area):
+#	if area.get_name() != "CursorArea": #make sure it's not the thing that checks for mouse inside areas
+#		var other_piece = area.get_parent()
+#		if self.mid_animation and !self.mid_leaping_animation and !other_piece.mid_leaping_animation:
+#			other_piece.set_z(0)
 		
 
 func set_mid_animation(flag):
@@ -169,7 +174,6 @@ func animate_move(new_coords, speed=250, blocking=true, trans_type=Tween.TRANS_L
 		emit_signal("animation_done")
 		subtract_anim_count()
 	else:
-		pass
 		subtract_anim_count()
 	
 func animate_move_and_hop(new_coords, speed=250, blocking=true, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
@@ -200,7 +204,7 @@ func animate_short_hop(speed, new_coords):
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
 	var time = distance/speed
-	var old_position = Vector2(0, 0)
+	var old_position = get_node("Physicals").get_pos()
 	var new_position = Vector2(0, -60)
 	
 	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
@@ -217,9 +221,13 @@ func animate_short_hop(speed, new_coords):
 	#emit_signal("animation_done")
 	#subtract_anim_count()
 
-func shift(change_vector):
-	self.move(change_vector)
-	self.enqueue_animation_sequence()
+func handle_shifting_sands():
+	var location = self.grid.locations[self.coords]
+	if location.shifting_direction != null:
+		var change_vector = self.grid.get_change_vector(location.shifting_direction)
+		self.move(change_vector)
+		self.enqueue_animation_sequence()
+		
 
 func hooked(new_coords):
 	add_animation(self, "animate_move", true, [new_coords, 300, true])
@@ -233,9 +241,7 @@ func move(distance, passed_animation_sequence=null):
 		self.current_animation_sequence = animation_sequence
 	else:
 		animation_sequence = get_new_animation_sequence()
-		
-	
-		
+
 	var old_coords = self.coords
 	
 	var distance_length = self.grid.hex_length(distance)
@@ -283,7 +289,6 @@ func move_helper(coords, animation_sequence=null, blocking=false):
 		set_coords(self.coords + distance_increment)
 
 	if walked_off:
-		print("deleting self after walking off")
 		delete_self()
 		#animation_sequence.add(self, "animate_delete_self", true)
 		if self.side == "ENEMY" and distance_increment == Vector2(0, 1):
@@ -321,9 +326,9 @@ func shove(collide_coords, distance, animation_sequence):
 				#recursively call move from the position of the first killed player unit
 				move(old_coords + distance - self.coords, animation_sequence)
 				return
-		elif distance_shoved == Vector2(0, 0):
-			animation_sequence.add(self, "animate_move", true, [self.coords, 300, true])
-			#get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords, 300, false])
+		elif distance_shoved == Vector2(0, 0): #the piece wasn't able to be pushed back then don't leap
+			pass
+			#animation_sequence.add(self, "animate_move", true, [self.coords, 300, true])
 		else:
 			move_helper(self.coords + distance_shoved, animation_sequence)
 
@@ -339,6 +344,7 @@ func receive_shove(pusher, distance, animation_sequence):
 	var distance_increment = self.grid.hex_normalize(distance)
 	var direction = self.grid.get_direction_from_vector(distance)
 	
+	#see if there's a piece behind it blocking things
 	var collide_range = self.grid.get_range(self.coords, [1, distance_length + 1], "ANY", true, [direction, direction + 1])
 	var collide_coords = null
 	if collide_range.size() > 0:

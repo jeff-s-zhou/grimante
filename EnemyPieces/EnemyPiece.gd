@@ -108,10 +108,6 @@ func hover_highlight():
 		get_node("Physicals/EnemyOverlays/White").show()
 		if self.grid.selected != null:
 			self.grid.selected.predict(self.coords)
-
-func debug():
-	#get_node("DebugText").show()
-	get_node("DebugText").set_text(str(get_z()))
 	
 	
 func hover_unhighlight():
@@ -226,10 +222,10 @@ func animate_smash_killed():
 	
 func set_stunned(flag):
 	if flag and !self.shielded:
-		self.stunned = flag
+		self.stunned = true
 		add_animation(self, "animate_set_stunned", false)
 	else:
-		self.stunned = flag
+		self.stunned = false
 		add_animation(self, "animate_hide_stunned", false)
 		
 func animate_set_stunned():
@@ -348,11 +344,12 @@ func animate_bubble_hide():
 	
 func set_burning(flag):
 	if flag and !self.shielded:
-		self.burning = flag
+		self.burning = true
 		self.currently_burning = true
+		set_freezing(false)
 		add_animation(self,"animate_fire", true)
 	else:
-		self.burning = flag
+		self.burning = false
 		add_animation(self,"animate_burning_hide", false)
 		
 func animate_fire():
@@ -368,9 +365,24 @@ func animate_fire():
 	
 		
 func set_frozen(flag):
-	self.frozen = flag
-	
-	#if flag and !self.shielded:
+	if flag and !self.shielded:
+		self.frozen = true
+		set_burning(false)
+		set_stunned(true)
+		add_animation(self,"animate_freeze", false)
+		
+	else:
+		self.frozen = false
+		add_animation(self, "animate_freeze_hide", false)
+		
+		
+func animate_freeze():
+	get_node("Physicals/EnemyEffects/FrozenEffect").show()
+	get_node("Physicals/EnemyEffects/FrozenParticles").set_emitting(true)
+
+func animate_freeze_hide():
+	get_node("Physicals/EnemyEffects/FrozenEffect").hide()
+	get_node("Physicals/EnemyEffects/FrozenParticles").set_emitting(false)
 	
 func set_silenced(flag):
 	if flag:
@@ -447,12 +459,12 @@ func heal(amount, delay=0.0):
 	modify_hp(amount, delay)
 
 
-func attacked(amount):
+func attacked(amount, delay=0.0):
 	set_cloaked(false)
 	if self.shielded:
 		set_shield(false)
 	else:
-		modify_hp(amount * -1)
+		modify_hp(amount * -1, delay)
 
 
 #called by the assassin's passive
@@ -531,7 +543,7 @@ func delete_self():
 
 #actually physically removes it from the board
 func animate_delete_self():
-	print("animating delete self")
+	print("mid animation is: " + str(self.mid_animation))
 	add_anim_count()
 	#get_node("Sprinkles").update() #update particleattractor location after all have moved
 	remove_from_group("enemy_pieces")
@@ -542,6 +554,7 @@ func animate_delete_self():
 	#yield(get_node("Sprinkles"), "animation_done")
 	#get_node("/root/Combat/ComboSystem").increase_combo()
 	subtract_anim_count()
+	print("mid animation is: " + str(self.mid_animation))
 	self.queue_free()
 	
 
@@ -551,11 +564,7 @@ func set_coords(new_coords, sequence=null):
 	self.grid.move_piece(self.coords, new_coords)
 	self.coords = new_coords
 	var location = self.grid.locations[self.coords]
-	if location.raining:
-		add_animation(location, "animate_lightning", true)
-		var action = get_new_action(self.coords)
-		action.add_call("attacked", [1])
-		action.execute()
+	
 
 
 func get_movement_value():
@@ -593,10 +602,23 @@ func turn_update():
 
 #called after all pieces finish moving
 func turn_attack_update():
+	if self.frozen:
+		set_frozen(false)
+	
 	if self.stunned:
 		set_stunned(false)
-	get_parent().handle_sand_shifts(self.coords)
-
+	
+	handle_rain()
+	handle_shifting_sands()
+	
+func handle_rain():
+	var location = self.grid.locations[self.coords]
+	if location.raining:
+		add_animation(location, "animate_lightning", true)
+		var action = get_new_action(self.coords)
+		action.add_call("attacked", [1])
+		action.execute()
+	
 
 #this is written so we can easily add more stuff to the end of the turn_update before executing the animation_sequence
 func turn_update_helper():
@@ -609,3 +631,10 @@ func summon_buff(health, modifiers):
 	heal(health)
 	if modifiers != null:
 		initialize_modifiers(modifiers)
+		
+func deathrattle():
+	if self.frozen and self.hp == 0:
+		var neighbor_coords_range = get_parent().get_range(self.coords, [1,2], "ENEMY")
+		for coords in neighbor_coords_range:
+			var neighbor = get_parent().pieces[coords]
+			neighbor.attacked(1, 1.5) #delay it by 1.5 so it happens when this piece dies

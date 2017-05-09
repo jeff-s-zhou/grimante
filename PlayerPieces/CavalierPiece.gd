@@ -51,7 +51,7 @@ func start_attack(attack_coords):
 	
 	var difference = 2 * (location.get_pos() - get_parent().locations[decremented_coords].get_pos())/3
 	var new_position = location.get_pos() - difference
-	add_animation(self, "animate_move_to_pos", true, [new_position, 500, true, Tween.TRANS_SINE, Tween.EASE_IN])
+	add_animation(self, "animate_move_to_pos", true, [new_position, 700, true, Tween.TRANS_QUAD, Tween.EASE_IN])
 	yield(get_node("Tween"), "tween_complete")
 	emit_signal("shake")
 	
@@ -190,7 +190,8 @@ func charge_attack(new_coords, attack=false):
 		if get_parent().pieces[new_coords + increment].side == "ENEMY":
 			attack_range.append(new_coords + increment)
 	var action = get_new_action(attack_range)
-	action.add_call("attacked", [get_charge_damage(tiles_travelled)])
+	#action.add_call("attacked", [get_charge_damage(tiles_travelled)])
+	action.add_call("attacked", [3])
 	action.execute()
 	var position_coords = decrement_one(new_coords)
 	end_attack(position_coords)

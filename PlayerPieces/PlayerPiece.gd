@@ -51,6 +51,8 @@ signal stepped_move_completed
 
 signal targeted
 
+signal animated_placed(hero_name)
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
@@ -104,7 +106,6 @@ func assist(piece, assist_type):
 #direct the particles to a certain coords
 func animate_assist(piece, assist_type):
 	add_anim_count()
-	print("reached this call")
 	var pos_difference = piece.get_pos() - get_pos()
 	get_node("Physicals/ComboSparkleManager").animate_assist(assist_type, pos_difference)
 	yield(get_node("Physicals/ComboSparkleManager"), "animation_done")
@@ -117,6 +118,10 @@ func clear_assist():
 
 
 func get_movement_value():
+	var adjacent_range = get_parent().get_range(self.coords, [1, 2], "ENEMY")
+	for coords in adjacent_range:
+		if get_parent().pieces[coords].unit_name == "Slime":
+			return 1
 	return self.AssistSystem.get_bonus_movement() + movement_value
 	
 func activate_finisher():
@@ -143,6 +148,10 @@ func set_armor(value):
 func deploy():
 	self.deploying_flag = false
 	self.state = States.PLACED
+	var seen_range = get_parent().get_range(self.coords, [1, 2], "ENEMY")
+	for coords in seen_range:
+		if get_parent().pieces[coords].cloaked:
+			get_parent().pieces[coords].set_cloaked(false)
 	
 func block_summon():
 	if !self.invulnerable_flag:
@@ -223,10 +232,11 @@ func set_coords(new_coords):
 	get_parent().move_piece(self.coords, new_coords)
 	self.coords = new_coords
 	
-	var seen_range = get_parent().get_range(self.coords, [1, 2], "ENEMY")
-	for coords in seen_range:
-		if get_parent().pieces[coords].cloaked:
-			get_parent().pieces[coords].set_cloaked(false)
+	if !self.deploying_flag:
+		var seen_range = get_parent().get_range(self.coords, [1, 2], "ENEMY")
+		for coords in seen_range:
+			if get_parent().pieces[coords].cloaked:
+				get_parent().pieces[coords].set_cloaked(false)
 			
 	var res_range = get_parent().get_location_range(self.coords)
 	for coords in res_range:
@@ -371,7 +381,7 @@ func select_action_target(target):
 		deploy_select_action_target(target)
 	else:
 		act(target.coords)
-		get_parent().handle_sand_shifts(self.coords)
+		handle_shifting_sands()
 		
 		
 
@@ -438,6 +448,7 @@ func animate_placed():
 		get_node("Cooldown").show()
 		get_node("Cooldown/Label").set_text(str(self.cooldown))
 	get_node("Physicals/AnimatedSprite").play("cooldown")
+	emit_signal("animated_placed", self.unit_name)
 	
 	
 func player_attacked(enemy, animation_sequence=null):
@@ -455,27 +466,6 @@ func dies_to_collision(pusher):
 		#set_armor(self.armor - 1)
 		#return !self.invulnerable_flag and (pusher.is_deadly() or self.armor == 0)
 		return !self.invulnerable_flag and (pusher.is_deadly() or pusher.hp >= self.armor) 
-		
-		
-#shove is different than push
-func initiate_friendly_shove(coords):
-	var offset = get_parent().hex_normalize(coords - self.coords)
-	var shoved_coords = coords + offset
-	if(get_parent().locations.has(shoved_coords) and !get_parent().pieces.has(shoved_coords)):
-		var location = get_parent().locations[coords]
-		var difference = (location.get_pos() - get_pos()) / 3
-		var collide_pos = get_pos() + difference 
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 300, true]) #push up against it
-		get_parent().pieces[coords].receive_friendly_shove(shoved_coords)
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [coords, 300, false])
-		set_coords(coords)
-		placed()
-	else:
-		invalid_move()
-		
-func receive_friendly_shove(destination_coords):
-	get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [destination_coords, 300, false])
-	set_coords(destination_coords)
 
 
 #OVERRIDEN OR INHERITED FUNCTIONS

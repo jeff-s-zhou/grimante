@@ -49,6 +49,8 @@ animation = "damaged"
 
 [node name="EnemyOverlays" parent="Physicals" instance=ExtResource( 6 )]
 
+editor/display_folded = true
+
 [node name="HealthDisplay" parent="Physicals" instance=ExtResource( 7 )]
 
 [node name="EnemyEffects" parent="Physicals" instance=ExtResource( 8 )]

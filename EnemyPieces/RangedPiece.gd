@@ -19,6 +19,8 @@ func turn_update_helper():
 		
 				
 func turn_attack_update():
+	if self.frozen:
+		set_freezing(false)
 	
 	if self.stunned:
 		set_stunned(false)
@@ -31,7 +33,8 @@ func turn_attack_update():
 			fireball(fireball_range[0])
 	
 		enqueue_animation_sequence()
-	get_parent().handle_sand_shifts(self.coords)
+	handle_rain()
+	handle_shifting_sands()
 				
 	
 func fireball(coords):

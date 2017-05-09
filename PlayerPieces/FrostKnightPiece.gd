@@ -41,6 +41,8 @@ func get_movement_range():
 func get_attack_range():
 	return get_parent().get_range(self.coords, [1, self.movement_value + 1], "ENEMY")
 
+func get_assist_range():
+	return get_parent().get_range(self.coords, [1, self.movement_value + 1], "PLAYER")
 
 func handle_assist():
 	if self.assist_flag:
@@ -61,6 +63,9 @@ func _is_within_attack_range(new_coords):
 	
 func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
+	
+func _is_within_assist_range(new_coords):
+	return new_coords in get_assist_range()
 
 
 func act(new_coords):
@@ -74,26 +79,22 @@ func act(new_coords):
 		handle_pre_assisted()
 		shield_bash(new_coords)
 		placed()
+	elif _is_within_assist_range(new_coords):
+		handle_pre_assisted()
+		shield_bash(new_coords)
+		placed()
 	else:
 		invalid_move()
 
 
 func shield_bash(new_coords):
-	var action = get_new_action(coords)
-	action.add_call("attacked", [self.shield_bash_damage])
-	action.execute()
+#	var action = get_new_action(coords)
+#	action.add_call("attacked", [self.shield_bash_damage])
+#	action.execute()
 	var offset = get_parent().hex_normalize(new_coords - self.coords)
-	var shove_destination_coords = new_coords + offset
-		
-	var location = get_parent().locations[new_coords]
-	var difference = (location.get_pos() - get_pos()) / 3
-	var collide_pos = get_pos() + difference 
-	get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 300, true]) #push up against it
-	if get_parent().pieces.has(new_coords): #if the initial damage didn't kill it
-		get_parent().pieces[new_coords].receive_shield_bash(shove_destination_coords)
-	get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [new_coords, 300, false])
+	move(offset)
+	enqueue_animation_sequence()
 	frostbringer(new_coords)
-	set_coords(new_coords)
 	
 func frostbringer(new_coords):
 	#get enemies to the left
@@ -102,7 +103,6 @@ func frostbringer(new_coords):
 	
 	var action = get_new_action(horizontal_range)
 	action.add_call("set_frozen", [true])
-	action.add_call("attacked", [self.freeze_damage])
 	action.execute()
 	
 

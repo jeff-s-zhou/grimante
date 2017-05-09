@@ -96,23 +96,29 @@ func _input(event):
 
 func has_player_turn_start_rule(turn):
 	return self.player_turn_start_rules.has(turn)
-	
-func has_player_turn_end_rule(turn):
-	return self.player_turn_end_rules.has(turn)
+#	
+#func has_player_turn_end_rule(turn):
+#	return self.player_turn_end_rules.has(turn)
 
 func has_enemy_turn_end_rule(turn):
 	return self.enemy_turn_end_rules.has(turn)
 
+func has_hero_cooldown_rule(turn, hero_name):
+	if self.hero_cooldown_rules.has(turn):
+		var hero_cooldown_set = self.hero_cooldown_rules[turn]
+		return hero_cooldown_set.has(hero_name)
+	else:
+		return false
 
 func display_player_turn_start_rule(turn):
 	set_process_input(true)
 	self.current_rule = self.player_turn_start_rules[turn]
 	update_rule()
 
-func display_player_turn_end_rule(turn):
-	set_process_input(true)
-	self.current_rule = self.player_turn_end_rules[turn]
-	update_rule()
+#func display_player_turn_end_rule(turn):
+#	set_process_input(true)
+#	self.current_rule = self.player_turn_end_rules[turn]
+#	update_rule()
 
 func display_enemy_turn_end_rule(turn):
 	set_process_input(true)
@@ -122,7 +128,7 @@ func display_enemy_turn_end_rule(turn):
 func display_hero_cooldown_rule(turn, hero_name):
 	set_process_input(true)
 	self.current_rule = self.hero_cooldown_rules[turn][hero_name]
-
+	update_rule()
 
 func update_rule():
 	var line = self.current_rule.get_next_line()

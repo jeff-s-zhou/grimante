@@ -42,7 +42,7 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(73, 280))
 	#get_node("Grid").set_pos(Vector2(400, 250))
-	debug_mode()
+	#debug_mode()
 	
 	get_node("EndTurnButton").connect("pressed", self, "end_turn_pressed")
 	get_node("/root/AnimationQueue").connect("animation_count_update", self, "update_animation_count_display")
@@ -57,6 +57,10 @@ func _ready():
 #
 	self.level_schematic_func = get_node("/root/global").get_param("level")
 	self.level_schematic = self.level_schematic_func.call_func()
+	
+	self.tutorial = self.level_schematic.tutorial
+	if self.tutorial != null:
+		add_child(self.tutorial)
 #		
 	for key in self.level_schematic.allies.keys():
 		initialize_piece(self.level_schematic.allies[key], key)
@@ -65,9 +69,6 @@ func _ready():
 
 	self.reinforcements = self.level_schematic.reinforcements
 	
-	self.tutorial = self.level_schematic.tutorial
-	if self.tutorial != null:
-		add_child(self.tutorial)
 	
 	#we store the initial wave count as the first value in the array
 
@@ -170,6 +171,8 @@ func initialize_piece(piece, key):
 	new_piece.connect("invalid_move", self, "handle_invalid_move")
 	new_piece.connect("pre_attack", self, "handle_archer_ultimate")
 	new_piece.connect("shake", self, "screen_shake")
+	if self.tutorial != null:
+		new_piece.connect("animated_placed", self, "handle_hero_cooldown_rules")
 	
 	var position
 	if typeof(key) == TYPE_INT:
@@ -215,12 +218,6 @@ func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon, anim
 func end_turn():
 	self.state = STATES.transitioning
 	
-	if self.tutorial.has_player_turn_end_rule(get_turn_count()):
-		self.tutorial.display_player_turn_end_rule(get_turn_count())
-		set_process_input(false)
-		yield(self.tutorial, "rule_finished")
-		set_process_input(true)
-	
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 		
@@ -245,8 +242,19 @@ func end_turn_pressed():
 		emit_signal("deployed")
 	if self.state == self.STATES.player_turn:
 		end_turn()
+		
+		
+func handle_hero_cooldown_rules(hero_name):
+	if self.tutorial != null and self.tutorial.has_hero_cooldown_rule(get_turn_count(), hero_name):
+		self.tutorial.display_hero_cooldown_rule(get_turn_count(), hero_name)
+		set_process_input(false)
+		yield(self.tutorial, "rule_finished")
+		set_process_input(true)
 
 func _input(event):
+	computer_input(event)
+
+func computer_input(event):
 	#select a unit
 	if get_node("InputHandler").is_select(event):
 		var hovered = get_node("CursorArea").get_piece_or_location_hovered()
@@ -331,6 +339,9 @@ func _input(event):
 		get_node("/root/AnimationQueue").debug()
 		for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
 			enemy_piece.debug()
+			
+		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
+			player_piece.debug()
 
 		#print(get_node("Grid").pieces)
 
@@ -390,7 +401,7 @@ func enemy_phase():
 	if self.state_manager.check_enemy_win(): #logic would change based on game type
 		enemy_win()
 	
-	if self.tutorial.has_enemy_turn_end_rule(get_turn_count()):
+	if self.tutorial != null and self.tutorial.has_enemy_turn_end_rule(get_turn_count()):
 		self.tutorial.display_enemy_turn_end_rule(get_turn_count())
 		set_process_input(false)
 		yield(self.tutorial, "rule_finished")
@@ -405,7 +416,7 @@ func enemy_phase():
 
 
 func start_player_phase():
-	if self.tutorial.has_player_turn_start_rule(get_turn_count()):
+	if self.tutorial != null and self.tutorial.has_player_turn_start_rule(get_turn_count()):
 		self.tutorial.display_player_turn_start_rule(get_turn_count())
 		set_process_input(false)
 		yield(self.tutorial, "rule_finished")
@@ -414,7 +425,8 @@ func start_player_phase():
 	
 	get_node("PhaseManager").player_turn_start()
 	get_node("CrystalSystem").update(get_turn_count())
-	self.tutorial.display_forced_action(get_turn_count())
+	if self.tutorial != null:
+		self.tutorial.display_forced_action(get_turn_count())
 	
 	get_node("AssistSystem").reset_combo()
 	if self.reinforcements.has(get_turn_count()):

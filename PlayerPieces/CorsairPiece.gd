@@ -46,6 +46,9 @@ func get_hook_range():
 	return get_parent().get_range(self.coords, [1, self.movement_value + 1], "ENEMY", true)
 	
 
+func finisher_reactivate():
+	self.moves_remaining = 2
+	.finisher_reactivate()
 
 func turn_update():
 	self.moves_remaining = 2

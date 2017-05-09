@@ -48,6 +48,10 @@ func delete_self(animation_sequence=null):
 	.delete_self(animation_sequence)
 
 
+func resurrect():
+	get_node("/root/Combat").assassin = self
+	.resurrect()
+
 func get_backstab_damage():
 	if self.bloodlust_flag:
 		return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_BACKSTAB_DAMAGE + BLOODLUST_BONUS
@@ -201,6 +205,9 @@ func unplaced():
 func animate_unplaced():
 	get_node("Physicals/AnimatedSprite").play("default")
 	
+func finisher_reactivate():
+	self.bloodlust_flag = false
+	.finisher_reactivate()
 
 func placed():
 	self.bloodlust_flag = false

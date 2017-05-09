@@ -14,9 +14,18 @@ animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "
 
 script/script = ExtResource( 2 )
 
+[node name="Physicals" parent="."]
+
+transform/pos = Vector2( 0, -5 )
+
 [node name="AnimatedSprite" parent="Physicals"]
 
+transform/pos = Vector2( 0, 0 )
 frames = SubResource( 1 )
+
+[node name="ArmorDisplay" parent="Physicals"]
+
+editor/display_folded = true
 
 [node name="SamplePlayer" parent="."]
 
