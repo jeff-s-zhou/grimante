@@ -51,6 +51,12 @@ func delete_self(animation_sequence=null):
 func resurrect():
 	get_node("/root/Combat").assassin = self
 	.resurrect()
+	
+	
+func delete_from_bar():
+	get_node("/root/Combat").assassin = null
+	.delete_from_bar()
+
 
 func get_backstab_damage():
 	if self.bloodlust_flag:

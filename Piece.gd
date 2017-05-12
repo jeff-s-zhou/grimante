@@ -31,7 +31,7 @@ func get_unit_name():
 	
 func debug():
 	#get_node("DebugText").show()
-	get_node("DebugText").set_text(str(self.mid_animation))
+	get_node("DebugText").set_text(str(self.mid_animation) + "\n" + str(self.coords))
 
 func _ready():
 	pass
@@ -284,9 +284,10 @@ func move_helper(coords, animation_sequence=null, blocking=false):
 			
 	var furthest_distance_length = self.grid.hex_length(furthest_distance)
 	
-	for i in range(0, furthest_distance_length):
-		animation_sequence.add(self, "animate_move_and_hop", blocking, [self.coords + distance_increment, 300, blocking])
-		set_coords(self.coords + distance_increment)
+	var speed = 300 * distance_length
+	
+	animation_sequence.add(self, "animate_move_and_hop", blocking, [coords, speed, blocking])
+	set_coords(coords)
 
 	if walked_off:
 		delete_self()

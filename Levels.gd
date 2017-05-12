@@ -33,6 +33,8 @@ var shield = enemy_modifiers["Shield"]
 var poisonous = enemy_modifiers["Poisonous"]
 var cloaked = enemy_modifiers["Cloaked"]
 
+#var available_unit_roster = get_node("/root/global").available_unit_roster
+
 func load_level(file_name):
 	var enemy_waves = {}
 	for i in range(0, 9): #TODO: don't hardcode this in, so you can have varied game lengths
@@ -75,8 +77,7 @@ func make_complex_tip(tip_text, objective_text, tooltips):
 	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
 	
 func sandbox_allies():
-	return {2: Assassin, 3: Berserker, 4: Cavalier} #2: Cavalier, 3: Archer, 4: Assassin}
-#
+	return [Assassin, Berserker, Cavalier] #2: Cavalier, 3: Archer, 4: Assassin}
 
 func sandbox_enemies():
 	var turn_power_levels = [1300, 0, 500, 0, 600, 0, 650, 0, 700]
@@ -84,7 +85,7 @@ func sandbox_enemies():
 	
 func sandbox_enemies2():
 	var turn_power_levels = [300, 0, 0, 0, 0]
-	var enemies = [{Vector2(3, 3): make(Grunt, 4), Vector2(3, 5): make(Slime, 2)}]
+	var enemies = [{Vector2(3, 3): make(Grunt, 4), Vector2(3, 4): make(Drummer, 2)}]
 	#var enemies = load_level("level2.save")
 	return EnemyWrappers.FiniteCuratedWrapper.new(turn_power_levels, enemies)
 	
@@ -105,9 +106,12 @@ func sandbox_extras():
 	
 	#return {"shifting_sands_tiles": {Vector2(3, 6): 4}, "tutorial":tutorial}
 	return {"tutorial":tutorial, "free_deploy":false}
+	
+func sandbox_extras2():
+	return {"required_units":{1: Cavalier, 2: Berserker, 3: FrostKnight, 4: Corsair, 5: Archer}}
 
 func sandbox_level():
-	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies2())#, null, sandbox_extras()) 
+	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies2(), null, sandbox_extras2())#, null, sandbox_extras()) 
 
 var sandbox_level_ref = funcref(self, "sandbox_level")
 #

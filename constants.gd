@@ -10,6 +10,7 @@ const Grower = preload("res://EnemyPieces/GrowerPiece.tscn")
 const Drummer = preload("res://EnemyPieces/DrummerPiece.tscn")
 const Melee = preload("res://EnemyPieces/MeleePiece.tscn")
 const Ranged = preload("res://EnemyPieces/RangedPiece.tscn")
+const Slime = preload("res://EnemyPieces/SlimePiece.tscn")
 
 
 var end_conditions = {"Defend":0, "Escort":1, "Timed":2, "MultiTimed":3}
@@ -18,7 +19,7 @@ var end_conditions = {"Defend":0, "Escort":1, "Timed":2, "MultiTimed":3}
 var enemy_modifiers = {"Poisonous":"Poisonous", "Shield":"Shield", "Cloaked":"Cloaked"}
 
 #used in the level editor
-var enemy_roster = {"grunt":Grunt, "fortifier":Fortifier, "grower":Grower, "drummer":Drummer, "melee":Melee, "ranged":Ranged}
+var enemy_roster = {"grunt":Grunt, "fortifier":Fortifier, "grower":Grower, "drummer":Drummer, "melee":Melee, "ranged":Ranged, "slime":Slime}
 
 const y_coords_offsets = [0, 0, 1, 1, 2, 2, 3]
 
@@ -47,7 +48,8 @@ Fortifier: 35,
 Grower: 35,
 Drummer: 40,
 Melee: 50,
-Ranged: 50
+Ranged: 50,
+Slime: 50
 }
 
 #potential problem, we don't want Fortifiers with shield_modifiers do we?
@@ -64,7 +66,8 @@ var FULL_UNIT_ROSTER = {
 2: Grower,
 3: Drummer,
 4: Melee,
-5: Ranged
+5: Ranged,
+6: Slime
 }
 
 #used in the generator
@@ -159,4 +162,14 @@ const RANGED_HEALTH_PROB_DIST = {
 6: 0.6,
 7: 0.5,
 8: 0.3,
+}
+
+const SLIME_HEALTH_PROB_DIST = {
+3: 1,
+4: 1,
+5: 1,
+6: 0.7,
+7: 0.6,
+8: 0.5,
+9: 0.3
 }

@@ -13,7 +13,7 @@ onready var levels = levels_prototype.instance()
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	pass
+	#add_child(levels)
 	get_node("/root/global").goto_scene("res://Combat.tscn", {"level":levels.sandbox_level_ref})
 
 

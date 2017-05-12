@@ -635,4 +635,4 @@ func deathrattle():
 		var neighbor_coords_range = get_parent().get_range(self.coords, [1,2], "ENEMY")
 		for coords in neighbor_coords_range:
 			var neighbor = get_parent().pieces[coords]
-			neighbor.attacked(1, 1.5) #delay it by 1.5 so it happens when this piece dies
+			neighbor.attacked(2, 1.5) #delay it by 1.5 so it happens when this piece dies

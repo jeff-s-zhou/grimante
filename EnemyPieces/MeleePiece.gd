@@ -18,7 +18,7 @@ func turn_update_helper():
 
 func turn_attack_update():
 	if self.frozen:
-		set_freezing(false)
+		set_frozen(false)
 	
 	if self.stunned:
 		set_stunned(false)

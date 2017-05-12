@@ -32,3 +32,11 @@ func show_sludge():
 	print("calling show sludge")
 	get_node("Tween").interpolate_property(get_node("Sludge"), "visibility/opacity", 0, 1, 0.4, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
+	
+func animate_cloaked_show():
+	get_node("Sludge").show()
+	.animate_cloaked_show()
+
+func animate_cloaked_hide():
+	get_node("Sludge").hide()
+	.animate_cloaked_hide()

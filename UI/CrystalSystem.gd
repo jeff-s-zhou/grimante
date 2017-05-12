@@ -13,6 +13,7 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	set_process_input(true)	
+	add_crystal()
 	
 func update(turn_count):
 	if turn_count + 1 % 3 == 0:

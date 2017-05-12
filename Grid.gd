@@ -11,6 +11,8 @@ var pieces = {}
 var shadow_wall_tile_range = []
 var shifting_sands_tiles = []
 
+var deploying = false
+
 
 #starts at 1, 2, 2, 3, 3, 4, 4, 5, 5,
 #ends at 8, 8, 9, 9, 10, 10, 11, 11, 12
@@ -28,7 +30,6 @@ const TILE_X_OFFSET = -5
 #const TILE_Y_OFFSET = 8
 const TILE_Y_OFFSET = 20
 
-const _Z_PIECE_OFFSET = Vector2(0, -0) #this is to offset for the pseudo-3d vertical distance of pieces
 
 const _LOCATION_Y_OFFSETS = [0, 0, 1, 1, 2, 2, 3]
 
@@ -82,6 +83,21 @@ func _ready():
 #				selector.triangulate_set_pos()
 #				self.pyromancer_selectors[tri_coords] = selector
 
+func set_deploying(flag, deploy_tiles=null):
+	self.deploying = flag
+	if deploying:
+		get_node("UnitSelectBar").set_global_pos(Vector2(0, 900))
+		get_node("UnitSelectBar").show()
+		if deploy_tiles != null:
+			for deploy_tile_coords in deploy_tiles:
+				if self.locations.has(deploy_tile_coords):
+					self.locations[deploy_tile_coords].set_deployable_indicator(true)
+	else:
+		get_node("UnitSelectBar").hide()
+		get_node("UnitSelectBar").queue_free()
+		reset_deployable_indicators()
+
+
 func deselect():
 	self.selected.deselect()
 	self.selected = null
@@ -90,7 +106,7 @@ func deselect():
 	
 	
 func predict(coords):
-	if self.selected != null:
+	if !self.deploying and self.selected != null:
 		self.selected.predict(coords)
 	
 
@@ -138,14 +154,30 @@ func set_target(target):
 		self.selected.select_action_target(target)
 
 
+func add_piece_on_bar(piece):
+	for i in range(0, 9):
+		if !get_node("UnitSelectBar").pieces.has(Vector2(i, 99)):
+			add_piece(Vector2(i, 99), piece)
+			break
+
+
 func add_piece(coords, piece):
-	pieces[coords] = piece
-	locations[coords].set_pickable(false)
+	var parent
+	if self.deploying and get_node("UnitSelectBar").locations.has(coords):
+		parent = get_node("UnitSelectBar")
+	else:
+		parent = self
+
+	parent.pieces[coords] = piece
+	parent.locations[coords].set_pickable(false)
 	piece.coords = coords
-	var location = locations[coords]
-	piece.set_pos(location.get_pos() + _Z_PIECE_OFFSET)
-	add_child(piece)
+	var location = parent.locations[coords]
 	
+	add_child(piece)
+	piece.set_global_pos(location.get_global_pos())
+	
+
+
 func remove_piece(coords):
 	self.pieces[coords].set_pickable(false)
 	self.pieces.erase(coords)
@@ -154,17 +186,21 @@ func remove_piece(coords):
 
 
 func swap_pieces(coords1, coords2):
-	var temp = self.pieces[coords1]
-	self.pieces[coords1] = self.pieces[coords2]
-	self.pieces[coords2] = temp
-	
+	if deploying:
+		deploy_swap_pieces(coords1, coords2)
+	else:
+		var temp = self.pieces[coords1]
+		self.pieces[coords1] = self.pieces[coords2]
+		self.pieces[coords2] = temp
+
+
 func deploy_swap_pieces(coords1, coords2):
 	var temp = self.get_piece(coords1)
 	self.set_piece(coords1, self.get_piece(coords2))
 	self.set_piece(coords2, temp)
 	
 func get_location(coords):
-	if get_node("UnitSelectBar").locations.has(coords):
+	if self.deploying and get_node("UnitSelectBar").locations.has(coords):
 		return get_node("UnitSelectBar").locations[coords]
 	else:
 		return self.locations[coords]
@@ -173,25 +209,38 @@ func has_piece(coords):
 	return get_node("UnitSelectBar").pieces.has(coords) or self.pieces.has(coords)
 
 func set_piece(coords, piece):
-	if get_node("UnitSelectBar").locations.has(coords):
+	if self.deploying and get_node("UnitSelectBar").locations.has(coords):
 		get_node("UnitSelectBar").pieces[coords] = piece
 	else:
 		self.pieces[coords] = piece
 
 func get_piece(coords):
-	if get_node("UnitSelectBar").pieces.has(coords):
+	if self.deploying and get_node("UnitSelectBar").pieces.has(coords):
 		return get_node("UnitSelectBar").pieces[coords]
 	else:
 		return self.pieces[coords]
 	
+
+func erase_piece(coords):
+	if self.deploying and get_node("UnitSelectBar").pieces.has(coords):
+		get_node("UnitSelectBar").pieces.erase(coords)
+	else:
+		self.pieces.erase(coords)
 	
 #moves the piece's location on grid. doesn't actually physically move the sprite
 func move_piece(old_coords, new_coords):
-	locations[old_coords].set_pickable(true)
-	var piece = pieces[old_coords]
-	pieces.erase(old_coords)
-	pieces[new_coords] = piece
-	locations[new_coords].set_pickable(false)
+	if self.deploying:
+		get_location(old_coords).set_pickable(true)
+		var piece = get_piece(old_coords)
+		erase_piece(old_coords)
+		set_piece(new_coords, piece)
+		get_location(new_coords).set_pickable(false)
+	else:
+		locations[old_coords].set_pickable(true)
+		var piece = pieces[old_coords]
+		pieces.erase(old_coords)
+		pieces[new_coords] = piece
+		locations[new_coords].set_pickable(false)
 
 #only returns a free location
 func get_free_location_at(coords):
@@ -227,7 +276,7 @@ func reset_highlighting(right_click_flag=false):
 
 #called when moved off of a tile while a player unit is selected
 func reset_prediction():
-	if self.selected != null:
+	if !self.deploying and self.selected != null:
 		for piece in pieces.values():
 			piece.reset_prediction_highlight()
 

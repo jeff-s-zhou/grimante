@@ -10,7 +10,12 @@ var _params = null
 
 var seen_units = {"Pawn":true, "Berserker":true, "Cavalier":true, 
 "Archer": true, "Corsair": true, "Saint":true, "Assassin":true, "Pyromancer":true, "Frost Knight": true}
+
 var seen_effect = {}
+
+var available_unit_roster = ["Berserker"]
+
+var full_unit_roster = ["Berserker", "Corsair", "Archer", "Saint", "Assassin", "Pyromancer", "Stormdancer", "Cavalier"]
 
 var PLATFORMS = {"Android":1, "iOS":2, "PC":3} 
 

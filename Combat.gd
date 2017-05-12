@@ -1,7 +1,10 @@
 extends Node2D
 
-const STATES = {"player_turn":0, "enemy_turn":1, "king_turn": 2, "transitioning":3, "game_start":4, "instruction":5}
-var state = STATES.game_start
+const STATES = {"player_turn":0, "enemy_turn":1, "transitioning":3, "deploying":4, "instruction":5}
+
+const Berserker = preload("res://PlayerPieces/BerserkerPiece.tscn")
+
+var state = STATES.deploying
 var enemy_waves = null
 
 var tutorial = null
@@ -61,10 +64,7 @@ func _ready():
 	self.tutorial = self.level_schematic.tutorial
 	if self.tutorial != null:
 		add_child(self.tutorial)
-#		
-	for key in self.level_schematic.allies.keys():
-		initialize_piece(self.level_schematic.allies[key], key)
-#	
+
 	self.enemy_waves = self.level_schematic.enemies
 
 	self.reinforcements = self.level_schematic.reinforcements
@@ -78,11 +78,6 @@ func _ready():
 			if flag == "ultimates_enabled_flag":
 				get_node("/root/global").ultimates_enabled_flag = true
 	
-	get_node("Grid").update_furthest_back_coords()
-	
-#	#self.next_wave = self.enemy_waves.get_next_summon()
-	
-	deploy_wave(true)
 	
 	if self.level_schematic.end_conditions.has(constants.end_conditions.Defend):
 		self.state_manager = load("res://UI/DefendSystem.tscn").instance()
@@ -94,11 +89,7 @@ func _ready():
 	add_child(self.state_manager)
 	self.state_manager.initialize(self.level_schematic)
 	self.state_manager.set_pos(Vector2(get_viewport_rect().size.width/2, 30))
-#	
 #
-	set_process(true)
-	set_process_input(true)	
-#	
 		
 	if self.level_schematic.shadow_wall_tiles.size() > 0:
 		get_node("Grid").initialize_shadow_wall_tiles(self.level_schematic.shadow_wall_tiles)
@@ -106,17 +97,36 @@ func _ready():
 	if self.level_schematic.shifting_sands_tiles.size() > 0:
 		get_node("Grid").initialize_shifting_sands_tiles(self.level_schematic.shifting_sands_tiles)	
 
+	for key in self.level_schematic.required_units.keys():
+		initialize_piece(self.level_schematic.required_units[key], false, key)
 	
+	get_node("Grid").update_furthest_back_coords()
 	
-	if self.level_schematic.free_deploy:
-		start_deploy_phase()
+	deploy_wave(true)
+	
+	set_process(true)
+	set_process_input(true)	
 		
+	if self.level_schematic.free_deploy:
+		get_node("Grid").set_deploying(true, self.level_schematic.deploy_tiles)
+		get_node("PhaseManager").set_free_deploy()
+		
+		
+#		for name in get_node("/root/global").available_unit_roster:
+#			if name == "Berserker":
+#				initialize_piece(Berserker, true)
+#		for unit in self.level_schematic.allies:
+#			initialize_piece(unit, true)
+		
+		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
+			player_piece.start_deploy_phase()
+
 		if (self.instructions.size() > 0):
 			handle_instructions()
 			yield(self, "next_pressed")
 		
 		yield(self, "deployed")
-		get_node("Grid").reset_deployable_indicators()
+		get_node("Grid").set_deploying(false)
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			player_piece.deploy()
 	
@@ -138,16 +148,7 @@ func get_turn_count():
 func update_animation_count_display(count):
 	get_node("AnimationCountLabel").set_text(str(count))
 	
-
-
-func start_deploy_phase():
 	
-	get_node("PhaseManager").set_free_deploy()
-	for deploy_tile_coords in self.level_schematic.deploy_tiles:
-		get_node("Grid").locations[deploy_tile_coords].set_deployable_indicator(true)
-	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
-		player_piece.start_deploy_phase()
-
 func is_within_deploy_range(coords):
 	return coords in self.level_schematic.deploy_tiles
 
@@ -161,27 +162,9 @@ func soft_copy_dict(source, target):
 func soft_copy_array(source, target):
 	for item in source:
 		target.push_back(item)
-#
-
-func initialize_piece_on_bar(piece_prototype):
-	var piece = piece_prototype.instance()
-	piece.set_opacity(0)
-	piece.initialize(get_node("CursorArea"))
-	piece.check_global_seen()
-	piece.animate_summon()
-
-func deploy_piece(piece, coords):
-	if piece.UNIT_TYPE == "Assassin":
-		self.assassin = piece
 		
-	piece.connect("invalid_move", self, "handle_invalid_move")
-	piece.connect("shake", self, "screen_shake")
-	if self.tutorial != null:
-		piece.connect("animated_placed", self, "handle_hero_cooldown_rules")
 
-	
-
-func initialize_piece(piece, key):
+func initialize_piece(piece, on_bar=false, key=null):
 	var new_piece = piece.instance()
 	if new_piece.UNIT_TYPE == "Assassin":
 		self.assassin = new_piece
@@ -191,13 +174,16 @@ func initialize_piece(piece, key):
 	if self.tutorial != null:
 		new_piece.connect("animated_placed", self, "handle_hero_cooldown_rules")
 	
-	var position
-	if typeof(key) == TYPE_INT:
-		position = get_node("Grid").get_bottom_of_column(key)
+	if on_bar:
+		get_node("Grid").add_piece_on_bar(new_piece)
 	else:
-		position = key #that way when we need to we can specify by coordinates
-	
-	get_node("Grid").add_piece(position, new_piece)
+		var position
+		if typeof(key) == TYPE_INT:
+			position = get_node("Grid").get_bottom_of_column(key)
+		else:
+			position = key #that way when we need to we can specify by coordinates
+		get_node("Grid").add_piece(position, new_piece)
+
 	new_piece.initialize(get_node("CursorArea")) #placed afterwards because we might need the piece to be on the grid	
 	new_piece.check_global_seen()
 	new_piece.animate_summon()
@@ -254,7 +240,7 @@ func end_turn():
 	self.state = STATES.enemy_turn
 	
 func end_turn_pressed():
-	if self.state == self.STATES.game_start:
+	if self.state == self.STATES.deploying:
 		get_node("PhaseManager").clear()
 		emit_signal("deployed")
 	if self.state == self.STATES.player_turn:
@@ -292,7 +278,7 @@ func computer_input(event):
 			get_node("Grid").deselect()
 	
 	elif get_node("InputHandler").is_ui_accept(event):
-		if self.state == self.STATES.game_start:
+		if self.state == self.STATES.deploying:
 			get_node("PhaseManager").clear()
 			emit_signal("deployed")
 		if self.state == self.STATES.player_turn:
@@ -463,7 +449,7 @@ func reinforce():
 	var reinforcement_wave = self.reinforcements[get_turn_count()]
 	for key in reinforcement_wave.keys():
 		var prototype = reinforcement_wave[key]
-		initialize_piece(prototype, key)
+		initialize_piece(prototype, false, key)
 		yield(self, "done_initializing")
 	emit_signal("reinforced")
 

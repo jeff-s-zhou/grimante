@@ -64,7 +64,7 @@ func _ready():
 	
 func get_assist_bonus_attack():
 	return self.AssistSystem.get_bonus_attack()
-	
+
 
 #call this function right before being assisted
 func handle_pre_assisted():
@@ -87,13 +87,20 @@ func trigger_assist_flag():
 	print("triggered")
 	self.assist_flag = true
 
+
 func handle_assist():
 	if self.assist_flag:
 		self.assist_flag = false
-		#we specifically redirect it through the AssistSystem to call the function below in case it's an ultimate
-		self.AssistSystem.activate_assist(self.assist_type, self)
-	else:
-		self.AssistSystem.clear_assist()
+	self.AssistSystem.activate_assist(self.assist_type, self)
+
+
+#func handle_assist():
+#	if self.assist_flag:
+#		self.assist_flag = false
+#		#we specifically redirect it through the AssistSystem to call the function below in case it's an ultimate
+#		self.AssistSystem.activate_assist(self.assist_type, self)
+#	else:
+#		self.AssistSystem.clear_assist()
 
 #start emitting the particles
 func activate_assist(assist_type):
@@ -172,6 +179,7 @@ func is_placed():
 	return self.state == States.PLACED
 
 func delete_self(animation_sequence=null):
+	print("deleting self at : " + str(self.coords))
 	var location = get_parent().locations[self.coords]
 	location.add_corpse(self)
 	if animation_sequence != null: #part of some other unit's animation sequence
@@ -193,6 +201,11 @@ func animate_delete_self(blocking=true):
 	if blocking:
 		emit_signal("animation_done")
 	subtract_anim_count()
+	
+
+func delete_from_bar():
+	remove_from_group("player_pieces")
+	queue_free()
 
 
 func resurrect():
@@ -214,6 +227,8 @@ func animate_resurrect(blocking=true):
 func initialize(cursor_area):
 	self.cursor_area = cursor_area
 	add_to_group("player_pieces")
+	if !get_node("/root/global").available_unit_roster.has(self.unit_name):
+		get_node("/root/global").available_unit_roster.append(self.unit_name)
 	
 func turn_update():
 	set_invulnerable(false)
@@ -338,6 +353,7 @@ func hovered():
 
 #called when an event happens inside the click area hitput
 func input_event(event):
+	print(self.unit_name)
 	if self.deploying_flag: #if in deploy phase
 		deploy_input_event(event)
 		return
@@ -402,7 +418,7 @@ func deploy_select_action_target(target):
 			get_parent().selected = null
 		else:
 			set_coords(target.coords)
-			set_pos(target.get_pos())
+			set_global_pos(target.get_global_pos())
 			get_parent().selected = null
 
 	else:
@@ -415,8 +431,8 @@ func swap_coords_and_pos(target):
 	target.coords = temp_coords
 	
 	#set the positions
-	set_pos(get_parent().get_location(self.coords).get_pos())
-	target.set_pos(get_parent().get_location(target.coords).get_pos())
+	set_global_pos(get_parent().get_location(self.coords).get_global_pos())
+	target.set_global_pos(get_parent().get_location(target.coords).get_global_pos())
 	
 
 
