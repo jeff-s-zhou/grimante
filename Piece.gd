@@ -53,6 +53,7 @@ func get_new_action(coords_or_range, trigger_assassin_passive=true):
 	return action
 	
 func get_new_animation_sequence(blocking=false):
+	get_node("/root/AnimationQueue").update_waiting_count(1)
 	self.current_animation_sequence = self.AnimationSequence.new(blocking)
 	add_child(self.current_animation_sequence)
 	return self.current_animation_sequence
@@ -72,6 +73,7 @@ func update_animation_count(amount):
 		get_node("/root/AnimationQueue").update_animation_count(amount)
 
 func enqueue_animation_sequence():
+	get_node("/root/AnimationQueue").update_waiting_count(-1)
 	if self.current_animation_sequence != null:
 		if !self.current_animation_sequence.is_empty():
 			get_node("/root/AnimationQueue").enqueue(self.current_animation_sequence, "execute", self.current_animation_sequence.blocking)
@@ -134,27 +136,17 @@ func animate_summon():
 	yield(get_node("Tween"), "tween_complete")
 	subtract_anim_count()
 
-
-#this doesn't actually block properly if you intend to have it block
-func animate_delete_self(blocking=true):
-	add_anim_count()
-	get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	get_node("Tween").start()
-	yield(get_node("Tween"), "tween_complete")
-	if blocking:
-		emit_signal("animation_done")
-	subtract_anim_count()
-	self.queue_free()
-	
-
 	
 func animate_move_to_pos(position, speed, blocking=false, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
 	add_anim_count()
+	var tween = Tween.new()
+	add_child(tween)
 	var distance = get_pos().distance_to(position)
-	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
-	get_node("Tween").start()
+	tween.interpolate_property(self, "transform/pos", get_pos(), position, float(distance)/speed, trans_type, ease_type)
+	tween.start()
 	if blocking:
-		yield(get_node("Tween"), "tween_complete")
+		yield(tween, "tween_complete")
+		tween.queue_free()
 		emit_signal("animation_done")
 		subtract_anim_count()
 	else:
@@ -180,16 +172,16 @@ func animate_move_and_hop(new_coords, speed=250, blocking=true, trans_type=Tween
 	add_anim_count()
 	var location = self.grid.locations[new_coords]
 	var position = location.get_pos()
-	animate_short_hop(speed, new_coords)
 	
 	var distance = get_pos().distance_to(position)
 	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
 	get_node("Tween").start()
+	animate_short_hop(speed, new_coords)
 	if blocking:
 		yield(get_node("Tween"), "tween_complete")
-		get_node("Timer").set_wait_time(0.1)
-		get_node("Timer").start()
-		yield(get_node("Timer"), "timeout")
+#		get_node("Timer").set_wait_time(0.1)
+#		get_node("Timer").start()
+#		yield(get_node("Timer"), "timeout")
 		emit_signal("animation_done")
 		subtract_anim_count()
 	else:
@@ -203,19 +195,29 @@ func animate_short_hop(speed, new_coords):
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
+	
+	#var one_tile_travelled = 115
+	#var time = 100 * (distance/one_tile_travelled)/speed
 	var time = distance/speed
-	var old_position = get_node("Physicals").get_pos()
-	var new_position = Vector2(0, -60)
+	time = max(0.35, time)
+
+	var old_height = Vector2(0, -5)
+	var vertical = min(-2 * distance/3, -60)
+	var new_height = Vector2(0, vertical)
 	
-	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
-		get_node("Physicals").get_pos(), new_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_OUT)
-	get_node("Tween 2").start()
-	yield(get_node("Tween 2"), "tween_complete")
+	var tween = Tween.new()
+	add_child(tween)
+
+	tween.interpolate_property(get_node("Physicals"), "transform/pos", \
+		get_node("Physicals").get_pos(), new_height, time/2, Tween.TRANS_QUART, Tween.EASE_OUT)
+	tween.start()
+	yield(tween, "tween_complete")
 	
-	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
-		get_node("Physicals").get_pos(), old_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_IN)
-	get_node("Tween 2").start()
-	yield(get_node("Tween 2"), "tween_complete")
+	tween.interpolate_property(get_node("Physicals"), "transform/pos", \
+		get_node("Physicals").get_pos(), old_height, time/2, Tween.TRANS_QUART, Tween.EASE_IN)
+	tween.start()
+	yield(tween, "tween_complete")
+	tween.queue_free()
 	set_z(0)
 	self.mid_leaping_animation = false
 	#emit_signal("animation_done")
@@ -253,7 +255,6 @@ func move(distance, passed_animation_sequence=null):
 	#if there's something in front, we shove it
 	if collide_range.size() > 0:
 		collide_coords = collide_range[0]
-		#if the tile right before the one we want to collide with isn't the one we're on
 		if self.coords != collide_coords - distance_increment: 
 			move_helper(collide_coords - distance_increment, animation_sequence, true)
 	else: #else just move forward all the way
@@ -284,14 +285,16 @@ func move_helper(coords, animation_sequence=null, blocking=false):
 			
 	var furthest_distance_length = self.grid.hex_length(furthest_distance)
 	
-	var speed = 300 * distance_length
-	
-	animation_sequence.add(self, "animate_move_and_hop", blocking, [coords, speed, blocking])
-	set_coords(coords)
+	var speed = 300 * furthest_distance_length
+	if furthest_distance_length > 0:
+		
+		#if walked off, we block so that delete self is animated sequentially
+		animation_sequence.add(self, "animate_move_and_hop", walked_off, [self.coords + furthest_distance, speed, walked_off])
+		set_coords(self.coords + furthest_distance)
 
 	if walked_off:
-		delete_self()
-		#animation_sequence.add(self, "animate_delete_self", true)
+		animation_sequence.blocking = true
+		delete_self(animation_sequence)
 		if self.side == "ENEMY" and distance_increment == Vector2(0, 1):
 			emit_signal("broke_defenses")
 
@@ -314,19 +317,20 @@ func shove(collide_coords, distance, animation_sequence):
 		var old_pos = location_right_before.get_pos()
 		var collide_pos = old_pos + difference 
 		var new_distance = (self.coords + distance) - collide_coords + self.grid.hex_normalize(distance)
-		
-		
+
 		animation_sequence.add(self, "animate_move_to_pos", true, [collide_pos, 300, true])
-		animation_sequence.add(self, "animate_move_to_pos", true, [old_pos, 300, true])
-		#get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [collide_pos, 300, true]) 
+		animation_sequence.add(self, "animate_move_to_pos", true, [old_pos, 300, true]) 
 		
 		var distance_shoved = get_parent().pieces[collide_coords].receive_shove(self, distance, animation_sequence)
 		if distance_shoved == null: #that means it killed the piece it shoved
-			move_helper(collide_coords, animation_sequence)
+			
+			#TODO: this might be broken lol. used to have move helper before the if
 			if old_coords + distance != self.coords: #if we still haven't travelled the full distance after killing
 				#recursively call move from the position of the first killed player unit
 				move(old_coords + distance - self.coords, animation_sequence)
 				return
+			else:
+				move_helper(collide_coords, animation_sequence)
 		elif distance_shoved == Vector2(0, 0): #the piece wasn't able to be pushed back then don't leap
 			pass
 			#animation_sequence.add(self, "animate_move", true, [self.coords, 300, true])

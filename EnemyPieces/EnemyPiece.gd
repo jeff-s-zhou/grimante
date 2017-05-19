@@ -33,6 +33,8 @@ const flyover_prototype = preload("res://EnemyPieces/Components/Flyover.tscn")
 
 signal broke_defenses
 
+signal enemy_death
+
 var hover_description = "" setget , get_hover_description
 
 var modifier_descriptions = {} setget , get_modifier_descriptions
@@ -344,7 +346,7 @@ func set_burning(flag):
 	if flag and !self.shielded:
 		self.burning = true
 		self.currently_burning = true
-		set_freezing(false)
+		set_frozen(false)
 		add_animation(self,"animate_fire", true)
 	else:
 		self.burning = false
@@ -488,6 +490,7 @@ func modify_hp(amount, delay=0):
 		get_new_animation_sequence()
 		add_animation(self, "animate_set_hp", true, [self.hp, amount, delay])
 		if self.hp == 0: 
+			emit_signal("enemy_death")
 			delete_self() 
 			
 		enqueue_animation_sequence()
@@ -502,6 +505,7 @@ func animate_set_hp(hp, value, delay=0):
 		get_node("Timer").set_wait_time(delay)
 		get_node("Timer").start()
 		yield(get_node("Timer"), "timeout")
+
 	get_node("Physicals/HealthDisplay").set_health(hp)
 	
 	var flyover = self.flyover_prototype.instance()
@@ -535,19 +539,19 @@ func animate_set_hp(hp, value, delay=0):
 
 #removes it from the self.grid, which prevents any interaction with other pieces
 func delete_self():
-	add_animation(self, "animate_delete_self", false)
+	add_animation(self, "animate_delete_self", true)
 	self.grid.remove_piece(self.coords)
 
 
 #actually physically removes it from the board
 func animate_delete_self():
-	print("mid animation is: " + str(self.mid_animation))
 	add_anim_count()
 	#get_node("Sprinkles").update() #update particleattractor location after all have moved
 	remove_from_group("enemy_pieces")
 	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
+	emit_signal("animation_done")
 	#get_node("Sprinkles").animate_sprinkles()
 	#yield(get_node("Sprinkles"), "animation_done")
 	#get_node("/root/Combat/ComboSystem").increase_combo()
@@ -614,7 +618,7 @@ func handle_rain():
 	if location.raining:
 		add_animation(location, "animate_lightning", true)
 		var action = get_new_action(self.coords)
-		action.add_call("attacked", [1])
+		action.add_call("attacked", [2])
 		action.execute()
 	
 

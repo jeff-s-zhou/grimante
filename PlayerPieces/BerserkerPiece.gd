@@ -70,14 +70,13 @@ func _is_within_movement_range(new_coords):
 func play_smash_sound():
 	get_node("SamplePlayer").play("explode3")
 
-func jump_to(new_coords, speed=4):
+func jump_to(new_coords, dust=false):
 	add_anim_count()
 	self.mid_leaping_animation = true
 	set_z(3)
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
-	print(distance)
 	var speed = 300
 	var one_tile_travelled = 115
 	var time = 100 * (distance/one_tile_travelled)/speed
@@ -85,7 +84,7 @@ func jump_to(new_coords, speed=4):
 #	time = (distance) / (speed) 
 #	print(time)
 
-	var old_height = Vector2(0, 0)
+	var old_height = Vector2(0, -5)
 	#var new_height = Vector2(0, (-3 * distance/4))
 	var vertical = min(-3.0 * distance/4, -100)
 	var new_height = Vector2(0, vertical)
@@ -93,11 +92,15 @@ func jump_to(new_coords, speed=4):
 		get_node("Physicals").get_pos(), new_height, time/2.0, Tween.TRANS_CUBIC, Tween.EASE_OUT)
 	get_node("Tween 2").start()
 	yield(get_node("Tween 2"), "tween_complete")
+	
 	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
 		get_node("Physicals").get_pos(), old_height, time/2.0, Tween.TRANS_QUART, Tween.EASE_IN)
 	get_node("Tween").interpolate_callback(self, time/2 - 0.1, "play_smash_sound")
 	get_node("Tween 2").start()
 	yield(get_node("Tween 2"), "tween_complete")
+	if dust:
+		get_node("Physicals/DustWaveParticles").set_emit_timeout(0.1)
+		get_node("Physicals/DustWaveParticles").set_emitting(true)
 	self.mid_leaping_animation = false
 	set_z(0)
 	emit_signal("shake")
@@ -165,7 +168,7 @@ func smash_attack(new_coords):
 
 func smash_move(new_coords):
 	get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [new_coords, 350, false])
-	get_node("/root/AnimationQueue").enqueue(self, "jump_to", true, [new_coords])
+	get_node("/root/AnimationQueue").enqueue(self, "jump_to", true, [new_coords, true])
 	
 	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 	smash(smash_range)

@@ -68,8 +68,8 @@ func get_passive_damage():
 
 
 func get_movement_range():
-	self.pathed_range = get_parent().get_pathed_range(self.coords, self.movement_value)
-	return self.pathed_range.keys()
+	return get_parent().get_radial_range(self.coords, [1, self.movement_range])
+	
 	
 func get_attack_range():
 	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, self.movement_value], "ENEMY")
@@ -142,8 +142,8 @@ func _is_within_passive_range(new_coords):
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
-		var args = [self.coords, new_coords, self.pathed_range, 350]
-		get_node("/root/AnimationQueue").enqueue(self, "animate_stepped_move", true, args)
+		var args = [new_coords, 350, true]
+		get_node("/root/AnimationQueue").enqueue(self, "animate_move_and_hop", true, args)
 		set_coords(new_coords)
 		if self.bloodlust_flag:
 			soft_placed() #in the case that it resets again using its passive

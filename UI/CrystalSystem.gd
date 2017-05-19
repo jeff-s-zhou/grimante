@@ -4,8 +4,11 @@ extends Node2D
 # var a = 2
 # var b = "textvar"
 
+var kill_count = 0
 
-var crystals = []
+const KILL_LIMIT = 7
+
+var crystal_count = 0
 
 var crystal_texture = preload("res://Assets/effects/combo_sparkle_cross_blue.png")
 
@@ -13,29 +16,31 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	set_process_input(true)	
-	add_crystal()
+	get_node("TextureButton").connect("pressed", self, "consume_crystal")
 	
-func update(turn_count):
-	if turn_count + 1 % 3 == 0:
+#func update(turn_count):
+#	if turn_count + 1 % 3 == 0:
+#		add_crystal()
+
+func add_kill_count():
+	self.kill_count += 1
+	if self.kill_count == KILL_LIMIT:
+		self.kill_count == 0
 		add_crystal()
+	get_node("KillsLabel").set_text(str(self.kill_count) + "/7 kills")
+
 
 func add_crystal():
-	var crystal = Sprite.new()
-	crystal.set_texture(self.crystal_texture)
-	self.crystals.append(crystal)
-	
-	crystal.set_pos(Vector2(30 * self.crystals.size(), 0))
-	add_child(crystal)
+	self.crystal_count += 1
+	get_node("Label").set_text(str(self.crystal_count))
+	get_node("TextureButton").set_disabled(false)
 
 
 func consume_crystal():
-	self.crystals[self.crystals.size() - 1].queue_free()
-	self.crystals.pop_back()
-
-
-func _input(event):
-	if event.is_action("test_action3") and event.is_pressed() and self.crystals != []:
+	if self.crystal_count > 0:
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			player_piece.activate_finisher()
-		consume_crystal()
-	
+		self.crystal_count -= 1
+		if self.crystal_count == 0:
+			get_node("TextureButton").set_disabled(true)
+		get_node("Label").set_text(str(self.crystal_count))

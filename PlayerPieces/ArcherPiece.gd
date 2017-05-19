@@ -70,8 +70,7 @@ func get_ultimate_range():
 	return attack_range + attack_range_diagonal
 
 func get_movement_range():
-	self.pathed_range = get_parent().get_pathed_range(self.coords, self.movement_value)
-	return self.pathed_range.keys()
+	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
 	
 func get_step_shot_coords(coords):
 	var step_shot_range = get_parent().get_range(coords, [1, 11], "ENEMY", true, [0, 1])
@@ -107,20 +106,20 @@ func act(new_coords):
 	
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
-		var args = [self.coords, new_coords, self.pathed_range, 350]
-		get_node("/root/AnimationQueue").enqueue(self, "animate_stepped_move", true, args)
+		var args = [new_coords, 350, true]
+		get_node("/root/AnimationQueue").enqueue(self, "animate_move_and_hop", true, args)
 		set_coords(new_coords)
 		var coords = get_step_shot_coords(self.coords)
 		if coords != null:
 			#get_node("/root/Combat").display_overlay(self.unit_name)
-			ranged_attack(coords, self.passive_damage)
+			piercing_arrow(coords)
 		placed()
 
 	#elif the tile selected is within attack range
 	elif _is_within_attack_range(new_coords):
 		handle_pre_assisted()
 		#get_node("/root/Combat").display_overlay(self.unit_name)
-		ranged_attack(new_coords, self.shoot_damage)
+		piercing_arrow(new_coords)
 		placed()
 	else:
 		invalid_move()
@@ -134,6 +133,32 @@ func ranged_attack(new_coords, damage):
 		var action = get_new_action(new_coords)
 		action.add_call("attacked", [damage])
 		action.execute()
+		
+		
+func piercing_arrow(new_coords):
+	var actions = []
+	var damage = self.shoot_damage
+	var line_range = self.grid.get_line_range(self.coords, new_coords - self.coords, "ENEMY")
+	var final_hit_coords
+	print("in piercing arrow")
+	print(line_range)
+	for coords in line_range:
+		final_hit_coords = coords
+		var action = get_new_action(coords)
+		var new_damage = damage
+		action.add_call("attacked", [new_damage])
+		actions.append(action)
+		if self.grid.pieces[coords].hp <= damage and damage > 0:
+			damage -= 1
+		else:
+			print("breaking here")
+			break
+			
+	if final_hit_coords != null:
+		get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [final_hit_coords])
+	for action in actions:
+		action.execute()
+	placed()
 
 
 func silver_arrow(new_coords):

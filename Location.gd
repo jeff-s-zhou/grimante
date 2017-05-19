@@ -88,7 +88,6 @@ func set_shifting_sands(direction):
 		
 func animate_lightning():
 	get_node("StormEffect").animate_lightning()
-	set_rain(false)
 	yield(get_node("StormEffect"), "animation_done")
 	emit_signal("animation_done")
 

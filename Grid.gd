@@ -280,6 +280,23 @@ func reset_prediction():
 		for piece in pieces.values():
 			piece.reset_prediction_highlight()
 
+
+func get_line_range(coords, direction_vector, side=null, magnitude_range=[1, 8]):
+	var return_set = []
+	var normalized_vector = hex_normalize(direction_vector)
+	for i in range(magnitude_range[0], magnitude_range[1]):
+		var new_coords = coords + Vector2(normalized_vector.x * i, normalized_vector.y * i)
+		if self.locations.has(new_coords):
+			if side == null:
+				return_set.append(new_coords)
+			elif side != null and self.pieces.has(new_coords):
+				if self.pieces[new_coords].side == side:
+					return_set.append(new_coords)
+				else:
+					break #if the sides are different, stop the line
+	return return_set
+
+
 func get_location_range(coords, magnitude_range=[1, 2], direction_range = [0, 6]):
 	var return_set = [] #make this a dict?
 	var change_vector = Vector2(0, 0)
@@ -302,6 +319,8 @@ func get_location_range(coords, magnitude_range=[1, 2], direction_range = [0, 6]
 	return return_set
 	
 func get_change_vector(direction):
+	if direction < 0:
+		direction = direction + 6
 	var change_vector = null
 	if direction == 0:
 		change_vector = Vector2(0, -1)
@@ -368,6 +387,8 @@ func get_diagonal_range(coords, magnitude_range=[1, 2], side=null, collision_che
 	var return_set = [] #make this a dict?
 	var change_vector = Vector2(0, 0)
 	for direction in range(direction_range[0], direction_range[1]):
+		if direction < 0:
+			direction = direction + 6
 		if direction == 0:
 			change_vector = Vector2(1, -1)
 		elif direction == 1:

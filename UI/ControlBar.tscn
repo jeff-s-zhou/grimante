@@ -1,0 +1,81 @@
+[gd_scene load_steps=11 format=1]
+
+[ext_resource path="res://Assets/UI/restart_button.png" type="Texture" id=1]
+[ext_resource path="res://Assets/UI/restart_button_pressed.png" type="Texture" id=2]
+[ext_resource path="res://Assets/UI/restart_button_light.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/restart_button_grey.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/new_turn_button.png" type="Texture" id=5]
+[ext_resource path="res://Assets/UI/new_turn_button_pressed.png" type="Texture" id=6]
+[ext_resource path="res://Assets/UI/new_end_turn_button_light.png" type="Texture" id=7]
+[ext_resource path="res://Assets/UI/new_turn_button_grey.png" type="Texture" id=8]
+[ext_resource path="res://UI/CrystalSystem.tscn" type="PackedScene" id=9]
+
+[sub_resource type="StyleBoxFlat" id=1]
+
+content_margin/left = -1.0
+content_margin/right = -1.0
+content_margin/top = -1.0
+content_margin/bottom = -1.0
+bg_color = Color( 0, 0, 0, 1 )
+light_color = Color( 0, 0, 0, 1 )
+dark_color = Color( 0, 0, 0, 1 )
+border_size = 0
+border_blend = true
+draw_bg = true
+
+[node name="ControlBar" type="Node2D"]
+
+[node name="Panel" type="Panel" parent="."]
+
+visibility/opacity = 0.4
+focus/ignore_mouse = true
+focus/stop_mouse = false
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 0.0
+margin/top = 0.0
+margin/right = 699.0
+margin/bottom = 127.0
+custom_styles/panel = SubResource( 1 )
+
+[node name="RestartButton" type="TextureButton" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 496.0
+margin/top = 42.0
+margin/right = 655.0
+margin/bottom = 114.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+textures/normal = ExtResource( 1 )
+textures/pressed = ExtResource( 2 )
+textures/hover = ExtResource( 3 )
+textures/disabled = ExtResource( 4 )
+
+[node name="EndTurnButton" type="TextureButton" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 15.0
+margin/top = 42.0
+margin/right = 174.0
+margin/bottom = 114.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+textures/normal = ExtResource( 5 )
+textures/pressed = ExtResource( 6 )
+textures/hover = ExtResource( 7 )
+textures/disabled = ExtResource( 8 )
+
+[node name="CrystalSystem" parent="." instance=ExtResource( 9 )]
+
+transform/pos = Vector2( 190.594, 41.5397 )
+
+

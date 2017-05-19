@@ -85,7 +85,7 @@ func sandbox_enemies():
 	
 func sandbox_enemies2():
 	var turn_power_levels = [300, 0, 0, 0, 0]
-	var enemies = [{Vector2(3, 3): make(Grunt, 4), Vector2(3, 4): make(Drummer, 2)}]
+	var enemies = [{Vector2(3, 4): make(Drummer, 4)}]
 	#var enemies = load_level("level2.save")
 	return EnemyWrappers.FiniteCuratedWrapper.new(turn_power_levels, enemies)
 	
@@ -108,10 +108,10 @@ func sandbox_extras():
 	return {"tutorial":tutorial, "free_deploy":false}
 	
 func sandbox_extras2():
-	return {"required_units":{1: Cavalier, 2: Berserker, 3: FrostKnight, 4: Corsair, 5: Archer}}
+	return {"required_units":{1: Cavalier, 2: Berserker, 3: Pyromancer, 4: Corsair, 5: Archer}}
 
 func sandbox_level():
-	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies2(), null, sandbox_extras2())#, null, sandbox_extras()) 
+	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies(), null, sandbox_extras2())#, null, sandbox_extras()) 
 
 var sandbox_level_ref = funcref(self, "sandbox_level")
 #

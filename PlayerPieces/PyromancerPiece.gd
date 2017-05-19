@@ -42,8 +42,10 @@ func get_wildfire_damage():
 
 
 func get_movement_range():
-	self.pathed_range = get_parent().get_pathed_range(self.coords, self.movement_value)
-	return self.pathed_range.keys()
+	var movement_range = get_parent().get_range(self.coords, [1,self.movement_value + 1], null, false, [-1, 2])
+	if self.movement_value == 2:
+		movement_range += get_parent().get_diagonal_range(self.coords, [1,2], null, false, [-1, 1])
+	return movement_range
 	
 func get_attack_range():
 	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, self.movement_value + 1], "ENEMY")
@@ -51,7 +53,7 @@ func get_attack_range():
 
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
-	var action_range = get_attack_range() + get_movement_range()
+	var action_range = get_movement_range()
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
 	.display_action_range()
@@ -67,16 +69,22 @@ func _is_within_movement_range(new_coords):
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
-		var args = [self.coords, new_coords, self.pathed_range, 350]
-		get_node("/root/AnimationQueue").enqueue(self, "animate_stepped_move", true, args)
+		
+		var line_range = self.grid.get_line_range(self.coords, new_coords - self.coords, "ENEMY")
+		
+		var args = [new_coords, 350, true]
+		get_node("/root/AnimationQueue").enqueue(self, "animate_move_and_hop", true, args)
+		if line_range != []:
+			get_node("/root/AnimationQueue").enqueue(self, "animate_bomb", true, [line_range[0]])
+			bomb(line_range[0])
 		set_coords(new_coords)
 		placed()
-	elif _is_within_attack_range(new_coords):
-		handle_pre_assisted()
-		get_node("/root/AnimationQueue").enqueue(self, "animate_bomb", true, [new_coords])
-		bomb(new_coords)
-		reset_currently_burning()
-		placed()
+#	elif _is_within_attack_range(new_coords):
+#		handle_pre_assisted()
+#		get_node("/root/AnimationQueue").enqueue(self, "animate_bomb", true, [new_coords])
+#		bomb(new_coords)
+#		reset_currently_burning()
+#		placed()
 	else:
 		invalid_move()
 		
@@ -94,7 +102,7 @@ func animate_bomb(coords):
 	
 	sub_animate_toss(flask)
 	
-	var target_pos = (get_parent().locations[coords].get_pos() - get_pos())
+	var target_pos = (get_parent().locations[coords].get_pos() - get_pos()) + Vector2(5, -10)
 	var final_rotd = flask_components.get_rotd() - 45
 	
 	get_node("Tween").interpolate_property(flask_components, "transform/pos", flask_components.get_pos(), target_pos, 0.8, Tween.TRANS_LINEAR, Tween.EASE_OUT)

@@ -54,10 +54,6 @@ func clear_assist():
 	get_node("/root/AnimationQueue").enqueue(self, "animate_activate_assist", false, [self.assist_type])
 
 
-func animate_clear_assist():
-	get_node("Label").set_text("")
-	
-
 func get_bonus_attack():
 	if self.assist_type == ASSIST_TYPES.attack or self.assist_type == ASSIST_TYPES.finisher:
 		return 1

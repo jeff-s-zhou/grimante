@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=1]
+[gd_scene load_steps=21 format=1]
 
 [ext_resource path="res://Combat.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/textured_background.png" type="Texture" id=2]
@@ -16,10 +16,8 @@
 [ext_resource path="res://OverlayDisplayer.tscn" type="PackedScene" id=14]
 [ext_resource path="res://Assets/processed_fonts/tutorial_tap_anywhere.fnt" type="BitmapFont" id=15]
 [ext_resource path="res://AssistSystem.tscn" type="PackedScene" id=16]
-[ext_resource path="res://UI/ComboSystem.tscn" type="PackedScene" id=17]
-[ext_resource path="res://UI/PhaseManager.tscn" type="PackedScene" id=18]
-[ext_resource path="res://UI/CrystalSystem.tscn" type="PackedScene" id=19]
-[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=20]
+[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=17]
+[ext_resource path="res://UI/ControlBar.tscn" type="PackedScene" id=18]
 
 [sub_resource type="StyleBoxFlat" id=1]
 
@@ -161,22 +159,9 @@ max_lines_visible = -1
 
 [node name="AssistSystem" parent="." instance=ExtResource( 16 )]
 
-transform/pos = Vector2( 597.571, 981.02 )
+transform/pos = Vector2( 42.6436, 30.4737 )
 
-[node name="ComboSystem" parent="." instance=ExtResource( 17 )]
-
-visibility/visible = false
-transform/pos = Vector2( 1195.11, 24.9927 )
-
-[node name="PhaseManager" parent="." instance=ExtResource( 18 )]
-
-transform/pos = Vector2( 598.149, 1047.89 )
-
-[node name="CrystalSystem" parent="." instance=ExtResource( 19 )]
-
-transform/pos = Vector2( 50.2113, 53.0009 )
-
-[node name="InputHandler" parent="." instance=ExtResource( 20 )]
+[node name="InputHandler" parent="." instance=ExtResource( 17 )]
 
 [node name="AnimationCountLabel" type="Label" parent="."]
 
@@ -193,20 +178,9 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="EndTurnButton" type="Button" parent="."]
+[node name="ControlBar" parent="." instance=ExtResource( 18 )]
 
 visibility/visible = false
-focus/ignore_mouse = false
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 2
-margin/left = 185.0
-margin/top = 972.0
-margin/right = 475.0
-margin/bottom = 1049.0
-toggle_mode = false
-enabled_focus_mode = 2
-shortcut = null
-flat = false
+transform/pos = Vector2( 0, 953 )
 
 

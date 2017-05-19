@@ -33,7 +33,8 @@ func execute():
 		var func_ref = func_call.func_ref
 		var blocking = func_call.blocking
 		var args = func_call.args
-
+		print("executing " + func_ref)
+		
 		if args == []:
 			node.call(func_ref)
 			#GIVE ME FUCKING SPREAD SYNTAX AAAAAAAAAGGGGGGGGHHHHHHHH

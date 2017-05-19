@@ -9,6 +9,10 @@ var lock = Mutex.new()
 
 var count_lock = Mutex.new()
 
+var waiting_count_lock = Mutex.new()
+
+var waiting_count = 0
+
 var animation_count = 0
 
 signal animation_count_update(count)
@@ -28,8 +32,9 @@ func is_busy():
 	return self.queue != [] or self.mid_processing
 
 func is_animating():
-
-	return self.queue != [] or self.mid_processing or get_animation_count() > 0
+	print("calling is_animating")
+	print(self.queue != [] or self.mid_processing or get_animation_count() > 0 or get_waiting_count() > 0)
+	return self.queue != [] or self.mid_processing or get_animation_count() > 0 or get_waiting_count() > 0
 	#return get_animation_count() > 0
 	
 func debug():
@@ -57,6 +62,16 @@ func update_animation_count(amount):
 		emit_signal("animations_finished")
 	self.count_lock.unlock()
 
+func get_waiting_count():
+	self.waiting_count_lock.lock()
+	var count = self.waiting_count
+	self.waiting_count_lock.unlock()
+	return count
+	
+func update_waiting_count(amount):
+	self.waiting_count_lock.lock()
+	self.waiting_count += amount
+	self.waiting_count_lock.unlock()
 
 func _process(delta):
 	while self.queue != [] and !self.mid_processing:
@@ -98,6 +113,7 @@ func process_animations():
 
 		if blocking:
 			yield(node, "animation_done")
+
 	self.mid_processing = false
 	if self.queue == [] and !self.mid_processing and get_animation_count() == 0:
 		emit_signal("animations_finished")

@@ -36,8 +36,7 @@ func get_slash_damage():
 	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_SLASH_DAMAGE
 
 func get_movement_range():
-	self.pathed_range = get_parent().get_pathed_range(self.coords, self.movement_value)
-	return self.pathed_range.keys()
+	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
 	
 func get_attack_range():
 	return get_parent().get_range(self.coords, [1, 2], "ENEMY")
@@ -86,8 +85,8 @@ func _is_within_movement_range(new_coords):
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
-		var args = [self.coords, new_coords, self.pathed_range, 350]
-		get_node("/root/AnimationQueue").enqueue(self, "animate_stepped_move", true, args)
+		var args = [new_coords, 350, true]
+		get_node("/root/AnimationQueue").enqueue(self, "animate_move_and_hop", true, args)
 		set_coords(new_coords)
 		placed()
 	elif _is_within_attack_range(new_coords):

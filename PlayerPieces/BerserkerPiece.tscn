@@ -1,10 +1,11 @@
-[gd_scene load_steps=7 format=1]
+[gd_scene load_steps=8 format=1]
 
 [ext_resource path="res://PlayerPieces/PrototypePlayerPiece.tscn" type="PackedScene" id=1]
 [ext_resource path="res://PlayerPieces/BerserkerPiece.gd" type="Script" id=2]
 [ext_resource path="res://Assets/Allies/berserker_piece.png" type="Texture" id=3]
 [ext_resource path="res://Assets/Allies/berserker_piece_sepia.png" type="Texture" id=4]
-[ext_resource path="res://PlayerPieces/Components/BerserkerSampleLibrary.tres" type="SampleLibrary" id=5]
+[ext_resource path="res://PlayerPieces/Components/DustWaveParticles.tscn" type="PackedScene" id=5]
+[ext_resource path="res://PlayerPieces/Components/BerserkerSampleLibrary.tres" type="SampleLibrary" id=6]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -14,22 +15,21 @@ animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "
 
 script/script = ExtResource( 2 )
 
-[node name="Physicals" parent="."]
-
-transform/pos = Vector2( 0, -5 )
-
 [node name="AnimatedSprite" parent="Physicals"]
 
-transform/pos = Vector2( 0, 0 )
 frames = SubResource( 1 )
 
 [node name="ArmorDisplay" parent="Physicals"]
 
 editor/display_folded = true
 
+[node name="DustWaveParticles" parent="Physicals" instance=ExtResource( 5 )]
+
+transform/pos = Vector2( 0, 5 )
+
 [node name="SamplePlayer" parent="."]
 
-config/samples = ExtResource( 5 )
+config/samples = ExtResource( 6 )
 
 [node name="Tween2" type="Tween" parent="."]
 

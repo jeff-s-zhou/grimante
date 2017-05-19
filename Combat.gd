@@ -47,13 +47,13 @@ func _ready():
 	#get_node("Grid").set_pos(Vector2(400, 250))
 	#debug_mode()
 	
-	get_node("EndTurnButton").connect("pressed", self, "end_turn_pressed")
+	get_node("ControlBar/EndTurnButton").connect("pressed", self, "end_turn_pressed")
+	get_node("ControlBar/RestartButton").connect("pressed", self, "restart")
 	get_node("/root/AnimationQueue").connect("animation_count_update", self, "update_animation_count_display")
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("AssistSystem").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 100))
-	get_node("PhaseManager").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 50))
-	
+
 	get_node("/root/AnimationQueue").reset_animation_count()
 #	
 #	
@@ -109,7 +109,6 @@ func _ready():
 		
 	if self.level_schematic.free_deploy:
 		get_node("Grid").set_deploying(true, self.level_schematic.deploy_tiles)
-		get_node("PhaseManager").set_free_deploy()
 		
 		
 #		for name in get_node("/root/global").available_unit_roster:
@@ -137,6 +136,8 @@ func _ready():
 	
 	get_node("PhaseShifter").player_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
+	
+	get_node("ControlBar").show()
 	
 	start_player_phase()
 	
@@ -210,14 +211,15 @@ func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon, anim
 		get_node("Grid").add_piece(position, enemy_piece)
 		enemy_piece.initialize(health, modifiers, prototype)
 		enemy_piece.connect("broke_defenses", self, "damage_defenses")
-		enemy_piece.get_node("Sprinkles").set_particle_endpoint(get_node("ComboSystem/ComboPointsLabel").get_global_pos())
+		enemy_piece.connect("enemy_death", get_node("ControlBar/CrystalSystem"), "add_kill_count")
+		#enemy_piece.get_node("Sprinkles").set_particle_endpoint(get_node("ComboSystem/ComboPointsLabel").get_global_pos())
 		enemy_piece.check_global_seen()
 		if animation_sequence != null:
 			animation_sequence.add(enemy_piece, "animate_summon", false)
 		else:
 			enemy_piece.add_animation(enemy_piece, "animate_summon", false)
+			
 
-	
 func end_turn():
 	self.state = STATES.transitioning
 	
@@ -228,24 +230,29 @@ func end_turn():
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
 
-	get_node("PhaseManager").player_turn_end()
 	get_node("TutorialTooltip").reset()
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 		player_piece.finisher_flag = false
 		player_piece.placed()
 		player_piece.clear_assist()
+	get_node("AssistSystem").clear_assist()
 	get_node("PhaseShifter").enemy_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
-	get_node("ComboSystem").player_turn_ended()
 	self.state = STATES.enemy_turn
 	
 func end_turn_pressed():
 	if self.state == self.STATES.deploying:
-		get_node("PhaseManager").clear()
 		emit_signal("deployed")
 	if self.state == self.STATES.player_turn:
 		end_turn()
-		
+
+
+func restart():
+	if get_node("/root/AnimationQueue").is_animating():
+		yield(get_node("/root/AnimationQueue"), "animations_finished")
+	get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic_func})
+
+	
 		
 func handle_hero_cooldown_rules(hero_name):
 	if self.tutorial != null and self.tutorial.has_hero_cooldown_rule(get_turn_count(), hero_name):
@@ -279,7 +286,6 @@ func computer_input(event):
 	
 	elif get_node("InputHandler").is_ui_accept(event):
 		if self.state == self.STATES.deploying:
-			get_node("PhaseManager").clear()
 			emit_signal("deployed")
 		if self.state == self.STATES.player_turn:
 			end_turn()
@@ -326,9 +332,7 @@ func computer_input(event):
 			
 			
 	elif event.is_action("restart") and event.is_pressed():
-		if get_node("/root/AnimationQueue").is_animating():
-			yield(get_node("/root/AnimationQueue"), "animations_finished")
-		get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic_func})
+		restart()
 	
 	elif event.is_action("toggle_fullscreen") and event.is_pressed():
 		if OS.is_window_fullscreen():
@@ -374,6 +378,7 @@ func enemy_phase():
 	for enemy_piece in enemy_pieces:
 		enemy_piece.turn_update()
 	
+	print("in enemy_phase call")
 	if(get_node("/root/AnimationQueue").is_animating()):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 		
@@ -384,6 +389,7 @@ func enemy_phase():
 	get_node("Grid").update_furthest_back_coords()
 	
 	#if there are enemy pieces, wait for them to finish
+	print("this call?")
 	if(get_node("/root/AnimationQueue").is_animating()):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 
@@ -426,8 +432,6 @@ func start_player_phase():
 		set_process_input(true)
 	
 	
-	get_node("PhaseManager").player_turn_start()
-	get_node("CrystalSystem").update(get_turn_count())
 	if self.tutorial != null:
 		self.tutorial.display_forced_action(get_turn_count())
 	
@@ -500,7 +504,7 @@ func handle_instructions():
 		get_node("TutorialTooltip").set_tooltips(instruction["tooltips"])
 
 func screen_shake():
-	get_node("ShakeCamera").shake(0.5, 30, 4)
+	get_node("ShakeCamera").shake(0.5, 35, 10)
 
 
 func _sort_by_y_axis(enemy_piece1, enemy_piece2):
@@ -555,8 +559,11 @@ func player_win():
 func enemy_win():
 	set_process(false)
 	self.state = STATES.transitioning
+	print(get_node("/root/AnimationQueue").is_animating())
 	if get_node("/root/AnimationQueue").is_animating():
+		print("yielded in enemy win")
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
+	print("not waiting here")
 	get_node("Timer2").set_wait_time(0.5)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
@@ -564,7 +571,6 @@ func enemy_win():
 	
 	
 func damage_defenses():
-	print("caught damage defenses??")
 	enemy_win()
 		
 func display_overlay(unit_name):
