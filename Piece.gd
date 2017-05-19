@@ -236,13 +236,7 @@ func hooked(new_coords):
 	set_coords(new_coords)
 	
 
-func move(distance, passed_animation_sequence=null):
-	var animation_sequence
-	if passed_animation_sequence != null:
-		animation_sequence = passed_animation_sequence
-		self.current_animation_sequence = animation_sequence
-	else:
-		animation_sequence = get_new_animation_sequence()
+func move(distance):
 
 	var old_coords = self.coords
 	
@@ -256,21 +250,20 @@ func move(distance, passed_animation_sequence=null):
 	if collide_range.size() > 0:
 		collide_coords = collide_range[0]
 		if self.coords != collide_coords - distance_increment: 
-			move_helper(collide_coords - distance_increment, animation_sequence, true)
+			move_helper(collide_coords - distance_increment, true)
 	else: #else just move forward all the way
-		move_helper(self.coords + distance, animation_sequence, true)
+		move_helper(self.coords + distance, false)
 	
 	#if there was a collision
 	if collide_coords != null:
 		var distance_travelled  = self.coords - old_coords
 		var remaining_distance = distance - distance_travelled
-		self.shove(collide_coords, remaining_distance, animation_sequence)
-		self.current_animation_sequence.blocking = true
+		self.shove(collide_coords, remaining_distance)
 	#execute the whole sequence outside of the function
 
 
 #helper function to either move a piece, or have it fall off the map
-func move_helper(coords, animation_sequence=null, blocking=false):
+func move_helper(coords, blocking=false):
 	var distance = coords - self.coords 
 	var distance_length = self.grid.hex_length(distance)
 	var distance_increment = self.grid.hex_normalize(distance)
@@ -289,19 +282,18 @@ func move_helper(coords, animation_sequence=null, blocking=false):
 	if furthest_distance_length > 0:
 		
 		#if walked off, we block so that delete self is animated sequentially
-		animation_sequence.add(self, "animate_move_and_hop", walked_off, [self.coords + furthest_distance, speed, walked_off])
+		add_animation(self, "animate_move_and_hop", walked_off, [self.coords + furthest_distance, speed, walked_off])
 		set_coords(self.coords + furthest_distance)
 
 	if walked_off:
-		animation_sequence.blocking = true
-		delete_self(animation_sequence)
+		delete_self()
 		if self.side == "ENEMY" and distance_increment == Vector2(0, 1):
 			emit_signal("broke_defenses")
 
 
 #at this point we've moved forward to cover all empty spaces
 #with remaining moves, try to push the obstacle immediately in front
-func shove(collide_coords, distance, animation_sequence):
+func shove(collide_coords, distance):
 	var old_coords = self.coords
 	var distance_length = self.grid.hex_length(distance)
 	var distance_increment = self.grid.hex_normalize(distance)
@@ -318,29 +310,29 @@ func shove(collide_coords, distance, animation_sequence):
 		var collide_pos = old_pos + difference 
 		var new_distance = (self.coords + distance) - collide_coords + self.grid.hex_normalize(distance)
 
-		animation_sequence.add(self, "animate_move_to_pos", true, [collide_pos, 300, true])
-		animation_sequence.add(self, "animate_move_to_pos", true, [old_pos, 300, true]) 
+		add_animation(self, "animate_move_to_pos", true, [collide_pos, 300, true])
+		add_animation(self, "animate_move_to_pos", true, [old_pos, 300, true]) 
 		
-		var distance_shoved = get_parent().pieces[collide_coords].receive_shove(self, distance, animation_sequence)
+		var distance_shoved = get_parent().pieces[collide_coords].receive_shove(self, distance)
 		if distance_shoved == null: #that means it killed the piece it shoved
 			
 			#TODO: this might be broken lol. used to have move helper before the if
 			if old_coords + distance != self.coords: #if we still haven't travelled the full distance after killing
 				#recursively call move from the position of the first killed player unit
-				move(old_coords + distance - self.coords, animation_sequence)
+				move(old_coords + distance - self.coords)
 				return
 			else:
-				move_helper(collide_coords, animation_sequence)
+				move_helper(collide_coords)
 		elif distance_shoved == Vector2(0, 0): #the piece wasn't able to be pushed back then don't leap
 			pass
 			#animation_sequence.add(self, "animate_move", true, [self.coords, 300, true])
 		else:
-			move_helper(self.coords + distance_shoved, animation_sequence)
+			move_helper(self.coords + distance_shoved)
 
 
-func receive_shove(pusher, distance, animation_sequence):
+func receive_shove(pusher, distance):
 	if dies_to_collision(pusher): #check if they're going to die from collision
-		delete_self(animation_sequence)
+		delete_self()
 		return null
 
 
@@ -355,13 +347,13 @@ func receive_shove(pusher, distance, animation_sequence):
 	if collide_range.size() > 0:
 		collide_coords = collide_range[0]
 		if self.coords != collide_coords - distance_increment: 
-			move_helper(collide_coords - distance_increment, animation_sequence, true)
+			move_helper(collide_coords - distance_increment, true)
 			return (self.coords - old_coords)
 		else:
 			#TODO make it brace up against the piece behind it
 			return Vector2(0, 0)
 	else:
-		move_helper(self.coords + distance, animation_sequence, true)
+		move_helper(self.coords + distance, true)
 		
 		return distance
 

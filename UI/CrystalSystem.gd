@@ -27,13 +27,20 @@ func add_kill_count():
 	if self.kill_count == KILL_LIMIT:
 		self.kill_count == 0
 		add_crystal()
-	get_node("KillsLabel").set_text(str(self.kill_count) + "/7 kills")
+	get_node("/root/AnimationQueue").enqueue(self, "animate_add_kill_count", false, [self.kill_count])
+	
 
+func animate_add_kill_count(kill_count):
+	get_node("KillsLabel").set_text(str(kill_count) + "/7 kills")
+	
 
 func add_crystal():
 	self.crystal_count += 1
-	get_node("Label").set_text(str(self.crystal_count))
 	get_node("TextureButton").set_disabled(false)
+	get_node("/root/AnimationQueue").enqueue(self, "animate_add_crystal", false, [self.crystal_count])
+	
+func animate_add_crystal(crystal_count):
+	get_node("Label").set_text(str(crystal_count))
 
 
 func consume_crystal():

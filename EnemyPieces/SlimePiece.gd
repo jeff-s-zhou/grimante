@@ -13,15 +13,9 @@ func initialize(max_hp, modifiers, prototype):
 #this clever shit might come back to bite me in the ass
 #I just needed to slap an animation before and after every move, so we construct the animation_sequence here
 func move(distance, passed_animation_sequence=null):
-	var animation_sequence
-	if passed_animation_sequence != null:
-		animation_sequence = passed_animation_sequence
-	else:
-		animation_sequence = get_new_animation_sequence()
-		
-	animation_sequence.add(self, "hide_sludge", false)
-	.move(distance, animation_sequence)
-	animation_sequence.add(self, "show_sludge", false)
+	add_animation(self, "hide_sludge", false)
+	.move(distance)
+	add_animation(self, "show_sludge", false)
 
 func hide_sludge():
 	print("calling hide sludge")

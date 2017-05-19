@@ -600,7 +600,6 @@ func turn_update():
 	var adjacent_players_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
 	if adjacent_players_range != []:
 		set_cloaked(false)
-	enqueue_animation_sequence()
 
 #called after all pieces finish moving
 func turn_attack_update():
