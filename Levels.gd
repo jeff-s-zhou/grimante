@@ -111,6 +111,14 @@ func sandbox_extras2():
 	return {"required_units":{1: Cavalier, 2: Berserker, 3: Pyromancer, 4: Corsair, 5: Archer}}
 
 func sandbox_level():
+	
+	var name = "Berserker: Part 1"
+	var level = LevelTypes.RoomSeal.new(name)
+	var power_levels = [300, 0, 0, 0]
+	level.set_generated_enemies(power_levels)
+	var enemies = []
+	level.set_curated_enemies(enemies)
+	
 	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies(), null, sandbox_extras2())#, null, sandbox_extras()) 
 
 var sandbox_level_ref = funcref(self, "sandbox_level")

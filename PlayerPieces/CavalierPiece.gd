@@ -71,9 +71,9 @@ func animate_hop(old_coords, new_coords, down=false):
 	var new_position = location.get_pos()
 	var distance = old_location.get_pos().distance_to(new_position)
 	var time = distance/250
-	var old_position = Vector2(0, -15)
+	var old_position = Vector2(0, -20)
 	if down:
-		old_position = Vector2(0, 0)
+		old_position = Vector2(0, -5)
 	var new_position = Vector2(0, -60)
 	
 	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
@@ -167,7 +167,8 @@ func trample(new_coords):
 				get_node("/root/AnimationQueue").enqueue(self, "animate_hop", true, [current_coords - increment, current_coords, true])
 				was_hopping = false
 			else:
-				get_node("/root/AnimationQueue").enqueue(self, "animate_move", true, [current_coords, 350])
+				get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [current_coords, 250, false])
+				get_node("/root/AnimationQueue").enqueue(self, "animate_hop", true, [current_coords - increment, current_coords, true])
 
 	set_coords(new_coords)
 	placed()

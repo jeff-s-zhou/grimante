@@ -17,6 +17,10 @@ script/script = ExtResource( 2 )
 
 frames = SubResource( 1 )
 
+[node name="EnemyOverlays" parent="Physicals"]
+
+editor/display_folded = false
+
 
 [editable path="Physicals/EnemyOverlays"]
 [editable path="Physicals/EnemyEffects"]

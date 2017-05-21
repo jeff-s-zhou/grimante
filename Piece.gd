@@ -35,8 +35,8 @@ func debug():
 
 func _ready():
 	pass
-#	get_node("CollisionArea").connect("area_enter", self, "collide")
-#	get_node("CollisionArea").connect("area_exit", self, "uncollide")
+	get_node("CollisionArea").connect("area_enter", self, "collide")
+	get_node("CollisionArea").connect("area_exit", self, "uncollide")
 	
 func add_anim_count():
 	get_node("/root/AnimationQueue").update_animation_count(1)
@@ -107,24 +107,23 @@ func check_global_seen():
 		get_node("SeenIcon").show()
 
 
-#func collide(area):
-#	pass
-#	if area.get_name() != "CursorArea":
-#		if self.mid_animation and !self.mid_leaping_animation: #If leaping, it'll set its own z above everythin else
-#			var other_piece = area.get_parent()
-#			if other_piece.get_pos().y > get_pos().y:
-#				other_piece.set_z(get_z() + 1)
-#			else:
-#				other_piece.set_z(get_z() - 1)
+func collide(area):
+	if area.get_name() != "CursorArea":
+		if self.mid_animation and !self.mid_leaping_animation: #If leaping, it'll set its own z above everythin else
+			var other_piece = area.get_parent()
+			if other_piece.get_pos().y > get_pos().y:
+				other_piece.set_z(get_z() + 1)
+			else:
+				other_piece.set_z(get_z() - 1)
 #
 #a little buggy currently, since both the offender and receiver of a collision can both be mid animation
 #we just let them reset each other for now, and make sure neither are mid_leaping_animation
-#func uncollide(area):
-#	if area.get_name() != "CursorArea": #make sure it's not the thing that checks for mouse inside areas
-#		var other_piece = area.get_parent()
-#		if self.mid_animation and !self.mid_leaping_animation and !other_piece.mid_leaping_animation:
-#			other_piece.set_z(0)
-		
+func uncollide(area):
+	if area.get_name() != "CursorArea": #make sure it's not the thing that checks for mouse inside areas
+		var other_piece = area.get_parent()
+		if self.mid_animation and !self.mid_leaping_animation and !other_piece.mid_leaping_animation:
+			other_piece.set_z(0)
+#		
 
 func set_mid_animation(flag):
 	self.mid_animation = flag
@@ -232,7 +231,7 @@ func handle_shifting_sands():
 		
 
 func hooked(new_coords):
-	add_animation(self, "animate_move", true, [new_coords, 300, true])
+	add_animation(self, "animate_move", false, [new_coords, 600, false, Tween.TRANS_QUAD])
 	set_coords(new_coords)
 	
 

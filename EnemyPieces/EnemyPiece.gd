@@ -508,6 +508,9 @@ func animate_set_hp(hp, value, delay=0):
 
 	get_node("Physicals/HealthDisplay").set_health(hp)
 	
+#	if hp == 0:
+#		get_node("SamplePlayer").play("monster_death")
+	
 	var flyover = self.flyover_prototype.instance()
 	add_child(flyover)
 	var text = flyover.get_node("FlyoverText")
@@ -548,7 +551,7 @@ func animate_delete_self():
 	add_anim_count()
 	#get_node("Sprinkles").update() #update particleattractor location after all have moved
 	remove_from_group("enemy_pieces")
-	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 1, 0, 0.6, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	emit_signal("animation_done")

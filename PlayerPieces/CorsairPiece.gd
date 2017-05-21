@@ -99,7 +99,7 @@ func act(new_coords):
 		handle_pre_assisted()
 		get_node("/root/AnimationQueue").enqueue(self, "animate_extend_hook", true, [new_coords])
 		var adjacent_coords = hook(new_coords)
-		get_node("/root/AnimationQueue").enqueue(self, "animate_retract_hook", false, [new_coords])
+		get_node("/root/AnimationQueue").enqueue(self, "animate_retract_hook", true, [new_coords])
 		get_node("/root/AnimationQueue").enqueue(self, "animate_slash", true, [adjacent_coords])
 		slash(adjacent_coords)
 		get_node("/root/AnimationQueue").enqueue(self, "animate_slash_end", true, [self.coords])
@@ -134,6 +134,9 @@ func animate_extend_hook(new_coords):
 	
 	get_node("CorsairHook").animate_extend(distance_length, angle)
 	yield(get_node("CorsairHook"), "animation_done")
+	get_node("Timer").set_wait_time(0.1)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
 	emit_signal("animation_done")
 	subtract_anim_count()
 	
@@ -143,7 +146,9 @@ func animate_retract_hook(new_coords):
 	var current_pos = get_parent().locations[self.coords].get_pos()
 	var distance_length = (new_pos - current_pos).length()
 	
-	get_node("CorsairHook").animate_retract(distance_length, 350)
+	get_node("CorsairHook").animate_retract(distance_length, 600)
+	yield(get_node("CorsairHook"), "animation_done")
+	emit_signal("animation_done")
 	subtract_anim_count()
 	
 func hook(new_coords):

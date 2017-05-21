@@ -84,7 +84,7 @@ func jump_to(new_coords, dust=false):
 #	time = (distance) / (speed) 
 #	print(time)
 
-	var old_height = Vector2(0, -5)
+	var old_height = get_node("Physicals").get_pos()
 	#var new_height = Vector2(0, (-3 * distance/4))
 	var vertical = min(-3.0 * distance/4, -100)
 	var new_height = Vector2(0, vertical)

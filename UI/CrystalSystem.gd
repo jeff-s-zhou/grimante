@@ -25,7 +25,7 @@ func _ready():
 func add_kill_count():
 	self.kill_count += 1
 	if self.kill_count == KILL_LIMIT:
-		self.kill_count == 0
+		self.kill_count = 0
 		add_crystal()
 	get_node("/root/AnimationQueue").enqueue(self, "animate_add_kill_count", false, [self.kill_count])
 	

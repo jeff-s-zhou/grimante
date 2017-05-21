@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=1]
+[gd_scene load_steps=20 format=1]
 
 [ext_resource path="res://EnemyPieces/GruntPiece.gd" type="Script" id=1]
 [ext_resource path="res://EnemyPieces/Components/EnemyCollisionArea.tscn" type="PackedScene" id=2]
@@ -16,10 +16,15 @@
 [ext_resource path="res://Assets/processed_fonts/flyover.fnt" type="BitmapFont" id=14]
 [ext_resource path="res://EnemyPieces/Components/EnemyClickArea.tscn" type="PackedScene" id=15]
 [ext_resource path="res://Assets/processed_fonts/enemy_health.fnt" type="BitmapFont" id=16]
+[ext_resource path="res://Assets/processed_sounds/monster_death.smp" type="Sample" id=17]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ), ExtResource( 5 ) ], "loop":true, "name":"damaged", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"attack_range", "speed":5.0 } ]
+animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"attack_range", "speed":5.0 }, { "frames":[ ExtResource( 4 ), ExtResource( 5 ) ], "loop":true, "name":"damaged", "speed":5.0 } ]
+
+[sub_resource type="SampleLibrary" id=2]
+
+samples/monster_death = { "db":-5.0, "pitch":1.0, "sample":ExtResource( 17 ) }
 
 [node name="GruntPiece" type="KinematicBody2D"]
 
@@ -143,6 +148,23 @@ playback/process_mode = 1
 playback/active = false
 playback/repeat = false
 playback/speed = 1.0
+
+[node name="SamplePlayer" type="SamplePlayer" parent="."]
+
+config/polyphony = 1
+config/samples = SubResource( 2 )
+default/volume_db = 0.0
+default/pitch_scale = 1.0
+default/pan = 0.0
+default/depth = 0.0
+default/height = 0.0
+default/filter/type = 0
+default/filter/cutoff = 5000.0
+default/filter/resonance = 1.0
+default/filter/gain = 1.0
+default/reverb_room = 2
+default/reverb_send = 0.0
+default/chorus_send = 0.0
 
 
 [editable path="Physicals/EnemyOverlays"]

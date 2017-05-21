@@ -94,6 +94,7 @@ func animate_bomb(coords):
 	add_child(flask)
 	var flask_components = flask.get_node("Components")
 	flask_components.set_rotd(-15)
+	flask_components.set_pos(flask_components.get_pos() + Vector2(0, -10))
 	flask_components.get_node("Flask").show()
 	
 	get_node("Tween").interpolate_property(flask_components, "visibility/opacity", 0, 1, 0.3, Tween.TRANS_LINEAR, Tween.EASE_OUT)

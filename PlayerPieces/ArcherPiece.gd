@@ -211,7 +211,7 @@ func animate_ranged_attack(new_coords):
 	var new_arrow_pos = (location.get_pos() - get_pos()) + offset
 	
 	#draw back
-	#get_node("SamplePlayer").play("bow_draw")
+	get_node("SamplePlayer 2").play("bow_draw")
 	var draw_back_position = arrow.get_pos() - (40 * (new_arrow_pos - arrow.get_pos()).normalized())
 	get_node("Tween 2").interpolate_property(arrow, "transform/pos", arrow.get_pos(), draw_back_position, 1.1, Tween.TRANS_SINE, Tween.EASE_OUT)
 	get_node("Tween 2").start()
@@ -219,9 +219,11 @@ func animate_ranged_attack(new_coords):
 	
 	get_node("Tween 2").interpolate_property(arrow, "transform/pos", arrow.get_pos(), new_arrow_pos, time, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	print("time to fire arrow is " + str(time))
+	
 	#get_node("Tween 2").interpolate_callback(self, max(time - 0.1, 0), "play_bow_hit")
 	get_node("Tween 2").start()
 	yield(get_node("Tween 2"), "tween_complete")
+	get_node("SamplePlayer 2").play("bow_hit")
 	arrow.set_opacity(0)
 	arrow.set_pos(offset)
 	
@@ -229,7 +231,7 @@ func animate_ranged_attack(new_coords):
 	subtract_anim_count()
 
 func play_bow_hit():
-	get_node("SamplePlayer").play("bow_hit")
+	get_node("SamplePlayer 2").play("bow_hit")
 
 func predict(new_coords):
 	if _is_within_movement_range(new_coords):
