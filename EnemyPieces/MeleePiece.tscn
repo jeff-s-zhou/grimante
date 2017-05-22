@@ -11,7 +11,6 @@ animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "
 
 [node name="MeleePiece" instance=ExtResource( 1 )]
 
-visibility/opacity = 1.0
 script/script = ExtResource( 2 )
 
 [node name="AnimatedSprite" parent="Physicals"]

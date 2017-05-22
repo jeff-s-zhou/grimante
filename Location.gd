@@ -24,7 +24,7 @@ signal is_targeted(location)
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Sprite").set_self_opacity(0.4)
+	get_node("Sprite").set_opacity(0.4)
 	connect("mouse_enter", self, "_mouse_entered")
 	connect("mouse_exit", self, "_mouse_exited")
 	
@@ -83,7 +83,9 @@ func set_shadow_wall(flag):
 
 func set_shifting_sands(direction):
 	self.shifting_direction = direction
+	get_node("ShiftingSands").set_shifting_direction(direction)
 	get_node("ShiftingSands").show()
+	get_node("Sprite").hide()
 		
 		
 func animate_lightning():
@@ -94,25 +96,34 @@ func animate_lightning():
 
 #when another unit is able to move to this location, it calls this function
 func movement_highlight():
-	get_node("Sprite").play("movement_hover")
+	get_node("HighlightSprite").show()
 	
 func attack_highlight():
-	get_node("Sprite").play("attack_hover")
+	get_node("HighlightSprite").show()
 	
 func reset_highlight():
-	get_node("Sprite").play("default")
-	external_set_opacity(0.4)
+	get_node("HighlightSprite").hide()
+	if shifting_direction != null:
+		get_node("ShiftingSands").reset_highlight()
+	else:
+		get_node("Sprite").set_opacity(0.4)
 	
 func _mouse_entered():
 	get_node("SamplePlayer").play("tile_hover")
-	get_node("Sprite").set_self_opacity(1.0)
+	if shifting_direction != null:
+		get_node("ShiftingSands").highlight()
+	else:
+		get_node("Sprite").set_opacity(1.0)
 	get_node("Timer").set_wait_time(0.01)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
 	get_parent().predict(self.coords)
 
 func _mouse_exited():
-	get_node("Sprite").set_self_opacity(0.4)
+	if shifting_direction != null:
+		get_node("ShiftingSands").reset_highlight()
+	else:
+		get_node("Sprite").set_opacity(0.4)
 	get_parent().reset_prediction()
 
 
@@ -120,7 +131,7 @@ func input_event(event):
 	get_parent().set_target(self)
 
 func external_set_opacity(value=1.0):
-	get_node("Sprite").set_self_opacity(value)
+	get_node("Sprite").set_opacity(value)
 	
 func get_size():
 	return get_node("Sprite").get_item_rect().size

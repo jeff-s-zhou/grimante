@@ -227,7 +227,6 @@ func handle_shifting_sands():
 	if location.shifting_direction != null:
 		var change_vector = self.grid.get_change_vector(location.shifting_direction)
 		self.move(change_vector)
-		self.enqueue_animation_sequence()
 		
 
 func hooked(new_coords):

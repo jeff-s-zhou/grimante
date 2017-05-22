@@ -28,6 +28,7 @@ func _ready():
 #Okay. so use this instead of the dict structure. So it contains everything, from player pieces, to enemy pieces, to structures
 
 class BaseLevelType:
+	var name = ""
 	var required_units = {}
 	var allies = null #the roster
 	var deploy_roster = null
@@ -43,7 +44,8 @@ class BaseLevelType:
 	var king = null
 	var end_conditions = {}
 	
-	func _init(allies, enemies, next_level=null, extras={}):
+	func _init(name, allies, enemies, next_level=null, extras={}):
+		self.name = name
 		self.allies = allies
 		self.enemies = enemies
 		self.next_level = next_level
@@ -72,8 +74,8 @@ class BaseLevelType:
 
 #infinite waves
 class RoomSeal extends BaseLevelType:
-	func _init(allies, enemies, \
-	next_level=null, extras={}).(allies, enemies, next_level, extras):
+	func _init(name, allies, enemies, \
+	next_level=null, extras={}).(name, allies, enemies, next_level, extras):
 		pass
 
 
@@ -92,8 +94,8 @@ class Timed extends BaseLevelType:
 	var Constants = preload("constants.gd").new()
 	var num_turns
 	
-	func _init(allies, enemies, num_turns, \
-	next_level=null, extras={}).(allies, enemies, next_level, extras):
+	func _init(name, allies, enemies, num_turns, \
+	next_level=null, extras={}).(name, allies, enemies, next_level, extras):
 		self.num_turns = num_turns
 		set_end_conditions(Constants.end_conditions.Timed)
 		

@@ -106,7 +106,7 @@ func modify_unit():
 func save_level():
 	var first_line = true
 	
-	var file_name = get_node("Title").get_text()
+	var file_name = get_node("FileName").get_text()
 	var save = File.new()
 	save.open("user://" + file_name, File.WRITE)
 	for editor_grid in self.editor_grids:
@@ -147,7 +147,7 @@ func initialize_grids():
 
 
 func load_level():
-	var file_name = get_node("Title").get_text()
+	var file_name = get_node("FileName").get_text()
 	reset_grids()
 	
 	var save = File.new()

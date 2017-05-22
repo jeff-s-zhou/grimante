@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=1]
+[gd_scene load_steps=7 format=1]
 
 [ext_resource path="res://EnemyPieces/GruntPiece.tscn" type="PackedScene" id=1]
 [ext_resource path="res://EnemyPieces/FortifierPiece.gd" type="Script" id=2]
 [ext_resource path="res://Assets/Enemies/harpy_piece.png" type="Texture" id=3]
 [ext_resource path="res://Assets/Enemies/harpy_piece_red.png" type="Texture" id=4]
+[ext_resource path="res://EnemyPieces/Components/SeraphDeathParticles.tscn" type="PackedScene" id=5]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -13,9 +14,17 @@ animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "
 
 script/script = ExtResource( 2 )
 
+[node name="Physicals" parent="."]
+
+editor/display_folded = true
+
 [node name="AnimatedSprite" parent="Physicals"]
 
 frames = SubResource( 1 )
+
+[node name="SeraphDeathParticles" parent="." instance=ExtResource( 5 )]
+
+transform/pos = Vector2( 0, -5 )
 
 
 [editable path="Physicals/EnemyOverlays"]

@@ -28,15 +28,30 @@ transform/pos = Vector2( 43.1693, 374.892 )
 
 transform/pos = Vector2( -2.27203, 59.0739 )
 
-[node name="Title" type="LineEdit" parent="."]
+[node name="Label" type="Label" parent="."]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 15.0
+margin/top = 30.0
+margin/right = 91.0
+margin/bottom = 51.0
+text = "File Name"
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="FileName" type="LineEdit" parent="."]
 
 focus/ignore_mouse = false
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
-margin/left = 249.0
+margin/left = 114.0
 margin/top = 26.0
-margin/right = 384.0
+margin/right = 249.0
 margin/bottom = 53.0
 placeholder/alpha = 0.6
 focus_mode = 2

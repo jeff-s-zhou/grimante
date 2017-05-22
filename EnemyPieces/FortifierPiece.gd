@@ -15,4 +15,23 @@ func deathrattle():
 		for coords in neighbor_coords_range:
 			var neighbor = get_parent().pieces[coords]
 			neighbor.heal(2, 1.5) #delay it by 1.5 so it happens when this piece dies
+			
+func animate_delete_self():
+	add_anim_count()
+	#get_node("Sprinkles").update() #update particleattractor location after all have moved
+	remove_from_group("enemy_pieces")
+	get_node("SeraphDeathParticles").set_emit_timeout(0.1)
+	get_node("SeraphDeathParticles").set_emitting(true)
+	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 1, 0, 0.6, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	emit_signal("animation_done")
+	#get_node("Sprinkles").animate_sprinkles()
+	#yield(get_node("Sprinkles"), "animation_done")
+	#get_node("/root/Combat/ComboSystem").increase_combo()
+	subtract_anim_count()
+	get_node("Timer").set_wait_time(1.5)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
+	self.queue_free()
 	

@@ -52,7 +52,8 @@ func start_attack(attack_coords):
 	var difference = 2 * (location.get_pos() - get_parent().locations[decremented_coords].get_pos())/3
 	var new_position = location.get_pos() - difference
 	add_animation(self, "animate_move_to_pos", true, [new_position, 700, true, Tween.TRANS_QUAD, Tween.EASE_IN])
-	yield(get_node("Tween"), "tween_complete")
+	yield(self, "animation_done")
+	print("met here?")
 	emit_signal("shake")
 	
 

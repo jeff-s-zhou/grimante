@@ -84,42 +84,44 @@ func sandbox_enemies():
 	return EnemyWrappers.FiniteGeneratedWrapper.new(turn_power_levels)
 	
 func sandbox_enemies2():
-	var turn_power_levels = [300, 0, 0, 0, 0]
-	var enemies = [{Vector2(3, 4): make(Drummer, 4)}]
+	var enemies = [{Vector2(3, 5): make(Grunt, 4)}, {Vector2(3, 2): make(Drummer, 6)}]
 	#var enemies = load_level("level2.save")
-	return EnemyWrappers.FiniteCuratedWrapper.new(turn_power_levels, enemies)
+	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
 func sandbox_extras():
 	var tutorial = TutorialPrototype.instance()
 
 	var turn0_player_start_rule = RulePrototype.instance()
 	turn0_player_start_rule.initialize(["Clear the board of enemies to win."])
-	tutorial.add_player_turn_start_rule(turn0_player_start_rule, 0)
+	tutorial.add_player_turn_start_rule(turn0_player_start_rule, 1)
 	
 	var forced_action = ForcedActionPrototype.instance()
 	forced_action.initialize(Vector2(3, 7), " Click on the Berserker to select it.", Vector2(3, 5), "Click on this tile to move the Berserker here.")
-	tutorial.add_forced_action(forced_action, 0)
+	tutorial.add_forced_action(forced_action, 1)
 	
 	var turn0_enemy_rule = RulePrototype.instance()
 	turn0_enemy_rule.initialize(["Enemies move down one tile each turn.", "If an enemy exits from the bottom of the board, you lose."])
-	tutorial.add_enemy_turn_end_rule(turn0_enemy_rule, 0)
+	tutorial.add_enemy_turn_end_rule(turn0_enemy_rule, 1)
 	
 	#return {"shifting_sands_tiles": {Vector2(3, 6): 4}, "tutorial":tutorial}
 	return {"tutorial":tutorial, "free_deploy":false}
 	
 func sandbox_extras2():
-	return {"required_units":{1: Cavalier, 2: Berserker, 3: Pyromancer, 4: Corsair, 5: Archer}}
+	return {"shifting_sands_tiles": {Vector2(3, 6): 4}, "required_units":{1: Cavalier, 2: Berserker, 3: Pyromancer, 4: Corsair, 5: Archer}}
+	#return {"required_units":{1: Cavalier, 2: Berserker, 3: Pyromancer, 4: Corsair, 5: Archer}}
 
 func sandbox_level():
-	
-	var name = "Berserker: Part 1"
-	var level = LevelTypes.RoomSeal.new(name)
-	var power_levels = [300, 0, 0, 0]
-	level.set_generated_enemies(power_levels)
-	var enemies = []
-	level.set_curated_enemies(enemies)
-	
-	return LevelTypes.RoomSeal.new(sandbox_allies(), sandbox_enemies(), null, sandbox_extras2())#, null, sandbox_extras()) 
+#	
+#	var name = "Berserker: Part 1"
+#	var level = LevelTypes.RoomSeal.new(name)
+#	var power_levels = [300, 0, 0, 0]
+#	level.set_generated_enemies(power_levels)
+#	var enemies = load_level("level2.save")
+#	level.set_curated_enemies(enemies)
+#	
+	return LevelTypes.RoomSeal.new("Test Name", sandbox_allies(), sandbox_enemies2(), null, sandbox_extras2())#, null, sandbox_extras()) 
+
+var list = [sandbox_level()]
 
 var sandbox_level_ref = funcref(self, "sandbox_level")
 #

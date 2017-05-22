@@ -58,9 +58,11 @@ func _ready():
 #	
 #	
 #
-	self.level_schematic_func = get_node("/root/global").get_param("level")
-	self.level_schematic = self.level_schematic_func.call_func()
-	
+#	self.level_schematic_func = get_node("/root/global").get_param("level")
+#	self.level_schematic = self.level_schematic_func.call_func()
+
+	self.level_schematic = get_node("/root/global").get_param("level")
+#	
 	self.tutorial = self.level_schematic.tutorial
 	if self.tutorial != null:
 		add_child(self.tutorial)
@@ -250,7 +252,7 @@ func end_turn_pressed():
 func restart():
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic_func})
+	get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic})
 
 	
 		
@@ -395,8 +397,6 @@ func enemy_phase():
 
 	
 	deploy_wave()
-	
-	self.state_manager.update_reinforcement_display()
 		
 	if(get_node("/root/AnimationQueue").is_animating()):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
@@ -418,13 +418,14 @@ func enemy_phase():
 	
 	get_node("PhaseShifter").player_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
-	self.state_manager.update()
-	self.turn_count += 1
+	self.state_manager.update(self.turn_count)
 	start_player_phase()
 
 
 
 func start_player_phase():
+	self.turn_count += 1
+	
 	if self.tutorial != null and self.tutorial.has_player_turn_start_rule(get_turn_count()):
 		self.tutorial.display_player_turn_start_rule(get_turn_count())
 		set_process_input(false)
@@ -520,7 +521,7 @@ func deploy_wave(mass_summon=false):
 
 	#var wave = self.next_wave
 	#self.next_wave = self.enemy_waves.get_next_summon()
-	var wave = self.enemy_waves.get_next_summon()
+	var wave = self.enemy_waves.get_next_summon(self.turn_count)
 	
 	if wave != null:
 		for key in wave.keys():
@@ -530,7 +531,7 @@ func deploy_wave(mass_summon=false):
 			var modifiers = prototype_parts["modifiers"]
 			initialize_enemy_piece(key, prototype, hp, modifiers, mass_summon)
 
-	display_wave_preview(self.enemy_waves.preview_next_summon())
+	display_wave_preview(self.enemy_waves.preview_next_summon(self.turn_count))
 
 
 func display_wave_preview(wave):
@@ -567,7 +568,7 @@ func enemy_win():
 	get_node("Timer2").set_wait_time(0.5)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
-	get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level": self.level_schematic_func})
+	get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level": self.level_schematic})
 	
 	
 func damage_defenses():

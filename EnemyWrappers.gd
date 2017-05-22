@@ -21,8 +21,6 @@ class FiniteGeneratedWrapper:
 	var piece_roster_by_turn = {}
 	var modifier_roster_by_turn = {}
 	
-	var current_turn_index = 0
-	
 	func _init(turn_power_levels, piece_roster_by_turn=null, modifier_roster_by_turn=null, big_wave_threshold=1400):
 		self.turn_power_levels = turn_power_levels
 		self.big_wave_threshold = 1400
@@ -37,52 +35,49 @@ class FiniteGeneratedWrapper:
 		return constants.FULL_MODIFIER_ROSTER
 		#return self.modifier_roster_by_turn(index)
 
-	func get_next_summon():
-		if self.current_turn_index < self.turn_power_levels.size():
+	func get_next_summon(turn_index):
+		if turn_index == 0:
+			self.next_wave = null
+		
+		if turn_index < self.turn_power_levels.size():
 			if self.next_wave != null:
 				var wave = self.next_wave
 				self.next_wave = null
-				self.current_turn_index += 1
 				return wave
 			else:
-				var power_level = self.turn_power_levels[self.current_turn_index]
-				var roster = get_piece_roster(self.current_turn_index)
-				var modifier_roster = get_modifier_roster(self.current_turn_index)
-				self.current_turn_index += 1
+				var power_level = self.turn_power_levels[turn_index]
+				var roster = get_piece_roster(turn_index)
+				var modifier_roster = get_modifier_roster(turn_index)
 				var wave = generator.generate_wave(power_level, roster, modifier_roster)
 				return wave
 				
 		else:
 			return null
 	
-	func preview_next_summon():
-		if self.current_turn_index < self.turn_power_levels.size():
-			var power_level = self.turn_power_levels[self.current_turn_index]
-			var roster = get_piece_roster(self.current_turn_index)
-			var modifier_roster = get_modifier_roster(self.current_turn_index)
+	func preview_next_summon(turn_index):
+		if turn_index + 1 < self.turn_power_levels.size():
+			var power_level = self.turn_power_levels[turn_index + 1]
+			var roster = get_piece_roster(turn_index + 1)
+			var modifier_roster = get_modifier_roster(turn_index + 1)
 			var wave = generator.generate_wave(power_level, roster, modifier_roster)
 			self.next_wave = wave
 			return wave
 		else:
 			return null
 		
-	func get_turns_til_next_wave():
-		for i in range(self.current_turn_index, self.turn_power_levels.size()):
+	func get_turns_til_next_wave(turn_index):
+		for i in range(turn_index, self.turn_power_levels.size()):
 			if self.turn_power_levels[i] >= self.big_wave_threshold:
-				return (i - self.current_turn_index)
+				return (i - turn_index)
 		return null
 
 
 class FiniteCuratedWrapper:
 	var generator = load("res://EnemyListGenerator.gd").new()
-	var current_turn_index = 0
-	var turn_power_levels
 	var waves
-	var big_wave_threshold = 0
 	
-	func _init(turn_power_levels, new_waves, big_wave_threshold=1400):
-		self.turn_power_levels = turn_power_levels
-		
+	func _init(new_waves):
+
 		if typeof(new_waves) == TYPE_DICTIONARY:
 			var keys = new_waves.keys()
 			self.waves = []
@@ -91,26 +86,26 @@ class FiniteCuratedWrapper:
 				self.waves.append(new_waves[key])
 		else:
 			self.waves = new_waves
-		self.big_wave_threshold = big_wave_threshold
 		
-	func get_next_summon():
-		if self.current_turn_index < self.waves.size():
-			var wave = self.waves[self.current_turn_index]
-			self.current_turn_index += 1
+	func get_next_summon(turn_index):
+		print("getting next summon")
+		print(turn_index)
+		if turn_index < self.waves.size():
+			var wave = self.waves[turn_index]
 			return wave
 		else:
 			return null
 	
-	func preview_next_summon():
-		if self.current_turn_index < self.waves.size():
-			return self.waves[self.current_turn_index]
+	func preview_next_summon(turn_index):
+		if turn_index + 1 < self.waves.size():
+			return self.waves[turn_index + 1]
 		else:
 			return null
 		
-	func get_turns_til_next_wave():
-		for i in range(self.current_turn_index, self.turn_power_levels.size()):
-			if self.turn_power_levels[i] >= self.big_wave_threshold:
-				return (i - self.current_turn_index)
+	func get_turns_til_next_wave(turn_index):
+		for i in range(turn_index, self.waves.size()):
+			if !self.waves[i].empty():
+				return (i - turn_index)
 		return null
 
 
