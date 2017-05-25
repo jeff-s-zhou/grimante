@@ -7,7 +7,7 @@ extends Node2D
 signal animation_done
 signal count_animation_done
 
-const ASSIST_TYPES = {"attack":1, "movement":2, "invulnerable":3, "finisher":4}
+onready var ASSIST_TYPES = get_node("/root/Combat/AssistSystem").ASSIST_TYPES
 
 
 func _ready():
@@ -21,7 +21,7 @@ func animate_activate_assist(assist_type):
 		get_node("ComboSparklesRed").set_emitting(true)
 	elif assist_type == ASSIST_TYPES.movement:
 		get_node("ComboSparklesYellow").set_emitting(true)
-	elif assist_type == ASSIST_TYPES.invulnerable:
+	elif assist_type == ASSIST_TYPES.defense:
 		get_node("ComboSparklesBlue").set_emitting(true)
 	emit_signal("count_animation_done")
 	
@@ -33,10 +33,8 @@ func animate_assist(assist_type, pos_difference):
 		sparkles_list = [get_node("ComboSparklesRed")]
 	elif assist_type == ASSIST_TYPES.movement:
 		sparkles_list = [get_node("ComboSparklesYellow")]
-	elif assist_type == ASSIST_TYPES.invulnerable:
+	elif assist_type == ASSIST_TYPES.defense:
 		sparkles_list = [get_node("ComboSparklesBlue")]
-	elif assist_type == ASSIST_TYPES.finisher:
-		sparkles_list = [get_node("ComboSparklesRed"), get_node("ComboSparklesYellow"), get_node("ComboSparklesBlue")]
 	for sparkles in sparkles_list:
 		sparkles.get_node("ParticleAttractor2D").set_pos(pos_difference)
 		sparkles.get_node("ParticleAttractor2D").set_enabled(true)

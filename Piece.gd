@@ -14,6 +14,8 @@ signal count_animation_done
 
 var current_animation_sequence = null
 
+var debug_anim_counter = 0
+
 var mid_animation = false
 
 var mid_leaping_animation = false
@@ -31,7 +33,7 @@ func get_unit_name():
 	
 func debug():
 	#get_node("DebugText").show()
-	get_node("DebugText").set_text(str(self.mid_animation) + "\n" + str(self.coords))
+	get_node("DebugText").set_text(str(self.debug_anim_counter) + "\n" + str(self.coords))
 
 func _ready():
 	pass
@@ -40,10 +42,12 @@ func _ready():
 	
 func add_anim_count():
 	get_node("/root/AnimationQueue").update_animation_count(1)
+	self.debug_anim_counter += 1
 	self.mid_animation = true
 	
 func subtract_anim_count():
 	get_node("/root/AnimationQueue").update_animation_count(-1)
+	self.debug_anim_counter -=1
 	self.mid_animation = false
 
 
@@ -58,7 +62,9 @@ func get_new_animation_sequence(blocking=false):
 	add_child(self.current_animation_sequence)
 	return self.current_animation_sequence
 	
-
+func set_animation_sequence_blocking():
+	if self.current_animation_sequence != null:
+		self.current_animation_sequence.blocking = true
 
 func add_animation(node, func_ref, blocking, arguments=[]):
 	if self.current_animation_sequence != null:
@@ -109,7 +115,8 @@ func check_global_seen():
 
 func collide(area):
 	if area.get_name() != "CursorArea":
-		if self.mid_animation and !self.mid_leaping_animation: #If leaping, it'll set its own z above everythin else
+		var other_piece = area.get_parent()
+		if !other_piece.mid_leaping_animation and !self.mid_leaping_animation: #If leaping, it'll set its own z above everythin else
 			var other_piece = area.get_parent()
 			if other_piece.get_pos().y > get_pos().y:
 				other_piece.set_z(get_z() + 1)
@@ -149,6 +156,8 @@ func animate_move_to_pos(position, speed, blocking=false, trans_type=Tween.TRANS
 		emit_signal("animation_done")
 		subtract_anim_count()
 	else:
+		yield(tween, "tween_complete")
+		tween.queue_free()
 		subtract_anim_count()
 
 
@@ -178,12 +187,14 @@ func animate_move_and_hop(new_coords, speed=250, blocking=true, trans_type=Tween
 	animate_short_hop(speed, new_coords)
 	if blocking:
 		yield(get_node("Tween"), "tween_complete")
-#		get_node("Timer").set_wait_time(0.1)
-#		get_node("Timer").start()
-#		yield(get_node("Timer"), "timeout")
+		#need this in because apparently Tween emits the signal slightly early
+		get_node("Timer").set_wait_time(0.1)
+		get_node("Timer").start()
+		yield(get_node("Timer"), "timeout")
 		emit_signal("animation_done")
 		subtract_anim_count()
 	else:
+		yield(get_node("Tween"), "tween_complete")
 		subtract_anim_count()
 		
 	

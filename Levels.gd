@@ -107,7 +107,7 @@ func sandbox_extras():
 	return {"tutorial":tutorial, "free_deploy":false}
 	
 func sandbox_extras2():
-	return {"shifting_sands_tiles": {Vector2(3, 6): 4}, "required_units":{1: Cavalier, 2: Berserker, 3: Pyromancer, 4: Corsair, 5: Archer}}
+	return {"shifting_sands_tiles": {Vector2(3, 6): 4}, "required_units":{1: Assassin, 2: Berserker, 4: Corsair, 5: Archer}}
 	#return {"required_units":{1: Cavalier, 2: Berserker, 3: Pyromancer, 4: Corsair, 5: Archer}}
 
 func sandbox_level():
@@ -119,7 +119,7 @@ func sandbox_level():
 #	var enemies = load_level("level2.save")
 #	level.set_curated_enemies(enemies)
 #	
-	return LevelTypes.RoomSeal.new("Test Name", sandbox_allies(), sandbox_enemies2(), null, sandbox_extras2())#, null, sandbox_extras()) 
+	return LevelTypes.RoomSeal.new("Test Name", sandbox_allies(), sandbox_enemies(), null, sandbox_extras2())#, null, sandbox_extras()) 
 
 var list = [sandbox_level()]
 

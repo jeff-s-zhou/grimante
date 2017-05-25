@@ -104,11 +104,14 @@ func handle_assist():
 
 #start emitting the particles
 func activate_assist(assist_type):
+	add_animation(get_node("InspireIndicator"), "animate_inspire_ready", false, [assist_type])
 	add_animation(get_node("Physicals/ComboSparkleManager"), "animate_activate_assist", false, [assist_type])
 
 	
 func assist(piece, assist_type):
-	add_animation(self, "animate_assist", true, [piece, assist_type])
+	add_animation(get_node("InspireIndicator"), "animate_give_inspire", true, [assist_type])
+	add_animation(self, "animate_assist", false, [piece, assist_type])
+	add_animation(piece.get_node("InspireIndicator"), "animate_receive_inspire", true, [assist_type])
 
 #direct the particles to a certain coords
 func animate_assist(piece, assist_type):
@@ -178,16 +181,13 @@ func _is_within_ally_shove_range(coords):
 func is_placed():
 	return self.state == States.PLACED
 
-func delete_self(animation_sequence=null):
+func delete_self():
 	print("deleting self at : " + str(self.coords))
 	var location = get_parent().locations[self.coords]
 	location.add_corpse(self)
-	if animation_sequence != null: #part of some other unit's animation sequence
-		animation_sequence.add(self, "animate_delete_self", true)
-		animation_sequence.add(location, "animate_add_corpse", false)
-	else:
-		add_animation(self, "animate_delete_self", true)
-		add_animation(location, "animate_add_corpse", false)
+
+	add_animation(self, "animate_delete_self", true)
+	add_animation(location, "animate_add_corpse", false)
 		
 	get_parent().remove_piece(self.coords)
 	remove_from_group("player_pieces")
@@ -353,7 +353,6 @@ func hovered():
 
 #called when an event happens inside the click area hitput
 func input_event(event):
-	print(self.unit_name)
 	if self.deploying_flag: #if in deploy phase
 		deploy_input_event(event)
 		return
@@ -468,9 +467,9 @@ func animate_placed():
 	emit_signal("animated_placed", self.unit_name)
 	
 	
-func player_attacked(enemy, animation_sequence=null):
+func player_attacked(enemy):
 	if dies_to_collision(enemy):
-		delete_self(animation_sequence)
+		delete_self()
 #		if animation_sequence != null: #if it's part of another unit's animation sequence
 #			animation_sequence.add(self, "animate_delete_self", true)
 #		else:

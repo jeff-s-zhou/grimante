@@ -36,10 +36,7 @@ func turn_attack_update():
 		
 func swipe(coords):
 	add_animation(self, "start_swipe", true, [coords])
-	if self.current_animation_sequence != null:
-		get_parent().pieces[coords].player_attacked(self, self.current_animation_sequence)
-	else:
-		get_parent().pieces[coords].player_attacked(self)
+	get_parent().pieces[coords].player_attacked(self)
 	add_animation(self, "end_swipe", true)
 
 func start_swipe(attack_coords):

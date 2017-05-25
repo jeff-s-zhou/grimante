@@ -346,6 +346,7 @@ func computer_input(event):
 			
 	elif event.is_action("test_action") and event.is_pressed():
 		get_node("/root/AnimationQueue").debug()
+		debug_mode()
 		for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
 			enemy_piece.debug()
 			
@@ -380,7 +381,6 @@ func enemy_phase():
 	for enemy_piece in enemy_pieces:
 		enemy_piece.turn_update()
 	
-	print("in enemy_phase call")
 	if(get_node("/root/AnimationQueue").is_animating()):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 		
@@ -391,7 +391,6 @@ func enemy_phase():
 	get_node("Grid").update_furthest_back_coords()
 	
 	#if there are enemy pieces, wait for them to finish
-	print("this call?")
 	if(get_node("/root/AnimationQueue").is_animating()):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 

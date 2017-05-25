@@ -115,7 +115,7 @@ func slash(new_coords):
 
 func animate_slash(attack_coords):
 	var location = get_parent().locations[attack_coords]
-	var difference = 2 * (location.get_pos() - get_pos())/3
+	var difference = 4 * (location.get_pos() - get_pos())/5
 	var new_position = location.get_pos() - difference
 	animate_move_to_pos(new_position, 450, true, Tween.TRANS_SINE, Tween.EASE_IN)
 

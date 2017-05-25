@@ -49,7 +49,7 @@ func start_attack(attack_coords):
 	var location = get_parent().locations[attack_coords]
 	var decremented_coords = decrement_one(attack_coords)
 	
-	var difference = 2 * (location.get_pos() - get_parent().locations[decremented_coords].get_pos())/3
+	var difference = 4 * (location.get_pos() - get_parent().locations[decremented_coords].get_pos())/5
 	var new_position = location.get_pos() - difference
 	add_animation(self, "animate_move_to_pos", true, [new_position, 700, true, Tween.TRANS_QUAD, Tween.EASE_IN])
 	yield(self, "animation_done")

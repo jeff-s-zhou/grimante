@@ -68,7 +68,7 @@ func get_passive_damage():
 
 
 func get_movement_range():
-	return get_parent().get_radial_range(self.coords, [1, self.movement_range])
+	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
 	
 	
 func get_attack_range():
@@ -102,7 +102,7 @@ func animate_backstab(attack_coords):
 	set_pos(new_position)
 	
 	var attack_location = get_parent().locations[attack_coords]
-	var difference = 2 * (attack_location.get_pos() - get_pos())/3
+	var difference = 3 * (attack_location.get_pos() - get_pos())/4
 	var attack_position = attack_location.get_pos() - difference
 	
 	get_node("Tween 2").interpolate_property(self, "visibility/opacity", 0, 1, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
@@ -114,7 +114,7 @@ func animate_backstab(attack_coords):
 func animate_directly_below_backstab(attack_coords):
 	add_anim_count()
 	var attack_location = get_parent().locations[attack_coords]
-	var difference = 2 * (attack_location.get_pos() - get_pos())/3
+	var difference = 3 * (attack_location.get_pos() - get_pos())/4
 	var attack_position = attack_location.get_pos() - difference
 	animate_move_to_pos(attack_position, 200, true, Tween.TRANS_SINE, Tween.EASE_IN)
 	subtract_anim_count()

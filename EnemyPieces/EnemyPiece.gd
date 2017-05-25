@@ -149,6 +149,7 @@ func will_die_to(damage):
 	return (self.hp - damage) <= 0 and self.shielded == false
 	
 func reset_prediction_flyover():
+	
 	get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
 	get_node("Physicals/HealthDisplay").set_health(self.temp_display_hp)
 	
@@ -198,6 +199,7 @@ func animate_predict_hp(hp, value, color):
 		tween.interpolate_property(text, "rect/pos", text.get_pos(), destination, 1.2, Tween.TRANS_EXPO, Tween.EASE_OUT)
 		tween.start()
 		yield(tween, "tween_complete") #this is the problem line...fuuuuck
+		self.predicting_hp = false
 		tween.queue_free()
 
 
@@ -490,8 +492,10 @@ func modify_hp(amount, delay=0):
 		get_new_animation_sequence()
 		add_animation(self, "animate_set_hp", true, [self.hp, amount, delay])
 		if self.hp == 0: 
+			print("deleting self")
 			emit_signal("enemy_death")
 			delete_self() 
+			set_animation_sequence_blocking()
 			
 		enqueue_animation_sequence()
 			
@@ -551,7 +555,7 @@ func animate_delete_self():
 	add_anim_count()
 	#get_node("Sprinkles").update() #update particleattractor location after all have moved
 	remove_from_group("enemy_pieces")
-	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 1, 0, 0.6, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 1, 0, 0.4, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	emit_signal("animation_done")
@@ -559,7 +563,11 @@ func animate_delete_self():
 	#yield(get_node("Sprinkles"), "animation_done")
 	#get_node("/root/Combat/ComboSystem").increase_combo()
 	subtract_anim_count()
-	print("mid animation is: " + str(self.mid_animation))
+	#let it resolve any other animations
+	get_node("Timer").set_wait_time(1)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
+	print("animation count is: " + str(self.debug_anim_counter))
 	self.queue_free()
 	
 
