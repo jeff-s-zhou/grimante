@@ -286,13 +286,6 @@ func cast_ultimate():
 	get_parent().reset_highlighting()
 	display_action_range()
 
-
-func placed():
-	if self.ultimate_flag:
-		self.ultimate_used_flag = true
-		self.ultimate_flag = false
-	.placed()
-
 	
 func display_overwatch():
 	pass

@@ -79,17 +79,6 @@ class RoomSeal extends BaseLevelType:
 		pass
 
 
-class Defend extends BaseLevelType:
-	var Constants = preload("constants.gd").new()
-	var num_turns
-	func check_player_win(state):
-		return state.enemy_pieces.size() == 0 or state.turns_left == 0
-	
-	func _init(allies, enemies, num_turns, \
-	next_level=null, extras={}).(allies, enemies, next_level, extras):
-		self.num_turns = num_turns
-		set_end_conditions(Constants.end_conditions.Defend)
-
 class Timed extends BaseLevelType:
 	var Constants = preload("constants.gd").new()
 	var num_turns
@@ -99,18 +88,4 @@ class Timed extends BaseLevelType:
 		self.num_turns = num_turns
 		set_end_conditions(Constants.end_conditions.Timed)
 		
-class MultiTimed extends BaseLevelType:
-	var Constants = preload("constants.gd").new()
-	var enemy_phases = []
-	
-	func _init(allies, first_phase, enemy_phases, next_level=null, extras={}).(allies, enemies, next_level, extras):
-		self.enemy_phases = enemy_phases
-		set_end_conditions(Constants.end_conditions.MultiTimed)
-		
-	
-	
-#	
-#class FogOfWar extends BaseLevelType:
-#	func check_player_win():
-#		pass
 

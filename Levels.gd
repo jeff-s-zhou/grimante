@@ -119,7 +119,7 @@ func sandbox_level():
 #	var enemies = load_level("level2.save")
 #	level.set_curated_enemies(enemies)
 #	
-	return LevelTypes.RoomSeal.new("Test Name", sandbox_allies(), sandbox_enemies(), null, sandbox_extras2())#, null, sandbox_extras()) 
+	return LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies(), 7, null, sandbox_extras2())#, null, sandbox_extras()) 
 
 var list = [sandbox_level()]
 

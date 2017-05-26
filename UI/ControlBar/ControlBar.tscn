@@ -1,0 +1,42 @@
+[gd_scene load_steps=4 format=1]
+
+[ext_resource path="res://UI/ControlBar/EndTurnButton.tscn" type="PackedScene" id=1]
+[ext_resource path="res://UI/ControlBar/StarButton.tscn" type="PackedScene" id=2]
+
+[sub_resource type="StyleBoxFlat" id=1]
+
+content_margin/left = -1.0
+content_margin/right = -1.0
+content_margin/top = -1.0
+content_margin/bottom = -1.0
+bg_color = Color( 0, 0, 0, 1 )
+light_color = Color( 0, 0, 0, 1 )
+dark_color = Color( 0, 0, 0, 1 )
+border_size = 0
+border_blend = true
+draw_bg = true
+
+[node name="ControlBar" type="Node2D"]
+
+[node name="Panel" type="Panel" parent="."]
+
+visibility/opacity = 0.4
+focus/ignore_mouse = true
+focus/stop_mouse = false
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = -24.0
+margin/top = 0.0
+margin/right = 699.0
+margin/bottom = 145.0
+custom_styles/panel = SubResource( 1 )
+
+[node name="EndTurnButton" parent="." instance=ExtResource( 1 )]
+
+transform/pos = Vector2( 250, 21 )
+
+[node name="StarButton" parent="." instance=ExtResource( 2 )]
+
+transform/pos = Vector2( 30, 21 )
+
+

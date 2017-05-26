@@ -53,10 +53,10 @@ func turn_update():
 	self.moves_remaining = 2
 	.turn_update()
 	
-func placed():
+func placed(ending_turn=false):
 	self.moves_remaining -= 1
-	if self.moves_remaining == 0:
-		.placed()
+	if self.moves_remaining == 0 or ending_turn:
+		.placed(ending_turn)
 	else:
 		self.handle_assist()
 		get_parent().selected = null

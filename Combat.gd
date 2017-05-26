@@ -48,7 +48,6 @@ func _ready():
 	#debug_mode()
 	
 	get_node("ControlBar/EndTurnButton").connect("pressed", self, "end_turn_pressed")
-	get_node("ControlBar/RestartButton").connect("pressed", self, "restart")
 	get_node("/root/AnimationQueue").connect("animation_count_update", self, "update_animation_count_display")
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
@@ -90,7 +89,8 @@ func _ready():
 
 	add_child(self.state_manager)
 	self.state_manager.initialize(self.level_schematic)
-	self.state_manager.set_pos(Vector2(get_viewport_rect().size.width/2, 30))
+	self.state_manager.get_node("StarSubsystem").connect("add_star", get_node("ControlBar/StarButton"), "add_star")
+	#self.state_manager.set_pos(Vector2(get_viewport_rect().size.width/2, 30))
 #
 		
 	if self.level_schematic.shadow_wall_tiles.size() > 0:
@@ -213,7 +213,7 @@ func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon, anim
 		get_node("Grid").add_piece(position, enemy_piece)
 		enemy_piece.initialize(health, modifiers, prototype)
 		enemy_piece.connect("broke_defenses", self, "damage_defenses")
-		enemy_piece.connect("enemy_death", get_node("ControlBar/CrystalSystem"), "add_kill_count")
+		enemy_piece.connect("enemy_death", self.state_manager.get_node("StarSubsystem"), "add_kill_count")
 		#enemy_piece.get_node("Sprinkles").set_particle_endpoint(get_node("ComboSystem/ComboPointsLabel").get_global_pos())
 		enemy_piece.check_global_seen()
 		if animation_sequence != null:
@@ -235,7 +235,7 @@ func end_turn():
 	get_node("TutorialTooltip").reset()
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 		player_piece.finisher_flag = false
-		player_piece.placed()
+		player_piece.placed(true)
 		player_piece.clear_assist()
 	get_node("AssistSystem").clear_assist()
 	get_node("PhaseShifter").enemy_phase_animation()
@@ -406,7 +406,7 @@ func enemy_phase():
 	yield(get_node("Timer2"), "timeout")
 	
 	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
-	if self.state_manager.check_enemy_win(): #logic would change based on game type
+	if self.state_manager.check_enemy_win(self.turn_count): #logic would change based on game type
 		enemy_win()
 	
 	if self.tutorial != null and self.tutorial.has_enemy_turn_end_rule(get_turn_count()):

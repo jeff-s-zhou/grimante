@@ -132,6 +132,6 @@ default/chorus_send = 0.0
 
 [node name="InspireIndicator" parent="." instance=ExtResource( 13 )]
 
-transform/pos = Vector2( 0, -8 )
+transform/pos = Vector2( 0, -5 )
 
 

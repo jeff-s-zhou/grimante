@@ -104,6 +104,7 @@ func handle_assist():
 
 #start emitting the particles
 func activate_assist(assist_type):
+	print("activating assist here?")
 	add_animation(get_node("InspireIndicator"), "animate_inspire_ready", false, [assist_type])
 	add_animation(get_node("Physicals/ComboSparkleManager"), "animate_activate_assist", false, [assist_type])
 
@@ -447,8 +448,10 @@ func invalid_move():
 
 #helper function for act
 
-func placed():
-	self.handle_assist()
+
+func placed(ending_turn=false):
+	if !ending_turn:
+		self.handle_assist()
 	add_animation(self, "animate_placed", false)
 	get_node("BlueGlow").hide()
 	self.state = States.PLACED

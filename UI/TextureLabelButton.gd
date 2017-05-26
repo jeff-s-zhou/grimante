@@ -5,6 +5,7 @@ extends Node2D
 # var b = "textvar"
 
 signal pressed
+signal released
 signal button_down
 signal button_up
 
@@ -26,13 +27,10 @@ func _ready():
 	#have them move downward the difference in y height of the default texture and the pressed texture
 	
 func is_pressed():
-	print("met here?")
 	emit_signal("pressed")
-	
 	
 func is_button_down():
 	emit_signal("button_down")
-	print("met here33?")
 	get_node("Toppings").translate(Vector2(0, self.y_difference))
 	
 func is_button_up():

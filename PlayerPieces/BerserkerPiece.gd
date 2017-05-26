@@ -215,10 +215,3 @@ func cast_ultimate():
 	display_action_range()
 	
 
-func placed():
-	if self.ultimate_flag:
-		self.ultimate_used_flag = true
-		self.ultimate_flag = false
-	.placed()
-
-

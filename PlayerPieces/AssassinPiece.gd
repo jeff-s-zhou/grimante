@@ -43,9 +43,9 @@ func _ready():
 	self.ultimate_description = ULTIMATE_DESCRIPTION
 	self.assist_type = ASSIST_TYPES.attack
 
-func delete_self(animation_sequence=null):
+func delete_self():
 	get_node("/root/Combat").assassin = null
-	.delete_self(animation_sequence)
+	.delete_self()
 
 
 func resurrect():
@@ -215,11 +215,12 @@ func finisher_reactivate():
 	self.bloodlust_flag = false
 	.finisher_reactivate()
 
-func placed():
+func placed(ending_turn=false):
 	self.bloodlust_flag = false
 	if self.ultimate_flag:
 		self.ultimate_flag = false
-	.placed()
+	.placed(ending_turn)
+
 
 func trigger_passive(attack_range):
 	for attack_coords in attack_range:
