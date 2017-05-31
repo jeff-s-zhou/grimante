@@ -15,13 +15,15 @@ var location_prototype = preload("res://Location.tscn")
 const Berserker = preload("res://PlayerPieces/BerserkerPiece.tscn")
 const Cavalier = preload("res://PlayerPieces/CavalierPiece.tscn")
 const Archer = preload("res://PlayerPieces/ArcherPiece.tscn")
-const Knight = preload("res://PlayerPieces/KnightPiece.tscn")
 const Assassin = preload("res://PlayerPieces/AssassinPiece.tscn")
 const Stormdancer = preload("res://PlayerPieces/StormdancerPiece.tscn")
 const Pyromancer = preload("res://PlayerPieces/PyromancerPiece.tscn")
 const FrostKnight = preload("res://PlayerPieces/FrostKnightPiece.tscn")
 const Saint = preload("res://PlayerPieces/SaintPiece.tscn")
 const Corsair = preload("res://PlayerPieces/CorsairPiece.tscn")
+
+const TILE_X_OFFSET = -5
+const TILE_Y_OFFSET = 20
 
 func _ready():
 	# Called every time the node is added to the scene.
@@ -35,30 +37,19 @@ func _ready():
 		var coords = Vector2(i, 99)
 		self.locations[coords] = location
 		location.set_coords(coords)
-		location.set_pos(Vector2(x_width * i + 106, 60)) 
-
-
-func handle_arrow_input(event, name):
-	if get_node("InputHandler").is_select(event):
-		if name == "LeftArrow":
-			self.shift_amount = -4.0
-		elif name == "RightArrow":
-			self.shift_amount = 4.0
-		set_process(true)
-	elif get_node("InputHandler").is_unpress(event):
-		set_process(false)
-
-
-func _process(delta):
-	shift()
-			
-
-func shift():
-	for key in self.locations.keys():
-		self.locations[key].translate(Vector2(self.shift_amount, 0))
-	for key in self.pieces.keys():
-		self.pieces[key].translate(Vector2(self.shift_amount, 0))
 		
+		var tile_x_spacing = location.get_size().width + TILE_X_OFFSET
+		var tile_y_spacing = location.get_size().height + TILE_Y_OFFSET
+		
+		if i in range(0, 4):
+			location.set_pos(Vector2(2 * tile_x_spacing * i, 0)) 
+		elif i in range(4, 7):
+			var x_coords = 2 * tile_x_spacing * (i - 4)
+			location.set_pos(Vector2(x_coords + tile_x_spacing, 50))
+		elif i in range(7, 9):
+			location.set_pos(Vector2(2 * tile_x_spacing * (i - 6), tile_y_spacing))
+		
+
 
 func queue_free():
 	for coords in self.pieces:

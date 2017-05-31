@@ -25,7 +25,7 @@ Inspire: +1 Attack
 
 const ATTACK_DESCRIPTION = """ Leap Strike. Deal 4 damage to an enemy within movement range. If the enemy is killed by the attack, move to its tile.
 """
-const PASSIVE_DESCRIPTION = """Earthshatter.  Moving to an empty tile deals 2 damage to all enemies adjacent to the tile and stuns them.
+const PASSIVE_DESCRIPTION = """Earthslam.  Moving to an empty tile deals 2 damage to all enemies adjacent to the tile and stuns them.
 """
 
 const ULTIMATE_DESCRIPTION = """Earthshatter. Stun and attack all enemies in a line from the Berserker, damage starting at 5 and decreasing by 1 for each enemy hit.

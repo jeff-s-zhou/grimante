@@ -74,9 +74,9 @@ func update_display_forced_action(coords, text):
 	
 	get_node("Label").set_bbcode("[center]" + text + "[/center]")
 	if new_pos.y > get_viewport_rect().size.height/2:
-		get_node("Label").set_pos(Vector2(0, 300))
+		get_node("Label").set_pos(Vector2(24, 300))
 	else:
-		get_node("Label").set_pos(Vector2(0, get_viewport_rect().size.height  - 300))
+		get_node("Label").set_pos(Vector2(24, get_viewport_rect().size.height  - 300))
 	get_node("Label").show()
 	
 	get_node("Arrow").set_pos(new_pos)
@@ -143,7 +143,7 @@ func update_rule():
 		if typeof(line) == TYPE_ARRAY:
 			pass
 		else:
-			get_node("Label").set_pos(Vector2(0, 200))
+			get_node("Label").set_pos(Vector2(24, 200))
 			get_node("Label").set_bbcode("[center]" + line + "[/center]")
 			get_node("TapLabel").show()
 			get_node("RuleOverlay").show()

@@ -14,11 +14,11 @@ const Drummer = preload("res://EnemyPieces/DrummerPiece.tscn")
 const Melee = preload("res://EnemyPieces/MeleePiece.tscn")
 const Ranged = preload("res://EnemyPieces/RangedPiece.tscn")
 const Slime = preload("res://EnemyPieces/SlimePiece.tscn")
+const Spectre = preload("res://EnemyPieces/SpectrePiece.tscn")
 
 const Berserker = preload("res://PlayerPieces/BerserkerPiece.tscn")
 const Cavalier = preload("res://PlayerPieces/CavalierPiece.tscn")
 const Archer = preload("res://PlayerPieces/ArcherPiece.tscn")
-const Knight = preload("res://PlayerPieces/KnightPiece.tscn")
 const Assassin = preload("res://PlayerPieces/AssassinPiece.tscn")
 const Stormdancer = preload("res://PlayerPieces/StormdancerPiece.tscn")
 const Pyromancer = preload("res://PlayerPieces/PyromancerPiece.tscn")
@@ -32,6 +32,8 @@ var enemy_modifiers = load("res://constants.gd").new().enemy_modifiers
 var shield = enemy_modifiers["Shield"]
 var poisonous = enemy_modifiers["Poisonous"]
 var cloaked = enemy_modifiers["Cloaked"]
+var rabid = enemy_modifiers["Rabid"]
+var corrosive = enemy_modifiers["Corrosive"]
 
 #var available_unit_roster = get_node("/root/global").available_unit_roster
 
@@ -68,14 +70,18 @@ func load_level(file_name):
 func make(prototype, hp, modifiers=null):
 	return {"prototype": prototype, "hp": hp, "modifiers":modifiers}
 	
-	
-func make_tip(tip_text, objective_text, arrow_coords, text):
-	return {"tip_text":tip_text, "objective_text": objective_text, "tooltip": {"coords":arrow_coords, "text":text}}
 
-#used when the tooltip changes upon clicking
-func make_complex_tip(tip_text, objective_text, tooltips):
-	return {"tip_text":tip_text, "objective_text": objective_text, "tooltips": tooltips}
-	
+func add_start_rule(tutorial, turn, text_list):
+	var player_start_rule = RulePrototype.instance()
+	player_start_rule.initialize(text_list)
+	tutorial.add_player_turn_start_rule(player_start_rule, 1)
+
+func add_forced_action(tutorial, turn, initial_coords, text, final_coords, text):
+	var forced_action = ForcedActionPrototype.instance()
+	forced_action.initialize(initial_coords, text, final_coords, text)
+	tutorial.add_forced_action(forced_action, turn)
+
+
 func sandbox_allies():
 	return [Assassin, Berserker, Cavalier] #2: Cavalier, 3: Archer, 4: Assassin}
 
@@ -84,7 +90,7 @@ func sandbox_enemies():
 	return EnemyWrappers.FiniteGeneratedWrapper.new(turn_power_levels)
 	
 func sandbox_enemies2():
-	var enemies = [{Vector2(3, 5): make(Grunt, 4)}, {Vector2(3, 2): make(Drummer, 6)}]
+	var enemies = [{Vector2(3, 2): make(Spectre, 3), Vector2(3, 3): make(Slime, 4)}]
 	#var enemies = load_level("level2.save")
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
@@ -107,82 +113,70 @@ func sandbox_extras():
 	return {"tutorial":tutorial, "free_deploy":false}
 	
 func sandbox_extras2():
-	return {"shifting_sands_tiles": {Vector2(3, 6): 4}, "required_units":{1: Assassin, 2: Berserker, 4: Corsair, 5: Archer}}
+	return {"shadow_wall_tiles": [Vector2(3, 3), Vector2(3, 4)], "required_units":{1: Assassin, 2: Berserker, 4: Corsair, 5: Archer}}
 	#return {"required_units":{1: Cavalier, 2: Berserker, 3: Pyromancer, 4: Corsair, 5: Archer}}
 
 func sandbox_level():
-#	
-#	var name = "Berserker: Part 1"
-#	var level = LevelTypes.RoomSeal.new(name)
-#	var power_levels = [300, 0, 0, 0]
-#	level.set_generated_enemies(power_levels)
-#	var enemies = load_level("level2.save")
-#	level.set_curated_enemies(enemies)
-#	
-	return LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies(), 7, null, sandbox_extras2())#, null, sandbox_extras()) 
+	return LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies2(), 7, null, sandbox_extras2())#, null, sandbox_extras()) 
 
 var list = [sandbox_level()]
 
-var sandbox_level_ref = funcref(self, "sandbox_level")
+func berserker_part_1_tutorial():
+	var tutorial = TutorialPrototype.instance()
+
+	var turn1_player_start_rule = RulePrototype.instance()
+	turn1_player_start_rule.initialize(["Clear the board of enemies to win."])
+	tutorial.add_player_turn_start_rule(turn1_player_start_rule, 1)
+	
+	var turn1_forced_action = ForcedActionPrototype.instance()
+	turn1_forced_action.initialize(Vector2(3, 7), " Click on the Berserker to select it.", Vector2(3, 5), "Click on this tile to move the Berserker here.")
+	tutorial.add_forced_action(turn1_forced_action, 1)
+	
+	var turn1_enemy_rule = RulePrototype.instance()
+	turn1_enemy_rule.initialize(["Enemies move down one tile each turn.", "If an enemy exits from the bottom of the board, you lose."])
+	tutorial.add_enemy_turn_end_rule(turn1_enemy_rule, 1)
+	
+	var turn2_forced_action = ForcedActionPrototype.instance()
+	turn2_forced_action.initialize(Vector2(3, 5), "Select the Berserker", Vector2(3, 3), "Select the Enemy to attack it.")
+	tutorial.add_forced_action(turn2_forced_action, 2)
+	
+	#THIS IS WRONG
+	var turn2_enemy_rule = RulePrototype.instance()
+	turn2_enemy_rule.initialize(["The Berserker's Direct Attack deals 4 damage to an enemy's Power.", \
+	"If an enemy's Power reaches 0, it is KOed."])
+	tutorial.add_enemy_turn_end_rule(turn2_enemy_rule, 2)
+	
+#Turn 2
+#On Screen: Select the Berserker.
+#On Screen: Select the enemy to attack it.
+#EOPT Rule: The Berserker's Direct Attack deals 4 damage to an enemy’s Power. If an enemy’s Power reaches 0, it is KOed. 
+# 
+#Turn 3  
+#On screen: KO the enemy.
+#EOPT Rule: When the Berserker KOs an enemy, it moves to its tile. 
+# 
+#Turn 4 (have all enemies be past the berserker by this point, so it’s unlikely to be KOed. If the Berserker is KOed though, give a message explaining why and let the player try again? Or just have all enemies be 1 HP?)
+#Objective: Clear the board of remaining enemies to win. 
+#On Screen Tip: Remember, If enemies exit the bottom of the board, you lose!
 #
-#
-#LEVEL 10
-#func level10_allies():
-#	return {1: Archer, 2:Berserker, 3:Cavalier, 4:Saint, 5: Pyromancer}
-#
-#func level10_enemies():
-#	var phase1_unit_roster = {0: Grunt, 1: Fortifier, 2: Grower, 3: Drummer, 4: Melee}
-#	var phase1_modifier_roster = {0: enemy_modifiers["Shield"], 1: enemy_modifiers["Poisonous"], 2: enemy_modifiers["Cloaked"]}
-#	var phase3_modifier_roster = {0: enemy_modifiers["Shield"], 1: enemy_modifiers["Poisonous"]}
-#	var phase3_unit_roster = {0: Grunt, 1: Fortifier, 2: Grower, 3: Drummer, 4: Melee, 5: Ranged}
 #	
-#	var phase = EnemyWrappers.ProcGenPhase.new(1400, 300, phase1_unit_roster, phase1_modifier_roster)
-#	var phase2 = EnemyWrappers.ProcGenPhase.new(1400, 300, phase1_unit_roster, phase1_modifier_roster)
-#	var phase3 = EnemyWrappers.FinalProcGenPhase.new(1500, 300, phase3_unit_roster, phase3_modifier_roster)
-#	return EnemyWrappers.InfinitePhasedWrapper.new([phase, phase2, phase3])
-#	
-#func level10_extras():
-#	var level10_instructions = [
-#	make_tip("And here's where I ran out of time. On the bright side, this level and the previous level are procedurally generated so you can replay them!", "", null, ""),
-#	]
-#	return {"instructions":level10_instructions}
-#
-#func level10():
-#	return LevelTypes.Defend.new(level10_allies(), level10_enemies(), 12, null, level10_extras())
-#
-#var level10_ref = funcref(self, "level10")	
-#
-#
-#LEVEL 9
-#func level9_allies():
-#	return {1: Archer, 2:Berserker, 3:Cavalier, 4:Saint, 5: Assassin}
-#
-#func level9_enemies():
-#	var phase1_unit_roster = {0: Grunt, 1: Fortifier, 2: Grower, 3: Drummer}
-#
-#	var phase1_modifier_roster = {0: enemy_modifiers["Shield"], 1: enemy_modifiers["Poisonous"]}
-#	
-#	var phase2_modifier_roster = {0: enemy_modifiers["Shield"], 1: enemy_modifiers["Poisonous"], 2: enemy_modifiers["Cloaked"]}
-#	
-#	var phase3_unit_roster = {0: Grunt, 1: Fortifier, 2: Grower, 3: Drummer, 4: Melee}
-#	
-#	var phase = EnemyWrappers.ProcGenPhase.new(1400, 300, phase1_unit_roster, phase1_modifier_roster)
-#	var phase2 = EnemyWrappers.ProcGenPhase.new(1400, 300, phase1_unit_roster, phase2_modifier_roster)
-#	var phase3 = EnemyWrappers.FinalProcGenPhase.new(1500, 300, phase3_unit_roster, phase1_modifier_roster)
-#	return EnemyWrappers.InfinitePhasedWrapper.new([phase, phase2, phase3])
-#	
-#func level9_extras():
-#	var level9_instructions = [
-#	make_tip("Now that you have access to 5 units, you can use Inspire Finishers. When all 5 units trigger their Inspire Effect in a turn, the Player is allowed to reactivate 1 unit, giving it all 3 types of Inspire Bonuses.", "Use a Inspire Finisher during this level.", null, ""),
-#	]
-#	return {"instructions":level9_instructions}
-#
-#func level9():
-#	return LevelTypes.Timed.new(level9_allies(), level9_enemies(), 12, level10_ref, level9_extras())
-#
-#var level9_ref = funcref(self, "level9")	
-#
-#
+	
+	
+	return tutorial
+
+#BERSERKER PART 1
+func berserker_part_1():
+	var allies = []
+	var raw_enemies = load_level("level1.save")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	
+	var flags = ["no_stars", "no_turns", "no_waves"]
+	var tutorial_func = funcref(self, "berserker_part_1_tutorial")
+	var extras = {"free_deploy":false, "required_units":{3: Berserker}, "tutorial":tutorial_func, "flags":flags}
+	
+	return LevelTypes.Timed.new("Berserker Part 1", allies, enemies, 7, null, extras)
+
+
 #SAINT LEVEL
 #func saint_level_allies():
 #	return {2: Saint, 4: Assassin}

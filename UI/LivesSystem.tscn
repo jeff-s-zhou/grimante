@@ -1,11 +1,14 @@
 [gd_scene load_steps=3 format=1]
 
-[ext_resource path="res://UI/LivesSystem.gd" type="Script" id=1]
-[ext_resource path="res://Assets/processed_fonts/ui_small_header.fnt" type="BitmapFont" id=2]
+[ext_resource path="res://Assets/processed_fonts/ui_small_header.fnt" type="BitmapFont" id=1]
+
+[sub_resource type="GDScript" id=1]
+
+script/source = "extends Node2D\n\n# class member variables go here, for example:\n# var a = 2\n# var b = \"textvar\"\n\nvar life_prototype = preload(\"Life.tscn\")\nvar lives_list = []\nvar lives = 0\n\nsignal animation_done\n\nfunc _ready():\n\t# Called every time the node is added to the scene.\n\t# Initialization here\n\tpass\n\t\nfunc set_lives(amount):\n\tself.lives = amount\n\tfor i in range(0, amount):\n\t\tvar life = life_prototype.instance()\n\t\tlife.set_pos(Vector2(34 + i * 75, 76))\n\t\tadd_child(life)\n\t\tself.lives_list.append(life)\n\t\t\n\t\t\nfunc lose_lives(amount):\n\tself.lives -= amount\n\tget_node(\"/root/AnimationQueue\").enqueue(self, \"animate_lose_lives\", true, [amount])\n\t\n\t\nfunc animate_lose_lives(amount):\n\tvar lost_lives = []\n\tif self.lives_list.size() > 0:\n\t\tfor i in range(self.lives_list.size() - amount, self.lives_list.size()):\n\t\t\tself.lives_list[i].get_node(\"AnimationPlayer\").play(\"Flicker\")\n\t\t\tlost_lives.append(self.lives_list[i])\n\t\tfor i in range(0, amount):\n\t\t\tself.lives_list.pop_back()\n\t\tyield(lost_lives[0].get_node(\"AnimationPlayer\"), \"finished\")\n\t\tfor i in range(0, lost_lives.size()):\n\t\t\tlost_lives[i].queue_free() \n\t\temit_signal(\"animation_done\")\n\n\n\t\nfunc gain_lives(amount):\n\t#TODO\n\tpass\n"
 
 [node name="LivesSystem" type="Node2D"]
 
-script/script = ExtResource( 1 )
+script/script = SubResource( 1 )
 
 [node name="Label" type="Label" parent="."]
 
@@ -17,7 +20,7 @@ margin/left = 0.0
 margin/top = 0.0
 margin/right = 40.0
 margin/bottom = 14.0
-custom_fonts/font = ExtResource( 2 )
+custom_fonts/font = ExtResource( 1 )
 text = "LIVES"
 percent_visible = 1.0
 lines_skipped = 0

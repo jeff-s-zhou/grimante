@@ -3,9 +3,9 @@
 [ext_resource path="res://UI/TutorialManager.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/forced_action_overlay.png" type="Texture" id=2]
 [ext_resource path="res://Assets/UI/tutorial_arrow.png" type="Texture" id=3]
-[ext_resource path="res://Assets/processed_fonts/tutorial_text.fnt" type="BitmapFont" id=4]
+[ext_resource path="res://Assets/processed_fonts/tutorial_text_rubik_36.fnt" type="BitmapFont" id=4]
 [ext_resource path="res://InputHandler.tscn" type="PackedScene" id=5]
-[ext_resource path="res://Assets/processed_fonts/tutorial_tap_anywhere.fnt" type="BitmapFont" id=6]
+[ext_resource path="res://Assets/processed_fonts/tutorial_tap_anywhere_rubik_30.fnt" type="BitmapFont" id=6]
 
 [sub_resource type="StyleBoxFlat" id=1]
 
@@ -83,9 +83,9 @@ focus/ignore_mouse = false
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
-margin/left = 0.0
+margin/left = 24.0
 margin/top = 0.0
-margin/right = 671.0
+margin/right = 647.0
 margin/bottom = 127.0
 custom_fonts/normal_font = ExtResource( 4 )
 bbcode/enabled = true

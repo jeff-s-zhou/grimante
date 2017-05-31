@@ -343,6 +343,8 @@ func receive_shove(pusher, distance):
 	if dies_to_collision(pusher): #check if they're going to die from collision
 		delete_self()
 		return null
+	
+	handle_nonlethal_shove(pusher) #needed for corrosive interaction
 
 
 	var old_coords = self.coords
@@ -365,6 +367,9 @@ func receive_shove(pusher, distance):
 		move_helper(self.coords + distance, true)
 		
 		return distance
+		
+func handle_nonlethal_shove():
+	pass
 
 
 func dies_to_collision(pusher):

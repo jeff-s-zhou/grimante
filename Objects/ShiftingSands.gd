@@ -12,6 +12,7 @@ func _ready():
 func set_shifting_direction(direction):
 	self.set_rotd(180 + (direction * -60))
 	
+	
 func highlight():
 	get_node("HighlightSprite").show()
 

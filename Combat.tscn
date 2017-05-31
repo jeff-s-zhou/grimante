@@ -11,12 +11,12 @@
 [ext_resource path="res://Assets/effects/darken_layer.png" type="Texture" id=9]
 [ext_resource path="res://UI/TutorialPopup.tscn" type="PackedScene" id=10]
 [ext_resource path="res://UI/TutorialTooltip.tscn" type="PackedScene" id=11]
-[ext_resource path="res://UI/Tooltip.tscn" type="PackedScene" id=12]
-[ext_resource path="res://UI/PlayerPieceInfo.tscn" type="PackedScene" id=13]
-[ext_resource path="res://OverlayDisplayer.tscn" type="PackedScene" id=14]
-[ext_resource path="res://AssistSystem.tscn" type="PackedScene" id=15]
-[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=16]
-[ext_resource path="res://UI/ControlBar/ControlBar.tscn" type="PackedScene" id=17]
+[ext_resource path="res://UI/PlayerPieceInfo.tscn" type="PackedScene" id=12]
+[ext_resource path="res://AssistSystem.tscn" type="PackedScene" id=13]
+[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=14]
+[ext_resource path="res://UI/ControlBar/ControlBar.tscn" type="PackedScene" id=15]
+[ext_resource path="res://UI/InfoOverlay.tscn" type="PackedScene" id=16]
+[ext_resource path="res://UI/RestartBar.tscn" type="PackedScene" id=17]
 
 [sub_resource type="SampleLibrary" id=1]
 
@@ -78,8 +78,8 @@ default/chorus_send = 0.0
 [node name="DarkenLayer" type="Sprite" parent="."]
 
 visibility/opacity = 0.0
-transform/pos = Vector2( 792.18, 555.558 )
-transform/scale = Vector2( 1.086, 1.07805 )
+transform/pos = Vector2( 792, 540 )
+z/z = 101
 texture = ExtResource( 9 )
 
 [node name="TutorialPopup" parent="." instance=ExtResource( 10 )]
@@ -105,15 +105,9 @@ wait_time = 1.0
 one_shot = false
 autostart = false
 
-[node name="Tooltip" parent="." instance=ExtResource( 12 )]
-
-transform/pos = Vector2( -300, -300 )
-
-[node name="PlayerPieceInfo" parent="." instance=ExtResource( 13 )]
+[node name="PlayerPieceInfo" parent="." instance=ExtResource( 12 )]
 
 visibility/visible = false
-
-[node name="OverlayDisplayer" parent="." instance=ExtResource( 14 )]
 
 [node name="FpsLabel" type="Label" parent="."]
 
@@ -129,11 +123,11 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="AssistSystem" parent="." instance=ExtResource( 15 )]
+[node name="AssistSystem" parent="." instance=ExtResource( 13 )]
 
 transform/pos = Vector2( 42.6436, 30.4737 )
 
-[node name="InputHandler" parent="." instance=ExtResource( 16 )]
+[node name="InputHandler" parent="." instance=ExtResource( 14 )]
 
 [node name="AnimationCountLabel" type="Label" parent="."]
 
@@ -149,9 +143,18 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="ControlBar" parent="." instance=ExtResource( 17 )]
+[node name="ControlBar" parent="." instance=ExtResource( 15 )]
 
 visibility/visible = false
 transform/pos = Vector2( 0, 953 )
+
+[node name="InfoOverlay" parent="." instance=ExtResource( 16 )]
+
+visibility/visible = false
+
+[node name="RestartBar" parent="." instance=ExtResource( 17 )]
+
+transform/pos = Vector2( 97, 446 )
+z/z = 102
 
 

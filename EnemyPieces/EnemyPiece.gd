@@ -12,9 +12,12 @@ var mid_trailing_animation = false
 var predicting_hp = false
 
 var hp
+
 var shielded = false
 var deadly = false
 var cloaked = false
+var rabid = false
+var corrosive = false
 
 var currently_burning = false
 var burning = false
@@ -83,6 +86,36 @@ func initialize(unit_name, hover_description, movement_value, max_hp, modifiers,
 	if adjacent_players_range != []:
 		set_cloaked(false)
 		
+	
+func set_hp(hp):
+	self.hp = hp
+	self.temp_display_hp = self.hp
+
+
+func initialize_hp(hp):
+	self.hp = hp
+	self.temp_display_hp = self.hp
+	get_node("Physicals/HealthDisplay").set_health(hp)
+
+
+func initialize_modifiers(modifiers):
+	#it'll be a dict when created through the level editor, array when programmed for convenience
+	if typeof(modifiers) == TYPE_DICTIONARY:
+		modifiers = modifiers.values()
+	var enemy_modifiers = get_node("/root/constants").enemy_modifiers
+	for modifier in modifiers:
+		if modifier == enemy_modifiers["Poisonous"]:
+			self.set_deadly(true)
+		elif modifier == enemy_modifiers["Shield"]:
+			self.set_shield(true)
+		elif modifier == enemy_modifiers["Cloaked"]:
+			self.set_cloaked(true)
+		elif modifier == enemy_modifiers["Rabid"]:
+			self.set_rabid(true)
+		elif modifier == enemy_modifiers["Corrosive"]:
+			self.set_corrosive(true)
+
+
 func get_modifiers():
 	var modifiers = {}
 	var enemy_modifiers = get_node("/root/constants").enemy_modifiers
@@ -92,6 +125,10 @@ func get_modifiers():
 		modifiers["Shield"] = enemy_modifiers["Shield"]
 	if self.cloaked:
 		modifiers["Cloaked"] = enemy_modifiers["Cloaked"]
+	if self.rabid:
+		modifiers["Rabid"] = enemy_modifiers["Rabid"]
+	if self.corrosive:
+		modifiers["Corrosive"] = enemy_modifiers["Corrosive"]
 	return modifiers
 
 
@@ -342,8 +379,28 @@ func animate_bubble_show():
 
 func animate_bubble_hide():
 	get_node("Physicals/EnemyEffects/Bubble").hide()
-
 	
+
+func set_corrosive(flag):
+	self.corrosive = flag
+	var name = get_node("/root/constants").enemy_modifiers["Corrosive"]
+	update_description(flag, name)
+	add_animation(self, "animate_set_corrosive", false, [flag])
+	
+func animate_set_corrosive(flag):
+	get_node("Physicals/EnemyEffects/CorrosiveParticles").set_emitting(flag)
+
+
+func set_rabid(flag):
+	self.rabid = flag
+	var name = get_node("/root/constants").enemy_modifiers["Rabid"]
+	update_description(flag, name)
+	add_animation(self, "animate_set_rabid", false, [flag])
+
+func animate_set_rabid(flag):
+	get_node("Physicals/EnemyEffects/RabidParticles").set_emitting(flag)
+
+
 func set_burning(flag):
 	if flag and !self.shielded:
 		self.burning = true
@@ -391,6 +448,8 @@ func set_silenced(flag):
 		set_shield(false)
 		set_deadly(false)
 		set_cloaked(false)
+		set_rabid(false)
+		set_corrosive(false)
 		add_animation(self, "animate_silenced", false)
 	else:
 		add_animation(self, "animate_unsilenced", false)
@@ -405,29 +464,6 @@ func animate_unsilenced():
 func animate_burning_hide():
 	get_node("Physicals/EnemyEffects/BurningEffect").hide()
 
-
-	
-func set_hp(hp):
-	self.hp = hp
-	self.temp_display_hp = self.hp
-	
-func initialize_hp(hp):
-	self.hp = hp
-	self.temp_display_hp = self.hp
-	get_node("Physicals/HealthDisplay").set_health(hp)
-	
-func initialize_modifiers(modifiers):
-	#it'll be a dict when created through the level editor, array when programmed for convenience
-	if typeof(modifiers) == TYPE_DICTIONARY:
-		modifiers = modifiers.values()
-	var enemy_modifiers = get_node("/root/constants").enemy_modifiers
-	for modifier in modifiers:
-		if modifier == enemy_modifiers["Poisonous"]:
-			self.set_deadly(true)
-		elif modifier == enemy_modifiers["Shield"]:
-			self.set_shield(true)
-		elif modifier == enemy_modifiers["Cloaked"]:
-			self.set_cloaked(true)
 
 
 func handle_pre_payload(payload):
@@ -522,6 +558,8 @@ func animate_set_hp(hp, value, delay=0):
 	if value > 0:
 		value_text = "+" + value_text
 		text.set("custom_colors/font_color", Color(0,1,0))
+	elif value == 0:
+		value_text = "-" + value_text
 	else:
 		get_node("AnimationPlayer").play("FlickerAnimation")
 	text.set_opacity(1.0)
@@ -622,6 +660,11 @@ func turn_attack_update():
 	
 	handle_rain()
 	handle_shifting_sands()
+	
+	var adjacent_players_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
+	if adjacent_players_range != [] and self.rabid:
+		heal(2)
+			
 	
 func handle_rain():
 	var location = self.grid.locations[self.coords]

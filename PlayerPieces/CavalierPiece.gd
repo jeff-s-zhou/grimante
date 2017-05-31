@@ -51,15 +51,42 @@ func start_attack(attack_coords):
 	
 	var difference = 4 * (location.get_pos() - get_parent().locations[decremented_coords].get_pos())/5
 	var new_position = location.get_pos() - difference
-	add_animation(self, "animate_move_to_pos", true, [new_position, 700, true, Tween.TRANS_QUAD, Tween.EASE_IN])
+	add_animation(self, "animate_show_spear", true, [attack_coords])
+	add_animation(self, "animate_charge", true, [new_position])
+	
+func animate_charge(new_position):
+	animate_move_to_pos(new_position, 700, true, Tween.TRANS_QUAD, Tween.EASE_IN)
 	yield(self, "animation_done")
-	print("met here?")
 	emit_signal("shake")
+
+func animate_show_spear(attack_coords):
+	var location = self.grid.locations[attack_coords]
+	var new_position = location.get_pos()
+	var angle = get_pos().angle_to_point(new_position)
+	print("angle is " + str(angle))
+	get_node("Spear").set_rot(angle)
+	
+	var tween = Tween.new()
+	add_child(tween)
+	tween.interpolate_property(get_node("Spear"), "visibility/opacity", 0, 1, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.start()
+	yield(tween, "tween_complete")
+	emit_signal("animation_done")
+	tween.queue_free()
+	
+func animate_hide_spear():
+	var tween = Tween.new()
+	add_child(tween)
+	tween.interpolate_property(get_node("Spear"), "visibility/opacity", 1, 0, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.start()
+	yield(tween, "tween_complete")
+	tween.queue_free()
 	
 
 func end_attack(original_coords):
 	var location = get_parent().locations[original_coords]
 	var new_position = location.get_pos()
+	add_animation(self, "animate_hide_spear", false)
 	add_animation(self, "animate_move_to_pos", true, [new_position, 300, true, Tween.TRANS_SINE, Tween.EASE_IN])
 	
 
@@ -235,9 +262,3 @@ func cast_ultimate():
 	get_node("Physicals/OverlayLayers/UltimateWhite").show()
 	self.ultimate_flag = true
 	pass
-		
-func placed():
-	if self.ultimate_flag:
-		self.ultimate_used_flag = true
-		self.ultimate_flag = false
-	.placed()

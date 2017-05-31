@@ -5,9 +5,11 @@ extends Node2D
 # var b = "textvar"
 
 var descriptions = {
-"Poisonous": "Any player unit shoved by this unit is KOed.",
-"Shield": "The first attack on this unit is nullified.",
-"Cloaked": "This enemy's health and identity is unknown until is it attacked, or a player piece moves adjacent to it."
+"Poisonous": "Any Hero attacked by this Enemy is KOed.",
+"Shield": "The first attack on this Enemy is nullified.",
+"Cloaked": "This Enemy's health and identity is unknown until is it attacked, or a Hero moves adjacent to it.",
+"Rabid": "At the end of the Enemy Turn, if this Enemy is adjacent to a Hero, gain +2 Power.",
+"Corrosive": "If this Enemy attacks a Hero and does not kill it, reduce its Armor by 1"
 }
 
 func _ready():

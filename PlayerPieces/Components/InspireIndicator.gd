@@ -29,8 +29,6 @@ func animate_give_inspire(type):
 	get_node("AnimationPlayer").stop()
 	
 	get_node("Tween").interpolate_property(get_node("InspireText"), "visibility/opacity", 1, 0, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)	
-	get_node("Tween").start()
-	yield(get_node("Tween"), "tween_complete")
 	var arrow = get_node("InspireArrow")
 	var final_pos = arrow.get_pos() + Vector2(0, -15)
 	
@@ -56,11 +54,9 @@ func animate_receive_inspire(type):
 	get_node("InspireArrow").play(type)
 	get_node("Tween").interpolate_property(arrow, "transform/pos", arrow.get_pos(), final_pos, 0.3, Tween.TRANS_SINE, Tween.EASE_IN) 
 	get_node("Tween").interpolate_property(arrow, "visibility/opacity", 0, 1, 0.3, Tween.TRANS_QUAD, Tween.EASE_OUT)
+	get_node("Tween").interpolate_property(get_node("InspireText"), "visibility/opacity", 0, 1, 0.3, Tween.TRANS_CUBIC, Tween.EASE_OUT)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
-	get_node("Tween 2").interpolate_property(get_node("InspireText"), "visibility/opacity", 0, 1, 0.3, Tween.TRANS_CUBIC, Tween.EASE_OUT)
-	get_node("Tween 2").start()
-	yield(get_node("Tween 2"), "tween_complete")
 	get_node("Tween 2").interpolate_property(self, "visibility/opacity", 1, 0, 0.3, Tween.TRANS_CUBIC, Tween.EASE_IN)
 	get_node("Tween 2").start()
 	yield(get_node("Tween 2"), "tween_complete")

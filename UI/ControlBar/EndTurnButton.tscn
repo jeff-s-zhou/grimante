@@ -21,11 +21,19 @@ margin/top = 0.0
 margin/right = 40.0
 margin/bottom = 40.0
 toggle_mode = false
+click_on_press = true
 enabled_focus_mode = 2
 shortcut = null
 textures/normal = ExtResource( 2 )
 textures/pressed = ExtResource( 3 )
 textures/hover = ExtResource( 4 )
 textures/disabled = ExtResource( 5 )
+
+[node name="Tween" type="Tween" parent="."]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
 
 

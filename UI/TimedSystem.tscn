@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=1]
+[gd_scene load_steps=7 format=1]
 
 [ext_resource path="res://UI/TimedSystem.gd" type="Script" id=1]
 [ext_resource path="res://Assets/processed_fonts/ui_header_amaranth_18.fnt" type="BitmapFont" id=2]
 [ext_resource path="res://Assets/processed_fonts/ui_header_nums_roboto_mono_54.fnt" type="BitmapFont" id=3]
 [ext_resource path="res://UI/StarSubsystem.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Assets/processed_fonts/clear_the_board_amaranth_36.fnt" type="BitmapFont" id=5]
 
 [sub_resource type="StyleBoxFlat" id=1]
 
@@ -37,6 +38,7 @@ custom_styles/panel = SubResource( 1 )
 
 [node name="TurnsHeader" type="Label" parent="."]
 
+visibility/visible = false
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
@@ -55,6 +57,7 @@ max_lines_visible = -1
 
 [node name="KillsHeader" type="Label" parent="."]
 
+visibility/visible = false
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
@@ -73,6 +76,7 @@ max_lines_visible = -1
 
 [node name="WaveHeader" type="Label" parent="."]
 
+visibility/visible = false
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
@@ -91,6 +95,7 @@ max_lines_visible = -1
 
 [node name="WaveCountdown" type="Label" parent="."]
 
+visibility/visible = false
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
@@ -109,6 +114,7 @@ max_lines_visible = -1
 
 [node name="TurnCountdown" type="Label" parent="."]
 
+visibility/visible = false
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
@@ -127,6 +133,24 @@ max_lines_visible = -1
 
 [node name="StarSubsystem" parent="." instance=ExtResource( 4 )]
 
+visibility/visible = false
 transform/pos = Vector2( 463.841, 41.165 )
+
+[node name="Label" type="Label" parent="."]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 71.0
+margin/top = 28.0
+margin/right = 593.0
+margin/bottom = 83.0
+custom_fonts/font = ExtResource( 5 )
+text = "Clear the Board"
+align = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
 
 

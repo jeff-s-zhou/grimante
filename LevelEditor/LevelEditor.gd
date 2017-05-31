@@ -20,6 +20,8 @@ var target = null
 
 var current_turn = 0
 
+var original_mouse_pos = null
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
@@ -40,6 +42,19 @@ func select_editor_grid(turn_number):
 
 func get_current_editor_grid():
 	return self.current_editor_grid
+
+#passed from the UnitBarArea, to detect scrolling the enemy unit bar
+func input_event(event):
+	if get_node("InputHandler").is_select(event):
+		print("met the select")
+		self.original_mouse_pos = event.pos
+	elif get_node("InputHandler").is_unpress(event):
+		self.original_mouse_pos = null
+
+	print("moving?")
+	if self.original_mouse_pos != null:
+		get_node("EditorUnitBar").translate(Vector2(event.pos.x - self.original_mouse_pos.x, 0))
+		self.original_mouse_pos = event.pos
 	
 func _input(event):
 	if get_node("InputHandler").is_select(event):

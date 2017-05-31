@@ -36,7 +36,7 @@ class BaseLevelType:
 	var next_level = null
 	var tutorial = null
 	var reinforcements = {}
-	var flags = null
+	var flags = []
 	var free_deploy = true
 	var deploy_tiles = DEFAULT_DEPLOY_TILES
 	var shadow_wall_tiles = []

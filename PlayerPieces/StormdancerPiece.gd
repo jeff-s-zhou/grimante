@@ -38,7 +38,7 @@ func _ready():
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.ultimate_description = ULTIMATE_DESCRIPTION
-	self.assist_type = ASSIST_TYPES.movement
+	self.assist_type = ASSIST_TYPES.defense
 
 func initialize(cursor_area):
 	.initialize(cursor_area)

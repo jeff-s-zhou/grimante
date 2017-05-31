@@ -17,6 +17,7 @@ var available_unit_roster = ["Berserker"]
 
 var full_unit_roster = ["Berserker", "Corsair", "Archer", "Saint", "Assassin", "Pyromancer", "Stormdancer", "Cavalier"]
 
+
 var PLATFORMS = {"Android":1, "iOS":2, "PC":3} 
 
 var platform = PLATFORMS.PC

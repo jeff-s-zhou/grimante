@@ -23,9 +23,6 @@ var next_wave #the wave that was used for reinforcement indication
 
 var tabbed_flag #to check if a current description is tabbed in
 
-var enemy_tooltip_flag
-var player_info_flag
-
 signal wave_deployed
 signal next_pressed
 signal reinforced
@@ -43,11 +40,15 @@ func _ready():
 	get_node("Timer").set_active(false)
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Grid").set_pos(Vector2(73, 280))
+	get_node("Grid").set_pos(Vector2(73, 270))
 	#get_node("Grid").set_pos(Vector2(400, 250))
 	#debug_mode()
 	
-	get_node("ControlBar/EndTurnButton").connect("pressed", self, "end_turn_pressed")
+	get_node("ControlBar/EndTurnButton").connect("released", self, "handle_end_turn_released")
+	get_node("ControlBar/EndTurnButton").connect("holding", self, "holding_end_turn")
+	
+	get_node("RestartBar").connect("bar_filled", self, "restart")
+	
 	get_node("/root/AnimationQueue").connect("animation_count_update", self, "update_animation_count_display")
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
@@ -61,8 +62,8 @@ func _ready():
 #	self.level_schematic = self.level_schematic_func.call_func()
 
 	self.level_schematic = get_node("/root/global").get_param("level")
-#	
-	self.tutorial = self.level_schematic.tutorial
+	var tutorial_func = self.level_schematic.tutorial
+	self.tutorial = tutorial_func.call_func()
 	if self.tutorial != null:
 		add_child(self.tutorial)
 
@@ -73,26 +74,15 @@ func _ready():
 	
 	#we store the initial wave count as the first value in the array
 
-	if self.level_schematic.flags != null:
-		var flags = self.level_schematic.flags
-		for flag in flags:
-			if flag == "ultimates_enabled_flag":
-				get_node("/root/global").ultimates_enabled_flag = true
-	
-	
-	if self.level_schematic.end_conditions.has(constants.end_conditions.Defend):
-		self.state_manager = load("res://UI/DefendSystem.tscn").instance()
-	elif self.level_schematic.end_conditions.has(constants.end_conditions.Timed):
+	if self.level_schematic.end_conditions.has(constants.end_conditions.Timed):
 		self.state_manager = load("res://UI/TimedSystem.tscn").instance()
 	else:
 		self.state_manager= load("res://UI/ClearRoomSystem.tscn").instance()
 
 	add_child(self.state_manager)
-	self.state_manager.initialize(self.level_schematic)
-	self.state_manager.get_node("StarSubsystem").connect("add_star", get_node("ControlBar/StarButton"), "add_star")
-	#self.state_manager.set_pos(Vector2(get_viewport_rect().size.width/2, 30))
-#
-		
+	self.state_manager.initialize(self.level_schematic, get_node("ControlBar/StarButton"), self.level_schematic.flags)
+
+
 	if self.level_schematic.shadow_wall_tiles.size() > 0:
 		get_node("Grid").initialize_shadow_wall_tiles(self.level_schematic.shadow_wall_tiles)
 	
@@ -242,11 +232,20 @@ func end_turn():
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	self.state = STATES.enemy_turn
 	
-func end_turn_pressed():
-	if self.state == self.STATES.deploying:
-		emit_signal("deployed")
-	if self.state == self.STATES.player_turn:
-		end_turn()
+func handle_end_turn_released():
+	if get_node("RestartBar").animating_flag:
+		lighten(0.2)
+		get_node("RestartBar").stop()
+	else:
+		if self.state == self.STATES.deploying:
+			emit_signal("deployed")
+		if self.state == self.STATES.player_turn:
+			end_turn()
+		
+		
+func holding_end_turn():
+	darken(0.1, 0.8)
+	get_node("RestartBar").start()
 
 
 func restart():
@@ -300,30 +299,14 @@ func computer_input(event):
 			
 			elif hovered_piece.side == "ENEMY":
 				hovered_piece.set_seen(true)
-				self.enemy_tooltip_flag = true
-				get_node("Tooltip").set_info(hovered_piece.unit_name, hovered_piece.hover_description, hovered_piece.modifier_descriptions)
-				get_node("Tooltip").set_pos(get_viewport().get_mouse_pos())
-				get_node("Tooltip").set_opacity(1)
+				get_node("InfoOverlay").display_enemy_info(hovered_piece)
 			else: #elif hovered_piece.side == "PLAYER"
-				self.player_info_flag = true
 				hovered_piece.set_seen(true)
-				get_node("PhaseShifter/AnimationPlayer").play("start_blur")
-				darken(0.1, 0.2)
-				get_node("PlayerPieceInfo").set_info(hovered_piece.unit_name, hovered_piece.overview_description, \
-	 			hovered_piece.attack_description, hovered_piece.passive_description, hovered_piece.ultimate_description)
-				get_node("PlayerPieceInfo").show()
+				get_node("InfoOverlay").display_player_info(hovered_piece)
 
 
 		elif !event.is_pressed() and !event.is_echo():
-			if self.enemy_tooltip_flag:
-				self.enemy_tooltip_flag = false
-				get_node("Tooltip").set_opacity(0)
-				get_node("Tooltip").set_pos(Vector2(-500, -500))
-			elif self.player_info_flag: #elif hovered_piece.side == "PLAYER"
-				self.player_info_flag = false
-				lighten(0.1)
-				get_node("PhaseShifter/AnimationPlayer").play("end_blur")
-				get_node("PlayerPieceInfo").hide()
+			get_node("InfoOverlay").hide()
 
 
 	elif event.is_action("debug_level_skip") and event.is_pressed():

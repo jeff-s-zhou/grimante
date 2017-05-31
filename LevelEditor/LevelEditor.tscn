@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=1]
+[gd_scene load_steps=9 format=1]
 
 [ext_resource path="res://LevelEditor/LevelEditor.gd" type="Script" id=1]
 [ext_resource path="res://LevelEditor/EditorUnitBar.tscn" type="PackedScene" id=2]
@@ -6,6 +6,12 @@
 [ext_resource path="res://InputHandler.tscn" type="PackedScene" id=4]
 [ext_resource path="res://LevelEditor/PieceForm.tscn" type="PackedScene" id=5]
 [ext_resource path="res://LevelEditor/EditorTurnSelector.tscn" type="PackedScene" id=6]
+[ext_resource path="res://LevelEditor/UnitBarArea.gd" type="Script" id=7]
+
+[sub_resource type="RectangleShape2D" id=1]
+
+custom_solver_bias = 0.0
+extents = Vector2( 10, 10 )
 
 [node name="LevelEditor" type="Node2D"]
 
@@ -57,5 +63,26 @@ placeholder/alpha = 0.6
 focus_mode = 2
 caret/caret_blink = false
 caret/caret_blink_speed = 0.65
+
+[node name="UnitBarArea" type="Area2D" parent="."]
+
+transform/pos = Vector2( 32.8087, 953.503 )
+input/pickable = true
+shapes/0/shape = SubResource( 1 )
+shapes/0/transform = Matrix32( 33.8119, 0, 0, 6.88936, 299.553, 35.3175 )
+shapes/0/trigger = false
+gravity_vec = Vector2( 0, 1 )
+gravity = 98.0
+linear_damp = 0.1
+angular_damp = 1.0
+script/script = ExtResource( 7 )
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="UnitBarArea"]
+
+transform/pos = Vector2( 299.553, 35.3175 )
+transform/scale = Vector2( 33.8119, 6.88936 )
+shape = SubResource( 1 )
+trigger = false
+_update_shape_index = 0
 
 

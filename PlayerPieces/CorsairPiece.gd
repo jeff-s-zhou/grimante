@@ -29,7 +29,7 @@ func _ready():
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.ultimate_description = ULTIMATE_DESCRIPTION
-	self.assist_type = ASSIST_TYPES.attack
+	self.assist_type = ASSIST_TYPES.movement
 
 
 func get_slash_damage():

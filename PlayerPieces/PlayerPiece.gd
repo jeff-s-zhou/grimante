@@ -8,6 +8,8 @@ var States = {"LOCKED":0, "DEFAULT":1, "CLICKED": 2, "PLACED":3, "SELECTED":4}
 
 onready var AssistSystem = get_node("/root/Combat/AssistSystem")
 
+const flyover_prototype = preload("res://EnemyPieces/Components/Flyover.tscn")
+
 onready var ASSIST_TYPES = AssistSystem.ASSIST_TYPES
 
 var assist_type = null
@@ -84,23 +86,17 @@ func animate_set_invulnerable(flag):
 	
 	
 func trigger_assist_flag():
-	print("triggered")
 	self.assist_flag = true
 
 
 func handle_assist():
 	if self.assist_flag:
 		self.assist_flag = false
-	self.AssistSystem.activate_assist(self.assist_type, self)
+		#we specifically redirect it through the AssistSystem to call the function below in case it's an ultimate
+		self.AssistSystem.activate_assist(self.assist_type, self)
+	else:
+		self.AssistSystem.clear_assist()
 
-
-#func handle_assist():
-#	if self.assist_flag:
-#		self.assist_flag = false
-#		#we specifically redirect it through the AssistSystem to call the function below in case it's an ultimate
-#		self.AssistSystem.activate_assist(self.assist_type, self)
-#	else:
-#		self.AssistSystem.clear_assist()
 
 #start emitting the particles
 func activate_assist(assist_type):
@@ -168,6 +164,8 @@ func block_summon():
 	if !self.invulnerable_flag:
 		delete_self()
 		#add_animation(self, "animate_delete_self", true)
+		
+
 	
 func set_cooldown(cooldown):
 	self.cooldown = cooldown + 1 #offset for the first countdown tick
@@ -247,6 +245,12 @@ func turn_update():
 func set_coords(new_coords):
 	get_parent().move_piece(self.coords, new_coords)
 	self.coords = new_coords
+	
+	#for moving on and off the unit select bar
+	if coords.y == 99:
+		set_opacity(0.5)
+	else:
+		set_opacity(1.0)
 	
 	if !self.deploying_flag:
 		var seen_range = get_parent().get_range(self.coords, [1, 2], "ENEMY")
@@ -477,7 +481,48 @@ func player_attacked(enemy):
 #			animation_sequence.add(self, "animate_delete_self", true)
 #		else:
 #			add_animation(self, "animate_delete_self", true)
-		
+
+
+func handle_nonlethal_shove(shover):
+	if shover.side == "ENEMY" and shover.corrosive:
+		self.armor = self.armor - 1
+		add_animation(self, "animate_set_armor", true, [self.armor, -1])
+	
+
+func animate_set_armor(armor, value, delay=0):
+	add_anim_count()
+	if delay > 0:
+		get_node("Timer").set_wait_time(delay)
+		get_node("Timer").start()
+		yield(get_node("Timer"), "timeout")
+
+	get_node("Physicals/ArmorDisplay").set_armor(armor)
+
+	var flyover = self.flyover_prototype.instance()
+	add_child(flyover)
+	var text = flyover.get_node("FlyoverText")
+	var value_text = str(value)
+	if value > 0:
+		value_text = "+" + value_text
+		text.set("custom_colors/font_color", Color(0,1,0))
+	else:
+		get_node("AnimationPlayer").play("flicker")
+	text.set_opacity(1.0)
+	
+	text.set_text(value_text)
+
+	var destination = text.get_pos() - Vector2(0, 200)
+	var tween = Tween.new()
+	add_child(tween)
+	tween.interpolate_property(text, "rect/pos", text.get_pos(), destination, 1.3, Tween.TRANS_EXPO, Tween.EASE_OUT_IN)
+	tween.interpolate_property(text, "visibility/opacity", 1, 0, 1.3, Tween.TRANS_EXPO, Tween.EASE_IN)
+	tween.start()
+	yield(tween, "tween_complete")
+	emit_signal("animation_done")
+	flyover.queue_free()
+	tween.queue_free()
+	subtract_anim_count()
+
 
 func dies_to_collision(pusher):
 	if pusher != null and pusher.side != self.side:  #if there's a pusher and not on the same side

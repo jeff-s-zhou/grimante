@@ -21,6 +21,10 @@ func initialize(modifier):
 		self.set_shield(true)
 	elif modifier == enemy_modifiers["Cloaked"]:
 		self.set_cloaked(true)
+	elif modifier == enemy_modifiers["Rabid"]:
+		self.set_rabid(true)
+	elif modifier == enemy_modifiers["Corrosive"]:
+		self.set_corrosive(true)
 
 
 func set_cloaked(flag):
@@ -37,11 +41,15 @@ func set_shield(flag):
 
 
 func set_poisonous(flag):
-	if flag:
-		get_node("EnemyEffects/DeathTouch").set_emitting(true)
-	else:
-		get_node("EnemyEffects/DeathTouch").set_emitting(false)
+	get_node("EnemyEffects/DeathTouch").set_emitting(flag)
+		
 
+func set_rabid(flag):
+	get_node("EnemyEffects/RabidParticles").set_emitting(flag)
+	
+	
+func set_corrosive(flag):
+	get_node("EnemyEffects/CorrosiveParticles").set_emitting(flag)
 
 func input_event(event):
 	get_parent().toggle_modifier(self.modifier)

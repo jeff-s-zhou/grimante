@@ -9,17 +9,18 @@ colors = ColorArray( 1, 1, 1, 0, 1, 1, 1, 1 )
 
 [node name="SludgeParticles" type="Particles2D"]
 
-config/amount = 10
-config/lifetime = 2.0
+config/amount = 6
+config/lifetime = 1.0
+config/time_scale = 0.5
 config/half_extents = Vector2( 65, 65 )
 config/texture = ExtResource( 1 )
 params/direction = 180.0
 params/spread = 10.0
-params/linear_velocity = 20.0
+params/linear_velocity = 15.0
 params/spin_velocity = 0.0
 params/orbit_velocity = 0.0
 params/gravity_direction = 0.0
-params/gravity_strength = 9.8
+params/gravity_strength = 6.0
 params/radial_accel = 0.0
 params/tangential_accel = 0.0
 params/damping = 0.0

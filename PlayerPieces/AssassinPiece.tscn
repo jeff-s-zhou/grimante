@@ -13,6 +13,10 @@ script/script = ExtResource( 2 )
 
 frames = ExtResource( 3 )
 
+[node name="ArmorDisplay" parent="Physicals"]
+
+editor/display_folded = true
+
 [node name="AssassinFade" type="Sprite" parent="."]
 
 visibility/opacity = 0.0

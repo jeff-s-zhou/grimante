@@ -17,20 +17,11 @@ func turn_update_helper():
 		self.move(movement_value)
 
 func turn_attack_update():
-	if self.frozen:
-		set_frozen(false)
-	
-	if self.stunned:
-		set_stunned(false)
-	elif self.hp != 0 and !self.silenced:
-#		if self.current_animation_sequence == null:
-#			get_new_animation_sequence()
+	if self.hp != 0 and !self.silenced and !self.stunned:
 		var swipe_range = get_parent().get_range(self.coords, [1, 2], "PLAYER")
 		for coords in swipe_range:
 			swipe(coords)
-#		enqueue_animation_sequence()
-	handle_rain()
-	handle_shifting_sands()
+	.turn_attack_update()
 	
 
 		

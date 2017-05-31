@@ -22,8 +22,6 @@ var deploying = false
 var tiles_x = 7 #x
 var tiles_y = 6 #y
 
-const _GRID_X_OFFSET = 0
-const _GRID_Y_OFFSET = 0
 
 #const TILE_X_OFFSET = -16
 const TILE_X_OFFSET = -5
@@ -54,7 +52,7 @@ func _ready():
 			var location1 = location.instance()
 			var tile_x_spacing = location1.get_size().width + TILE_X_OFFSET
 			var tile_y_spacing = location1.get_size().height + TILE_Y_OFFSET
-			location1.set_pos(Vector2(_GRID_X_OFFSET + tile_x_spacing * i, _GRID_Y_OFFSET + offset + (tile_y_spacing * j)))
+			location1.set_pos(Vector2(tile_x_spacing * i, offset + (tile_y_spacing * j)))
 			add_child(location1)
 			
 			var location_y_coord = _LOCATION_Y_OFFSETS[i] + j
@@ -86,7 +84,7 @@ func _ready():
 func set_deploying(flag, deploy_tiles=null):
 	self.deploying = flag
 	if deploying:
-		get_node("UnitSelectBar").set_global_pos(Vector2(0, 900))
+		get_node("UnitSelectBar").set_global_pos(Vector2(73, 910))
 		get_node("UnitSelectBar").show()
 		if deploy_tiles != null:
 			for deploy_tile_coords in deploy_tiles:
@@ -198,7 +196,8 @@ func deploy_swap_pieces(coords1, coords2):
 	var temp = self.get_piece(coords1)
 	self.set_piece(coords1, self.get_piece(coords2))
 	self.set_piece(coords2, temp)
-	
+
+
 func get_location(coords):
 	if self.deploying and get_node("UnitSelectBar").locations.has(coords):
 		return get_node("UnitSelectBar").locations[coords]

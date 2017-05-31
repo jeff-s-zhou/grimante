@@ -11,6 +11,7 @@ const Drummer = preload("res://EnemyPieces/DrummerPiece.tscn")
 const Melee = preload("res://EnemyPieces/MeleePiece.tscn")
 const Ranged = preload("res://EnemyPieces/RangedPiece.tscn")
 const Slime = preload("res://EnemyPieces/SlimePiece.tscn")
+const Spectre = preload("res://EnemyPieces/SpectrePiece.tscn")
 
 var constants = load("res://constants.gd").new()
 
@@ -144,6 +145,8 @@ func get_unit_hp(prototype):
 		prob_dist = constants.RANGED_HEALTH_PROB_DIST
 	elif prototype == Slime:
 		prob_dist = constants.SLIME_HEALTH_PROB_DIST
+	elif prototype == Spectre:
+		prob_dist = constants.SPECTRE_HEALTH_PROB_DIST
 	return get_value_from_prob_dist(prob_dist)
 	
 	
