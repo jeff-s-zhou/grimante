@@ -36,8 +36,6 @@ const ATTACK_DESCRIPTION = """Snipe. Fire an arrow at the first enemy in a line 
 const PASSIVE_DESCRIPTION = """ Running Fire. Whenever you move, attempt to Snipe down the column of your new position (failing if an ally is in the way).
 
 """
-const ULTIMATE_DESCRIPTION = """Gain +2 damage for this turn. The next Snipe, if it kills the target, continues travelling in the same direction, dealing 1 less damage for each target it kills and passes through.
-"""
 
 
 func _ready():
@@ -47,7 +45,6 @@ func _ready():
 	self.overview_description = OVERVIEW_DESCRIPTION
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
-	self.ultimate_description = ULTIMATE_DESCRIPTION
 	self.assist_type = ASSIST_TYPES.movement
 	
 
@@ -63,11 +60,6 @@ func get_attack_range():
 	var attack_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", true)
 	var attack_range_diagonal = get_parent().get_diagonal_range(self.coords, [1, 8], "ENEMY", true)
 	return attack_range + attack_range_diagonal
-	
-func get_ultimate_range():
-	var attack_range = get_parent().get_range(self.coords, [1, 11], "ENEMY")
-	var attack_range_diagonal = get_parent().get_diagonal_range(self.coords, [1, 8], "ENEMY")
-	return attack_range + attack_range_diagonal
 
 func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
@@ -82,12 +74,7 @@ func get_step_shot_coords(coords):
 
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
-	var action_range
-	if self.ultimate_flag:
-		action_range = get_ultimate_range() + get_movement_range()
-	else:
-		action_range = get_attack_range() + get_movement_range()
-		
+	var action_range = get_attack_range() + get_movement_range()
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
 	
@@ -97,8 +84,6 @@ func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
 
 func _is_within_attack_range(new_coords):
-	if self.ultimate_flag:
-		return new_coords in get_ultimate_range()
 	return new_coords in get_attack_range()
 
 
@@ -125,14 +110,10 @@ func act(new_coords):
 		invalid_move()
 
 func ranged_attack(new_coords, damage):
-	
-	if self.ultimate_flag:
-		silver_arrow(new_coords)
-	else:
-		get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [new_coords])
-		var action = get_new_action(new_coords)
-		action.add_call("attacked", [damage])
-		action.execute()
+	get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [new_coords])
+	var action = get_new_action(new_coords)
+	action.add_call("attacked", [damage])
+	action.execute()
 		
 		
 func piercing_arrow(new_coords):
@@ -245,50 +226,11 @@ func predict(new_coords):
 
 
 func predict_passive_ranged_attack(new_position_coords, new_attack_coords):
-	if self.ultimate_flag:
-		predict_ultimate_attack(new_position_coords, new_attack_coords)
-	else:
-		get_parent().pieces[new_attack_coords].predict(self.passive_damage, true)
+	get_parent().pieces[new_attack_coords].predict(self.passive_damage, true)
 
 
 func predict_ranged_attack(new_coords):
-	if self.ultimate_flag:
-		predict_ultimate_attack(self.coords, new_coords)
-	else:
-		get_parent().pieces[new_coords].predict(self.shoot_damage, false)
-	
-
-func predict_ultimate_attack(position_coords, attack_coords):
-	var damage_range
-	var direction = get_parent().get_direction_from_vector(attack_coords - position_coords)
-	if direction == null:
-		direction = get_parent().get_diagonal_direction_from_vector(attack_coords  - position_coords)
-		damage_range = get_parent().get_diagonal_range(self.coords, [1, 11], "ENEMY", false, [direction, direction +1])
-	else:
-		damage_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", false, [direction, direction +1])
-
-	var damage = self.shoot_damage
-	for coords in damage_range:
-		if damage == 0:
-			break
-		if coords == attack_coords:
-			get_parent().pieces[coords].predict(damage)
-		else:
-			get_parent().pieces[coords].predict(damage, true)
-		damage -= 1
-#	
-	
-func cast_ultimate():
-	get_node("Physicals/OverlayLayers/UltimateWhite").show()
-	#first reset the highlighting on the parent nodes. Then call the new highlighting
-	self.ultimate_flag = true
-	self.attack_bonus += 2
-	get_parent().reset_highlighting()
-	display_action_range()
-
-	
-func display_overwatch():
-	pass
+	get_parent().pieces[new_coords].predict(self.shoot_damage, false)
 
 
 	

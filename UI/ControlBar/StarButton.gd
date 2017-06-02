@@ -5,16 +5,26 @@ extends "res://UI/TextureLabelButton.gd"
 # var b = "textvar"
 
 var star_count = 0
+var enabled = true
 
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	self.y_difference = 7
+	
+func disable():
+	self.hide()
+	self.enabled = false
+	
+	
+func has_star():
+	return self.star_count > 0
 
 func add_star():
-	self.star_count += 1
-	get_node("TextureButton").set_disabled(false)
-	get_node("/root/AnimationQueue").enqueue(self, "animate_add_star", false, [self.star_count])
+	if not self.enabled:
+		self.star_count += 1
+		get_node("TextureButton").set_disabled(false)
+		get_node("/root/AnimationQueue").enqueue(self, "animate_add_star", false, [self.star_count])
 	
 func animate_add_star(crystal_count):
 	get_node("Toppings/Label").set_text(str(star_count))

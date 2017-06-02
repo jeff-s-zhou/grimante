@@ -27,7 +27,7 @@ func _ready():
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.ultimate_description = ULTIMATE_DESCRIPTION
-	self.assist_type = ASSIST_TYPES.invulnerable
+	self.assist_type = ASSIST_TYPES.defense
 
 func get_freeze_damage():
 	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_FREEZE_DAMAGE

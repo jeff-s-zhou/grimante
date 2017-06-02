@@ -13,6 +13,9 @@ func _ready():
 	# Initialization here
 	pass
 	
+func animate_clear_inspire():
+	self.hide()
+	
 func animate_inspire_ready(type):
 	self.set_opacity(0)
 	get_node("InspireArrow").set_rotd(0)

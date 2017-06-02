@@ -30,14 +30,6 @@ var assist_flag = false
 
 var invulnerable_flag = false
 
-var ultimate_available_flag = false
-
-var ultimate_flag = false
-
-var ultimate_used_flag = false
-
-var finisher_flag = false
-
 var armor = 0
 var movement_value = 1 setget , get_movement_value
 var attack_bonus = 0
@@ -122,6 +114,7 @@ func animate_assist(piece, assist_type):
 	
 func clear_assist():
 	add_animation(get_node("Physicals/ComboSparkleManager"), "animate_clear_assist", false, [self.assist_type])
+	add_animation(get_node("InspireIndicator"), "animate_clear_inspire", false)
 
 
 func get_movement_value():
@@ -228,6 +221,7 @@ func initialize(cursor_area):
 	add_to_group("player_pieces")
 	if !get_node("/root/global").available_unit_roster.has(self.unit_name):
 		get_node("/root/global").available_unit_roster.append(self.unit_name)
+		
 	
 func turn_update():
 	set_invulnerable(false)
@@ -454,9 +448,12 @@ func invalid_move():
 
 
 func placed(ending_turn=false):
-	if !ending_turn:
-		self.handle_assist()
-	add_animation(self, "animate_placed", false)
+	if ending_turn:
+		print("clearing assist here?")
+		clear_assist()
+	else:
+		handle_assist()
+	add_animation(self, "animate_placed", false, [ending_turn])
 	get_node("BlueGlow").hide()
 	self.state = States.PLACED
 	self.attack_bonus = 0
@@ -464,14 +461,17 @@ func placed(ending_turn=false):
 	get_parent().selected = null
 	
 
-func animate_placed():
+func animate_placed(ending_turn=false):
 	#get_node("Physicals/OverlayLayers/UltimateWhite").hide()
 	if(self.cooldown > 0):
 		self.cooldown -= 1
 		get_node("Cooldown").show()
 		get_node("Cooldown/Label").set_text(str(self.cooldown))
 	get_node("Physicals/AnimatedSprite").play("cooldown")
-	emit_signal("animated_placed", self.unit_name)
+	
+	#if we're calling it from end_turn() in combat, don't trigger all the individual placed checks
+	if !ending_turn:
+		emit_signal("animated_placed")
 	
 	
 func player_attacked(enemy):

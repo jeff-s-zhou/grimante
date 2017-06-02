@@ -10,6 +10,8 @@ var assist_type = null
 
 var assister = null
 
+var assist_disabled = true
+
 signal count_animation_done
 
 func _ready():
@@ -25,9 +27,10 @@ func reset_combo():
 	
 	
 func activate_assist(assist_type, assister):
-	self.assister = assister
-	self.assist_type = assist_type
-	self.assister.activate_assist(self.assist_type)
+	if !self.assist_disabled:
+		self.assister = assister
+		self.assist_type = assist_type
+		self.assister.activate_assist(self.assist_type)
 
 		
 

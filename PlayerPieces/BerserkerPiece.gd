@@ -177,10 +177,6 @@ func smash_move(new_coords):
 
 
 func smash(smash_range):
-	#attack_event = new aoe_attack_event(smash_range)
-	#attack_event.add_call(attacked, [self.aoe_damage, true])
-	#attack_event.add_call(set_stunned, [true])
-	#attack_event.execute()
 	var action = get_new_action(smash_range)
 	action.add_call("set_stunned", [true])
 	action.add_call("attacked", [self.aoe_damage])

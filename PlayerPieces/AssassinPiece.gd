@@ -217,8 +217,6 @@ func finisher_reactivate():
 
 func placed(ending_turn=false):
 	self.bloodlust_flag = false
-	if self.ultimate_flag:
-		self.ultimate_flag = false
 	.placed(ending_turn)
 
 

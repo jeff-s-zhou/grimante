@@ -17,8 +17,8 @@ func _init(affected_range, caller, trigger_assassin_passive=true).():
 	self.caller = caller
 	self.trigger_assassin_passive = trigger_assassin_passive
 
-func add_call(func_ref, args):
-	func_calls.append({"func_ref":func_ref, "args":args})
+func add_call(func_ref, args, affected_range=null):
+	func_calls.append({"func_ref":func_ref, "args":args, "range":affected_range})
 	
 func execute():
 	var death_flag = false

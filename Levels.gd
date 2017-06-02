@@ -44,12 +44,12 @@ func load_level(file_name):
 		enemy_waves[i] = {}
 
 	var save = File.new()
-	if !save.file_exists("user://" + file_name):
+	if !save.file_exists("res://Levels/" + file_name):
 		return #Error!  We don't have a save to load
 
 	# Load the file line by line and process that dictionary to restore the object it represents
 	var current_line = {} # dict.parse_json() requires a declared dict.
-	save.open("user://" + file_name, File.READ)
+	save.open("res://Levels/" + file_name, File.READ)
 	while (!save.eof_reached()):
 		current_line.parse_json(save.get_line())
 		# First we need to create the object and add it to the tree and set its position.
@@ -71,14 +71,19 @@ func make(prototype, hp, modifiers=null):
 	return {"prototype": prototype, "hp": hp, "modifiers":modifiers}
 	
 
-func add_start_rule(tutorial, turn, text_list):
+func add_player_start_rule(tutorial, turn, text_list):
 	var player_start_rule = RulePrototype.instance()
 	player_start_rule.initialize(text_list)
-	tutorial.add_player_turn_start_rule(player_start_rule, 1)
+	tutorial.add_player_turn_start_rule(player_start_rule, turn)
+	
+func add_enemy_end_rule(tutorial, turn, text_list):
+	var enemy_end_rule = RulePrototype.instance()
+	enemy_end_rule.initialize(text_list)
+	tutorial.add_enemy_turn_end_rule(enemy_end_rule, turn)
 
-func add_forced_action(tutorial, turn, initial_coords, text, final_coords, text):
+func add_forced_action(tutorial, turn, initial_coords, text, final_coords, text2, result=null):
 	var forced_action = ForcedActionPrototype.instance()
-	forced_action.initialize(initial_coords, text, final_coords, text)
+	forced_action.initialize(initial_coords, text, final_coords, text2, result)
 	tutorial.add_forced_action(forced_action, turn)
 
 
@@ -90,91 +95,104 @@ func sandbox_enemies():
 	return EnemyWrappers.FiniteGeneratedWrapper.new(turn_power_levels)
 	
 func sandbox_enemies2():
-	var enemies = [{Vector2(3, 2): make(Spectre, 3), Vector2(3, 3): make(Slime, 4)}]
+	var enemies = [{Vector2(3, 2): make(Spectre, 3), Vector2(3, 4): make(Slime, 4)}]
 	#var enemies = load_level("level2.save")
-	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
+	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)\
 	
 func sandbox_extras():
-	var tutorial = TutorialPrototype.instance()
-
-	var turn0_player_start_rule = RulePrototype.instance()
-	turn0_player_start_rule.initialize(["Clear the board of enemies to win."])
-	tutorial.add_player_turn_start_rule(turn0_player_start_rule, 1)
-	
-	var forced_action = ForcedActionPrototype.instance()
-	forced_action.initialize(Vector2(3, 7), " Click on the Berserker to select it.", Vector2(3, 5), "Click on this tile to move the Berserker here.")
-	tutorial.add_forced_action(forced_action, 1)
-	
-	var turn0_enemy_rule = RulePrototype.instance()
-	turn0_enemy_rule.initialize(["Enemies move down one tile each turn.", "If an enemy exits from the bottom of the board, you lose."])
-	tutorial.add_enemy_turn_end_rule(turn0_enemy_rule, 1)
-	
 	#return {"shifting_sands_tiles": {Vector2(3, 6): 4}, "tutorial":tutorial}
-	return {"tutorial":tutorial, "free_deploy":false}
+	return {"required_units":{2: Archer, 3: FrostKnight}}
 	
 func sandbox_extras2():
 	return {"shadow_wall_tiles": [Vector2(3, 3), Vector2(3, 4)], "required_units":{1: Assassin, 2: Berserker, 4: Corsair, 5: Archer}}
 	#return {"required_units":{1: Cavalier, 2: Berserker, 3: Pyromancer, 4: Corsair, 5: Archer}}
 
 func sandbox_level():
-	return LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies2(), 7, null, sandbox_extras2())#, null, sandbox_extras()) 
+	return LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies2(), 7, null, sandbox_extras()) 
 
 var list = [sandbox_level()]
 
-func berserker_part_1_tutorial():
+func berserker_part1_tutorial():
 	var tutorial = TutorialPrototype.instance()
+	
+	var text = ["Clear the board of enemies to win."]
+	add_player_start_rule(tutorial, 1, text)
+	
+	var text = ["When all of your pieces have moved, your turn ends."]
+	var fa_text1 = "Click on the Berserker to select it."
+	var fa_text2 = "Click on this tile to move the Berserker here."
+	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(3, 5), fa_text2, text)
+	
+	text = ["Enemies move down one tile each turn.", \
+	"If an enemy exits from the bottom of the board, you lose."]
+	add_enemy_end_rule(tutorial, 1, text)
 
-	var turn1_player_start_rule = RulePrototype.instance()
-	turn1_player_start_rule.initialize(["Clear the board of enemies to win."])
-	tutorial.add_player_turn_start_rule(turn1_player_start_rule, 1)
+	text = ["The Berserker's Direct Attack deals 4 damage to an enemy's Power.", \
+	"If an enemy's Power reaches 0, it is KOed."]
+	fa_text1 = "Select the Berserker"
+	fa_text2 = "Select the Enemy to attack it."
+	add_forced_action(tutorial, 2, Vector2(3, 5), fa_text1, Vector2(3, 3), fa_text2, text)
 	
-	var turn1_forced_action = ForcedActionPrototype.instance()
-	turn1_forced_action.initialize(Vector2(3, 7), " Click on the Berserker to select it.", Vector2(3, 5), "Click on this tile to move the Berserker here.")
-	tutorial.add_forced_action(turn1_forced_action, 1)
+	text = ["When the Berserker kills an enemy, it moves to its tile. "]
+	fa_text1 = "Kill the Enemy"
+	fa_text2 = ""
+	add_forced_action(tutorial, 3, Vector2(3, 5), fa_text1, Vector2(3, 4), fa_text2, text)
 	
-	var turn1_enemy_rule = RulePrototype.instance()
-	turn1_enemy_rule.initialize(["Enemies move down one tile each turn.", "If an enemy exits from the bottom of the board, you lose."])
-	tutorial.add_enemy_turn_end_rule(turn1_enemy_rule, 1)
-	
-	var turn2_forced_action = ForcedActionPrototype.instance()
-	turn2_forced_action.initialize(Vector2(3, 5), "Select the Berserker", Vector2(3, 3), "Select the Enemy to attack it.")
-	tutorial.add_forced_action(turn2_forced_action, 2)
-	
-	#THIS IS WRONG
-	var turn2_enemy_rule = RulePrototype.instance()
-	turn2_enemy_rule.initialize(["The Berserker's Direct Attack deals 4 damage to an enemy's Power.", \
-	"If an enemy's Power reaches 0, it is KOed."])
-	tutorial.add_enemy_turn_end_rule(turn2_enemy_rule, 2)
-	
-#Turn 2
-#On Screen: Select the Berserker.
-#On Screen: Select the enemy to attack it.
-#EOPT Rule: The Berserker's Direct Attack deals 4 damage to an enemy’s Power. If an enemy’s Power reaches 0, it is KOed. 
-# 
-#Turn 3  
-#On screen: KO the enemy.
-#EOPT Rule: When the Berserker KOs an enemy, it moves to its tile. 
-# 
-#Turn 4 (have all enemies be past the berserker by this point, so it’s unlikely to be KOed. If the Berserker is KOed though, give a message explaining why and let the player try again? Or just have all enemies be 1 HP?)
-#Objective: Clear the board of remaining enemies to win. 
-#On Screen Tip: Remember, If enemies exit the bottom of the board, you lose!
-#
-#	
-	
+	text = ["Clear the board of remaining enemies to win. "]
+	add_player_start_rule(tutorial, 4, text)
 	
 	return tutorial
 
 #BERSERKER PART 1
-func berserker_part_1():
+func berserker_part1():
 	var allies = []
-	var raw_enemies = load_level("level1.save")
+	var raw_enemies = load_level("berserker_part1.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	
-	var flags = ["no_stars", "no_turns", "no_waves"]
-	var tutorial_func = funcref(self, "berserker_part_1_tutorial")
+	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire"]
+	var tutorial_func = funcref(self, "berserker_part1_tutorial")
 	var extras = {"free_deploy":false, "required_units":{3: Berserker}, "tutorial":tutorial_func, "flags":flags}
 	
 	return LevelTypes.Timed.new("Berserker Part 1", allies, enemies, 7, null, extras)
+	
+
+func berserker_part2_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	
+	var text = ["You've learned how to use the Berserker's Direct Attack,", \
+	"but the Berserker has another trick up its sleeve."]
+	add_player_start_rule(tutorial, 1, text)
+	
+	var text = ["When the Berserker moves to an empty tile, it uses its Indirect Attack, Ground Slam, ", "to deals 2 damage to adjacent enemies."]
+	var fa_text1 = "Move the Berserker next to these enemies."
+	var fa_text2 = ""
+	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(3, 5), fa_text2, text)
+	
+	
+	text = ["The Berserker's Indirect Attack stuns enemies.", \
+	"The Stun Effect prevents enemies from moving their next turn."]
+	fa_text1 = "Let’s attack these High Power enemies."
+	fa_text2 = ""
+	add_forced_action(tutorial, 2, Vector2(3, 5), fa_text1, Vector2(3, 3), fa_text2, text)
+
+
+	text = ["Clear the board."]
+	add_player_start_rule(tutorial, 3, text)
+	
+	return tutorial
+	
+
+#BERSERKER PART 2
+func berserker_part2():
+	var allies = []
+	var raw_enemies = load_level("berserker_part2.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	
+	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire"]
+	var tutorial_func = funcref(self, "berserker_part2_tutorial")
+	var extras = {"free_deploy":false, "required_units":{3: Berserker}, "tutorial":tutorial_func, "flags":flags}
+	
+	return LevelTypes.Timed.new("Berserker Part 2", allies, enemies, 7, null, extras)
 
 
 #SAINT LEVEL

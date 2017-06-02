@@ -42,7 +42,7 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(73, 270))
 	#get_node("Grid").set_pos(Vector2(400, 250))
-	#debug_mode()
+	debug_mode()
 	
 	get_node("ControlBar/EndTurnButton").connect("released", self, "handle_end_turn_released")
 	get_node("ControlBar/EndTurnButton").connect("holding", self, "holding_end_turn")
@@ -62,10 +62,11 @@ func _ready():
 #	self.level_schematic = self.level_schematic_func.call_func()
 
 	self.level_schematic = get_node("/root/global").get_param("level")
-	var tutorial_func = self.level_schematic.tutorial
-	self.tutorial = tutorial_func.call_func()
-	if self.tutorial != null:
-		add_child(self.tutorial)
+	if self.level_schematic.tutorial != null:
+		var tutorial_func = self.level_schematic.tutorial
+		self.tutorial = tutorial_func.call_func()
+		if self.tutorial != null:
+			add_child(self.tutorial)
 
 	self.enemy_waves = self.level_schematic.enemies
 
@@ -81,7 +82,9 @@ func _ready():
 
 	add_child(self.state_manager)
 	self.state_manager.initialize(self.level_schematic, get_node("ControlBar/StarButton"), self.level_schematic.flags)
-
+	
+	if self.level_schematic.flags.has("no_stars"):
+		get_node("ControlBar/StarButton").disable()
 
 	if self.level_schematic.shadow_wall_tiles.size() > 0:
 		get_node("Grid").initialize_shadow_wall_tiles(self.level_schematic.shadow_wall_tiles)
@@ -165,7 +168,7 @@ func initialize_piece(piece, on_bar=false, key=null):
 	new_piece.connect("invalid_move", self, "handle_invalid_move")
 	new_piece.connect("shake", self, "screen_shake")
 	if self.tutorial != null:
-		new_piece.connect("animated_placed", self, "handle_hero_cooldown_rules")
+		new_piece.connect("animated_placed", self, "handle_piece_placed")
 	
 	if on_bar:
 		get_node("Grid").add_piece_on_bar(new_piece)
@@ -182,6 +185,25 @@ func initialize_piece(piece, on_bar=false, key=null):
 	new_piece.animate_summon()
 	yield(new_piece.get_node("Tween"), "tween_complete")
 	emit_signal("done_initializing")
+	
+
+func handle_piece_placed():
+	if self.tutorial.has_forced_action_result():
+		set_process_input(false)
+		self.tutorial.handle_forced_action_result()
+		yield(self.tutorial, "rule_finished")
+		set_process_input(true)
+		self.tutorial.display_forced_action(self.turn_count)
+	
+	#shouldn't interfere with any other forced actions, since it'll only end when all pieces are placed
+	if !get_node("ControlBar/StarButton").has_star():
+		#check if we can automatically end turn
+		var player_pieces = get_tree().get_nodes_in_group("player_pieces")
+		for player_piece in player_pieces:
+			if !player_piece.is_placed():
+				return
+		end_turn()
+
 #	
 #
 func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon, animation_sequence=null):
@@ -224,7 +246,6 @@ func end_turn():
 
 	get_node("TutorialTooltip").reset()
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
-		player_piece.finisher_flag = false
 		player_piece.placed(true)
 		player_piece.clear_assist()
 	get_node("AssistSystem").clear_assist()
@@ -254,13 +275,6 @@ func restart():
 	get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic})
 
 	
-		
-func handle_hero_cooldown_rules(hero_name):
-	if self.tutorial != null and self.tutorial.has_hero_cooldown_rule(get_turn_count(), hero_name):
-		self.tutorial.display_hero_cooldown_rule(get_turn_count(), hero_name)
-		set_process_input(false)
-		yield(self.tutorial, "rule_finished")
-		set_process_input(true)
 
 func _input(event):
 	computer_input(event)
@@ -324,8 +338,9 @@ func computer_input(event):
 			OS.set_window_fullscreen(false)
 			OS.set_window_maximized(true)
 		else:
-			OS.set_window_maximized(false)
 			OS.set_window_fullscreen(true)
+			OS.set_window_maximized(false)
+			
 			
 	elif event.is_action("test_action") and event.is_pressed():
 		get_node("/root/AnimationQueue").debug()
@@ -344,13 +359,9 @@ func _process(delta):
 	
 	if self.state_manager.check_player_win(): 
 		player_win()
-
-
-
 	elif self.state == STATES.enemy_turn:
 		enemy_phase()
 		self.state = STATES.transitioning
-
 	elif self.state == STATES.transitioning:
 		pass
 		
