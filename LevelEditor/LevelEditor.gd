@@ -35,9 +35,11 @@ func _ready():
 func select_editor_grid(turn_number):
 	self.current_turn = turn_number
 	for editor_grid in self.editor_grids:
+		editor_grid.set_pos(Vector2(-1500, -1500))
 		editor_grid.hide()
 	self.current_editor_grid = self.editor_grids[turn_number]
 	self.editor_grids[turn_number].show()
+	self.editor_grids[turn_number].set_pos(Vector2(73, 280))
 	
 
 func get_current_editor_grid():
