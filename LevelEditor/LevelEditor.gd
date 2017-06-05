@@ -46,12 +46,9 @@ func get_current_editor_grid():
 #passed from the UnitBarArea, to detect scrolling the enemy unit bar
 func input_event(event):
 	if get_node("InputHandler").is_select(event):
-		print("met the select")
 		self.original_mouse_pos = event.pos
 	elif get_node("InputHandler").is_unpress(event):
 		self.original_mouse_pos = null
-
-	print("moving?")
 	if self.original_mouse_pos != null:
 		get_node("EditorUnitBar").translate(Vector2(event.pos.x - self.original_mouse_pos.x, 0))
 		self.original_mouse_pos = event.pos
@@ -66,8 +63,7 @@ func _input(event):
 			var hovered = get_node("CursorArea").get_piece_or_location_hovered()
 			if hovered:
 				hovered.input_event(event)
-			elif selected != null:
-				selected.invalid_move()
+
 				
 	elif event.is_action("test_action") and event.is_pressed():
 		save_level()
@@ -123,7 +119,7 @@ func save_level():
 	
 	var file_name = get_node("FileName").get_text()
 	var save = File.new()
-	save.open("user://" + file_name, File.WRITE)
+	save.open("res://Levels/" + file_name, File.WRITE)
 	for editor_grid in self.editor_grids:
 		var enemy_pieces = editor_grid.pieces
 		for key in enemy_pieces:
@@ -166,17 +162,16 @@ func load_level():
 	reset_grids()
 	
 	var save = File.new()
-	if !save.file_exists("user://" + file_name):
+	if !save.file_exists("res://Levels/" + file_name):
 		return #Error!  We don't have a save to load
 
 	# Load the file line by line and process that dictionary to restore the object it represents
 	var current_line = {} # dict.parse_json() requires a declared dict.
-	save.open("user://" + file_name, File.READ)
+	save.open("res://Levels/" + file_name, File.READ)
 	while (!save.eof_reached()):
 		current_line.parse_json(save.get_line())
 		# First we need to create the object and add it to the tree and set its position.
 		var new_piece = editor_piece_prototype.instance()
-		print(current_line)
 		var name = current_line["name"]
 		var coords = Vector2(current_line["pos_x"],current_line["pos_y"])
 		var hp = current_line["hp"]

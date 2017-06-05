@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=1]
+[gd_scene load_steps=9 format=1]
 
 [ext_resource path="res://UI/InfoOverlay.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/forced_action_overlay.png" type="Texture" id=2]
@@ -7,6 +7,7 @@
 [ext_resource path="res://Assets/processed_fonts/info_overlay_body_rubik_26.fnt" type="BitmapFont" id=5]
 [ext_resource path="res://Assets/processed_fonts/info_overlay_header_amaranth_56.fnt" type="BitmapFont" id=6]
 [ext_resource path="res://UI/HeroInfoSubOverlay.tscn" type="PackedScene" id=7]
+[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=8]
 
 [node name="InfoOverlay" type="Node2D"]
 
@@ -55,5 +56,7 @@ max_lines_visible = -1
 [node name="HeroInfoSubOverlay" parent="." instance=ExtResource( 7 )]
 
 visibility/visible = false
+
+[node name="InputHandler" parent="." instance=ExtResource( 8 )]
 
 

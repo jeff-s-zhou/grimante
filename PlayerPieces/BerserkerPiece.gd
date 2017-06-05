@@ -16,30 +16,17 @@ var animation_state = ANIMATION_STATES.default
 
 const UNIT_TYPE = "Berserker"
 
-const OVERVIEW_DESCRIPTION = """3 Armor
-
-Movement: 2 Range Leap Move
-
-Inspire: +1 Attack
-"""
-
-const ATTACK_DESCRIPTION = """ Leap Strike. Deal 4 damage to an enemy within movement range. If the enemy is killed by the attack, move to its tile.
-"""
-const PASSIVE_DESCRIPTION = """Earthslam.  Moving to an empty tile deals 2 damage to all enemies adjacent to the tile and stuns them.
-"""
-
-const ULTIMATE_DESCRIPTION = """Earthshatter. Stun and attack all enemies in a line from the Berserker, damage starting at 5 and decreasing by 1 for each enemy hit.
-"""
-
+const ATTACK_DESCRIPTION = ["""Leap Strike. Deal 4 damage to an enemy within movement range. If the enemy is killed by the attack, move to its tile.
+"""]
+const PASSIVE_DESCRIPTION = ["""Earthslam.  Moving to an empty tile deals 2 damage to all enemies adjacent to the tile and stuns them.
+"""]
 
 func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.overview_description = OVERVIEW_DESCRIPTION
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
-	self.ultimate_description = ULTIMATE_DESCRIPTION
 	self.assist_type = ASSIST_TYPES.attack
 	
 func get_damage():
@@ -149,16 +136,16 @@ func smash_attack(new_coords):
 	get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [new_coords, 350, false])
 	get_node("/root/AnimationQueue").enqueue(self, "jump_to", true, [new_coords])
 	if get_parent().pieces[new_coords].will_die_to(self.damage):
-		var action = get_new_action(new_coords)
-		action.add_call("smash_killed", [self.damage])
+		var action = get_new_action()
+		action.add_call("smash_killed", [self.damage], new_coords)
 		action.execute()
 		set_coords(new_coords)
 		placed()
 
 	#else leap back
 	else:
-		var action = get_new_action(new_coords)
-		action.add_call("attacked", [self.damage])
+		var action = get_new_action()
+		action.add_call("attacked", [self.damage], new_coords)
 		action.execute()
 		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords, 300, false])
 		get_node("/root/AnimationQueue").enqueue(self, "jump_back", true, [self.coords])
@@ -177,9 +164,9 @@ func smash_move(new_coords):
 
 
 func smash(smash_range):
-	var action = get_new_action(smash_range)
-	action.add_call("set_stunned", [true])
-	action.add_call("attacked", [self.aoe_damage])
+	var action = get_new_action()
+	action.add_call("set_stunned", [true], smash_range)
+	action.add_call("attacked", [self.aoe_damage], smash_range)
 	action.execute()
 
 

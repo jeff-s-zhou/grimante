@@ -17,8 +17,12 @@ func _ready():
 	# Initialization here
 	pass
 
-func add_player_turn_start_rule(rule, turn):
-	self.player_turn_start_rules[turn] = rule
+func add_player_turn_start_rule(rule, turn, coords=null):
+	#needed for explaining coords tiles
+	if coords != null:
+		self.player_turn_start_rules[turn] = {"rule":rule, "coords":coords}
+	else:
+		self.player_turn_start_rules[turn] = rule
 
 
 func add_enemy_turn_end_rule(rule, turn):
@@ -127,10 +131,19 @@ func display_enemy_turn_end_rule(turn):
 
 
 func update_rule():
-	var line = self.current_rule.get_next_line()
+	var rule
+	var coords
+	if typeof(self.current_rule) == TYPE_DICTIONARY:
+		coords = self.current_rule.coords
+		rule = self.current_rule.rule
+	else:
+		rule = self.current_rule
+		
+	var line = rule.get_next_line()
 	if line == null:
 		self.current_rule = null
 		get_node("RuleOverlay").hide()
+		get_node("Sprite").hide()
 		get_node("Label").hide()
 		get_node("TapLabel").hide()
 		set_process_input(false)
@@ -140,10 +153,19 @@ func update_rule():
 			pass
 		else:
 			get_node("Label").set_pos(Vector2(24, 200))
-			
- #then we keep the same line for updating the rule
-			get_node("Label").set_bbcode("[center]" + line + "[/center]")
+			print(line)
+			print(line.length())
+			if line.length() < 35:
+				print("met here?")
+				get_node("Label").set_bbcode("[center]" + line + "[/center]")
+			else:
+				get_node("Label").set_bbcode(line)
 			get_node("Label").show()
 			get_node("TapLabel").show()
-			get_node("RuleOverlay").show()
+			if coords != null:
+				var new_pos = get_parent().get_node("Grid").locations[coords].get_global_pos()
+				get_node("Sprite").set_pos(new_pos)
+				get_node("Sprite").show()
+			else:
+				get_node("RuleOverlay").show()
 

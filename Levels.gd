@@ -71,10 +71,10 @@ func make(prototype, hp, modifiers=null):
 	return {"prototype": prototype, "hp": hp, "modifiers":modifiers}
 	
 
-func add_player_start_rule(tutorial, turn, text_list):
+func add_player_start_rule(tutorial, turn, text_list, coords=null):
 	var player_start_rule = RulePrototype.instance()
 	player_start_rule.initialize(text_list)
-	tutorial.add_player_turn_start_rule(player_start_rule, turn)
+	tutorial.add_player_turn_start_rule(player_start_rule, turn, coords)
 	
 func add_enemy_end_rule(tutorial, turn, text_list):
 	var enemy_end_rule = RulePrototype.instance()
@@ -159,11 +159,11 @@ func berserker_part1():
 func berserker_part2_tutorial():
 	var tutorial = TutorialPrototype.instance()
 	
-	var text = ["You've learned how to use the Berserker's Direct Attack,", \
-	"but the Berserker has another trick up its sleeve."]
+	var text = ["You've learned how to use the Berserker's Direct Attack.", \
+	"However, that's not all the Berserker can do."]
 	add_player_start_rule(tutorial, 1, text)
 	
-	var text = ["When the Berserker moves to an empty tile, it uses its Indirect Attack, Ground Slam, ", "to deals 2 damage to adjacent enemies."]
+	var text = ["When the Berserker moves to an empty tile, it uses its Indirect Attack, Ground Slam.", "Ground Slam deals 2 damage to adjacent enemies."]
 	var fa_text1 = "Move the Berserker next to these enemies."
 	var fa_text2 = ""
 	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(3, 5), fa_text2, text)
@@ -190,9 +190,130 @@ func berserker_part2():
 	
 	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire"]
 	var tutorial_func = funcref(self, "berserker_part2_tutorial")
-	var extras = {"free_deploy":false, "required_units":{3: Berserker}, "tutorial":tutorial_func, "flags":flags}
+	var extras = {"free_deploy":false, "required_units":{3: Berserker}, "tutorial": tutorial_func, "flags":flags}
 	
 	return LevelTypes.Timed.new("Berserker Part 2", allies, enemies, 7, null, extras)
+
+
+func cavalier_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	
+	var text = ["The Cavalier has arrived! Let's see what it can do."]
+	add_player_start_rule(tutorial, 1, text)
+	
+	var fa_text1 = "The Cavalier can move any number of tiles in all six directions."
+	var fa_text2 = ""
+	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(0, 4), fa_text2)
+	
+	
+	text = ["The Cavalier can run through enemies with its Indirect Attack: Trample.", \
+	"Trample deals 2 damage to each enemy."]
+	fa_text1 = "Now let's clean up some enemies."
+	fa_text2 = ""
+	add_forced_action(tutorial, 2, Vector2(0, 4), fa_text1, Vector2(0, 0), fa_text2, text)
+	
+	text = ["The Cavalier can use its Direct Attack, Charge, on an enemy when there is nothing blocking its path.", \
+	"Charge deals 1 damage for each tile travelled to the first enemy it hits, and the enemy behind it."]
+	fa_text1 = "Now let's use the Cavalier's Direct Attack, Charge."
+	fa_text2 = ""
+	add_forced_action(tutorial, 3, Vector2(0, 0), fa_text1, Vector2(5, 5), fa_text2, text)
+
+
+	text = ["Can you clear the board before the enemies reach the bottom?"]
+	add_player_start_rule(tutorial, 3, text)
+	
+	return tutorial
+
+#CAVALIER
+func cavalier():
+	var allies = []
+	var raw_enemies = load_level("cavalier.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	
+	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire"]
+	var tutorial_func = funcref(self, "cavalier_tutorial")
+	var extras = {"free_deploy":false, "required_units":{3: Cavalier}, "tutorial": tutorial_func, "flags":flags}
+	
+	return LevelTypes.Timed.new("Cavalier", allies, enemies, 7, null, extras)
+
+
+func dead_or_alive_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	
+	var text = [" Here, both Heroes have already moved and are on cooldown.", 
+	"Let's see what happens when the Enemies try to move forward.",
+	"Press the End Turn button when you're ready."]
+	add_player_start_rule(tutorial, 1, text)
+	
+	text = ["When an Enemy moves forward onto a tile occupied by a Hero, it shoves the Hero.", 
+	"If the Enemy's Power >= Hero's Armor, the Hero is KOed.",
+	"Otherwise the Hero is pushed back 1 tile.",
+	"If the Hero is pushed off the map, it is KOed."]
+	
+	add_enemy_end_rule(tutorial, 1, text)
+	
+	text = ["The Berserker is KOed, but he's not out yet!"]
+	
+	add_player_start_rule(tutorial, 2, text)
+	
+	text = ["Heroes can be revived if the tile they were KOed on is empty, and another Hero moves adjacent to the tile.",
+	"However, if all heroes are KOed, you lose."]
+	
+	var fa_text1 = "Let's move the Cavalier here."
+	var fa_text2 = ""
+	add_forced_action(tutorial, 2, Vector2(4, 7), fa_text1, Vector2(1, 4), fa_text2, text)
+	
+	text = ["Each Hero can move once per turn.", 
+	"Right Click or press Escape to deselect a Hero."]
+	add_player_start_rule(tutorial, 3, text)
+
+	
+	return tutorial
+
+
+#DEAD OR ALIVE
+func dead_or_alive():
+	var allies = []
+	var raw_enemies = load_level("dead_or_alive.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	
+	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire", "placed"]
+	var tutorial_func = funcref(self, "dead_or_alive_tutorial")
+	var extras = {"free_deploy":false, "required_units":{Vector2(4, 6): Cavalier, Vector2(2, 5): Berserker}, "tutorial": tutorial_func, "flags":flags}
+	
+	return LevelTypes.Timed.new("Dead or Alive", allies, enemies, 7, null, extras)
+	
+
+func reinforcements_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	
+	var text = ["These are Reinforcement Hexes.", 
+	"An enemy unit will appear on a Reinforcement Hex on the following turn."]
+	add_player_start_rule(tutorial, 1, text, Vector2(5, 4))
+	
+	text = ["If a Hero stands on a Reinforcement Hex, it is KOed.", 
+	"If an Enemy stands on a Reinforcement Hex, it absorbs the Reinforcement and gains its Power."]
+	add_enemy_end_rule(tutorial, 1, text)
+	
+	var text = ["Check the top left of the screen to see when the next Wave of Reinforcements is going to arrive."]
+	add_player_start_rule(tutorial, 2, text)
+	
+	var text = ["If you forget what a Piece does, double click on it to bring up a summary."]
+	add_player_start_rule(tutorial, 3, text)
+	
+	return tutorial
+	
+func reinforcements():
+	var allies = []
+	var raw_enemies = load_level("reinforcements.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	
+	var flags = ["no_stars", "no_turns", "no_inspire"]
+	var tutorial_func = funcref(self, "reinforcements_tutorial")
+	var extras = {"free_deploy":false, "required_units":{4: Berserker, 2: Cavalier}, "tutorial": tutorial_func, "flags":flags}
+	
+	return LevelTypes.Timed.new("Reinforcements!", allies, enemies, 7, null, extras)
+
 
 
 #SAINT LEVEL

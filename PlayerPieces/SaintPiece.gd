@@ -7,30 +7,20 @@ const UNIT_TYPE = "Saint"
 var pathed_range
 
 
-const OVERVIEW_DESCRIPTION = """1 Armor
-
-Movement: 2 Range Step
-
-Inspire: +Protect (Unit is invulnerable to damage until next turn. Can block Summoning Tiles.)
-"""
-
-const ATTACK_DESCRIPTION = """
-
+const ATTACK_DESCRIPTION = ["""
 Intervention. Target an ally within 2 range. If the tile immediately south of it is empty, move it to that tile.
-"""
+"""]
 
-const PASSIVE_DESCRIPTION = """Purify. Move to a tile. All adjacent Enemy units which are already adjacent to another Player Unit are silenced."""
+const PASSIVE_DESCRIPTION = ["""Purify. Move to a tile. All adjacent Enemy units which are already adjacent to another Player Unit are silenced.
+"""]
 
-const ULTIMATE_DESCRIPTION = """"""
 
 func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.overview_description = OVERVIEW_DESCRIPTION
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
-	self.ultimate_description = ULTIMATE_DESCRIPTION
 	self.assist_type = ASSIST_TYPES.invulnerable
 	
 func handle_assist():
@@ -140,8 +130,8 @@ func purify(new_coords):
 		get_node("/root/AnimationQueue").enqueue(self, "animate_directly_above_purify", true, [new_coords])
 	else:
 		get_node("/root/AnimationQueue").enqueue(self, "animate_purify", true, [new_coords])
-	var action = get_new_action(new_coords)
-	action.add_call("set_silenced", [true])
+	var action = get_new_action()
+	action.add_call("set_silenced", [true], new_coords)
 	action.execute()
 	var return_position = get_parent().locations[new_coords + Vector2(0, 1)].get_pos()
 	get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [return_position, 200, true])
@@ -151,8 +141,8 @@ func purify(new_coords):
 
 func purify_passive(new_coords):
 	var adjacent_enemy_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
-	var action = get_new_action(adjacent_enemy_range, false)
-	action.add_call("set_silenced", [true])
+	var action = get_new_action(false)
+	action.add_call("set_silenced", [true], adjacent_enemy_range)
 	action.execute()
 
 

@@ -3,6 +3,8 @@ extends Node
 var queue = []
 var mid_processing = false
 
+var stopped_flag = false
+
 var processing_queue = []
 
 var lock = Mutex.new()
@@ -24,10 +26,11 @@ func _ready():
 
 func enqueue(node, func_ref, blocking, args=[]):
 	#print("enqueuing: " + func_ref)
-	self.lock.lock()
-	self.queue.append({"node":node, "func_ref":func_ref, "blocking":blocking, "args":args})
-	self.lock.unlock()
-	
+	if !stopped_flag:
+		self.lock.lock()
+		self.queue.append({"node":node, "func_ref":func_ref, "blocking":blocking, "args":args})
+		self.lock.unlock()
+		
 func is_busy():
 	return self.queue != [] or self.mid_processing
 
@@ -42,16 +45,20 @@ func debug():
 	print(self.queue)
 	print(self.mid_processing)
 	
+func set_stopped(flag):
+	self.stopped_flag = flag
+	
 func get_animation_count():
 	self.count_lock.lock()
 	var count = self.animation_count
 	self.count_lock.unlock()
 	return count
 	
-func reset_animation_count():
+func reset():
 	self.count_lock.lock()
 	self.animation_count = 0
 	self.count_lock.unlock()
+	set_stopped(false)
 	
 func update_animation_count(amount):
 	self.count_lock.lock()
@@ -91,6 +98,8 @@ func process_animations():
 		var blocking = animation_action["blocking"]
 		var func_ref = animation_action["func_ref"]
 		var args = animation_action["args"]
+#		print("animating " + str(node.get_name()))
+#		print("animating " + str(func_ref) + ", blocking: " + str(blocking))
 		if args == []:
 			node.call(func_ref)
 			#GIVE ME FUCKING SPREAD SYNTAX AAAAAAAAAGGGGGGGGHHHHHHHH

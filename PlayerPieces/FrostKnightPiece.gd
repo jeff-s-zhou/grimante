@@ -9,24 +9,18 @@ const UNIT_TYPE = "Frost Knight"
 var freeze_damage = DEFAULT_FREEZE_DAMAGE setget , get_freeze_damage
 var shield_bash_damage = DEFAULT_SHIELD_BASH_DAMAGE setget , get_shield_bash_damage
 
-const OVERVIEW_DESCRIPTION = """
-"""
-
 const ATTACK_DESCRIPTION = """
 """
 
 const PASSIVE_DESCRIPTION = """"""
 
-const ULTIMATE_DESCRIPTION = """"""
 
 func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.overview_description = OVERVIEW_DESCRIPTION
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
-	self.ultimate_description = ULTIMATE_DESCRIPTION
 	self.assist_type = ASSIST_TYPES.defense
 
 func get_freeze_damage():
@@ -101,8 +95,8 @@ func frostbringer(new_coords):
 	var horizontal_range = get_parent().get_diagonal_range(new_coords, [1, 4], "ENEMY", false, [1, 2]) + \
 	 get_parent().get_diagonal_range(new_coords, [1, 4], "ENEMY", false, [4, 5])
 	
-	var action = get_new_action(horizontal_range)
-	action.add_call("set_frozen", [true])
+	var action = get_new_action()
+	action.add_call("set_frozen", [true], horizontal_range)
 	action.execute()
 	
 

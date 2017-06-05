@@ -11,24 +11,18 @@ var pathed_range
 
 var slash_damage = DEFAULT_SLASH_DAMAGE setget , get_slash_damage
 
-const OVERVIEW_DESCRIPTION = """
-"""
-
 const ATTACK_DESCRIPTION = """
 """
 
 const PASSIVE_DESCRIPTION = """"""
 
-const ULTIMATE_DESCRIPTION = """"""
 
 func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.overview_description = OVERVIEW_DESCRIPTION
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
-	self.ultimate_description = ULTIMATE_DESCRIPTION
 	self.assist_type = ASSIST_TYPES.movement
 
 
@@ -109,8 +103,8 @@ func act(new_coords):
 
 
 func slash(new_coords):
-	var action = get_new_action(new_coords)
-	action.add_call("attacked", [self.slash_damage])
+	var action = get_new_action()
+	action.add_call("attacked", [self.slash_damage], new_coords)
 	action.execute()
 
 func animate_slash(attack_coords):

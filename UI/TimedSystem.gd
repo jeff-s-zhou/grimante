@@ -38,6 +38,8 @@ func initialize(level_schematic, star_button_handle, flags):
 		get_node("WaveHeader").hide()
 		get_node("WaveCountdown").hide()
 	else:
+		#after the tutorial with reinforcements, we hide the message
+		get_node("Label").hide()
 		if self.turns_til_wave != null:
 			get_node("WaveCountdown").set_text(str(self.turns_til_wave))
 

@@ -7,22 +7,13 @@ const DEFAULT_PASSIVE_DAMAGE = 1
 const DEFAULT_MOVEMENT_VALUE = 2
 const DEFAULT_ARMOR_VALUE = 3
 const UNIT_TYPE = "Assassin"
-const OVERVIEW_DESCRIPTION = """3 Armor
 
-Movement: 2 Range Step Move
+const ATTACK_DESCRIPTION = ["""Backstab. 2 range. Teleport behind an enemy and deal 2 damage. Will fail if there is a unit behind the enemy.
+"""]
 
-Inspire: +1 Attack
-"""
-
-const ATTACK_DESCRIPTION = """Backstab. 2 range. Teleport behind an enemy and deal 2 damage. Will fail if there is a unit behind the enemy.
-"""
-
-const PASSIVE_DESCRIPTION = """Opportunity Strikes. If an adjacent enemy is attacked and isn't killed, the Assassin attacks it for 1 damage. Will trigger Bloodlust if the Assassin is already on cooldown.
-
-Bloodlust. If the Assassin kills a unit, it may act again and its next Backstab deals +2 damage. May only activate once per turn."""
-
-const ULTIMATE_DESCRIPTION = """Danse Macabre. Requires and spends 3 Combo Points. During this Player Phase, the Assassin gains +2 damage and can act again if it kills an enemy. Can be used any number of times per level. 
-"""
+const PASSIVE_DESCRIPTION = ["""Opportunity Strikes. If an adjacent enemy is attacked and isn't killed, the Assassin attacks it for 1 damage. Will trigger Bloodlust if the Assassin is already on cooldown.
+Bloodlust. If the Assassin kills a unit, it may act again and its next Backstab deals +2 damage. May only activate once per turn.
+"""]
 
 const BEHIND = Vector2(0, -1)
 
@@ -37,10 +28,8 @@ func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.overview_description = OVERVIEW_DESCRIPTION
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
-	self.ultimate_description = ULTIMATE_DESCRIPTION
 	self.assist_type = ASSIST_TYPES.attack
 
 func delete_self():
@@ -163,8 +152,8 @@ func backstab(new_coords):
 	else:
 		get_node("/root/AnimationQueue").enqueue(self, "animate_backstab", true, [new_coords])
 	#TODO: yield to AnimationQueue call
-	var action = get_new_action(new_coords, false)
-	action.add_call("opportunity_attacked", [self.backstab_damage])
+	var action = get_new_action(false)
+	action.add_call("opportunity_attacked", [self.backstab_damage], new_coords)
 	action.execute()
 	var return_position = get_parent().locations[new_coords + BEHIND].get_pos()
 	get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [return_position, 200, true])
@@ -224,8 +213,8 @@ func trigger_passive(attack_range):
 	for attack_coords in attack_range:
 		if _is_within_passive_range(attack_coords):
 			get_node("/root/AnimationQueue").enqueue(self, "animate_passive", true, [attack_coords])
-			var action = get_new_action(attack_coords, false)
-			action.add_call("opportunity_attacked", [self.passive_damage])
+			var action = get_new_action(false)
+			action.add_call("opportunity_attacked", [self.passive_damage], attack_coords)
 			action.execute()
 	
 			if !get_parent().pieces.has(attack_coords) and !self.bloodlust_flag and self.state == States.PLACED:

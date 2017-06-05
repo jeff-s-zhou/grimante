@@ -9,21 +9,12 @@ const flask_prototype = preload("res://PlayerPieces/Components/PyromancerFlask.t
 
 var wildfire_damage = DEFAULT_WILDFIRE_DAMAGE setget , get_wildfire_damage
 
-const OVERVIEW_DESCRIPTION = """1 Armor
 
-Movement: 1 Range Step
+const ATTACK_DESCRIPTION = ["""Fire Bomb. Lob a bomb at any enemy unit within 2 range, inflicting it with Wildfire.
+"""]
 
-Inspire: +1 Attack
-
-"""
-
-const ATTACK_DESCRIPTION = """Fire Bomb. Lob a bomb at any enemy unit within 2 range, inflicting it with Wildfire.
-"""
-
-const PASSIVE_DESCRIPTION = """Wildfire. An enemy inflicted with Wildfire is dealt 2 damage immediately, and 1 damage at the start of every Player Turn. 
-"""
-
-const ULTIMATE_DESCRIPTION = """"""
+const PASSIVE_DESCRIPTION = ["""Wildfire. An enemy inflicted with Wildfire is dealt 2 damage immediately, and 1 damage at the start of every Player Turn. 
+"""]
 
 var pathed_range
 
@@ -31,10 +22,8 @@ func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.overview_description = OVERVIEW_DESCRIPTION
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
-	self.ultimate_description = ULTIMATE_DESCRIPTION
 	self.assist_type = ASSIST_TYPES.attack
 
 func get_wildfire_damage():
@@ -136,9 +125,9 @@ func sub_animate_toss(flask):
 
 
 func bomb(new_coords):
-	var action = get_new_action(new_coords)
-	action.add_call("set_burning", [true])
-	action.add_call("attacked", [self.wildfire_damage])
+	var action = get_new_action()
+	action.add_call("set_burning", [true], new_coords)
+	action.add_call("attacked", [self.wildfire_damage], new_coords)
 	action.execute()
 	
 	var nearby_enemy_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")

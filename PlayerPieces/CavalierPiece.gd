@@ -12,30 +12,19 @@ var trample_damage = DEFAULT_TRAMPLE_DAMAGE setget , get_trample_damage
 
 
 const UNIT_TYPE = "Cavalier"
-const OVERVIEW_DESCRIPTION = """5 Armor
 
-Movement: Leap Move. Able to move to any empty tile along a straight line.
+const PASSIVE_DESCRIPTION = ["""Trample. Moving through an enemy unit deals 2 damage to it.
+"""]
 
-Inspire: +1 Range.
-"""
-
-const PASSIVE_DESCRIPTION = """Trample. Moving through an enemy unit deals 2 damage to it.
-"""
-
-const ATTACK_DESCRIPTION = """Move in a straight line, dealing 1 damage for each tile travelled to the first enemy it hits, as well as the enemy immediately behind it.
-"""
-
-const ULTIMATE_DESCRIPTION = """Rally! For the rest of this Player Phase, all allied units have +1 movement and deal +1 damage.
-"""
+const ATTACK_DESCRIPTION = ["""Move in a straight line, dealing 1 damage for each tile travelled to the first enemy it hits, as well as the enemy immediately behind it.
+"""]
 
 func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.overview_description = OVERVIEW_DESCRIPTION
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
-	self.ultimate_description = ULTIMATE_DESCRIPTION
 	self.assist_type = ASSIST_TYPES.movement
 	
 func get_trample_damage():
@@ -184,8 +173,8 @@ func trample(new_coords):
 			was_hopping = true
 			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [current_coords, 250, false])
 			get_node("/root/AnimationQueue").enqueue(self, "animate_hop", true, [current_coords - increment, current_coords])
-			var action = get_new_action(current_coords)
-			action.add_call("attacked", [self.trample_damage])
+			var action = get_new_action()
+			action.add_call("attacked", [self.trample_damage], current_coords)
 			action.execute()
 			
 		else:
@@ -218,9 +207,8 @@ func charge_attack(new_coords, attack=false):
 	if get_parent().pieces.has(new_coords + increment): #if there's an enemy directly behind this one
 		if get_parent().pieces[new_coords + increment].side == "ENEMY":
 			attack_range.append(new_coords + increment)
-	var action = get_new_action(attack_range)
-	#action.add_call("attacked", [get_charge_damage(tiles_travelled)])
-	action.add_call("attacked", [3])
+	var action = get_new_action()
+	action.add_call("attacked", [get_charge_damage(tiles_travelled)], attack_range)
 	action.execute()
 	var position_coords = decrement_one(new_coords)
 	end_attack(position_coords)

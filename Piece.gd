@@ -51,8 +51,8 @@ func subtract_anim_count():
 	self.mid_animation = false
 
 
-func get_new_action(coords_or_range, trigger_assassin_passive=true):
-	var action = self.Action.new(coords_or_range, self, trigger_assassin_passive)
+func get_new_action(trigger_assassin_passive=true):
+	var action = self.Action.new(self, trigger_assassin_passive)
 	add_child(action)
 	return action
 	
@@ -368,7 +368,7 @@ func receive_shove(pusher, distance):
 		
 		return distance
 		
-func handle_nonlethal_shove():
+func handle_nonlethal_shove(pusher):
 	pass
 
 

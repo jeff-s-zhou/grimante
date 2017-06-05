@@ -13,6 +13,9 @@ func _ready():
 	# Initialization here
 	get_node("TextureButton").connect("pressed", self, "is_pressed")
 	get_node("TextureButton").connect("released", self, "is_released")
+	
+func set_disabled(flag):
+	get_node("TextureButton").set_disabled(flag)
 
 func is_pressed():
 	pressed_flag = true

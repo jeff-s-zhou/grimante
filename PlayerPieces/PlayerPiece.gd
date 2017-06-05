@@ -30,6 +30,8 @@ var assist_flag = false
 
 var invulnerable_flag = false
 
+var finisher_flag = false
+
 var armor = 0
 var movement_value = 1 setget , get_movement_value
 var attack_bonus = 0
@@ -221,7 +223,7 @@ func initialize(cursor_area):
 	add_to_group("player_pieces")
 	if !get_node("/root/global").available_unit_roster.has(self.unit_name):
 		get_node("/root/global").available_unit_roster.append(self.unit_name)
-		
+
 	
 func turn_update():
 	set_invulnerable(false)

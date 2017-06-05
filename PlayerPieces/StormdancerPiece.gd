@@ -2,21 +2,14 @@
 extends "PlayerPiece.gd"
 
 const UNIT_TYPE = "Stormdancer"
-const OVERVIEW_DESCRIPTION = """Armored
 
-Movement: 2 range leap
-"""
+const ATTACK_DESCRIPTION = ["""Lightning Shuriken. Deal 1 damage to any enemy on the map.
+"""]
 
-const ATTACK_DESCRIPTION = """Lightning Shuriken. Deal 1 damage to any enemy on the map.
-"""
-
-const PASSIVE_DESCRIPTION = """Rain Dance. Moving to a tile casts Rain on the tile. 
+const PASSIVE_DESCRIPTION = ["""Rain Dance. Moving to a tile casts Rain on the tile. 
 
 Tango. Select an allied unit within movement range to swap positions with it.
-"""
-
-const ULTIMATE_DESCRIPTION = """Storm. Deal damage to enemies on Rain tiles equal to the number of Rain Tiles on the map. Stun all enemies hit. Rain tiles that dealt damage disappear. Can be used any number of times per level.
-"""
+"""]
 
 
 const DEFAULT_BOLT_DAMAGE = 3
@@ -34,10 +27,8 @@ func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.overview_description = OVERVIEW_DESCRIPTION
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
-	self.ultimate_description = ULTIMATE_DESCRIPTION
 	self.assist_type = ASSIST_TYPES.defense
 
 func initialize(cursor_area):
@@ -146,22 +137,3 @@ func animate_shunpo(new_coords):
 
 func predict(new_coords):
 	pass
-
-
-func cast_ultimate():
-	self.ultimate_used_flag = true
-	get_node("/root/AnimationQueue").enqueue(get_node("/root/Combat"), "darken", true)
-	var damage_range = []
-	for coords in self.rain_coords_dict:
-		if get_parent().pieces.has(coords) and get_parent().pieces[coords].side == "ENEMY":
-			get_parent().locations[coords].activate_lightning()
-			damage_range.append[coords]
-		else:
-			get_parent().locations[coords].set_rain(false)
-	
-	var action = get_new_action(damage_range)
-	action.add_call("set_stunned", [true])
-	action.add_call("attacked", [self.storm_damage])
-	action.execute()
-	get_node("/root/AnimationQueue").enqueue(get_node("/root/Combat"), "lighten", true)
-	placed()

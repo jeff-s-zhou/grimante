@@ -25,24 +25,16 @@ signal animation_finished
 
 const UNIT_TYPE = "Archer"
 
-const OVERVIEW_DESCRIPTION = """2 Armor.
-
-Movement: 1 Range Step Move
-
-Inspire: +1 Range
-"""
-const ATTACK_DESCRIPTION = """Snipe. Fire an arrow at the first enemy in a line for 3 damage. Can target diagonally. Allies will block the shot.
-"""
-const PASSIVE_DESCRIPTION = """ Running Fire. Whenever you move, attempt to Snipe down the column of your new position (failing if an ally is in the way).
-
-"""
+const ATTACK_DESCRIPTION = ["""Snipe. Fire an arrow at the first enemy in a line for 3 damage. Can target diagonally. Allies will block the shot.
+"""]
+const PASSIVE_DESCRIPTION = ["""Running Fire. Whenever you move, attempt to Snipe down the column of your new position (failing if an ally is in the way).
+"""]
 
 
 func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.overview_description = OVERVIEW_DESCRIPTION
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.assist_type = ASSIST_TYPES.movement
@@ -117,28 +109,23 @@ func ranged_attack(new_coords, damage):
 		
 		
 func piercing_arrow(new_coords):
-	var actions = []
 	var damage = self.shoot_damage
 	var line_range = self.grid.get_line_range(self.coords, new_coords - self.coords, "ENEMY")
 	var final_hit_coords
-	print("in piercing arrow")
-	print(line_range)
+	var action = get_new_action()
 	for coords in line_range:
 		final_hit_coords = coords
-		var action = get_new_action(coords)
+		
 		var new_damage = damage
-		action.add_call("attacked", [new_damage])
-		actions.append(action)
+		action.add_call("attacked", [new_damage], coords)
 		if self.grid.pieces[coords].hp <= damage and damage > 0:
 			damage -= 1
 		else:
-			print("breaking here")
 			break
 			
 	if final_hit_coords != null:
 		get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [final_hit_coords])
-	for action in actions:
-		action.execute()
+	action.execute()
 	placed()
 
 

@@ -33,10 +33,10 @@ custom_styles/panel = SubResource( 1 )
 
 [node name="EndTurnButton" parent="." instance=ExtResource( 1 )]
 
-transform/pos = Vector2( 245, 21 )
+transform/pos = Vector2( 248, 21 )
 
 [node name="StarButton" parent="." instance=ExtResource( 2 )]
 
-transform/pos = Vector2( 34, 21 )
+transform/pos = Vector2( 36, 21 )
 
 

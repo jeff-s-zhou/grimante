@@ -46,6 +46,7 @@ func _ready():
 	
 	get_node("ControlBar/EndTurnButton").connect("released", self, "handle_end_turn_released")
 	get_node("ControlBar/EndTurnButton").connect("holding", self, "holding_end_turn")
+	get_node("ControlBar/EndTurnButton").set_disabled(true)
 	
 	get_node("RestartBar").connect("bar_filled", self, "restart")
 	
@@ -54,7 +55,7 @@ func _ready():
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("AssistSystem").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 100))
 
-	get_node("/root/AnimationQueue").reset_animation_count()
+	get_node("/root/AnimationQueue").reset()
 #	
 #	
 #
@@ -101,16 +102,10 @@ func _ready():
 	
 	set_process(true)
 	set_process_input(true)	
+	get_node("ControlBar/EndTurnButton").set_disabled(false)
 		
 	if self.level_schematic.free_deploy:
 		get_node("Grid").set_deploying(true, self.level_schematic.deploy_tiles)
-		
-		
-#		for name in get_node("/root/global").available_unit_roster:
-#			if name == "Berserker":
-#				initialize_piece(Berserker, true)
-#		for unit in self.level_schematic.allies:
-#			initialize_piece(unit, true)
 		
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			player_piece.start_deploy_phase()
@@ -120,10 +115,10 @@ func _ready():
 			yield(self, "next_pressed")
 		
 		yield(self, "deployed")
-		get_node("Grid").set_deploying(false)
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			player_piece.deploy()
 	
+	get_node("Grid").set_deploying(false)
 	
 	get_node("Timer2").set_wait_time(0.3)
 	get_node("Timer2").start()
@@ -167,8 +162,7 @@ func initialize_piece(piece, on_bar=false, key=null):
 	new_piece.set_opacity(0)
 	new_piece.connect("invalid_move", self, "handle_invalid_move")
 	new_piece.connect("shake", self, "screen_shake")
-	if self.tutorial != null:
-		new_piece.connect("animated_placed", self, "handle_piece_placed")
+	new_piece.connect("animated_placed", self, "handle_piece_placed")
 	
 	if on_bar:
 		get_node("Grid").add_piece_on_bar(new_piece)
@@ -188,8 +182,11 @@ func initialize_piece(piece, on_bar=false, key=null):
 	
 
 func handle_piece_placed():
-	if self.tutorial.has_forced_action_result():
+	if self.tutorial != null and self.tutorial.has_forced_action_result():
+		print("reached here?")
 		set_process_input(false)
+		if get_node("/root/AnimationQueue").is_animating():
+			yield(get_node("/root/AnimationQueue"), "animations_finished")
 		self.tutorial.handle_forced_action_result()
 		yield(self.tutorial, "rule_finished")
 		set_process_input(true)
@@ -236,6 +233,7 @@ func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon, anim
 
 func end_turn():
 	self.state = STATES.transitioning
+	get_node("ControlBar/EndTurnButton").set_disabled(true)
 	
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
@@ -272,6 +270,7 @@ func holding_end_turn():
 func restart():
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
+	get_node("/root/AnimationQueue").set_stopped(true)
 	get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic})
 
 	
@@ -287,7 +286,10 @@ func computer_input(event):
 			#if during a tutorial level, make sure move is as intended
 			if self.tutorial != null:
 				if self.tutorial.move_is_valid(get_turn_count(), hovered.coords):
+					print("it's catching the input?")
 					hovered.input_event(event)
+				else:
+					print("not valid??")
 			else:
 				hovered.input_event(event)
 				
@@ -317,16 +319,17 @@ func computer_input(event):
 			else: #elif hovered_piece.side == "PLAYER"
 				hovered_piece.set_seen(true)
 				get_node("InfoOverlay").display_player_info(hovered_piece)
-
-
-		elif !event.is_pressed() and !event.is_echo():
-			get_node("InfoOverlay").hide()
+			
+			set_process_input(false)
+			yield(get_node("InfoOverlay"), "description_finished")
+			set_process_input(true)
 
 
 	elif event.is_action("debug_level_skip") and event.is_pressed():
 		if(self.level_schematic.next_level != null):
 			if get_node("/root/AnimationQueue").is_animating():
 				yield(get_node("/root/AnimationQueue"), "animations_finished")
+			get_node("/root/AnimationQueue").set_stopped(true)
 			get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.next_level})
 			
 			
@@ -418,16 +421,7 @@ func enemy_phase():
 
 func start_player_phase():
 	self.turn_count += 1
-	
-	if self.tutorial != null and self.tutorial.has_player_turn_start_rule(get_turn_count()):
-		self.tutorial.display_player_turn_start_rule(get_turn_count())
-		set_process_input(false)
-		yield(self.tutorial, "rule_finished")
-		set_process_input(true)
-	
-	
-	if self.tutorial != null:
-		self.tutorial.display_forced_action(get_turn_count())
+	get_node("ControlBar/EndTurnButton").set_disabled(false)
 	
 	get_node("AssistSystem").reset_combo()
 	if self.reinforcements.has(get_turn_count()):
@@ -439,6 +433,23 @@ func start_player_phase():
 	
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 		player_piece.turn_update()
+		
+	if self.tutorial != null and self.tutorial.has_player_turn_start_rule(get_turn_count()):
+		self.tutorial.display_player_turn_start_rule(get_turn_count())
+		set_process_input(false)
+		
+		#this is all for the tutorial level to teach shoving
+		if self.turn_count == 1 and self.level_schematic.flags.has("placed"):
+			var player_pieces = get_tree().get_nodes_in_group("player_pieces")
+			for player_piece in player_pieces:
+				player_piece.placed(true)
+
+		yield(self.tutorial, "rule_finished")
+		set_process_input(true)
+	
+	
+	if self.tutorial != null:
+		self.tutorial.display_forced_action(get_turn_count())
 
 	self.state = STATES.player_turn
 
@@ -541,26 +552,32 @@ func display_wave_preview(wave):
 
 func player_win():
 	set_process(false)
+	get_node("/root/AnimationQueue").set_stopped(true)
+	print("in player win")
 	self.state = STATES.transitioning
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
+	
 	get_node("Timer2").set_wait_time(0.5)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
+	
 	get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.level_schematic.next_level})
 
 
 func enemy_win():
 	set_process(false)
+	get_node("/root/AnimationQueue").set_stopped(true)
 	self.state = STATES.transitioning
 	print(get_node("/root/AnimationQueue").is_animating())
 	if get_node("/root/AnimationQueue").is_animating():
 		print("yielded in enemy win")
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	print("not waiting here")
+	
 	get_node("Timer2").set_wait_time(0.5)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
+	
 	get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level": self.level_schematic})
 	
 	

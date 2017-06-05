@@ -531,7 +531,7 @@ func modify_hp(amount, delay=0):
 			print("deleting self")
 			emit_signal("enemy_death")
 			delete_self() 
-			set_animation_sequence_blocking()
+			#set_animation_sequence_blocking()
 			
 		enqueue_animation_sequence()
 			
@@ -605,11 +605,8 @@ func animate_delete_self():
 	get_node("Timer").set_wait_time(1)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
-	print("animation count is: " + str(self.debug_anim_counter))
 	self.queue_free()
-	
 
-	#emit_signal("animation_done")
 
 func set_coords(new_coords, sequence=null):
 	self.grid.move_piece(self.coords, new_coords)
@@ -640,8 +637,8 @@ func add_modifier_sets(set1, set2):
 func turn_update():
 	set_z(0)
 	if self.burning:
-		var action = get_new_action(self.coords)
-		action.add_call("attacked", [1])
+		var action = get_new_action()
+		action.add_call("attacked", [1], self.coords)
 		action.execute()
 	turn_update_helper()
 	reset_auras()
@@ -670,8 +667,8 @@ func handle_rain():
 	var location = self.grid.locations[self.coords]
 	if location.raining:
 		add_animation(location, "animate_lightning", true)
-		var action = get_new_action(self.coords)
-		action.add_call("attacked", [2])
+		var action = get_new_action()
+		action.add_call("attacked", [2], self.coords)
 		action.execute()
 	
 
