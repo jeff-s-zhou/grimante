@@ -32,7 +32,7 @@ func initialize(level_schematic, star_button_handle, flags):
 		get_node("TurnsHeader").hide()
 		get_node("TurnCountdown").hide()
 	else:
-		get_node("TurnCountdown").set_text(str(self.num_turns))
+		get_node("TurnCountdown").set_text(str(self.num_turns - 1))
 		
 	if flags.has("no_waves"):
 		get_node("WaveHeader").hide()
@@ -41,14 +41,16 @@ func initialize(level_schematic, star_button_handle, flags):
 		#after the tutorial with reinforcements, we hide the message
 		get_node("Label").hide()
 		if self.turns_til_wave != null:
-			get_node("WaveCountdown").set_text(str(self.turns_til_wave))
+			get_node("WaveCountdown").set_text(str(self.turns_til_wave - 1))
 
 func update(turn_count):
 	if !self.flags.has("no_turns"):
+		get_node("TurnCountdown").set_text(str(self.num_turns - (turn_count + 1)))
+	
+	if !self.flags.has("no_waves"):
 		self.turns_til_wave = self.enemies.get_turns_til_next_wave(turn_count)
-		get_node("TurnCountdown").set_text(str(self.num_turns - turn_count))
 		if self.turns_til_wave != null:
-			get_node("WaveCountdown").set_text(str(self.turns_til_wave))
+			get_node("WaveCountdown").set_text(str(self.turns_til_wave - 1))
 		
 		
 func check_enemy_win(turn_count): #only checks part of the condition. other is in the game loop	

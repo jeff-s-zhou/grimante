@@ -1,0 +1,14 @@
+{"hp":"2", "turn":0, "pos_x":5, "name":"fortifier", "modifiers":{}, "pos_y":6}
+{"hp":"1", "turn":0, "pos_x":0, "name":"grower", "modifiers":{}, "pos_y":0}
+{"hp":"3", "turn":0, "pos_x":4, "name":"grunt", "modifiers":{}, "pos_y":4}
+{"hp":"2", "turn":0, "pos_x":6, "name":"drummer", "modifiers":{}, "pos_y":4}
+{"hp":"2", "turn":0, "pos_x":3, "name":"fortifier", "modifiers":{}, "pos_y":3}
+{"hp":"2", "turn":0, "pos_x":2, "name":"grower", "modifiers":{}, "pos_y":2}
+{"hp":"4", "turn":0, "pos_x":2, "name":"grunt", "modifiers":{}, "pos_y":4}
+{"hp":"3", "turn":1, "pos_x":4, "name":"grunt", "modifiers":{}, "pos_y":6}
+{"hp":"7", "turn":1, "pos_x":5, "name":"grunt", "modifiers":{}, "pos_y":8}
+{"hp":"9", "turn":1, "pos_x":1, "name":"grunt", "modifiers":{}, "pos_y":6}
+{"hp":"3", "turn":3, "pos_x":4, "name":"fortifier", "modifiers":{}, "pos_y":4}
+{"hp":"2", "turn":3, "pos_x":2, "name":"fortifier", "modifiers":{}, "pos_y":3}
+{"hp":"6", "turn":3, "pos_x":3, "name":"grunt", "modifiers":{}, "pos_y":4}
+{"hp":"3", "turn":3, "pos_x":1, "name":"grower", "modifiers":{}, "pos_y":2}

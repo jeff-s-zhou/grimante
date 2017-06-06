@@ -19,6 +19,7 @@ func _input(event):
 			display_description()
 		else:
 			set_process_input(false)
+			emit_signal("description_finished")
 			hide()
 	
 func display_description():
@@ -33,7 +34,7 @@ func display_enemy_info(hovered_piece):
 	var title = hovered_piece.unit_name
 	var text = hovered_piece.hover_description
 	var modifier_descriptions = hovered_piece.modifier_descriptions
-	self.description_sequence = modifier_descriptions
+	
 	
 	get_node("Overlay").set_global_pos(pos)
 	
@@ -51,6 +52,8 @@ func display_enemy_info(hovered_piece):
 			print(modifier_description)
 			print(text)
 			text += modifier_description
+	
+	self.description_sequence = [text]
 	
 	display_description()
 	show()

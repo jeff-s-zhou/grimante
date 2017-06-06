@@ -67,7 +67,6 @@ func add_piece(name, turn, coords, piece, hp, modifiers=null):
 	
 	
 func remove_piece(coords):
-	self.pieces[coords].set_pickable(false)
 	self.pieces.erase(coords)
 	locations[coords].set_pickable(true)
 
@@ -79,9 +78,9 @@ func swap_pieces(coords1, coords2):
 #moves the piece's location on grid. doesn't actually physically move the sprite
 func move_piece(old_coords, new_coords):
 	locations[old_coords].set_pickable(true)
-	var piece = pieces[old_coords]
-	pieces.erase(old_coords)
-	pieces[new_coords] = piece
+	var piece = self.pieces[old_coords]
+	self.pieces.erase(old_coords)
+	self.pieces[new_coords] = piece
 	locations[new_coords].set_pickable(false)
 	
 func invalid_move():

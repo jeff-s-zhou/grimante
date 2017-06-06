@@ -44,7 +44,7 @@ func initialize(name, turn, coords, hp, modifiers=null):
 	set_health(hp)
 	set_modifiers(modifiers)
 	self.coords = coords
-	var pos = get_node("/root/LevelEditor").get_current_editor_grid().locations[coords].get_pos()
+	var pos = get_node("/root/LevelEditor").get_current_editor_grid().locations[self.coords].get_pos()
 	set_pos(pos)
 	self.state = STATES.instanced
 	
@@ -53,25 +53,38 @@ func edit(hp, modifiers=null):
 	set_modifiers(modifiers)
 	
 func delete():
-	get_node("/root/LevelEditor").get_current_editor_grid().pieces.erase(coords)
+	get_node("/root/LevelEditor").get_current_editor_grid().remove_piece(self.coords)
 	queue_free()
 	
 func input_event(event):
 	if get_node("/root/LevelEditor").selected == null:
 		get_node("/root/LevelEditor").selected = self
-	
+
 	#if we're already selected, and tapped again
 	elif get_node("/root/LevelEditor").selected == self and self.is_instanced():
 		get_node("/root/LevelEditor").modify_unit()
 		
 func is_instanced():
 	return self.state == STATES.instanced
+
+#not implemented for now lul
+func swap(other_piece):
+	get_node("/root/LevelEditor").get_current_editor_grid().swap_piece(self.coords, other_piece.coords)
+	var temp_coords = self.coords
+	self.coords = other_piece.coords
+	other_piece.coords = self.coords
+	
+	var pos = get_node("/root/LevelEditor").get_current_editor_grid().locations[coords].get_pos()
+	set_pos(pos)
+	
+	var other_pos = get_node("/root/LevelEditor").get_current_editor_grid().locations[other_piece.coords].get_pos()
+	other_piece.set_pos(other_pos)
+	
 	
 #called when the piece is already instanced and we're moving it on the grid
 func move(coords):
-	get_node("/root/LevelEditor").get_current_editor_grid().pieces[self.coords] = null
+	get_node("/root/LevelEditor").get_current_editor_grid().move_piece(self.coords, coords)
 	self.coords = coords
-	get_node("/root/LevelEditor").get_current_editor_grid().pieces[self.coords] = self
 	var pos = get_node("/root/LevelEditor").get_current_editor_grid().locations[coords].get_pos()
 	set_pos(pos)
 

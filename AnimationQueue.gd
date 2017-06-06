@@ -35,8 +35,7 @@ func is_busy():
 	return self.queue != [] or self.mid_processing
 
 func is_animating():
-	print("calling is_animating")
-	print(self.queue != [] or self.mid_processing or get_animation_count() > 0 or get_waiting_count() > 0)
+#	print(self.queue != [] or self.mid_processing or get_animation_count() > 0 or get_waiting_count() > 0)
 	return self.queue != [] or self.mid_processing or get_animation_count() > 0 or get_waiting_count() > 0
 	#return get_animation_count() > 0
 	

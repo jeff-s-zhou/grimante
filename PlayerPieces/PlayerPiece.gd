@@ -450,6 +450,7 @@ func invalid_move():
 
 
 func placed(ending_turn=false):
+	print("placed and ending turn: " + str(ending_turn))
 	if ending_turn:
 		print("clearing assist here?")
 		clear_assist()

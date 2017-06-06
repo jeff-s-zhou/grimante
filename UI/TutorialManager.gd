@@ -153,10 +153,7 @@ func update_rule():
 			pass
 		else:
 			get_node("Label").set_pos(Vector2(24, 200))
-			print(line)
-			print(line.length())
 			if line.length() < 35:
-				print("met here?")
 				get_node("Label").set_bbcode("[center]" + line + "[/center]")
 			else:
 				get_node("Label").set_bbcode(line)

@@ -77,7 +77,7 @@ class FiniteCuratedWrapper:
 	var waves
 	
 	func _init(new_waves):
-
+		print(new_waves)
 		if typeof(new_waves) == TYPE_DICTIONARY:
 			var keys = new_waves.keys()
 			self.waves = []
@@ -103,8 +103,13 @@ class FiniteCuratedWrapper:
 			return null
 		
 	func get_turns_til_next_wave(turn_index):
-		for i in range(turn_index, self.waves.size()):
-			if !self.waves[i].empty():
+		print(self.waves)
+		#so we get the turn index for the next turn
+		for i in range(turn_index + 1, self.waves.size()):
+			if self.waves[i] != null and !self.waves[i].empty():
+				print("getting turns til next wave")
+				print(self.waves[i])
+				print(i - turn_index)
 				return (i - turn_index)
 		return null
 

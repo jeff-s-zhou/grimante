@@ -95,9 +95,12 @@ func sandbox_enemies():
 	return EnemyWrappers.FiniteGeneratedWrapper.new(turn_power_levels)
 	
 func sandbox_enemies2():
-	var enemies = [{Vector2(3, 2): make(Spectre, 3), Vector2(3, 4): make(Slime, 4)}]
+	var enemies = {0: {Vector2(3, 2): make(Spectre, 3), Vector2(3, 4): make(Slime, 4)},
+	1: {},
+	2: {Vector2(3, 3): make(Grunt, 4)}
+	}
 	#var enemies = load_level("level2.save")
-	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)\
+	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
 func sandbox_extras():
 	#return {"shifting_sands_tiles": {Vector2(3, 6): 4}, "tutorial":tutorial}
@@ -108,7 +111,7 @@ func sandbox_extras2():
 	#return {"required_units":{1: Cavalier, 2: Berserker, 3: Pyromancer, 4: Corsair, 5: Archer}}
 
 func sandbox_level():
-	return LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies2(), 7, null, sandbox_extras()) 
+	return LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies2(), 3, null, sandbox_extras()) 
 
 var list = [sandbox_level()]
 
@@ -332,11 +335,15 @@ func archer_tutorial():
 	
 	add_forced_action(tutorial, 2, Vector2(3, 7), fa_text1, Vector2(3, 5), fa_text1, text)
 	
-	fa_text1 = "The Archer can shoot along \"hex diagonal\" angles to hit tricky targets."
-	add_force_action(tutorial, 3, Vector2(3, 7), fa_text1, Vector2(1, 3), fa_text1)
+	#it's after here it stops detecting the FAR?
 	
+	fa_text1 = "The Archer can shoot along \"hex diagonal\" angles to hit tricky targets."
+	text = ["test result"]
+	add_forced_action(tutorial, 3, Vector2(3, 7), fa_text1, Vector2(1, 3), fa_text1, text)
+	
+	fa_text1 = "The Archer doesn't just have to sit still."
 	text = ["When the Archer moves, its passive causes it to automatically fire a Piercing Arrow directly north."]
-	add_forced_action(tutorial, 4, Vector2(3, 7), "", Vector2(4, 7), "", text)
+	add_forced_action(tutorial, 4, Vector2(3, 7), fa_text1, Vector2(4, 7), fa_text1, text)
 	
 	
 	text = ["The Archer's shots are blocked by other Heroes.", 
@@ -351,13 +358,83 @@ func archer():
 	var allies = []
 	var raw_enemies = load_level("archer.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var reinforcements = {3: { 5: Berserker}}
+	var reinforcements = {5: { Vector2(5, 7): Berserker}}
 	var flags = ["no_stars", "no_turns", "no_inspire"]
 	var tutorial_func = funcref(self, "archer_tutorial")
 	var extras = {"free_deploy":false, "reinforcements":reinforcements, "required_units":{3:Archer}, "tutorial": tutorial_func, "flags":flags}
 	
 	return LevelTypes.Timed.new("Archer", allies, enemies, 7, null, extras)
 
+
+func offsides_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	
+	var text = ["A Piece cannot be pushed if there's another Piece behind it."]
+	add_player_start_rule(tutorial, 1, text)
+	
+	var fa_text1 = "Block the Enemies."
+	
+	add_forced_action(tutorial, 1, Vector2(4, 7), fa_text1, Vector2(3, 7), fa_text1)
+	
+	add_forced_action(tutorial, 1, Vector2(2, 6), fa_text1, Vector2(3, 6), fa_text1)
+	
+	text = ["The Archer behind the Cavalier blocks the Enemy from advancing.", 
+	"Be careful however, as powerful enemies can still KO weaker Heroes."]
+	add_enemy_end_rule(tutorial, 1, text)
+	
+	text = ["Enemies cannot reinforce past the furthest back Player Unit."]
+	add_player_start_rule(tutorial, 2, text)
+	
+	fa_text1 = "Move your units forward."
+	
+	add_forced_action(tutorial, 2, Vector2(3, 6), fa_text1, Vector2(3, 1), fa_text1)
+	
+	add_forced_action(tutorial, 2, Vector2(3, 7), fa_text1, Vector2(3, 6), fa_text1)
+	
+	text = ["Look to move your Heroes forward in order to reduce the area in which Enemies can reinforce."]
+	add_enemy_end_rule(tutorial, 2, text)
+	
+	return tutorial
+
+func offsides():
+	var allies = []
+	var raw_enemies = load_level("offsides.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_stars", "no_turns", "no_inspire"]
+	var tutorial_func = funcref(self, "offsides_tutorial")
+	var extras = {"free_deploy":false, "required_units":{2:Cavalier, 4: Archer}, "tutorial": tutorial_func, "flags":flags}
+	
+	return LevelTypes.Timed.new("Offsides!", allies, enemies, 7, null, extras)
+	
+func tick_tock_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	var text = ["Clear the board within the turn limit displayed at the top of the screen, or else you lose!"]
+	add_player_start_rule(tutorial, 1, text)
+	
+	var text = ["Special enemies with abilities have appeared!", "Press Tab over them to read what their abilities do."]
+	add_enemy_end_rule(tutorial, 1, text)
+	
+	var text = ["Don't forget to move past Enemy reinforcements to cancel them!"]
+	add_player_start_rule(tutorial, 3, text)
+	return tutorial
+	
+func tick_tock():
+	var allies = []
+	var raw_enemies = load_level("tick_tock.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_stars", "no_inspire"]
+	var tutorial_func = funcref(self, "tick_tock_tutorial")
+	var extras = {"free_deploy":false, "required_units":{2:Cavalier, 3:Berserker, 4: Archer}, "tutorial": tutorial_func, "flags":flags}
+	
+	return LevelTypes.Timed.new("Tick Tock", allies, enemies, 7, null, extras)
+	
+func flying_solo():
+	var allies = []
+	var raw_enemies = load_level("flying_solo.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_stars", "no_inspire"]
+	var extras = {"free_deploy":false, "required_units":{2:Cavalier, 3:Berserker, 4: Archer}, "flags":flags}
+	return LevelTypes.Timed.new("Flying Solo", allies, enemies, 7, null, extras)
 
 
 #SAINT LEVEL
@@ -422,33 +499,7 @@ func archer():
 #	return LevelTypes.Defend.new(level8_allies(), level8_enemies(), 7, saint_level_ref, level8_extras())
 #
 #var level8_ref = funcref(self, "level8")
-#
-#
-#
-#PYROMANCER LEVEL
-#func pyromancer_level_allies():
-#	return {3: Pyromancer}
-#	
-#func pyromancer_level_enemies():
-#	var phase = EnemyWrappers.CuratedPhase.new(3)
-#	phase.add_wave({Vector2(1, 4): make(Grunt, 3), Vector2(2, 5): make(Grunt, 3), 
-#	Vector2(3, 6): make(Grunt, 3), Vector2(4, 6): make(Grunt, 3), Vector2(5, 6): make(Grunt, 3)})
-#	phase.add_reinforcements({Vector2(4, 4): make(Grunt, 3), Vector2(4, 3): make(Grunt, 3), Vector2(3, 2): make(Grunt, 3)})
-#	return EnemyWrappers.FinitePhasedWrapper.new([phase])
-#	
-#func pyromancer_level_extras():
-#	var pyromancer_level_instructions = [
-#	make_tip("The Pyromancer is a damage focused unit. It throws a Fire Bomb from range, inflicting Wildfire.", "Light stuff on fire.", Vector2(3, 6), ""),
-#	make_tip("When inflicted, Wildfire will spread to an adjacent enemy at random. In addition, enemies inflicted are burned, dealing 1 damage each turn.", "Clean up.", null, ""),
-#	make_tip("The Pyromancer cannot move and throw a Fire Bomb in the same turn, so plan carefully.", "", null, ""),
-#	]
-#	return {"instructions":pyromancer_level_instructions, "free_deploy":false}
-#
-#func pyromancer_level():
-#	return LevelTypes.RoomSeal.new(pyromancer_level_allies(), pyromancer_level_enemies(), level8_ref, pyromancer_level_extras())
-#
-#var pyromancer_level_ref = funcref(self, "pyromancer_level")
-#	
+
 #
 #LEVEL 7
 #func level7_allies():
@@ -522,71 +573,7 @@ func archer():
 #	return LevelTypes.RoomSeal.new(assassin_level_allies(), assassin_level_enemies(), level7_ref, assassin_level_extras())
 #
 #var assassin_level_ref = funcref(self, "assassin_level")
-#
-#
-#
-#LEVEL 6
-#func level6_allies():
-#	return {2: Archer, 4:Cavalier}
-#	
-#func level6_enemies():
-#	var phase = EnemyWrappers.CuratedPhase.new(3)
-#	phase.add_wave({Vector2(3, 6): make(Grunt, 7), Vector2(3, 5): make(Grunt, 2)})
-#	phase.add_reinforcements({Vector2(1, 3): make(Grunt, 3), Vector2(3, 3): make(Grunt, 2), Vector2(4, 2): make(Grunt, 2), Vector2(5, 3): make(Grunt, 2)})
-#	phase.add_reinforcements({Vector2(1, 7): make(Grunt, 9), Vector2(5, 9): make(Grunt, 9)})
-#	return EnemyWrappers.FinitePhasedWrapper.new([phase])
-#	
-#func level6_extras():
-#	var complex_tooltip1 = [{"coords":Vector2(2, 7), "text":""}, {"coords":Vector2(3, 8), "text": ""}, {"coords":Vector2(4, 8), "text": ""}, {"coords":Vector2(3, 7), "text": ""}]
-#	var complex_tooltip2 = [{"coords":Vector2(3, 7), "text":""}, {"coords":Vector2(3, 2), "text": ""}, {"coords":Vector2(3, 8), "text": ""}, {"coords":Vector2(3, 7), "text": ""}]
-#	
-#	var level6_instructions = [
-#	make_complex_tip("A Unit cannot be pushed if there's something else behind it.", "Block the Enemy Units.", complex_tooltip1),
-#	make_complex_tip("Enemies cannot be summoned past the furthest back Player Unit.", "Move your units forward to cancel the summons.", complex_tooltip2),
-#	make_tip("Look to move your Units forward in order to reduce the area in which Enemies can be summoned.", "Clean up.", null, "")
-#	]
-#	return {"instructions":level6_instructions, "free_deploy":false}
-#
-#func level6():
-#	return LevelTypes.RoomSeal.new(level6_allies(), level6_enemies(), assassin_level_ref, level6_extras())
-#
-#var level6_ref = funcref(self, "level6")
-#
-#
-#LEVEL 5
-#func level5_allies():
-#	return {3:Archer}
-#	
-#func level5_enemies():
-#	var phase = EnemyWrappers.CuratedPhase.new(2)
-#	phase.add_wave({Vector2(6, 5): make(Grunt, 3), 2: make(Grunt, 3)})
-#	phase.add_reinforcements({Vector2(2, 3): make(Grunt, 5)})
-#	var phase2 = EnemyWrappers.CuratedPhase.new(3)
-#	phase2.add_wave({1: make(Grunt, 5), 3: make(Grunt, 3), 2: make(Grunt, 2), 5: make(Grunt, 6)})
-#	phase2.add_reinforcements({Vector2(3, 3): make(Grunt, 4), Vector2(2, 3): make(Grunt, 3)})
-#	phase2.add_reinforcements({Vector2(3, 4): make(Grunt, 3)})
-#	var phase3 = EnemyWrappers.CuratedPhase.new(1)
-#	phase3.add_wave({Vector2(1, 5): make(Grunt, 6), Vector2(3, 5): make(Grunt, 6), Vector2(4, 6): make(Grunt, 6),
-#	Vector2(5, 5): make(Grunt, 4), Vector2(3, 4): make(Grunt, 4)})
-#	return EnemyWrappers.FinitePhasedWrapper.new([phase, phase2, phase3])
-#	
-#func level5_extras():
-#	var level5_instructions = [
-#	make_tip("The Archer can attack from range and is able to shoot along diagonal lines.", "Attack diagonally.", Vector2(6, 5), ""),
-#	make_tip("When the Archer moves, its passive causes it to automatically shoot directly North.", "Use the Archer's passive.", Vector2(2, 7), ""),
-#	make_tip("A large group of incoming enemies is called a Wave. Check the top of the screen to see when the next Wave appears.", "", null, ""),
-#	make_tip("When an enemy is summoned onto the board, if the tile is already occupied by a Player Unit, the Player Unit is KOed. If the tile is occupied by an Enemy, it becomes stronger.", "", null, ""),
-#	make_tip("If a Player Unit is KOed, move another Player Unit adjacent to the tile it was KOed on to revive it. Revived units cannot act on the turn they are revived.", "Clear all enemies before the next Wave appears.", null, ""),
-#	make_tip("The Archer is a Step Move Unit, meaning it is blocked by other pieces while moving. The Berserker and Cavalier are Leap Move Pieces, and can leap over other pieces.", "", null, ""),
-#	make_tip("Keep in mind that the Archer's shots are blocked by other Player Units.", "", null, "")
-#	]
-#	var level5_reinforcements = {3: {0: Berserker, 6: Cavalier}}
-#	return {"instructions":level5_instructions, "reinforcements":level5_reinforcements, "free_deploy":false}
-#
-#func level5():
-#	return LevelTypes.RoomSeal.new(level5_allies(), level5_enemies(), level6_ref, level5_extras())
-#
-#var level5_ref = funcref(self, "level5")
+
 #
 #LEVEL 4
 #func level4_allies():
@@ -615,93 +602,3 @@ func archer():
 #	return LevelTypes.RoomSeal.new(level4_allies(), level4_enemies(), level5_ref, level4_extras())
 #
 #var level4_ref = funcref(self, "level4")
-#
-#
-#LEVEL 3
-#func level3_allies():
-#	return {Vector2(3, 7): Berserker}
-#	
-#	
-#func level3_enemies():
-#	var phase = EnemyWrappers.CuratedPhase.new(99)
-#	phase.add_wave({Vector2(3, 2) : make(Grunt, 2), Vector2(2, 3): make(Grunt, 1), 
-#	Vector2(3, 3) :make(Grunt, 8), Vector2(3, 5): make(Grunt, 4), 
-#	Vector2(3, 6): make(Grunt, 6)})
-#	return EnemyWrappers.FinitePhasedWrapper.new([phase])
-#	
-#func level3_extras():
-#	var level3_instructions = [
-#	
-#	make_tip("Enemies will push Player Units forward on their turn. If a Player Unit is pushed off the map, it is KOed.", \
-#	"Don't let the Berserker get KOed.", Vector2(3, 6), ""),
-#	make_tip("If a Player Unit is pushed by an Enemy with Health equal to or greater than its Armor, it is also KOed. You LOSE if all Player Units are KOed.", "Don't lose.", null, ""),
-#	make_tip("Remember that the Berserker stuns enemies with its Passive. If you need a refresher on a Unit, hold Tab over it for a summary.", "" , null, ""),
-#	]
-#	return {"instructions":level3_instructions, "free_deploy":false}
-#
-#func level3():
-#	return LevelTypes.RoomSeal.new(level3_allies(), level3_enemies(), level4_ref, level3_extras())
-#
-#var level3_ref = funcref(self, "level3")
-#
-#
-#LEVEL 2
-#func level2_allies():
-#	return {3: Cavalier}
-#	
-#func level2_enemies():
-#	var phase = EnemyWrappers.CuratedPhase.new(99)
-#	phase.add_wave({Vector2(3, 6): make(Grunt, 5), Vector2(3, 5): make(Grunt, 5), Vector2(3, 4): make(Grunt, 2)})
-#	phase.add_reinforcements({1: make(Grunt, 2), 2:make(Grunt, 2)})
-#	phase.add_reinforcements({3: make(Grunt, 2)})
-#	return EnemyWrappers.FinitePhasedWrapper.new([phase])
-#
-#func level2_extras():
-#	var level2_instructions = [
-#		make_tip("The Cavalier can run through enemies and Trample them.", \
-#		"Move the Cavalier behind enemy lines.", Vector2(3, 2), ""),
-#		make_tip("The Cavalier does 2 damage to each enemy he Tramples through.", \
-#		"The Cavalier can unleash his direct attack, Charge, when there are no Units (Enemy or Friendly) blocking his path to an enemy. Charge at the enemy!", Vector2(3, 6), ""),
-#		make_tip("Charge deals 1 damage for each tile travelled to the first enemy it hits, and the enemy behind it.", "Eliminate all remaining enemies.", null, ""),
-#	]
-#	return {"instructions":level2_instructions, "free_deploy":false}
-#
-#func level2():
-#	return LevelTypes.RoomSeal.new(level2_allies(), level2_enemies(), level3_ref, level2_extras())
-#
-#var level2_ref = funcref(self, "level2")
-#
-#
-#
-#LEVEL 1
-#func level1_allies():
-#	return {3: Berserker}
-#	
-#func level1_enemies():
-#	var phase = EnemyWrappers.CuratedPhase.new(99)
-#	phase.add_wave({ Vector2(3, 3): make(Grunt, 7), Vector2(0, 0): make(Grunt, 2)})
-#	phase.add_reinforcements({0: make(Grunt, 2)})
-#	phase.add_reinforcements({2: make(Grunt, 2), 3: make(Grunt, 6), 4: make(Grunt, 2)})
-#	phase.add_reinforcements({4: make(Grunt, 2)})
-#	return EnemyWrappers.FinitePhasedWrapper.new([phase])
-#
-#func level1_extras():
-#	var complex_tooltip1 = [{"coords":Vector2(3, 8), "text":"Click on the Berserker to select it."}, {"coords":Vector2(3, 6), "text": "Click on this tile to move the Berserker here."}]
-#	var complex_tooltip2 = [{"coords":Vector2(3, 6), "text":"Select the Berserker."}, {"coords":Vector2(3, 4), "text":"Select the enemy to attack it."}]
-#	var level1_instructions = [
-#		make_complex_tip("Clear the board of enemies to WIN.", "Move the Berserker towards the enemies.", complex_tooltip1),
-#		make_complex_tip("Enemies move down one tile each turn. If an enemy moves off the bottom of the map, you LOSE.",  "Attack the nearby enemy.", complex_tooltip2),
-#		make_tip("The Berserker's direct attack deals 4 damage.",  "Finish off the enemy.", Vector2(3, 5), ""),
-#		make_tip("When the Berserker kills an enemy, it lands on their tile. ", \
-#		 "The next group of enemies is outside of direct attack range. Move the Berserker next to them to trigger its passive effect, Ground Slam.", \
-#		 Vector2(1, 3), ""),
-#		make_tip("When the Berserker lands on an unoccupied tile, Ground Slam deals 2 damage to adjacent enemies and stuns them, keeping them from moving.", \
-#		"Finish off the remaining enemies to beat the level.", null, "")
-#	]
-#	return {"instructions":level1_instructions, "free_deploy":false}
-#	
-#func level1():
-#	return LevelTypes.RoomSeal.new(level1_allies(), level1_enemies(), level2_ref, level1_extras())
-#	
-#var level1_ref = funcref(self, "level1")
-#

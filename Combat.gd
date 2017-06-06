@@ -183,13 +183,14 @@ func initialize_piece(piece, on_bar=false, key=null):
 
 func handle_piece_placed():
 	if self.tutorial != null and self.tutorial.has_forced_action_result():
-		print("reached here?")
 		set_process_input(false)
 		if get_node("/root/AnimationQueue").is_animating():
 			yield(get_node("/root/AnimationQueue"), "animations_finished")
 		self.tutorial.handle_forced_action_result()
 		yield(self.tutorial, "rule_finished")
 		set_process_input(true)
+
+	if self.tutorial != null:
 		self.tutorial.display_forced_action(self.turn_count)
 	
 	#shouldn't interfere with any other forced actions, since it'll only end when all pieces are placed
@@ -286,7 +287,6 @@ func computer_input(event):
 			#if during a tutorial level, make sure move is as intended
 			if self.tutorial != null:
 				if self.tutorial.move_is_valid(get_turn_count(), hovered.coords):
-					print("it's catching the input?")
 					hovered.input_event(event)
 				else:
 					print("not valid??")

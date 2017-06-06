@@ -126,7 +126,6 @@ func piercing_arrow(new_coords):
 	if final_hit_coords != null:
 		get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [final_hit_coords])
 	action.execute()
-	placed()
 
 
 func silver_arrow(new_coords):
