@@ -111,12 +111,12 @@ func lightning_attack(attack_coords):
 
 
 func shunpo(new_coords):
-	get_node("/root/AnimationQueue").enqueue(self, "animate_shunpo", true, [new_coords])
+	add_animation(self, "animate_shunpo", true, [new_coords])
 	set_coords(new_coords)
 	
 
 func tango(new_coords):
-	get_node("/root/AnimationQueue").enqueue(self, "animate_shunpo", true, [new_coords])
+	add_animation(self, "animate_shunpo", true, [new_coords])
 	var target = self.grid.pieces[new_coords]
 	swap_coords_and_pos(target)
 	get_parent().locations[new_coords].set_rain(true)

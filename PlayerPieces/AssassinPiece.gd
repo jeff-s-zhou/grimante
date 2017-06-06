@@ -132,7 +132,7 @@ func act(new_coords):
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
 		var args = [new_coords, 350, true]
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move_and_hop", true, args)
+		add_animation(self, "animate_move_and_hop", true, args)
 		set_coords(new_coords)
 		if self.bloodlust_flag:
 			soft_placed() #in the case that it resets again using its passive
@@ -148,15 +148,15 @@ func act(new_coords):
 
 func backstab(new_coords):
 	if new_coords == self.coords + Vector2(0, 1):
-		get_node("/root/AnimationQueue").enqueue(self, "animate_directly_below_backstab", true, [new_coords])
+		add_animation(self, "animate_directly_below_backstab", true, [new_coords])
 	else:
-		get_node("/root/AnimationQueue").enqueue(self, "animate_backstab", true, [new_coords])
+		add_animation(self, "animate_backstab", true, [new_coords])
 	#TODO: yield to AnimationQueue call
 	var action = get_new_action(false)
 	action.add_call("opportunity_attacked", [self.backstab_damage], new_coords)
 	action.execute()
 	var return_position = get_parent().locations[new_coords + BEHIND].get_pos()
-	get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [return_position, 200, true])
+	add_animation(self, "animate_move_to_pos", true, [return_position, 200, true])
 	set_coords(new_coords + BEHIND)
 		
 	if !self.bloodlust_flag: #hasn't triggered bloodlust yet
@@ -173,6 +173,10 @@ func activate_bloodlust():
 	self.bloodlust_flag = true
 	get_parent().selected = null
 
+#neede for tutorials
+func animate_activate_bloodlust():
+	emit_signal("animated_placed")
+
 func predict(new_coords):
 	if _is_within_attack_range(new_coords):
 		get_parent().pieces[new_coords].predict(self.backstab_damage)
@@ -187,7 +191,7 @@ func cast_ultimate():
 #same as regular placed() except doesn't reset the ultimate_flag or bloodlust_flag
 func soft_placed(): 
 	self.handle_assist()
-	get_node("/root/AnimationQueue").enqueue(self, "animate_placed", false)
+	add_animation(self, "animate_placed", false)
 	self.state = States.PLACED
 	get_parent().selected = null
 
@@ -195,7 +199,7 @@ func soft_placed():
 #resets the assassin to be able to act again
 func unplaced():
 	self.state = States.DEFAULT
-	get_node("/root/AnimationQueue").enqueue(self, "animate_unplaced", false)
+	add_animation(self, "animate_unplaced", false)
 	
 func animate_unplaced():
 	get_node("Physicals/AnimatedSprite").play("default")
@@ -212,7 +216,7 @@ func placed(ending_turn=false):
 func trigger_passive(attack_range):
 	for attack_coords in attack_range:
 		if _is_within_passive_range(attack_coords):
-			get_node("/root/AnimationQueue").enqueue(self, "animate_passive", true, [attack_coords])
+			add_animation(self, "animate_passive", true, [attack_coords])
 			var action = get_new_action(false)
 			action.add_call("opportunity_attacked", [self.passive_damage], attack_coords)
 			action.execute()
@@ -220,7 +224,7 @@ func trigger_passive(attack_range):
 			if !get_parent().pieces.has(attack_coords) and !self.bloodlust_flag and self.state == States.PLACED:
 				activate_bloodlust()
 				unplaced()
-			get_node("/root/AnimationQueue").enqueue(self, "animate_passive_end", true, [self.coords])
+			add_animation(self, "animate_passive_end", true, [self.coords])
 
 
 func animate_passive(attack_coords):

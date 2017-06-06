@@ -84,7 +84,7 @@ func act(new_coords):
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
 		var args = [new_coords, 350, true]
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move_and_hop", true, args)
+		add_animation(self, "animate_move_and_hop", true, args)
 		set_coords(new_coords)
 		var coords = get_step_shot_coords(self.coords)
 		if coords != null:
@@ -102,7 +102,7 @@ func act(new_coords):
 		invalid_move()
 
 func ranged_attack(new_coords, damage):
-	get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [new_coords])
+	add_animation(self, "animate_ranged_attack", true, [new_coords])
 	var action = get_new_action(new_coords)
 	action.add_call("attacked", [damage])
 	action.execute()
@@ -124,7 +124,7 @@ func piercing_arrow(new_coords):
 			break
 			
 	if final_hit_coords != null:
-		get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [final_hit_coords])
+		add_animation(self, "animate_ranged_attack", true, [final_hit_coords])
 	action.execute()
 
 
@@ -145,7 +145,7 @@ func silver_arrow(new_coords):
 			last_hit_coords = coords #if it stops prematurely, the arrow stops there
 		damage -= 1
 	#animate hitting to the last coords hit
-	get_node("/root/AnimationQueue").enqueue(self, "animate_ranged_attack", true, [last_hit_coords])
+	add_animation(self, "animate_ranged_attack", true, [last_hit_coords])
 	
 	damage = self.shoot_damage
 

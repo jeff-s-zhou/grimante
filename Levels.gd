@@ -201,15 +201,12 @@ func berserker_part2():
 func cavalier_tutorial():
 	var tutorial = TutorialPrototype.instance()
 	
-	var text = ["The Cavalier has arrived! Let's see what it can do."]
-	add_player_start_rule(tutorial, 1, text)
-	
-	var fa_text1 = "The Cavalier can move any number of tiles in all six directions."
-	var fa_text2 = ""
+	var fa_text1 = "The Cavalier has arrived! Let's see what it can do."
+	var fa_text2 = "The Cavalier can move any number of tiles in all six directions."
 	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(0, 4), fa_text2)
 	
 	
-	text = ["The Cavalier can run through enemies with its Indirect Attack: Trample.", \
+	var text = ["The Cavalier can run through enemies with its Indirect Attack: Trample.", \
 	"Trample deals 2 damage to each enemy."]
 	fa_text1 = "Now let's clean up some enemies."
 	fa_text2 = ""
@@ -321,13 +318,11 @@ func reinforcements():
 func archer_tutorial():
 	var tutorial = TutorialPrototype.instance()
 	
-	var text = ["The Archer is here!"]
-	add_player_start_rule(tutorial, 1, text)
+	var fa_text1 = "The Archer is here!"
+	var fa_text2 = "The Archer can Direct Attack from a distance by firing a Piercing Arrow."
+	var text = ["The Piercing Arrow hits the first target along a line for 3 damage."]
 	
-	var fa_text1 = "The Archer can Direct Attack from a distance by firing a Piercing Arrow."
-	text = ["The Piercing Arrow hits the first target along a line for 3 damage."]
-	
-	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(3, 4), fa_text1, text)
+	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(3, 4), fa_text2, text)
 	
 	fa_text1 = "The Archer's Piercing Arrow has a special effect when it kills an enemy."
 	text = ["If the Archer's Piercing Arrow kills, it continues to travel.", 
@@ -435,6 +430,36 @@ func flying_solo():
 	var flags = ["no_stars", "no_inspire"]
 	var extras = {"free_deploy":false, "required_units":{2:Cavalier, 3:Berserker, 4: Archer}, "flags":flags}
 	return LevelTypes.Timed.new("Flying Solo", allies, enemies, 7, null, extras)
+	
+
+func assassin_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	
+	var fa_text1 = "The Assassin is now at your disposal."
+	var fa_text2 = "The Assassin attacks by Backstabbing."
+	var text = ["The Assassin's Backstab teleports it behind the target and deals 2 damage."]
+	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(3, 5), fa_text2, text)
+	
+	var fa_text1 = "The Assassin activates a unique ability when it kills an Enemy."
+	var text = ["After killing an enemy, the Assassin can act again and gains +2 damage on its next Backstab.", 
+	"This can only occur once per turn."]
+	
+	add_forced_action(tutorial, 2, Vector2(3, 4), fa_text1, Vector2(3, 6), fa_text1, text)
+	
+	var fa_text1 = ""
+	add_forced_action(tutorial, 2, Vector2(3, 5), fa_text1, Vector2(2, 3), fa_text1)
+	
+	return tutorial
+	
+func assassin():
+	var allies = []
+	var raw_enemies = load_level("assassin.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var tutorial_func = funcref(self, "assassin_tutorial")
+	var flags = ["no_stars", "no_inspire"]
+	var reinforcements = {3: {5:Cavalier}}
+	var extras = {"free_deploy":false, "required_units":{3:Assassin}, "flags":flags, "tutorial":tutorial_func, "reinforcements":reinforcements}
+	return LevelTypes.Timed.new("Assassin", allies, enemies, 7, null, extras)
 
 
 #SAINT LEVEL

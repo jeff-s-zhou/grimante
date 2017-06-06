@@ -62,15 +62,15 @@ func act(new_coords):
 		var line_range = self.grid.get_line_range(self.coords, new_coords - self.coords, "ENEMY")
 		
 		var args = [new_coords, 350, true]
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move_and_hop", true, args)
+		add_animation(self, "animate_move_and_hop", true, args)
 		if line_range != []:
-			get_node("/root/AnimationQueue").enqueue(self, "animate_bomb", true, [line_range[0]])
+			add_animation(self, "animate_bomb", true, [line_range[0]])
 			bomb(line_range[0])
 		set_coords(new_coords)
 		placed()
 #	elif _is_within_attack_range(new_coords):
 #		handle_pre_assisted()
-#		get_node("/root/AnimationQueue").enqueue(self, "animate_bomb", true, [new_coords])
+#		add_animation(self, "animate_bomb", true, [new_coords])
 #		bomb(new_coords)
 #		reset_currently_burning()
 #		placed()

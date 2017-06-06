@@ -340,6 +340,8 @@ func computer_input(event):
 		if OS.is_window_fullscreen():
 			OS.set_window_fullscreen(false)
 			OS.set_window_maximized(true)
+			var current_size = OS.get_window_size()
+			OS.set_window_size(Vector2(670, current_size.y))
 		else:
 			OS.set_window_fullscreen(true)
 			OS.set_window_maximized(false)

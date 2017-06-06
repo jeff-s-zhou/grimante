@@ -65,7 +65,8 @@ func _is_within_assist_range(new_coords):
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move", true, [new_coords, 250, true])
+		var args = [new_coords, 250, true]
+		add_animation(self, "animate_move_and_hop", true, args)
 		frostbringer(new_coords)
 		set_coords(new_coords)
 		placed()

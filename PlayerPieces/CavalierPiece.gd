@@ -171,8 +171,8 @@ func trample(new_coords):
 		current_coords = current_coords + increment
 		if get_parent().pieces.has(current_coords) and get_parent().pieces[current_coords].side == "ENEMY":
 			was_hopping = true
-			get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [current_coords, 250, false])
-			get_node("/root/AnimationQueue").enqueue(self, "animate_hop", true, [current_coords - increment, current_coords])
+			add_animation(self, "animate_move", false, [current_coords, 250, false])
+			add_animation(self, "animate_hop", true, [current_coords - increment, current_coords])
 			var action = get_new_action()
 			action.add_call("attacked", [self.trample_damage], current_coords)
 			action.execute()
@@ -180,12 +180,12 @@ func trample(new_coords):
 		else:
 			if was_hopping:
 				#hop down
-				get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [current_coords, 250, false])
-				get_node("/root/AnimationQueue").enqueue(self, "animate_hop", true, [current_coords - increment, current_coords, true])
+				add_animation(self, "animate_move", false, [current_coords, 250, false])
+				add_animation(self, "animate_hop", true, [current_coords - increment, current_coords, true])
 				was_hopping = false
 			else:
-				get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [current_coords, 250, false])
-				get_node("/root/AnimationQueue").enqueue(self, "animate_hop", true, [current_coords - increment, current_coords, true])
+				add_animation(self, "animate_move", false, [current_coords, 250, false])
+				add_animation(self, "animate_hop", true, [current_coords - increment, current_coords, true])
 
 	set_coords(new_coords)
 	placed()

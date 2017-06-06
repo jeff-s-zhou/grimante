@@ -80,23 +80,23 @@ func act(new_coords):
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
 		var args = [new_coords, 350, true]
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move_and_hop", true, args)
+		add_animation(self, "animate_move_and_hop", true, args)
 		set_coords(new_coords)
 		placed()
 	elif _is_within_attack_range(new_coords):
 		handle_pre_assisted()
-		get_node("/root/AnimationQueue").enqueue(self, "animate_slash", true, [new_coords])
+		add_animation(self, "animate_slash", true, [new_coords])
 		slash(new_coords)
-		get_node("/root/AnimationQueue").enqueue(self, "animate_slash_end", true, [self.coords])
+		add_animation(self, "animate_slash_end", true, [self.coords])
 		placed()
 	elif _is_within_hook_range(new_coords):
 		handle_pre_assisted()
-		get_node("/root/AnimationQueue").enqueue(self, "animate_extend_hook", true, [new_coords])
+		add_animation(self, "animate_extend_hook", true, [new_coords])
 		var adjacent_coords = hook(new_coords)
-		get_node("/root/AnimationQueue").enqueue(self, "animate_retract_hook", true, [new_coords])
-		get_node("/root/AnimationQueue").enqueue(self, "animate_slash", true, [adjacent_coords])
+		add_animation(self, "animate_retract_hook", true, [new_coords])
+		add_animation(self, "animate_slash", true, [adjacent_coords])
 		slash(adjacent_coords)
-		get_node("/root/AnimationQueue").enqueue(self, "animate_slash_end", true, [self.coords])
+		add_animation(self, "animate_slash_end", true, [self.coords])
 		placed()
 	else:
 		invalid_move()

@@ -133,8 +133,8 @@ func act(new_coords):
 
 
 func smash_attack(new_coords):
-	get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [new_coords, 350, false])
-	get_node("/root/AnimationQueue").enqueue(self, "jump_to", true, [new_coords])
+	add_animation(self, "animate_move", false, [new_coords, 350, false])
+	add_animation(self, "jump_to", true, [new_coords])
 	if get_parent().pieces[new_coords].will_die_to(self.damage):
 		var action = get_new_action()
 		action.add_call("smash_killed", [self.damage], new_coords)
@@ -147,15 +147,15 @@ func smash_attack(new_coords):
 		var action = get_new_action()
 		action.add_call("attacked", [self.damage], new_coords)
 		action.execute()
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [self.coords, 300, false])
-		get_node("/root/AnimationQueue").enqueue(self, "jump_back", true, [self.coords])
+		add_animation(self, "animate_move", false, [self.coords, 300, false])
+		add_animation(self, "jump_back", true, [self.coords])
 		placed()
 
 
 
 func smash_move(new_coords):
-	get_node("/root/AnimationQueue").enqueue(self, "animate_move", false, [new_coords, 350, false])
-	get_node("/root/AnimationQueue").enqueue(self, "jump_to", true, [new_coords, true])
+	add_animation(self, "animate_move", false, [new_coords, 350, false])
+	add_animation(self, "jump_to", true, [new_coords, true])
 	
 	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 	smash(smash_range)

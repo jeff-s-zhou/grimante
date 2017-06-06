@@ -112,7 +112,7 @@ func act(new_coords):
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
 		var args = [new_coords, 300, true]
-		get_node("/root/AnimationQueue").enqueue(self, "animate_move_and_hop", true, args)
+		add_animation(self, "animate_move_and_hop", true, args)
 		set_coords(new_coords)
 		purify_passive(new_coords)
 		#imbue(new_coords)
@@ -127,14 +127,14 @@ func act(new_coords):
 
 func purify(new_coords):
 	if new_coords == self.coords + Vector2(0, -1):
-		get_node("/root/AnimationQueue").enqueue(self, "animate_directly_above_purify", true, [new_coords])
+		add_animation(self, "animate_directly_above_purify", true, [new_coords])
 	else:
-		get_node("/root/AnimationQueue").enqueue(self, "animate_purify", true, [new_coords])
+		add_animation(self, "animate_purify", true, [new_coords])
 	var action = get_new_action()
 	action.add_call("set_silenced", [true], new_coords)
 	action.execute()
 	var return_position = get_parent().locations[new_coords + Vector2(0, 1)].get_pos()
-	get_node("/root/AnimationQueue").enqueue(self, "animate_move_to_pos", true, [return_position, 200, true])
+	add_animation(self, "animate_move_to_pos", true, [return_position, 200, true])
 	set_coords(new_coords + Vector2(0, 1))
 	#imbue(return_position)
 	

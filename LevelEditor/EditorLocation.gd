@@ -16,6 +16,7 @@ func get_size():
 	
 func set_coords(coords):
 	self.coords = coords
+	get_node("Label").set_text(str(self.coords))
 	
 func input_event(event):
 	get_node("/root/LevelEditor").set_target(self)
