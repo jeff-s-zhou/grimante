@@ -124,21 +124,22 @@ func sub_animate_toss(flask):
 	get_node("Tween 2").start()
 
 
-func bomb(new_coords):
+func bomb(new_coords, count=0):
 	var action = get_new_action()
 	action.add_call("set_burning", [true], new_coords)
 	action.add_call("attacked", [self.wildfire_damage], new_coords)
 	action.execute()
 	
-	var nearby_enemy_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
-	var nearby_enemy_range_filtered = []
-	for coords in nearby_enemy_range:
-		if !get_parent().pieces[coords].currently_burning:
-			nearby_enemy_range_filtered.append(coords)
-	if nearby_enemy_range_filtered.size() > 0:
-		var random_index = randi() % nearby_enemy_range_filtered.size()
-		var spread_coords = nearby_enemy_range_filtered[random_index]
-		bomb(spread_coords)
+	if count < 3:
+		var nearby_enemy_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
+		var nearby_enemy_range_filtered = []
+		for coords in nearby_enemy_range:
+			if !get_parent().pieces[coords].currently_burning:
+				nearby_enemy_range_filtered.append(coords)
+		if nearby_enemy_range_filtered.size() > 0:
+			var random_index = randi() % nearby_enemy_range_filtered.size()
+			var spread_coords = nearby_enemy_range_filtered[random_index]
+			bomb(spread_coords, count + 1)
 		
 func reset_currently_burning():
 	var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")

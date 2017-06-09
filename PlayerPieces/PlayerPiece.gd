@@ -103,6 +103,7 @@ func assist(piece, assist_type):
 	add_animation(get_node("InspireIndicator"), "animate_give_inspire", true, [assist_type])
 	add_animation(self, "animate_assist", false, [piece, assist_type])
 	add_animation(piece.get_node("InspireIndicator"), "animate_receive_inspire", true, [assist_type])
+	
 
 #direct the particles to a certain coords
 func animate_assist(piece, assist_type):
@@ -110,7 +111,7 @@ func animate_assist(piece, assist_type):
 	var pos_difference = piece.get_pos() - get_pos()
 	get_node("Physicals/ComboSparkleManager").animate_assist(assist_type, pos_difference)
 	yield(get_node("Physicals/ComboSparkleManager"), "animation_done")
-	emit_signal("animation_done")
+	#emit_signal("animation_done")
 	subtract_anim_count()
 
 	

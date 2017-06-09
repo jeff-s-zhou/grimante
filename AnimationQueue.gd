@@ -97,8 +97,8 @@ func process_animations():
 		var blocking = animation_action["blocking"]
 		var func_ref = animation_action["func_ref"]
 		var args = animation_action["args"]
-#		print("animating " + str(node.get_name()))
-#		print("animating " + str(func_ref) + ", blocking: " + str(blocking))
+		#print("animating " + str(node.get_name()))
+		#print("animating " + str(func_ref) + ", blocking: " + str(blocking))
 		if args == []:
 			node.call(func_ref)
 			#GIVE ME FUCKING SPREAD SYNTAX AAAAAAAAAGGGGGGGGHHHHHHHH

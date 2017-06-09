@@ -159,12 +159,13 @@ func movement_highlight():
 	get_node("Physicals/EnemyOverlays/Red").show()
 
 #called from self.grid to reset highlighting over the whole board
-func reset_highlight(right_click_flag=false):
+func reset_highlight(deselect_flag=false):
 	self.action_highlighted = false
 	get_node("Physicals/EnemyOverlays/White").hide()
 	
 	get_node("Physicals/EnemyOverlays/Orange").hide()
-	#reset_prediction_flyover() #it's this one lol
+	if deselect_flag:
+		reset_prediction_flyover() #it's this one? I don't remember what this broke but we need it lol
 	
 	get_node("Physicals/EnemyOverlays/Red").hide()
 
@@ -507,11 +508,11 @@ func attacked(amount, delay=0.0):
 
 #called by the assassin's passive
 func opportunity_attacked(amount):
-	set_cloaked(false)
+	#set_cloaked(false) we don't need this, right?
 	if self.shielded:
 		set_shield(false)
 	else:
-		modify_hp(amount * -1)
+		modify_hp(amount * -1, 1)
 
 
 #for the berserker's smash kill which should instantly remove

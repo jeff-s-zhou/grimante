@@ -10,7 +10,7 @@ var assist_type = null
 
 var assister = null
 
-var assist_disabled = true
+var assist_disabled = false
 
 signal count_animation_done
 
@@ -18,6 +18,12 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	pass
+	
+
+func initialize(flags):
+	if flags.has("no_inspire"):
+		self.assist_disabled = true
+
 	
 func reset_combo():
 	self.assist_type = null

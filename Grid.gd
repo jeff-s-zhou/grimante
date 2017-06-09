@@ -267,6 +267,7 @@ func reset_deployable_indicators():
 	
 #done once a piece is moved by the player	
 #right click flag is so if we know to check immediately after if cursor is still in a piece's area
+#and apparently so we know to clear flyovers...lol
 func reset_highlighting(right_click_flag=false):
 	for location in locations.values():
 		location.reset_highlight()
@@ -300,21 +301,22 @@ func get_location_range(coords, magnitude_range=[1, 2], direction_range = [0, 6]
 	var return_set = [] #make this a dict?
 	var change_vector = Vector2(0, 0)
 	for direction in range(direction_range[0], direction_range[1]):
-		if direction == 0:
-			change_vector = Vector2(0, -1)
-		elif direction == 1:
-			change_vector = Vector2(1, 0)
-		elif direction == 2:
-			change_vector = Vector2(1, 1)
-		elif direction == 3:
-			change_vector = Vector2(0, 1)
-		elif direction == 4:
-			change_vector = Vector2(-1, 0)
-		elif direction == 5:
-			change_vector = Vector2(-1, -1)
-			
-		if self.locations.has(coords + change_vector):
-			return_set.append(coords + change_vector)
+		for magnitude in range(magnitude_range[0], magnitude_range[1]):
+			if direction == 0:
+				change_vector = Vector2(0, -1)
+			elif direction == 1:
+				change_vector = Vector2(1, 0)
+			elif direction == 2:
+				change_vector = Vector2(1, 1)
+			elif direction == 3:
+				change_vector = Vector2(0, 1)
+			elif direction == 4:
+				change_vector = Vector2(-1, 0)
+			elif direction == 5:
+				change_vector = Vector2(-1, -1)
+				
+			if self.locations.has(coords + change_vector * magnitude):
+				return_set.append(coords + change_vector * magnitude)
 	return return_set
 	
 func get_change_vector(direction):

@@ -14,6 +14,6 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	#add_child(levels)
-	get_node("/root/global").goto_scene("res://Combat.tscn", {"level":levels.assassin()})
+	get_node("/root/global").goto_scene("res://Combat.tscn", {"level":levels.sandbox()})
 
 

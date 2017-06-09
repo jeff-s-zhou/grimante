@@ -163,6 +163,7 @@ func backstab(new_coords):
 		if get_parent().pieces.has(new_coords): #if it didn't kill
 			soft_placed()
 		else:
+			add_animation(self, "emit_animated_placed", false)
 			activate_bloodlust()
 	
 	else: #already triggered bloodlust
@@ -174,7 +175,7 @@ func activate_bloodlust():
 	get_parent().selected = null
 
 #neede for tutorials
-func animate_activate_bloodlust():
+func emit_animated_placed():
 	emit_signal("animated_placed")
 
 func predict(new_coords):

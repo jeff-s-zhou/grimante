@@ -89,31 +89,22 @@ func add_forced_action(tutorial, turn, initial_coords, text, final_coords, text2
 
 func sandbox_allies():
 	return [Assassin, Berserker, Cavalier] #2: Cavalier, 3: Archer, 4: Assassin}
-
-func sandbox_enemies():
-	var turn_power_levels = [1300, 0, 500, 0, 600, 0, 650, 0, 700]
-	return EnemyWrappers.FiniteGeneratedWrapper.new(turn_power_levels)
 	
-func sandbox_enemies2():
-	var enemies = {0: {Vector2(3, 2): make(Spectre, 3), Vector2(3, 4): make(Slime, 4)},
-	1: {},
-	2: {Vector2(3, 3): make(Grunt, 4)}
+func sandbox_enemies():
+	var enemies = {0: {Vector2(3, 3): make(Grunt, 3), Vector2(3, 4): make(Grunt, 3), 
+	Vector2(3, 5): make(Fortifier, 3), Vector2(3, 2): make(Grunt, 3), Vector2(3, 1):make(Grunt, 3)},
 	}
 	#var enemies = load_level("level2.save")
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
 func sandbox_extras():
 	#return {"shifting_sands_tiles": {Vector2(3, 6): 4}, "tutorial":tutorial}
-	return {"required_units":{2: Archer, 3: FrostKnight}}
-	
-func sandbox_extras2():
-	return {"shadow_wall_tiles": [Vector2(3, 3), Vector2(3, 4)], "required_units":{1: Assassin, 2: Berserker, 4: Corsair, 5: Archer}}
-	#return {"required_units":{1: Cavalier, 2: Berserker, 3: Pyromancer, 4: Corsair, 5: Archer}}
+	return {"required_units":{3: Pyromancer, 4: Assassin}}
 
-func sandbox_level():
-	return LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies2(), 3, null, sandbox_extras()) 
+func sandbox():  
+	return LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies(), 3, null, sandbox_extras()) 
 
-var list = [sandbox_level()]
+var list = [sandbox()]
 
 func berserker_part1_tutorial():
 	var tutorial = TutorialPrototype.instance()
@@ -440,15 +431,30 @@ func assassin_tutorial():
 	var text = ["The Assassin's Backstab teleports it behind the target and deals 2 damage."]
 	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(3, 5), fa_text2, text)
 	
-	var fa_text1 = "The Assassin activates a unique ability when it kills an Enemy."
-	var text = ["After killing an enemy, the Assassin can act again and gains +2 damage on its next Backstab.", 
+	fa_text1 = "The Assassin activates a unique ability when it kills an Enemy."
+	text = ["After killing an enemy, the Assassin can act again and gains +2 damage on its next Backstab.", 
 	"This can only occur once per turn."]
 	
 	add_forced_action(tutorial, 2, Vector2(3, 4), fa_text1, Vector2(3, 6), fa_text1, text)
 	
-	var fa_text1 = ""
+	fa_text1 = ""
 	add_forced_action(tutorial, 2, Vector2(3, 5), fa_text1, Vector2(2, 3), fa_text1)
 	
+	fa_text1 = "Let's prepare the Assassin's Indirect Attack."
+	fa_text2 = "Move the Assassin next to this enemy."
+	add_forced_action(tutorial, 3, Vector2(2, 2), fa_text1, Vector2(4, 3), fa_text2) 
+	
+	text = ["If an Enemy adjacent to the Assassin is attacked and isn't killed, the Assassin automatically attacks it for 1 damage.",
+	"Furthermore, if the Assassin is on cooldown, its Indirect Attack also lets it act again!"]
+	fa_text1 = "Now we send the Cavalier to act."
+	fa_text2 = ""
+	add_forced_action(tutorial, 3, Vector2(5, 8), fa_text1, Vector2(5, 4), fa_text2, text) 
+	
+	add_forced_action(tutorial, 3, Vector2(4, 3), "", Vector2(3, 2), "")
+	
+	text = ["Can you clear the board this turn?"]
+	add_player_start_rule(tutorial, 4, text)
+
 	return tutorial
 	
 func assassin():
@@ -460,6 +466,177 @@ func assassin():
 	var reinforcements = {3: {5:Cavalier}}
 	var extras = {"free_deploy":false, "required_units":{3:Assassin}, "flags":flags, "tutorial":tutorial_func, "reinforcements":reinforcements}
 	return LevelTypes.Timed.new("Assassin", allies, enemies, 7, null, extras)
+	
+
+func deploy_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	var text = ["This is the deployment phase.", 
+	"Here, you choose which Heroes to use and can rearrange your Heroes before the level starts.",
+	"Press DEPLOY when finished."]
+	add_player_start_rule(tutorial, 0, text)
+	return tutorial
+	
+func deploy():
+	var allies = []
+	var raw_enemies = load_level("deploy.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var tutorial_func = funcref(self, "deploy_tutorial")
+	var flags = ["no_stars", "no_inspire"]
+	var extras = {"required_units":{2: Cavalier, 3:Archer, 4:Assassin, Vector2(3, 6): Berserker}, "flags":flags, "tutorial":tutorial_func}
+	return LevelTypes.Timed.new("Deploy", allies, enemies, 7, null, extras)
+	
+
+func mutation_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	var text = ["Enemies can have mutations, which give them additional special effects.", 
+	"Press Tab over an enemy with a mutation to learn about it."]
+	add_player_start_rule(tutorial, 0, text, Vector2(2, 5))
+	return tutorial
+	
+	
+func mutation():
+	var allies = []
+	var raw_enemies = load_level("mutation.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var tutorial_func = funcref(self, "mutation_tutorial")
+	var flags = ["no_stars", "no_inspire"]
+	var extras = {"required_units":{2: Cavalier, 3:Archer, 4:Assassin, Vector2(3, 6): Berserker}, "flags":flags, "tutorial":tutorial_func}
+	return LevelTypes.Timed.new("Mutation", allies, enemies, 7, null, extras)
+	
+func rising_tides_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	var text = ["Remember that moving past enemy reinforcements will prevent them from appearing!"]
+	add_player_start_rule(tutorial, 1, text)
+	return tutorial
+
+#might be too hard
+func rising_tides():
+	var allies = []
+	var raw_enemies = load_level("rising_tides.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var tutorial_func = funcref(self, "rising_tides_tutorial")
+	var flags = ["no_stars", "no_inspire"]
+	var extras = {"required_units":{2: Cavalier, 3:Archer, 4:Assassin, Vector2(3, 6): Berserker}, "tutorial": tutorial_func, "flags":flags}
+	return LevelTypes.Timed.new("Rising Tides", allies, enemies, 7, null, extras)
+	
+func inspire_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	var text = ["Heroes can now Inspire other Heroes.", 
+	"After killing an Enemy, a Hero gives a bonus effect to the next Hero that acts."]
+	add_player_start_rule(tutorial, 1, text)
+	
+	var fa_text1 = "Let's kill these enemies with the Berserker."
+	text = ["The Berserker inspires allies to Attack.", 
+	"Whenever it kills an enemy, the next Hero that acts receives +1 to all damage dealt."]
+	add_forced_action(tutorial, 1, Vector2(1, 6), fa_text1, Vector2(1, 4), fa_text1, text)
+	
+	fa_text1 = "Now the Cavalier can do some big damage!"
+	add_forced_action(tutorial, 1, Vector2(5, 8), fa_text1, Vector2(5, 3), fa_text1)
+	
+	fa_text1 = "Now let's have the Cavalier Inspire the Berserker."
+	text = ["The Cavalier inspires allies to Move.",  
+	"Whenever it kills an enemy, the next Hero gains an additional 1 range to its movement."]
+	add_forced_action(tutorial, 2, Vector2(5, 3), fa_text1, Vector2(0, 3), fa_text1, text)
+	
+	text = ["The Assassin inspires Attack, and the Archer inspires Movement.",
+	"Press Tab over a Hero to see what it Inspires."]
+	
+	add_player_start_rule(tutorial, 3, text)
+
+	return tutorial
+	
+func inspire():
+	var allies = []
+	var raw_enemies = load_level("inspire.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var tutorial_func = funcref(self, "inspire_tutorial")
+	var flags = ["no_stars"]
+	var reinforcements = {3: {2: Archer, 3: Assassin}}
+	var extras = {"free_deploy":false, "required_units":{1: Berserker, 5: Cavalier}, "tutorial": tutorial_func, "reinforcements":reinforcements, "flags":flags}
+	return LevelTypes.Timed.new("Power of Friendship", allies, enemies, 7, null, extras)
+	
+	
+func swamp():
+	var allies = []
+	var raw_enemies = load_level("swamp.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_stars"]
+	var extras = {"required_units":{2: Cavalier, 3:Archer, 4:Assassin, Vector2(3, 6): Berserker}, "flags":flags}
+	return LevelTypes.Timed.new("Dagobah", allies, enemies, 7, null, extras)
+
+	
+func stormdancer_tutorial():
+	var tutorial = TutorialPrototype.instance()
+
+	var fa_text1 = "The Stormdancer is here to help!"
+	var fa_text2 = "Let's move the Stormdancer forward."
+	var text = ["The Stormdancer leaves behind a Storm tile whenever it moves.", 
+	"The Storm tile stays on the board for the rest of the level."]
+	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(4, 6), fa_text2, text)
+	
+	var text =["If an Enemy steps on a Storm Tile, it takes 2 damage."]
+	add_enemy_end_rule(tutorial, 1, text)
+	
+	fa_text1 = "Let's use the Stormdancer's Direct Attack!"
+	text = ["The Stormdancer has the ability to swap positions with Enemies or Heroes within its movement range."]
+	add_forced_action(tutorial, 2, Vector2(4, 6), fa_text1, Vector2(3, 4), fa_text1, text)
+	
+	text = ["The Stormdancer inspires Heroes to Defend."]
+	add_player_start_rule(tutorial, 3, text)
+	
+	fa_text1 = ""
+	text = ["Unlike other Inspires, Defense is always triggered whenever the Stormdancer takes action."]
+	add_forced_action(tutorial, 3, Vector2(3, 4), fa_text1, Vector2(3, 2), fa_text1, text)
+	
+	text = ["Defense stays on a Hero until its next turn."]
+	add_forced_action(tutorial, 3, Vector2(3, 7), fa_text1, Vector2(3, 4), fa_text1, text)
+	
+	text = ["When Heroes Defend, they cannot be KOed by any means."]
+	add_enemy_end_rule(tutorial, 3, text)
+	
+	text = ["Clear the level before the start of your next turn!",  
+	"Hint: Remember that the Stormdancer's Swap doesn't just affect enemies."]
+	add_player_start_rule(tutorial, 4, text)
+	
+	return tutorial
+	
+func stormdancer():
+	var allies = []
+	var raw_enemies = load_level("stormdancer.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var tutorial_func = funcref(self, "stormdancer_tutorial")
+	var flags = ["no_stars"]
+	var reinforcements = {3: {3: Cavalier}, 4: {Vector2(1, 2): Berserker}}
+	var extras = {"free_deploy":false, "required_units":{3: Stormdancer}, "tutorial": tutorial_func, "reinforcements":reinforcements, "flags":flags}
+	return LevelTypes.Timed.new("Stormdancer", allies, enemies, 4, null, extras)
+	
+	
+func pyromancer_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	
+	var fa_text1 = "The Pyromancer is going to set the world in flames, and no one can stop him!"
+	var fa_text2 = "Let's move the Pyromancer forward and use its Indirect Attack."
+	var text = ["Whenever the Pyromancer moves, it tosses a Firebomb in the direction it moves!", 
+	"Enemies hit take 2 damage, and are inflicted with Burn."]
+	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(2, 6), fa_text2, text)
+	
+	text = ["Burned Enemies take 1 damage a turn."]
+	add_enemy_end_rule(tutorial, 1, text)
+	
+	fa_text1 = "The Pyromancer can only move forward." 
+	fa_text2 = "In addition, the Pyromancer can only attack by moving!"
+	text = [" Fire will spread to a single adjacent enemy at random, and will chain up to 4 times."]
+	add_forced_action(tutorial, 2, Vector2(2, 6), fa_text1, Vector2(2, 5), fa_text2, text)
+	return tutorial
+	
+func pyromancer():
+	var allies = []
+	var raw_enemies = load_level("pyromancer.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var tutorial_func = funcref(self, "pyromancer_tutorial")
+	var flags = ["no_stars"]
+	var extras = {"free_deploy":false, "required_units":{3: Pyromancer}, "tutorial": tutorial_func, "flags":flags}
+	return LevelTypes.Timed.new("Stormdancer", allies, enemies, 4, null, extras)
 
 
 #SAINT LEVEL
@@ -492,138 +669,3 @@ func assassin():
 #	return LevelTypes.RoomSeal.new(saint_level_allies(), saint_level_enemies(), level9_ref, saint_level_extras())
 #
 #var saint_level_ref = funcref(self, "saint_level")
-#
-#
-#LEVEL 8
-#func level8_allies():
-#	return {3: Archer, 2: Cavalier, Vector2(3, 7): Berserker, 4: Pyromancer}
-#	
-#func level8_enemies():
-#	var phase = EnemyWrappers.CuratedPhase.new(3)
-#	phase.add_wave({Vector2(2, 3): make(Fortifier, 3), Vector2(4, 4): make(Fortifier, 2), Vector2(1, 2): make(Grower, 2), 
-#	Vector2(5, 5): make(Grunt, 5), Vector2(1, 3): make(Drummer, 4), Vector2(3, 5): make(Grunt, 4, [poisonous]), 
-#	Vector2(4, 3): make(Grunt, 4), Vector2(6, 5): make(Grower, 2, [shield]), Vector2(0, 4): make(Grunt, 3, [shield]),
-#	Vector2(3, 2): make(Grower, 2)})
-#	phase.add_reinforcements({Vector2(1, 3): make(Grower, 2), Vector2(4, 6): make(Fortifier, 2)})
-#	phase.add_reinforcements({Vector2(1, 6): make(Grunt, 4), Vector2(6, 6): make(Drummer, 2), Vector2(4, 4): make(Grunt, 3, [shield])})
-#	var phase2 = EnemyWrappers.CuratedPhase.new(3)
-#	phase2.add_wave({Vector2(3, 5): make(Fortifier, 3), Vector2(3, 4): make(Drummer, 4, [shield]), Vector2(3, 3): make(Grunt, 5, [poisonous]),
-#	Vector2(1, 3): make(Grunt, 5, shield), Vector2(1, 2): make(Drummer, 2, [shield]), Vector2(4, 4): make(Grower, 3), Vector2(4, 5): make(Fortifier, 3),
-#	Vector2(5, 7): make(Drummer, 3), Vector2(4, 7): make(Fortifier, 2, [poisonous])})
-#	phase2.add_reinforcements({Vector2(0, 5): make(Grunt, 3, [poisonous]), Vector2(0, 2): make(Drummer, 2)})
-#	phase2.add_reinforcements({Vector2(2, 5): make(Grunt, 3), Vector2(3, 6): make(Fortifier, 2)})
-#	return EnemyWrappers.FinitePhasedWrapper.new([phase, phase2])
-#	
-#func level8_extras():
-#	var level8_instructions = [
-#	make_tip("Enemies now have modifier abilities! Hold Tab over units to learn about them.", "", null, ""),
-#	]
-#	return {"instructions":level8_instructions}
-#
-#func level8():
-#	return LevelTypes.Defend.new(level8_allies(), level8_enemies(), 7, saint_level_ref, level8_extras())
-#
-#var level8_ref = funcref(self, "level8")
-
-#
-#LEVEL 7
-#func level7_allies():
-#	return {3: Archer, 2: Cavalier, Vector2(3, 7): Berserker, 4: Assassin}
-#	
-#func level7_enemies():
-#	var phase = EnemyWrappers.CuratedPhase.new(3)
-#	phase.add_wave({Vector2(0, 1): make(Grunt, 3), Vector2(1, 1): make(Grunt, 3), Vector2(1, 3): make(Grunt, 4), 
-#	Vector2(2, 4): make(Grunt, 3), Vector2(4, 4): make(Grunt, 6), Vector2(5, 5): make(Grunt, 3),
-#	Vector2(5, 3): make(Grunt, 3)})
-#	phase.add_reinforcements({Vector2(1, 3): make(Grunt, 3), Vector2(3, 3): make(Grunt, 6), Vector2(5, 6): make(Grunt, 3)})
-#	phase.add_reinforcements({Vector2(1, 3): make(Grower, 3), Vector2(4, 3): make(Grower, 4), Vector2(4, 6): make(Fortifier, 2)})
-#	var phase2 = EnemyWrappers.CuratedPhase.new(1)
-#	phase2.add_wave({Vector2(1, 6): make(Grunt, 2), Vector2(3, 2): make(Grower, 2), Vector2(3, 3): make(Fortifier, 3), 
-#	Vector2(4, 4): make(Grunt, 5), Vector2(0, 0): make(Grower, 2), Vector2(4, 6): make(Grunt, 4)}) 
-#	return EnemyWrappers.FinitePhasedWrapper.new([phase, phase2])
-#	
-#func level7_extras():
-#	var level7_instructions = [
-#	make_tip("From here on out, you can choose where to place your Units at the start of the game.", "Deploy your Units, then press Space to Start.", null, ""),
-#	make_tip("At the top of the screen, you'll see a new Win Condition. If you keep an enemy from passing for 9 turns, you win.", "Defend for 9 turns.", null, ""),
-#	make_tip("Regardless of the explicit Win Condition, you can always clear the board of enemies to win.", "Alternate objective: clear the board.", null, ""),
-#	make_tip("Remember to hold Tab over new units to learn about their abilities.", "", null, "")
-#	]
-#	return {"instructions":level7_instructions}
-#
-#func level7():
-#	return LevelTypes.Defend.new(level7_allies(), level7_enemies(), 9, pyromancer_level_ref, level7_extras())
-#
-#var level7_ref = funcref(self, "level7")
-#
-#var level7_enemies = [
-#{Vector2(7, 6): make(Drummer, 2), 1: make(Grunt, 4), 2: make(Grunt, 3), 4: make(Grunt, 2), 5: make(Grunt, 4), 6: make(Grunt, 2)},
-#{3: make(Fortifier, 2), 4: make(Grunt, 5), 5: make(Grower, 2), 6: make(Fortifier, 5)},
-#{0: make(Grower, 1), 3: make(Grunt, 3), 4: make(Drummer, 2), 6: make(Grower, 1), 8: make(Grower, 1)},
-#{2: make(Grunt, 6), 5: make(Grower, 1), 6: make(Grunt, 2), 7: make(Grunt, 3)},
-#{0: make(Grunt, 4), 3: make(Fortifier, 3), 4: make(Grower, 1), 5: make(Drummer, 4)},
-#{1: make(Grunt, 4), 2: make(Grunt, 3), 4: make(Grunt, 4), 5: make(Grower, 3)},
-#{2: make(Grunt, 2), 3: make(Drummer, 1), 5: make(Fortifier, 2), 7: make(Grunt, 2)}
-#]
-#
-#ASSASSIN LEVEL
-#
-#func assassin_level_allies():
-#	return {3: Assassin}
-#	
-#func assassin_level_enemies():
-#	var phase = EnemyWrappers.CuratedPhase.new(3)
-#	phase.add_wave({Vector2(3, 6): make(Grunt, 4), Vector2(2, 3): make(Grunt, 4)})
-#	phase.add_reinforcements({Vector2(1, 6): make(Grunt, 9), Vector2(4, 8): make(Grunt, 9), 5: make(Grunt, 5)})
-#	phase.add_reinforcements({Vector2(3, 3): make(Grunt, 4), Vector2(0, 0): make(Grunt, 4), Vector2(2, 1): make(Grunt, 5)})
-#	return EnemyWrappers.FinitePhasedWrapper.new([phase])
-#	
-#func assassin_level_extras():
-#	var complex_tooltip1 = [{"coords":Vector2(3, 5), "text":""}, {"coords":Vector2(3, 7), "text": ""}, {"coords":Vector2(3, 6), "text": ""}, {"coords":Vector2(2, 4), "text": ""}]
-#	var complex_tooltip2 = [{"coords":Vector2(2, 3), "text":""}, {"coords":Vector2(4, 4), "text": ""}, 
-#	{"coords":Vector2(5, 9), "text": ""}, {"coords":Vector2(5, 4), "text": ""}, 
-#	{"coords":Vector2(4, 4), "text": "If the Assassin is on cooldown, its passive also activates Bloodlust!"},
-#	{"coords":Vector2(3, 3), "text": ""}]
-#	var assassin_level_instructions = [
-#	make_tip("The Assassin is now at your disposal. It attacks by backstabbing.", "Backstab an Enemy Unit.", Vector2(3, 6), ""),
-#	make_complex_tip("The Assassin is a mobile unit. After killing an enemy, it gains Bloodlust, allowing it to act again and deal +2 damage on its next Backstab.", "Kill two enemies this turn.", complex_tooltip1),
-#	make_complex_tip("If an adjacent enemy is attacked and isn't killed, the Assassin's passive allows it to follow up with its own attack.", "Use the Assassin's passive.", complex_tooltip2),
-#	make_tip("", "Clean up (Can you do it in one turn?).", null, "")
-#	]
-#	var assassin_level_reinforcements = {3: {5: Cavalier}}
-#	return {"instructions":assassin_level_instructions, "reinforcements":assassin_level_reinforcements, "free_deploy":false}
-#
-#
-#func assassin_level():
-#	return LevelTypes.RoomSeal.new(assassin_level_allies(), assassin_level_enemies(), level7_ref, assassin_level_extras())
-#
-#var assassin_level_ref = funcref(self, "assassin_level")
-
-#
-#LEVEL 4
-#func level4_allies():
-#	return {3: Berserker, 6: Cavalier}
-#	
-#func level4_enemies():
-#	var phase = EnemyWrappers.CuratedPhase.new(99)
-#	phase.add_wave({Vector2(2, 6): make(Grunt, 4), Vector2(4, 7): make(Grunt, 3), Vector2(5, 8): make(Grunt, 3),
-#	Vector2(2, 3): make(Grunt, 3), 
-#	Vector2(3, 3): make(Grunt, 5), Vector2(4, 4):make(Grunt, 2),
-#	Vector2(1, 3): make(Grunt, 2),
-#	1: make(Grunt, 5), 2: make(Grunt, 3), 4:make(Grunt, 2)})
-#	return EnemyWrappers.FinitePhasedWrapper.new([phase])
-#	
-#func level4_extras():
-#	var complex_tooltip1 = [{"coords":Vector2(3, 8), "text":""}, {"coords":Vector2(2, 6), "text": "Kill an enemy to trigger a Inspire Effect."}, {"coords":Vector2(6, 9), "text": "The next Unit to act receives the Inspire Effect."}, {"coords":Vector2(3, 6), "text": "The next Unit to act receives the Inspire Effect."}]
-#	var level4_instructions = [
-#	make_complex_tip("If a Player Unit gets a kill, it activates its Inspire Ability, which gives a bonus effect to the next Player Unit that acts this turn.", "Activate a Inspire.", complex_tooltip1),
-#	make_tip("Press Tab over a Player Unit to see its Inspire Ability.", "Clean up.", null, ""),
-#	make_tip("Each Player Unit can move once per turn. Right Click or press Escape to deselect a Player Unit. To quickly end your turn, press SPACE." \
-#	,"", null, ""),
-#	]
-#	return {"instructions":level4_instructions, "free_deploy":false}
-#
-#func level4():
-#	return LevelTypes.RoomSeal.new(level4_allies(), level4_enemies(), level5_ref, level4_extras())
-#
-#var level4_ref = funcref(self, "level4")

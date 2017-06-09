@@ -31,8 +31,6 @@ func _ready():
 	self.passive_description = PASSIVE_DESCRIPTION
 	self.assist_type = ASSIST_TYPES.defense
 
-func initialize(cursor_area):
-	.initialize(cursor_area)
 
 	
 func handle_assist():
@@ -53,9 +51,6 @@ func get_bolt_damage():
 func get_storm_damage():
 	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_STORM_DAMAGE
 	
-
-func set_coords(coords):
-	.set_coords(coords)
 
 func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
@@ -97,7 +92,7 @@ func act(new_coords):
 		
 	elif _is_within_movement_range(new_coords):
 		handle_pre_assisted()
-		shunpo(new_coords)
+		add_animation(self, "animate_shunpo", true, [new_coords])
 		get_parent().locations[new_coords].set_rain(true)
 		self.rain_coords_dict[new_coords] = true
 		set_coords(new_coords)
@@ -108,29 +103,26 @@ func act(new_coords):
 
 func lightning_attack(attack_coords):
 	get_parent().pieces[attack_coords].attacked(self.bolt_damage)
-
-
-func shunpo(new_coords):
-	add_animation(self, "animate_shunpo", true, [new_coords])
-	set_coords(new_coords)
 	
 
 func tango(new_coords):
 	add_animation(self, "animate_shunpo", true, [new_coords])
 	var target = self.grid.pieces[new_coords]
-	swap_coords_and_pos(target)
 	get_parent().locations[new_coords].set_rain(true)
 	self.rain_coords_dict[new_coords] = true
+	swap_coords_and_pos(target)
+	if target.side == "ENEMY":
+		target.handle_rain()
 	
 func animate_shunpo(new_coords):
 	add_anim_count()
-	get_node("AnimationPlayer").play("ShunpoOut")
-	yield(get_node("AnimationPlayer"), "finished")
+	get_node("AnimationPlayer 2").play("ShunpoOut")
+	yield(get_node("AnimationPlayer 2"), "finished")
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	set_pos(new_position)
-	get_node("AnimationPlayer").play("ShunpoIn")
-	yield(get_node("AnimationPlayer"), "finished")
+	get_node("AnimationPlayer 2").play("ShunpoIn")
+	yield(get_node("AnimationPlayer 2"), "finished")
 	emit_signal("animation_done")
 	subtract_anim_count()
 

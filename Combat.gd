@@ -86,6 +86,8 @@ func _ready():
 	
 	if self.level_schematic.flags.has("no_stars"):
 		get_node("ControlBar/StarButton").disable()
+	
+	get_node("AssistSystem").initialize(self.level_schematic.flags)
 
 	if self.level_schematic.shadow_wall_tiles.size() > 0:
 		get_node("Grid").initialize_shadow_wall_tiles(self.level_schematic.shadow_wall_tiles)
@@ -109,14 +111,18 @@ func _ready():
 		
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			player_piece.start_deploy_phase()
-
-		if (self.instructions.size() > 0):
-			handle_instructions()
-			yield(self, "next_pressed")
+		
+		#handle turn 0 tutorial popups before even deploying
+		if self.tutorial != null and self.tutorial.has_player_turn_start_rule(get_turn_count()):
+			print("did we get in here?")
+			self.tutorial.display_player_turn_start_rule(get_turn_count())
+			set_process_input(false)
+			yield(self.tutorial, "rule_finished")
+			set_process_input(true)
 		
 		yield(self, "deployed")
-		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
-			player_piece.deploy()
+	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
+		player_piece.deploy()
 	
 	get_node("Grid").set_deploying(false)
 	
