@@ -526,7 +526,8 @@ func modify_hp(amount, delay=0):
 		self.hp = min((max(0, self.hp + amount)), 9) #has to be between 0 and 9
 		self.temp_display_hp = self.hp
 		
-		get_new_animation_sequence()
+		if self.current_animation_sequence == null:
+			get_new_animation_sequence()
 		add_animation(self, "animate_set_hp", true, [self.hp, amount, delay])
 		if self.hp == 0: 
 			print("deleting self")
@@ -567,7 +568,7 @@ func animate_set_hp(hp, value, delay=0):
 	
 	text.set_text(value_text)
 
-	var destination = text.get_pos() - Vector2(0, 200)
+	var destination = text.get_pos() - Vector2(0, 130)
 	var tween = Tween.new()
 	add_child(tween)
 	tween.interpolate_property(text, "rect/pos", text.get_pos(), destination, 1.3, Tween.TRANS_EXPO, Tween.EASE_OUT_IN)
@@ -603,9 +604,12 @@ func animate_delete_self():
 	#get_node("/root/Combat/ComboSystem").increase_combo()
 	subtract_anim_count()
 	#let it resolve any other animations
+	print("enemy deleting self")
+	print(self.debug_anim_counter)
 	get_node("Timer").set_wait_time(1)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
+	print(self.debug_anim_counter)
 	self.queue_free()
 
 

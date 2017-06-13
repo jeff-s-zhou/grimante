@@ -1,0 +1,6 @@
+{"hp":"3", "turn":0, "pos_x":0, "name":"grunt", "modifiers":{}, "pos_y":0}
+{"hp":"7", "turn":1, "pos_x":5, "name":"grunt", "modifiers":{}, "pos_y":2}
+{"hp":"3", "turn":3, "pos_x":0, "name":"grunt", "modifiers":{}, "pos_y":0}
+{"hp":"2", "turn":3, "pos_x":2, "name":"grunt", "modifiers":{}, "pos_y":1}
+{"hp":"2", "turn":3, "pos_x":3, "name":"grunt", "modifiers":{}, "pos_y":1}
+{"hp":"2", "turn":3, "pos_x":4, "name":"grunt", "modifiers":{}, "pos_y":2}

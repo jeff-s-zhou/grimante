@@ -36,7 +36,10 @@ func get_attack_range():
 	return get_parent().get_range(self.coords, [1, 2], "ENEMY")
 	
 func get_hook_range():
-	return get_parent().get_range(self.coords, [1, self.movement_value + 1], "ENEMY", true)
+	return get_parent().get_range(self.coords, [1, 3], "ENEMY", true)
+	
+func get_assist_hook_range():
+	return get_parent().get_range(self.coords, [1, 3], "PLAYER", true)
 	
 
 func finisher_reactivate():
@@ -54,6 +57,11 @@ func placed(ending_turn=false):
 	else:
 		self.handle_assist()
 		get_parent().selected = null
+		add_animation(self, "emit_animated_placed", false)
+
+#neede for tutorials
+func emit_animated_placed():
+	emit_signal("animated_placed")
 	
 
 #parameters to use for get_node("get_parent()").get_neighbors
@@ -69,6 +77,10 @@ func _is_within_attack_range(new_coords):
 	
 func _is_within_hook_range(new_coords):
 	var hook_range = get_hook_range()
+	return new_coords in hook_range
+	
+func _is_within_assist_hook_range(new_coords):
+	var hook_range = get_assist_hook_range()
 	return new_coords in hook_range
 	
 func _is_within_movement_range(new_coords):
@@ -97,6 +109,12 @@ func act(new_coords):
 		add_animation(self, "animate_slash", true, [adjacent_coords])
 		slash(adjacent_coords)
 		add_animation(self, "animate_slash_end", true, [self.coords])
+		placed()
+	elif _is_within_assist_hook_range(new_coords):
+		handle_pre_assisted()
+		add_animation(self, "animate_extend_hook", true, [new_coords])
+		var adjacent_coords = hook(new_coords)
+		add_animation(self, "animate_retract_hook", true, [new_coords])
 		placed()
 	else:
 		invalid_move()

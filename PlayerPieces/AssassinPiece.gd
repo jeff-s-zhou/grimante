@@ -2,17 +2,16 @@
 extends "PlayerPiece.gd"
 
 const DEFAULT_BACKSTAB_DAMAGE = 2
-const BLOODLUST_BONUS = 2
+const ISOLATION_BONUS = 2
 const DEFAULT_PASSIVE_DAMAGE = 1
 const DEFAULT_MOVEMENT_VALUE = 2
 const DEFAULT_ARMOR_VALUE = 3
 const UNIT_TYPE = "Assassin"
 
-const ATTACK_DESCRIPTION = ["""Backstab. 2 range. Teleport behind an enemy and deal 2 damage. Will fail if there is a unit behind the enemy.
+const ATTACK_DESCRIPTION = ["""
 """]
 
-const PASSIVE_DESCRIPTION = ["""Opportunity Strikes. If an adjacent enemy is attacked and isn't killed, the Assassin attacks it for 1 damage. Will trigger Bloodlust if the Assassin is already on cooldown.
-Bloodlust. If the Assassin kills a unit, it may act again and its next Backstab deals +2 damage. May only activate once per turn.
+const PASSIVE_DESCRIPTION = ["""
 """]
 
 const BEHIND = Vector2(0, -1)
@@ -47,9 +46,10 @@ func delete_from_bar():
 	.delete_from_bar()
 
 
-func get_backstab_damage():
-	if self.bloodlust_flag:
-		return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_BACKSTAB_DAMAGE + BLOODLUST_BONUS
+func get_backstab_damage(coords):
+	var neighbor_coords_range = get_parent().get_range(coords, [1,2], "ENEMY")
+	if neighbor_coords_range == []:
+		return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_BACKSTAB_DAMAGE + ISOLATION_BONUS
 	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_BACKSTAB_DAMAGE
 	
 func get_passive_damage():
@@ -151,9 +151,8 @@ func backstab(new_coords):
 		add_animation(self, "animate_directly_below_backstab", true, [new_coords])
 	else:
 		add_animation(self, "animate_backstab", true, [new_coords])
-	#TODO: yield to AnimationQueue call
 	var action = get_new_action(false)
-	action.add_call("opportunity_attacked", [self.backstab_damage], new_coords)
+	action.add_call("attacked", [self.get_backstab_damage(new_coords)], new_coords)
 	action.execute()
 	var return_position = get_parent().locations[new_coords + BEHIND].get_pos()
 	add_animation(self, "animate_move_to_pos", true, [return_position, 200, true])
@@ -180,7 +179,7 @@ func emit_animated_placed():
 
 func predict(new_coords):
 	if _is_within_attack_range(new_coords):
-		get_parent().pieces[new_coords].predict(self.backstab_damage)
+		get_parent().pieces[new_coords].predict(self.get_backstab_damage(new_coords))
 
 func cast_ultimate():
 	get_node("Physicals/OverlayLayers/UltimateWhite").show()

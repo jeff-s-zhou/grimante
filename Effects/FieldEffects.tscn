@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=1]
+
+[ext_resource path="res://Effects/FieldEffects.gd" type="Script" id=1]
+[ext_resource path="res://Effects/DustWaveParticles.tscn" type="PackedScene" id=2]
+
+[node name="FieldEffects" type="Node2D"]
+
+script/script = ExtResource( 1 )
+
+[node name="DustWaveParticles" parent="." instance=ExtResource( 2 )]
+
+[node name="Tween" type="Tween" parent="."]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
+
+

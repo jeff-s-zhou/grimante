@@ -86,8 +86,7 @@ func jump_to(new_coords, dust=false):
 	get_node("Tween 2").start()
 	yield(get_node("Tween 2"), "tween_complete")
 	if dust:
-		get_node("Physicals/DustWaveParticles").set_emit_timeout(0.1)
-		get_node("Physicals/DustWaveParticles").set_emitting(true)
+		get_parent().get_node("FieldEffects").emit_dust(self.get_pos())
 	self.mid_leaping_animation = false
 	set_z(0)
 	emit_signal("shake")

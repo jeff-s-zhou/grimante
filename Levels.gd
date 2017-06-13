@@ -91,15 +91,13 @@ func sandbox_allies():
 	return [Assassin, Berserker, Cavalier] #2: Cavalier, 3: Archer, 4: Assassin}
 	
 func sandbox_enemies():
-	var enemies = {0: {Vector2(3, 3): make(Grunt, 3), Vector2(3, 4): make(Grunt, 3), 
-	Vector2(3, 5): make(Fortifier, 3), Vector2(3, 2): make(Grunt, 3), Vector2(3, 1):make(Grunt, 3)},
-	}
+	var enemies = {0:{ Vector2(0, 1): make(Grunt, 4), Vector2(2, 2): make(Grunt, 7)}}
 	#var enemies = load_level("level2.save")
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
 func sandbox_extras():
 	#return {"shifting_sands_tiles": {Vector2(3, 6): 4}, "tutorial":tutorial}
-	return {"required_units":{3: Pyromancer, 4: Assassin}}
+	return {"required_units":{Vector2(3, 1): Assassin, Vector2(5, 5): Cavalier}}
 
 func sandbox():  
 	return LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies(), 3, null, sandbox_extras()) 
@@ -432,17 +430,18 @@ func assassin_tutorial():
 	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(3, 5), fa_text2, text)
 	
 	fa_text1 = "The Assassin activates a unique ability when it kills an Enemy."
-	text = ["After killing an enemy, the Assassin can act again and gains +2 damage on its next Backstab.", 
+	text = ["After killing an Enemy, the Assassin can act again.", 
 	"This can only occur once per turn."]
 	
 	add_forced_action(tutorial, 2, Vector2(3, 4), fa_text1, Vector2(3, 6), fa_text1, text)
 	
 	fa_text1 = ""
-	add_forced_action(tutorial, 2, Vector2(3, 5), fa_text1, Vector2(2, 3), fa_text1)
+	text = ["If an Enemy has no other Enemies adjacent to it, Backstab deals 4 damage."]
+	add_forced_action(tutorial, 2, Vector2(3, 5), fa_text1, Vector2(2, 5), fa_text1, text)
 	
 	fa_text1 = "Let's prepare the Assassin's Indirect Attack."
 	fa_text2 = "Move the Assassin next to this enemy."
-	add_forced_action(tutorial, 3, Vector2(2, 2), fa_text1, Vector2(4, 3), fa_text2) 
+	add_forced_action(tutorial, 3, Vector2(2, 4), fa_text1, Vector2(4, 4), fa_text2) 
 	
 	text = ["If an Enemy adjacent to the Assassin is attacked and isn't killed, the Assassin automatically attacks it for 1 damage.",
 	"Furthermore, if the Assassin is on cooldown, its Indirect Attack also lets it act again!"]
@@ -450,7 +449,7 @@ func assassin_tutorial():
 	fa_text2 = ""
 	add_forced_action(tutorial, 3, Vector2(5, 8), fa_text1, Vector2(5, 4), fa_text2, text) 
 	
-	add_forced_action(tutorial, 3, Vector2(4, 3), "", Vector2(3, 2), "")
+	add_forced_action(tutorial, 3, Vector2(4, 4), "", Vector2(3, 2), "")
 	
 	text = ["Can you clear the board this turn?"]
 	add_player_start_rule(tutorial, 4, text)
@@ -591,7 +590,7 @@ func stormdancer_tutorial():
 	text = ["Defense stays on a Hero until its next turn."]
 	add_forced_action(tutorial, 3, Vector2(3, 7), fa_text1, Vector2(3, 4), fa_text1, text)
 	
-	text = ["When Heroes Defend, they cannot be KOed by any means."]
+	text = ["When Heroes Defend, they cannot be KOed by any means or shoved."]
 	add_enemy_end_rule(tutorial, 3, text)
 	
 	text = ["Clear the level before the start of your next turn!",  
@@ -609,7 +608,40 @@ func stormdancer():
 	var reinforcements = {3: {3: Cavalier}, 4: {Vector2(1, 2): Berserker}}
 	var extras = {"free_deploy":false, "required_units":{3: Stormdancer}, "tutorial": tutorial_func, "reinforcements":reinforcements, "flags":flags}
 	return LevelTypes.Timed.new("Stormdancer", allies, enemies, 4, null, extras)
+
+
+func double_time_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	var text = ["This is an Elite Enemy.", 
+	"Elite Enemies have powerful effects, so think carefully about how to handle them!"]
+	add_player_start_rule(tutorial, 0, text, Vector2(3, 3))
+	return tutorial
+
+func double_time():
+	var allies = []
+	var raw_enemies = load_level("double_time.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_stars"]
+	var tutorial_func = funcref(self, "double_time_tutorial")
+	var extras = {"required_units":{1: Stormdancer, 2: Cavalier, 3:Berserker, 4:Assassin, 5: Archer}, "tutorial":tutorial_func, "flags":flags}
+	return LevelTypes.Timed.new("Double Time", allies, enemies, 7, null, extras)
 	
+
+func defuse_the_bomb():
+	var allies = []
+	var raw_enemies = load_level("defuse_the_bomb.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_stars"]
+	var extras = {"required_units":{1: Stormdancer, 2: Cavalier, 3:Berserker, 4:Assassin, 5: Archer}, "flags":flags}
+	return LevelTypes.Timed.new("Defuse the Bomb", allies, enemies, 3, null, extras)
+
+func spoopy_ghosts():
+	var allies = []
+	var raw_enemies = load_level("spoopy_ghosts.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_stars"]
+	var extras = {"required_units":{1: Stormdancer, 2: Cavalier, 3:Berserker, 4:Assassin, 5: Archer}, "flags":flags}
+	return LevelTypes.Timed.new("Spoopy Ghosts", allies, enemies, 7, null, extras)
 	
 func pyromancer_tutorial():
 	var tutorial = TutorialPrototype.instance()
@@ -637,6 +669,43 @@ func pyromancer():
 	var flags = ["no_stars"]
 	var extras = {"free_deploy":false, "required_units":{3: Pyromancer}, "tutorial": tutorial_func, "flags":flags}
 	return LevelTypes.Timed.new("Stormdancer", allies, enemies, 4, null, extras)
+
+
+func corsair_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	var fa_text1 = "The Corsair is ready to buckle some swashes."
+	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(3, 5), fa_text1)
+	fa_text1 = "The Corsair can act twice each turn without any conditions."
+	add_forced_action(tutorial, 1, Vector2(3, 5), fa_text1, Vector2(3, 3), fa_text1)
+	
+	var text = ["The Corsair can act twice a turn, but he cannot attack while moving."]
+	add_player_start_rule(tutorial, 2, text)
+	
+	fa_text1 = "Move the Corsair adjacent to an enemy to then attack it."
+	add_forced_action(tutorial, 2, Vector2(3, 3), fa_text1, Vector2(1, 2), fa_text1)
+	add_forced_action(tutorial, 2, Vector2(1, 2), "", Vector2(0, 1), "")
+	
+	fa_text1 = "The Corsair has one more trick up its sleeve."
+	text = [" The Corsair can use its hook to drag enemies close from 2 distance away in a straight line.",
+	"It then automatically attacks the enemy."]
+	add_forced_action(tutorial, 3, Vector2(1, 2), fa_text1, Vector2(3, 3), fa_text1)
+	add_forced_action(tutorial, 3, Vector2(3, 3), fa_text1, Vector2(5, 3), fa_text1, text)
+	
+	fa_text1 = "The Corsair can also hook allies!"
+	text = ["Clear this tutorial before time runs out!", 
+	"Hint: The Corsair inspires Movement."]
+	add_forced_action(tutorial, 4, Vector2(3, 3), fa_text1, Vector2(3, 5), fa_text1, text)
+	return tutorial
+
+func corsair():
+	var allies = []
+	var raw_enemies = load_level("corsair.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var tutorial_func = funcref(self, "corsair_tutorial")
+	var flags = ["no_stars"]
+	var reinforcements = {4: {Vector2(3, 5): Berserker, Vector2(2, 6): Archer}}
+	var extras = {"free_deploy":false, "required_units":{3: Corsair}, "reinforcements":reinforcements, "tutorial": tutorial_func, "flags":flags}
+	return LevelTypes.Timed.new("Corsair", allies, enemies, 4, null, extras)
 
 
 #SAINT LEVEL

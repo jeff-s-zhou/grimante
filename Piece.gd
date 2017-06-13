@@ -352,6 +352,11 @@ func receive_shove(pusher, distance):
 	var distance_increment = self.grid.hex_normalize(distance)
 	var direction = self.grid.get_direction_from_vector(distance)
 	
+	
+	#if the piece is a player piece and is defending, return Vector2(0, 0)
+	if self.side == "PLAYER" and self.invulnerable_flag:
+		return Vector2(0, 0)
+	
 	#see if there's a piece behind it blocking things
 	var collide_range = self.grid.get_range(self.coords, [1, distance_length + 1], "ANY", true, [direction, direction + 1])
 	var collide_coords = null
