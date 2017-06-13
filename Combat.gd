@@ -42,7 +42,7 @@ func _ready():
 	# Initialization here
 	get_node("Grid").set_pos(Vector2(73, 270))
 	#get_node("Grid").set_pos(Vector2(400, 250))
-	debug_mode()
+	#debug_mode()
 	
 	get_node("ControlBar/EndTurnButton").connect("released", self, "handle_end_turn_released")
 	get_node("ControlBar/EndTurnButton").connect("holding", self, "holding_end_turn")
@@ -121,10 +121,13 @@ func _ready():
 			set_process_input(true)
 		
 		yield(self, "deployed")
+		
+	get_node("Grid").set_deploying(false)
+	
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 		player_piece.deploy()
 	
-	get_node("Grid").set_deploying(false)
+	
 	
 	get_node("Timer2").set_wait_time(0.3)
 	get_node("Timer2").start()

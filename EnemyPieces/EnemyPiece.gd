@@ -544,9 +544,14 @@ func animate_set_hp(hp, value, delay=0):
 	reset_prediction_flyover()
 	self.mid_trailing_animation = true
 	if delay > 0:
-		get_node("Timer").set_wait_time(delay)
-		get_node("Timer").start()
-		yield(get_node("Timer"), "timeout")
+		print("got to the delay")
+		var timer = Timer.new()
+		add_child(timer)
+		timer.set_wait_time(delay)
+		timer.start()
+		yield(timer, "timeout")
+		timer.queue_free()
+		
 
 	get_node("Physicals/HealthDisplay").set_health(hp)
 	
@@ -567,21 +572,25 @@ func animate_set_hp(hp, value, delay=0):
 	text.set_opacity(1.0)
 	
 	text.set_text(value_text)
-
+	if delay > 0:
+		print("partially through teh delayed animate hp")
+	
 	var destination = text.get_pos() - Vector2(0, 130)
 	var tween = Tween.new()
 	add_child(tween)
 	tween.interpolate_property(text, "rect/pos", text.get_pos(), destination, 1.3, Tween.TRANS_EXPO, Tween.EASE_OUT_IN)
 	tween.interpolate_property(text, "visibility/opacity", 1, 0, 1.3, Tween.TRANS_EXPO, Tween.EASE_IN)
 	tween.start()
+	
 	yield(tween, "tween_complete") #this is the problem line...fuuuuck
+	if delay > 0:
+		print("finished with teh delayed animate hp")
 	emit_signal("animation_done")
 	flyover.queue_free()
 	tween.queue_free()
+	
 	self.mid_trailing_animation = false
 	subtract_anim_count()
-#	if hp == 0:
-#		animate_delete_self()
 
 
 #removes it from the self.grid, which prevents any interaction with other pieces
@@ -606,7 +615,7 @@ func animate_delete_self():
 	#let it resolve any other animations
 	print("enemy deleting self")
 	print(self.debug_anim_counter)
-	get_node("Timer").set_wait_time(1)
+	get_node("Timer").set_wait_time(3)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
 	print(self.debug_anim_counter)
