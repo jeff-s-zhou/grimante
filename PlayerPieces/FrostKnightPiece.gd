@@ -83,9 +83,9 @@ func act(new_coords):
 
 
 func shield_bash(new_coords):
-#	var action = get_new_action(coords)
-#	action.add_call("attacked", [self.shield_bash_damage])
-#	action.execute()
+	var action = get_new_action()
+	action.add_call("set_frozen", [true], new_coords)
+	action.execute()
 	var offset = get_parent().hex_normalize(new_coords - self.coords)
 	move(offset)
 	enqueue_animation_sequence()

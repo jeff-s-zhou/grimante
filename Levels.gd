@@ -91,13 +91,13 @@ func sandbox_allies():
 	return [Assassin, Berserker, Cavalier] #2: Cavalier, 3: Archer, 4: Assassin}
 	
 func sandbox_enemies():
-	var enemies = {0:{ Vector2(0, 1): make(Grunt, 4), Vector2(2, 2): make(Grunt, 7)}}
-	#var enemies = load_level("level2.save")
+	#var enemies = {0:{ Vector2(3, 5): make(Grunt, 4)}}
+	var enemies = load_level("frost_knight.level")
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
 func sandbox_extras():
 	#return {"shifting_sands_tiles": {Vector2(3, 6): 4}, "tutorial":tutorial}
-	return {"required_units":{Vector2(3, 1): Assassin, Vector2(5, 5): Cavalier}}
+	return {"required_units":{3: FrostKnight, 4: Assassin}}
 
 func sandbox():  
 	return LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies(), 3, null, sandbox_extras()) 
@@ -706,6 +706,41 @@ func corsair():
 	var reinforcements = {4: {Vector2(3, 5): Berserker, Vector2(2, 6): Archer}}
 	var extras = {"free_deploy":false, "required_units":{3: Corsair}, "reinforcements":reinforcements, "tutorial": tutorial_func, "flags":flags}
 	return LevelTypes.Timed.new("Corsair", allies, enemies, 4, null, extras)
+	
+func frost_knight_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	var fa_text1 = "The Frost Knight is at your command."
+	var text = ["The Frost Knight can shove Enemies and Heroes.", 
+	"Shoved Enemies are Frozen and Stunned."]
+	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(3, 6), fa_text1, text)
+	
+	fa_text1 = "Let's attack the Frozen Enemy and see what happens."
+	text = ["Frozen units, if killed, shatter and deal 2 damage to all adjacent Enemies.",  
+	"NOTE: Being Burned by the Pyromancer cancels out being Frozen, and vice versa."]
+	add_forced_action(tutorial, 1, Vector2(2, 6), fa_text1, Vector2(3, 5), fa_text1, text)
+	
+	add_forced_action(tutorial, 2, Vector2(2, 6), "", Vector2(2, 5), "")
+	
+	fa_text1 = "The Frost Knight can only move in the 6 hexagonal directions, even when Inspired."
+	add_forced_action(tutorial, 2, Vector2(3, 6), fa_text1, Vector2(5, 6), fa_text1)
+	
+	text = ["Enemies shoved off the map on any side except the bottom are KOed."]
+	add_forced_action(tutorial, 2, Vector2(5, 6), "", Vector2(6, 6), "", text)
+	
+
+	
+	
+	
+	return tutorial
+	
+func frost_knight():
+	var allies = []
+	var raw_enemies = load_level("frost_knight.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var tutorial_func = funcref(self, "frost_knight_tutorial")
+	var flags = ["no_stars"]
+	var extras = {"free_deploy":false, "required_units":{2: Archer, 3: FrostKnight}, "tutorial": tutorial_func, "flags":flags}
+	return LevelTypes.Timed.new("Frost Knight", allies, enemies, 4, null, extras)
 
 
 #SAINT LEVEL

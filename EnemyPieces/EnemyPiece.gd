@@ -187,7 +187,7 @@ func will_die_to(damage):
 	return (self.hp - damage) <= 0 and self.shielded == false
 	
 func reset_prediction_flyover():
-	
+	print("calling reset prediction flyover???")
 	get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
 	get_node("Physicals/HealthDisplay").set_health(self.temp_display_hp)
 	
@@ -541,10 +541,9 @@ func modify_hp(amount, delay=0):
 
 func animate_set_hp(hp, value, delay=0):
 	add_anim_count()
-	reset_prediction_flyover()
+	#reset_prediction_flyover() #why the fuck do I need this??
 	self.mid_trailing_animation = true
 	if delay > 0:
-		print("got to the delay")
 		var timer = Timer.new()
 		add_child(timer)
 		timer.set_wait_time(delay)
@@ -572,8 +571,6 @@ func animate_set_hp(hp, value, delay=0):
 	text.set_opacity(1.0)
 	
 	text.set_text(value_text)
-	if delay > 0:
-		print("partially through teh delayed animate hp")
 	
 	var destination = text.get_pos() - Vector2(0, 130)
 	var tween = Tween.new()
@@ -583,8 +580,6 @@ func animate_set_hp(hp, value, delay=0):
 	tween.start()
 	
 	yield(tween, "tween_complete") #this is the problem line...fuuuuck
-	if delay > 0:
-		print("finished with teh delayed animate hp")
 	emit_signal("animation_done")
 	flyover.queue_free()
 	tween.queue_free()
