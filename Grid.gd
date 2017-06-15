@@ -84,18 +84,12 @@ func _ready():
 func set_deploying(flag, deploy_tiles=null):
 	self.deploying = flag
 	if deploying:
-		get_node("UnitSelectBar").set_global_pos(Vector2(73, 910))
-		get_node("UnitSelectBar").show()
 		if deploy_tiles != null:
 			for deploy_tile_coords in deploy_tiles:
 				if self.locations.has(deploy_tile_coords):
 					self.locations[deploy_tile_coords].set_deployable_indicator(true)
 	else:
-		get_node("UnitSelectBar").hide()
-		get_node("UnitSelectBar").queue_free()
 		reset_deployable_indicators()
-
-
 	
 	
 func predict(coords):
@@ -148,23 +142,13 @@ func set_target(target):
 
 
 func add_piece_on_bar(piece):
-	for i in range(0, 9):
-		if !get_node("UnitSelectBar").pieces.has(Vector2(i, 99)):
-			add_piece(Vector2(i, 99), piece)
-			break
-
+	pass
 
 func add_piece(coords, piece):
-	var parent
-	if self.deploying and get_node("UnitSelectBar").locations.has(coords):
-		parent = get_node("UnitSelectBar")
-	else:
-		parent = self
-
-	parent.pieces[coords] = piece
-	parent.locations[coords].set_pickable(false)
+	self.pieces[coords] = piece
+	self.locations[coords].set_pickable(false)
 	piece.coords = coords
-	var location = parent.locations[coords]
+	var location = self.locations[coords]
 	
 	add_child(piece)
 	piece.set_global_pos(location.get_global_pos())
@@ -194,47 +178,28 @@ func deploy_swap_pieces(coords1, coords2):
 
 
 func get_location(coords):
-	if self.deploying and get_node("UnitSelectBar").locations.has(coords):
-		return get_node("UnitSelectBar").locations[coords]
-	else:
-		return self.locations[coords]
+	self.locations[coords]
 
 func has_piece(coords):
-	return get_node("UnitSelectBar").pieces.has(coords) or self.pieces.has(coords)
+	return self.pieces.has(coords)
 
 func set_piece(coords, piece):
-	if self.deploying and get_node("UnitSelectBar").locations.has(coords):
-		get_node("UnitSelectBar").pieces[coords] = piece
-	else:
-		self.pieces[coords] = piece
+	self.pieces[coords] = piece
 
 func get_piece(coords):
-	if self.deploying and get_node("UnitSelectBar").pieces.has(coords):
-		return get_node("UnitSelectBar").pieces[coords]
-	else:
-		return self.pieces[coords]
+	return self.pieces[coords]
 	
 
 func erase_piece(coords):
-	if self.deploying and get_node("UnitSelectBar").pieces.has(coords):
-		get_node("UnitSelectBar").pieces.erase(coords)
-	else:
-		self.pieces.erase(coords)
+	self.pieces.erase(coords)
 	
 #moves the piece's location on grid. doesn't actually physically move the sprite
 func move_piece(old_coords, new_coords):
-	if self.deploying:
-		get_location(old_coords).set_pickable(true)
-		var piece = get_piece(old_coords)
-		erase_piece(old_coords)
-		set_piece(new_coords, piece)
-		get_location(new_coords).set_pickable(false)
-	else:
-		locations[old_coords].set_pickable(true)
-		var piece = pieces[old_coords]
-		pieces.erase(old_coords)
-		pieces[new_coords] = piece
-		locations[new_coords].set_pickable(false)
+	locations[old_coords].set_pickable(true)
+	var piece = pieces[old_coords]
+	pieces.erase(old_coords)
+	pieces[new_coords] = piece
+	locations[new_coords].set_pickable(false)
 
 #only returns a free location
 func get_free_location_at(coords):
