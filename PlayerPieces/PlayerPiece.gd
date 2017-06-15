@@ -535,6 +535,8 @@ func dies_to_collision(pusher):
 		#return !self.invulnerable_flag and (pusher.is_deadly() or self.armor == 0)
 		return !self.invulnerable_flag and (pusher.is_deadly() or pusher.hp >= self.armor) 
 
+func get_sprite():
+	return get_node("Physicals/AnimatedSprite").get_sprite_frames().get_frame("default", 0)
 
 #OVERRIDEN OR INHERITED FUNCTIONS
 func act(new_coords):

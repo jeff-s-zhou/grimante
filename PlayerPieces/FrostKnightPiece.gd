@@ -86,8 +86,10 @@ func shield_bash(new_coords):
 	var action = get_new_action()
 	action.add_call("set_frozen", [true], new_coords)
 	action.execute()
-	var offset = get_parent().hex_normalize(new_coords - self.coords)
-	move(offset)
+	#var offset = get_parent().hex_normalize(new_coords - self.coords)
+	print("in shield bash")
+	#print(offset)
+	move(new_coords - self.coords)
 	enqueue_animation_sequence()
 	frostbringer(new_coords)
 	

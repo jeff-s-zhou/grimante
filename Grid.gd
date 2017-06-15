@@ -96,11 +96,6 @@ func set_deploying(flag, deploy_tiles=null):
 		reset_deployable_indicators()
 
 
-func deselect():
-	self.selected.deselect()
-	self.selected = null
-	self.reset_highlighting(true)
-	self.reset_prediction()
 	
 	
 func predict(coords):
@@ -264,6 +259,12 @@ func reset_reinforcement_indicators():
 func reset_deployable_indicators():
 	for location in locations.values():
 		location.set_deployable_indicator(false)
+		
+func deselect():
+	self.selected.deselect()
+	self.selected = null
+	self.reset_highlighting(true)
+	self.reset_prediction()
 	
 #done once a piece is moved by the player	
 #right click flag is so if we know to check immediately after if cursor is still in a piece's area

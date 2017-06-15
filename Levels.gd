@@ -97,7 +97,7 @@ func sandbox_enemies():
 	
 func sandbox_extras():
 	#return {"shifting_sands_tiles": {Vector2(3, 6): 4}, "tutorial":tutorial}
-	return {"required_units":{3: FrostKnight, 4: Assassin}}
+	return {"required_units":{3: FrostKnight, 4: Archer}}
 
 func sandbox():  
 	return LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies(), 3, null, sandbox_extras()) 
@@ -715,7 +715,7 @@ func frost_knight_tutorial():
 	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(3, 6), fa_text1, text)
 	
 	fa_text1 = "Let's attack the Frozen Enemy and see what happens."
-	text = ["Frozen units, if killed, shatter and deal 2 damage to all adjacent Enemies.",  
+	text = ["Frozen Enemies, if killed, shatter and deal 2 damage to all adjacent Enemies.",  
 	"NOTE: Being Burned by the Pyromancer cancels out being Frozen, and vice versa."]
 	add_forced_action(tutorial, 1, Vector2(2, 6), fa_text1, Vector2(3, 5), fa_text1, text)
 	
@@ -725,12 +725,14 @@ func frost_knight_tutorial():
 	add_forced_action(tutorial, 2, Vector2(3, 6), fa_text1, Vector2(5, 6), fa_text1)
 	
 	text = ["Enemies shoved off the map on any side except the bottom are KOed."]
-	add_forced_action(tutorial, 2, Vector2(5, 6), "", Vector2(6, 6), "", text)
+	add_forced_action(tutorial, 3, Vector2(5, 6), "", Vector2(6, 6), "", text)
 	
-
+	text = ["The Frost Knight Inspires Defense."]
+	add_forced_action(tutorial, 3, Vector2(2, 6), "", Vector2(2, 5), "", text)
 	
-	
-	
+	text = ["When the Frost Knight moves, its Indirect Attack freezes Enemies in the same row of its destination.",
+	"Clear the board!"]
+	add_forced_action(tutorial, 4, Vector2(6, 6), "", Vector2(5, 6), "", text)
 	return tutorial
 	
 func frost_knight():
