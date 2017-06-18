@@ -123,7 +123,7 @@ func clear_assist():
 func get_movement_value():
 	var adjacent_range = get_parent().get_range(self.coords, [1, 2], "ENEMY")
 	for coords in adjacent_range:
-		if get_parent().pieces[coords].unit_name == "Slime":
+		if get_parent().pieces[coords].is_slime():
 			return 1
 	return self.AssistSystem.get_bonus_movement() + movement_value
 	
@@ -222,10 +222,8 @@ func animate_resurrect(blocking=true):
 func initialize(cursor_area):
 	self.cursor_area = cursor_area
 	add_to_group("player_pieces")
-	if !get_node("/root/global").available_unit_roster.has(self.unit_name):
-		get_node("/root/global").available_unit_roster.append(self.unit_name)
 
-	
+
 func turn_update():
 	set_invulnerable(false)
 	set_z(0)
@@ -451,9 +449,7 @@ func invalid_move():
 
 
 func placed(ending_turn=false):
-	print("placed and ending turn: " + str(ending_turn))
 	if ending_turn:
-		print("clearing assist here?")
 		clear_assist()
 	else:
 		handle_assist()
@@ -488,10 +484,16 @@ func player_attacked(enemy):
 
 
 func handle_nonlethal_shove(shover):
-	if shover.side == "ENEMY" and shover.corrosive:
-		self.armor = self.armor - 1
-		add_animation(self, "animate_set_armor", true, [self.armor, -1])
+	pass
 	
+
+func damage_armor(amount):
+	if !self.invulnerable_flag:
+		self.armor = self.armor - amount
+		add_animation(self, "animate_set_armor", true, [self.armor, -1 * amount])
+		if self.armor == 0:
+			delete_self()
+
 
 func animate_set_armor(armor, value, delay=0):
 	add_anim_count()

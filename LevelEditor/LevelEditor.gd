@@ -81,8 +81,6 @@ func set_target(target):
 	self.target = target
 	if self.selected != null:
 		if self.selected.is_instanced(): #if already placed on the map, switch up positions
-			print("setting target")
-			print(self.target)
 			self.selected.move(target.coords)
 			self.selected = null
 		else:

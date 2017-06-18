@@ -36,6 +36,9 @@ var assassin = null
 
 
 func _ready():
+	#TODO move this to level select once we figure out the structure
+	get_node("/root/global").load_state()
+	get_node("/root/DataLogger").load_state()
 	
 	get_node("Timer").set_active(false)
 	# Called every time the node is added to the scene.
@@ -43,7 +46,8 @@ func _ready():
 	get_node("Grid").set_pos(Vector2(73, 270))
 	#get_node("Grid").set_pos(Vector2(400, 250))
 	#debug_mode()
-	
+	#debug_full_roster()
+	get_node("ControlBar/DeployButton").connect("pressed", self, "handle_deploy")
 	get_node("ControlBar/EndTurnButton").connect("released", self, "handle_end_turn_released")
 	get_node("ControlBar/EndTurnButton").connect("holding", self, "holding_end_turn")
 	get_node("ControlBar/EndTurnButton").set_disabled(true)
@@ -69,6 +73,8 @@ func _ready():
 		if self.tutorial != null:
 			add_child(self.tutorial)
 
+	get_node("/root/DataLogger").log_attempt(self.level_schematic.name)
+
 	self.enemy_waves = self.level_schematic.enemies
 
 	self.reinforcements = self.level_schematic.reinforcements
@@ -89,14 +95,24 @@ func _ready():
 	
 	get_node("AssistSystem").initialize(self.level_schematic.flags)
 
-	if self.level_schematic.shadow_wall_tiles.size() > 0:
-		get_node("Grid").initialize_shadow_wall_tiles(self.level_schematic.shadow_wall_tiles)
+	if self.level_schematic.shadow_tiles.size() > 0:
+		get_node("Grid").initialize_shadow_tiles(self.level_schematic.shadow_tiles)
 	
-	if self.level_schematic.shifting_sands_tiles.size() > 0:
-		get_node("Grid").initialize_shifting_sands_tiles(self.level_schematic.shifting_sands_tiles)	
+	if self.level_schematic.shifting_sands.size() > 0:
+		get_node("Grid").initialize_shifting_sands(self.level_schematic.shifting_sands)	
 
-	for key in self.level_schematic.required_units.keys():
-		initialize_piece(self.level_schematic.required_units[key], false, key)
+	#key is the coords, value is the piece
+	for key in self.level_schematic.allies.keys():
+		initialize_piece(self.level_schematic.allies[key], false, key)
+	
+	#key is the unit, value is simply true
+	var available_roster = get_node("/root/global").available_unit_roster.keys()
+	if self.level_schematic.free_deploy:
+		for prototype in available_roster:
+			#only add to the final hero select pieces that aren't already pre selected
+			if !prototype in self.level_schematic.allies.values():
+				initialize_piece(prototype, true)
+	
 	
 	get_node("Grid").update_furthest_back_coords()
 	
@@ -104,9 +120,9 @@ func _ready():
 	
 	set_process(true)
 	set_process_input(true)	
-	get_node("ControlBar/EndTurnButton").set_disabled(false)
 		
 	if self.level_schematic.free_deploy:
+		get_node("ControlBar/DeployButton").show()
 		get_node("Grid").set_deploying(true, self.level_schematic.deploy_tiles)
 		
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
@@ -117,11 +133,15 @@ func _ready():
 			print("did we get in here?")
 			self.tutorial.display_player_turn_start_rule(get_turn_count())
 			set_process_input(false)
+			set_process(false)
 			yield(self.tutorial, "rule_finished")
 			set_process_input(true)
+			set_process(true)
 		
 		yield(self, "deployed")
-		
+	
+	get_node("ControlBar/DeployButton").hide()
+	get_node("ControlBar/EndTurnButton").show()
 	get_node("Grid").set_deploying(false)
 	
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
@@ -136,7 +156,7 @@ func _ready():
 	get_node("PhaseShifter").player_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	
-	get_node("ControlBar").show()
+	get_node("ControlBar/EndTurnButton").set_disabled(false)
 	
 	start_player_phase()
 	
@@ -151,6 +171,19 @@ func update_animation_count_display(count):
 	
 func is_within_deploy_range(coords):
 	return coords in self.level_schematic.deploy_tiles
+	
+func debug_full_roster():
+	var Berserker = load("res://PlayerPieces/BerserkerPiece.tscn")
+	var Cavalier = load("res://PlayerPieces/CavalierPiece.tscn")
+	var Archer = load("res://PlayerPieces/ArcherPiece.tscn")
+	var Assassin = load("res://PlayerPieces/AssassinPiece.tscn")
+	var Stormdancer = load("res://PlayerPieces/StormdancerPiece.tscn")
+	var Pyromancer = load("res://PlayerPieces/PyromancerPiece.tscn")
+	var FrostKnight = load("res://PlayerPieces/FrostKnightPiece.tscn")
+	var Saint = load("res://PlayerPieces/SaintPiece.tscn")
+	var Corsair = load("res://PlayerPieces/CorsairPiece.tscn")
+	var roster = {Berserker: true, Cavalier: true, Archer: true, Assassin: true, Corsair: true}
+	get_node("/root/global").available_unit_roster = roster
 
 func debug_mode():
 	get_node("Grid").debug()
@@ -162,16 +195,28 @@ func soft_copy_dict(source, target):
 func soft_copy_array(source, target):
 	for item in source:
 		target.push_back(item)
-		
 
-func initialize_piece(piece, on_bar=false, key=null):
-	var new_piece = piece.instance()
-	if new_piece.UNIT_TYPE == "Assassin":
-		self.assassin = new_piece
+#called on its own to initialize Crusader alter ego
+func initialize_crusader(new_piece):
 	new_piece.set_opacity(0)
 	new_piece.connect("invalid_move", self, "handle_invalid_move")
 	new_piece.connect("shake", self, "screen_shake")
 	new_piece.connect("animated_placed", self, "handle_piece_placed")
+	get_node("Grid").add_child(new_piece)
+	new_piece.initialize(get_node("CursorArea")) #placed afterwards because we might need the piece to be on the grid	
+
+func initialize_piece(piece, on_bar=false, key=null):
+	if !get_node("/root/global").available_unit_roster.has(piece):
+		get_node("/root/global").available_unit_roster[piece] = true
+	
+	var new_piece = piece.instance()
+	new_piece.set_opacity(0)
+	new_piece.connect("invalid_move", self, "handle_invalid_move")
+	new_piece.connect("shake", self, "screen_shake")
+	new_piece.connect("animated_placed", self, "handle_piece_placed")	
+	
+	if new_piece.UNIT_TYPE == "Assassin":
+		self.assassin = new_piece
 	
 	if on_bar:
 		get_node("Grid").add_piece_on_bar(new_piece)
@@ -183,8 +228,9 @@ func initialize_piece(piece, on_bar=false, key=null):
 			position = key #that way when we need to we can specify by coordinates
 		get_node("Grid").add_piece(position, new_piece)
 
-	new_piece.initialize(get_node("CursorArea")) #placed afterwards because we might need the piece to be on the grid	
-	new_piece.check_global_seen()
+	#these require the piece to have been added as a child
+	new_piece.initialize(get_node("CursorArea")) #placed afterwards because we might need the piece to be on the grid
+	
 	new_piece.animate_summon()
 	yield(new_piece.get_node("Tween"), "tween_complete")
 	emit_signal("done_initializing")
@@ -193,11 +239,13 @@ func initialize_piece(piece, on_bar=false, key=null):
 func handle_piece_placed():
 	if self.tutorial != null and self.tutorial.has_forced_action_result():
 		set_process_input(false)
+		set_process(false)
 		if get_node("/root/AnimationQueue").is_animating():
 			yield(get_node("/root/AnimationQueue"), "animations_finished")
 		self.tutorial.handle_forced_action_result()
 		yield(self.tutorial, "rule_finished")
 		set_process_input(true)
+		set_process(true)
 
 	if self.tutorial != null:
 		self.tutorial.display_forced_action(self.turn_count)
@@ -261,15 +309,16 @@ func end_turn():
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	self.state = STATES.enemy_turn
 	
+func handle_deploy():
+	if self.state == self.STATES.deploying:
+		emit_signal("deployed")
+	
 func handle_end_turn_released():
 	if get_node("RestartBar").animating_flag:
 		lighten(0.2)
 		get_node("RestartBar").stop()
 	else:
-		if self.state == self.STATES.deploying:
-			emit_signal("deployed")
-		if self.state == self.STATES.player_turn:
-			end_turn()
+		end_turn()
 		
 		
 func holding_end_turn():
@@ -281,6 +330,7 @@ func restart():
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 	get_node("/root/AnimationQueue").set_stopped(true)
+	get_node("/root/DataLogger").log_restart(self.level_schematic.name, self.turn_count)
 	get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic})
 
 	
@@ -326,12 +376,13 @@ func computer_input(event):
 				hovered_piece.set_seen(true)
 				get_node("InfoOverlay").display_enemy_info(hovered_piece)
 			else: #elif hovered_piece.side == "PLAYER"
-				hovered_piece.set_seen(true)
 				get_node("InfoOverlay").display_player_info(hovered_piece)
 			
 			set_process_input(false)
+			set_process(false)
 			yield(get_node("InfoOverlay"), "description_finished")
 			set_process_input(true)
+			set_process(true)
 
 
 	elif event.is_action("debug_level_skip") and event.is_pressed():
@@ -364,6 +415,9 @@ func computer_input(event):
 			
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			player_piece.debug()
+			
+	elif event.is_action("test_action2") and event.is_pressed():
+		get_node("/root/global").save_state()
 
 		#print(get_node("Grid").pieces)
 
@@ -385,10 +439,14 @@ func enemy_phase():
 	
 	enemy_pieces.sort_custom(self, "_sort_by_y_axis") #ensures the pieces in front move first
 	for enemy_piece in enemy_pieces:
-		enemy_piece.aura_update()
+		enemy_piece.turn_start()
+	
+	if(get_node("/root/AnimationQueue").is_animating()):
+		yield(get_node("/root/AnimationQueue"), "animations_finished")
+	
 	for enemy_piece in enemy_pieces:
 		enemy_piece.turn_update()
-	
+		
 	if(get_node("/root/AnimationQueue").is_animating()):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 		
@@ -420,8 +478,10 @@ func enemy_phase():
 	if self.tutorial != null and self.tutorial.has_enemy_turn_end_rule(get_turn_count()):
 		self.tutorial.display_enemy_turn_end_rule(get_turn_count())
 		set_process_input(false)
+		set_process(false)
 		yield(self.tutorial, "rule_finished")
 		set_process_input(true)
+		set_process(true)
 	
 	get_node("PhaseShifter").player_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
@@ -448,7 +508,7 @@ func start_player_phase():
 	if self.tutorial != null and self.tutorial.has_player_turn_start_rule(get_turn_count()):
 		self.tutorial.display_player_turn_start_rule(get_turn_count())
 		set_process_input(false)
-		
+		set_process(false)
 		#this is all for the tutorial level to teach shoving
 		if self.turn_count == 1 and self.level_schematic.flags.has("placed"):
 			var player_pieces = get_tree().get_nodes_in_group("player_pieces")
@@ -456,6 +516,7 @@ func start_player_phase():
 				player_piece.placed(true)
 
 		yield(self.tutorial, "rule_finished")
+		set_process(true)
 		set_process_input(true)
 	
 	
@@ -566,6 +627,11 @@ func player_win():
 	get_node("/root/AnimationQueue").set_stopped(true)
 	print("in player win")
 	self.state = STATES.transitioning
+	
+	get_node("/root/DataLogger").log_win(self.level_schematic.name, self.turn_count)
+	
+	#saves the progress made, right now just the units unlocked
+	get_node("/root/global").save_state()
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 	
@@ -579,6 +645,9 @@ func player_win():
 func enemy_win():
 	set_process(false)
 	get_node("/root/AnimationQueue").set_stopped(true)
+	
+	get_node("/root/DataLogger").log_lose(self.level_schematic.name, self.turn_count)
+	
 	self.state = STATES.transitioning
 	print(get_node("/root/AnimationQueue").is_animating())
 	if get_node("/root/AnimationQueue").is_animating():

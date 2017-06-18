@@ -4,27 +4,28 @@ extends Node2D
 # var a = 2
 # var b = "textvar"
 
-var grid
+var grid = get_parent()
 
 var currently_selected
+
+signal final_hero_selected
 
 const FinalHeroMockPiecePrototype = preload("res://UI/FinalHeroMockPiece.tscn")
 
 var current_pos = 65
 
+var pieces = []
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	var ArcherPiece = load("res://PlayerPieces/CavalierPiece.tscn").instance()
-	initialize(ArcherPiece)
-	initialize(ArcherPiece)
-	initialize(ArcherPiece)
-	initialize(ArcherPiece)
-	initialize(ArcherPiece)
 
 #the control flow is that it's passed to grid through initialize_piece in combat
 #and then passed here?
 func initialize(unused_piece):
+	self.show() #we only show this screen if we have pieces to select lol
+	self.pieces.append(unused_piece)
 	unused_piece.set_pos(Vector2(-999, -999)) #get it out of the way
 	
 	var mock_piece = FinalHeroMockPiecePrototype.instance()
@@ -35,10 +36,26 @@ func initialize(unused_piece):
 	
 	
 func select(piece):
-	var coords = self.currently_selected.coords
-	self.currently_selected.set_pos(Vector2(-999, -999))
-	grid.remove_piece(self.currently_selected)
+	var coords
+	if self.currently_selected == null:
+		coords = Vector2(3, 7)
+	else:
+		coords = self.currently_selected.coords
+		self.currently_selected.set_pos(Vector2(-999, -999))
+		get_parent().remove_piece(self.currently_selected)
 	self.currently_selected = piece
-	grid.add_piece(coords, self.currently_selected)
+	get_parent().add_piece(coords, self.currently_selected, true)
+	self.hide()
+	emit_signal("final_hero_selected")
 
+func queue_free():
+	print("reached this queue_free?")
+	print(self.pieces)
+	print(self.currently_selected)
+	for piece in self.pieces:
+		if piece != self.currently_selected:
+			piece.remove_from_group("player_pieces")
+			piece.queue_free()
+	.queue_free()
+			
 	

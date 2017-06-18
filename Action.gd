@@ -30,12 +30,13 @@ func execute():
 		var affected_range = func_call.affected_range
 		var pieces = []
 		for coords in affected_range:
-			var piece = get_node("/root/Combat/Grid").pieces[coords]
-			pieces.append(piece)
-			
-			#keep a set of pieces that had something done to them
-			if !affected_pieces.has(piece):
-				affected_pieces[piece] = true
+			if get_node("/root/Combat/Grid").pieces.has(coords):
+				var piece = get_node("/root/Combat/Grid").pieces[coords]
+				pieces.append(piece)
+				
+				#keep a set of pieces that had something done to them
+				if !affected_pieces.has(piece):
+					affected_pieces[piece] = true
 		for piece in pieces:
 			if args == []:
 				piece.call(func_ref)

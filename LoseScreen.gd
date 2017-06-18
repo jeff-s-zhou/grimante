@@ -11,6 +11,10 @@ func _ready():
 	# Initialization here
 	level = get_node("/root/global").get_param("level")
 	get_node("Button").connect("pressed", self, "next_level")
+	get_node("LevelSelectButton").connect("pressed", self, "level_select")
 	
 func next_level():
 	get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level})
+	
+func level_select():
+	get_node("/root/global").goto_scene("res://LevelSelect/LevelSelect.tscn")

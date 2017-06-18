@@ -12,14 +12,30 @@ focus/ignore_mouse = false
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
-margin/left = 565.0
-margin/top = 490.0
-margin/right = 752.0
-margin/bottom = 569.0
+margin/left = 249.0
+margin/top = 360.0
+margin/right = 436.0
+margin/bottom = 439.0
 toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
 text = "Next Level!"
+flat = false
+
+[node name="LevelSelectButton" type="Button" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 249.0
+margin/top = 477.0
+margin/right = 436.0
+margin/bottom = 556.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+text = "Level Select"
 flat = false
 
 [node name="Label" type="Label" parent="."]
@@ -28,11 +44,12 @@ focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
-margin/left = 624.0
-margin/top = 448.0
-margin/right = 710.0
-margin/bottom = 480.0
+margin/left = 301.0
+margin/top = 319.0
+margin/right = 387.0
+margin/bottom = 351.0
 text = "You win!!!"
+align = 1
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1

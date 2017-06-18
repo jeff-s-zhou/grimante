@@ -13,7 +13,7 @@ script/script = ExtResource( 2 )
 
 frames = ExtResource( 3 )
 
-[node name="SaintFlash" type="Sprite" parent="."]
+[node name="Flash" type="Sprite" parent="."]
 
 visibility/opacity = 0.0
 transform/pos = Vector2( 0, -4 )

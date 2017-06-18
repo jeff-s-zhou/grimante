@@ -23,6 +23,7 @@ var currently_burning = false
 var burning = false
 var frozen = false
 var silenced = false
+var stunned = false
 
 var temp_display_hp #what we reset to when resetting prediction, in case original hp is already changed
 
@@ -185,6 +186,16 @@ func attack_highlight():
 	
 func will_die_to(damage):
 	return (self.hp - damage) <= 0 and self.shielded == false
+
+#does the same thing as below, doesn't reset the health
+#needed in animate_set_hp so we can clear previous hero's prediction flyover
+#but don't mess up the set hp from delayed animations like seraph or opportunity strikes
+func reset_just_prediction_flyover():
+	self.predicting_hp = false
+	if self.prediction_flyover != null:
+		self.prediction_flyover.queue_free()
+		self.prediction_flyover = null
+
 	
 func reset_prediction_flyover():
 	get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
@@ -497,8 +508,11 @@ func heal(amount, delay=0.0):
 	modify_hp(amount, delay)
 
 
-func attacked(amount, delay=0.0):
+func attacked(amount, delay=0.0, interrupting=true):
+	if interrupting and self.stunned:
+		set_stunned(false)
 	set_cloaked(false)
+	
 	if self.shielded:
 		set_shield(false)
 	else:
@@ -540,7 +554,7 @@ func modify_hp(amount, delay=0):
 
 func animate_set_hp(hp, value, delay=0):
 	add_anim_count()
-	#reset_prediction_flyover() #why the fuck do I need this??
+	reset_just_prediction_flyover() #if you forget why you need this, attack same enemy quickly with 2 heroes
 	self.mid_trailing_animation = true
 	if delay > 0:
 		var timer = Timer.new()
@@ -625,10 +639,6 @@ func set_coords(new_coords, sequence=null):
 
 func get_movement_value():
 	return self.movement_value
-
-
-func aura_update():
-	pass
 	
 func reset_auras():
 	self.movement_value = self.default_movement_value
@@ -640,6 +650,9 @@ func add_modifier_sets(set1, set2):
 			set2[key] = set1[key]
 			
 	return set2
+	
+func turn_start():
+	pass
 
 #called at the start of enemy turn, after checking for aura effects
 func turn_update():

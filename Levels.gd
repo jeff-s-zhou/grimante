@@ -26,6 +26,8 @@ const FrostKnight = preload("res://PlayerPieces/FrostKnightPiece.tscn")
 const Saint = preload("res://PlayerPieces/SaintPiece.tscn")
 const Corsair = preload("res://PlayerPieces/CorsairPiece.tscn")
 
+const Crusader = preload("res://PlayerPieces/CrusaderPiece.tscn")
+
 var enemy_roster = load("res://constants.gd").new().enemy_roster
 #
 var enemy_modifiers = load("res://constants.gd").new().enemy_modifiers
@@ -85,24 +87,35 @@ func add_forced_action(tutorial, turn, initial_coords, text, final_coords, text2
 	var forced_action = ForcedActionPrototype.instance()
 	forced_action.initialize(initial_coords, text, final_coords, text2, result)
 	tutorial.add_forced_action(forced_action, turn)
+	
+	
+
+var list = [berserker_part1(), berserker_part2(), cavalier(), dead_or_alive(), reinforcements(),
+archer(), offsides(), tick_tock(), flying_solo(), assassin(), deploy(), mutation(),
+rising_tides(), inspire(), swamp(), stormdancer(), double_time(), defuse_the_bomb(),
+spoopy_ghosts(), pyromancer(), minesweeper(), star_power(), corsair(), frost_knight(),
+howl(), howl2(), saint(), corrosion()]
+
+func get_levels():
+	for i in range(0, list.size() - 1):
+		list[i].next_level = list[i+1]
+	return list
 
 
 func sandbox_allies():
-	return [Assassin, Berserker, Cavalier] #2: Cavalier, 3: Archer, 4: Assassin}
+	return {2: Berserker, 4: Archer}
 	
 func sandbox_enemies():
-	#var enemies = {0:{ Vector2(3, 5): make(Grunt, 4)}}
-	var enemies = load_level("frost_knight.level")
+	var enemies = {0:{ Vector2(3, 5): make(Grunt, 9), Vector2(3, 4): make(Grunt, 2)}}
+	#var enemies = load_level("frost_knight.level")
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
 func sandbox_extras():
 	#return {"shifting_sands_tiles": {Vector2(3, 6): 4}, "tutorial":tutorial}
-	return {"required_units":{3: FrostKnight, 4: Archer}}
+	return {}
 
 func sandbox():  
 	return LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies(), 3, null, sandbox_extras()) 
-
-var list = [sandbox()]
 
 func berserker_part1_tutorial():
 	var tutorial = TutorialPrototype.instance()
@@ -137,13 +150,13 @@ func berserker_part1_tutorial():
 
 #BERSERKER PART 1
 func berserker_part1():
-	var allies = []
+	var allies = {3: Berserker} 
 	var raw_enemies = load_level("berserker_part1.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	
 	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire"]
 	var tutorial_func = funcref(self, "berserker_part1_tutorial")
-	var extras = {"free_deploy":false, "required_units":{3: Berserker}, "tutorial":tutorial_func, "flags":flags}
+	var extras = {"free_deploy":false, "tutorial":tutorial_func, "flags":flags}
 	
 	return LevelTypes.Timed.new("Berserker Part 1", allies, enemies, 7, null, extras)
 	
@@ -160,13 +173,12 @@ func berserker_part2_tutorial():
 	var fa_text2 = ""
 	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(3, 5), fa_text2, text)
 	
-	
 	text = ["The Berserker's Indirect Attack stuns enemies.", \
-	"The Stun Effect prevents enemies from moving their next turn."]
+	"The Stun Effect prevents enemies from moving their next turn.", 
+	"However, if an enemy is attacked while stunned, the effect is cancelled."]
 	fa_text1 = "Let’s attack these High Power enemies."
 	fa_text2 = ""
 	add_forced_action(tutorial, 2, Vector2(3, 5), fa_text1, Vector2(3, 3), fa_text2, text)
-
 
 	text = ["Clear the board."]
 	add_player_start_rule(tutorial, 3, text)
@@ -176,13 +188,13 @@ func berserker_part2_tutorial():
 
 #BERSERKER PART 2
 func berserker_part2():
-	var allies = []
+	var allies = {3: Berserker}
 	var raw_enemies = load_level("berserker_part2.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	
 	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire"]
 	var tutorial_func = funcref(self, "berserker_part2_tutorial")
-	var extras = {"free_deploy":false, "required_units":{3: Berserker}, "tutorial": tutorial_func, "flags":flags}
+	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
 	
 	return LevelTypes.Timed.new("Berserker Part 2", allies, enemies, 7, null, extras)
 
@@ -193,7 +205,6 @@ func cavalier_tutorial():
 	var fa_text1 = "The Cavalier has arrived! Let's see what it can do."
 	var fa_text2 = "The Cavalier can move any number of tiles in all six directions."
 	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(0, 4), fa_text2)
-	
 	
 	var text = ["The Cavalier can run through enemies with its Indirect Attack: Trample.", \
 	"Trample deals 2 damage to each enemy."]
@@ -207,21 +218,20 @@ func cavalier_tutorial():
 	fa_text2 = ""
 	add_forced_action(tutorial, 3, Vector2(0, 0), fa_text1, Vector2(5, 5), fa_text2, text)
 
-
 	text = ["Can you clear the board before the enemies reach the bottom?"]
-	add_player_start_rule(tutorial, 3, text)
+	add_player_start_rule(tutorial, 4, text)
 	
 	return tutorial
 
 #CAVALIER
 func cavalier():
-	var allies = []
+	var allies = {3: Cavalier}
 	var raw_enemies = load_level("cavalier.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	
 	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire"]
 	var tutorial_func = funcref(self, "cavalier_tutorial")
-	var extras = {"free_deploy":false, "required_units":{3: Cavalier}, "tutorial": tutorial_func, "flags":flags}
+	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
 	
 	return LevelTypes.Timed.new("Cavalier", allies, enemies, 7, null, extras)
 
@@ -262,13 +272,13 @@ func dead_or_alive_tutorial():
 
 #DEAD OR ALIVE
 func dead_or_alive():
-	var allies = []
+	var allies = {Vector2(4, 6): Cavalier, Vector2(2, 5): Berserker}
 	var raw_enemies = load_level("dead_or_alive.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	
 	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire", "placed"]
 	var tutorial_func = funcref(self, "dead_or_alive_tutorial")
-	var extras = {"free_deploy":false, "required_units":{Vector2(4, 6): Cavalier, Vector2(2, 5): Berserker}, "tutorial": tutorial_func, "flags":flags}
+	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
 	
 	return LevelTypes.Timed.new("Dead or Alive", allies, enemies, 7, null, extras)
 	
@@ -293,13 +303,13 @@ func reinforcements_tutorial():
 	return tutorial
 	
 func reinforcements():
-	var allies = []
+	var allies = {4: Berserker, 2: Cavalier}
 	var raw_enemies = load_level("reinforcements.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	
 	var flags = ["no_stars", "no_turns", "no_inspire"]
 	var tutorial_func = funcref(self, "reinforcements_tutorial")
-	var extras = {"free_deploy":false, "required_units":{4: Berserker, 2: Cavalier}, "tutorial": tutorial_func, "flags":flags}
+	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
 	
 	return LevelTypes.Timed.new("Reinforcements!", allies, enemies, 7, null, extras)
 
@@ -319,8 +329,6 @@ func archer_tutorial():
 	
 	add_forced_action(tutorial, 2, Vector2(3, 7), fa_text1, Vector2(3, 5), fa_text1, text)
 	
-	#it's after here it stops detecting the FAR?
-	
 	fa_text1 = "The Archer can shoot along \"hex diagonal\" angles to hit tricky targets."
 	text = ["test result"]
 	add_forced_action(tutorial, 3, Vector2(3, 7), fa_text1, Vector2(1, 3), fa_text1, text)
@@ -329,23 +337,21 @@ func archer_tutorial():
 	text = ["When the Archer moves, its passive causes it to automatically fire a Piercing Arrow directly north."]
 	add_forced_action(tutorial, 4, Vector2(3, 7), fa_text1, Vector2(4, 7), fa_text1, text)
 	
-	
 	text = ["The Archer's shots are blocked by other Heroes.", 
 	"Can you clear the board this turn?"]
 	add_player_start_rule(tutorial, 5, text)
-	
 	
 	return tutorial
 
 
 func archer():
-	var allies = []
+	var allies = {3:Archer}
 	var raw_enemies = load_level("archer.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var reinforcements = {5: { Vector2(5, 7): Berserker}}
 	var flags = ["no_stars", "no_turns", "no_inspire"]
 	var tutorial_func = funcref(self, "archer_tutorial")
-	var extras = {"free_deploy":false, "reinforcements":reinforcements, "required_units":{3:Archer}, "tutorial": tutorial_func, "flags":flags}
+	var extras = {"free_deploy":false, "reinforcements":reinforcements, "tutorial": tutorial_func, "flags":flags}
 	
 	return LevelTypes.Timed.new("Archer", allies, enemies, 7, null, extras)
 
@@ -381,12 +387,12 @@ func offsides_tutorial():
 	return tutorial
 
 func offsides():
-	var allies = []
+	var allies = {2:Cavalier, 4: Archer}
 	var raw_enemies = load_level("offsides.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_stars", "no_turns", "no_inspire"]
 	var tutorial_func = funcref(self, "offsides_tutorial")
-	var extras = {"free_deploy":false, "required_units":{2:Cavalier, 4: Archer}, "tutorial": tutorial_func, "flags":flags}
+	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
 	
 	return LevelTypes.Timed.new("Offsides!", allies, enemies, 7, null, extras)
 	
@@ -403,21 +409,21 @@ func tick_tock_tutorial():
 	return tutorial
 	
 func tick_tock():
-	var allies = []
+	var allies = {2:Cavalier, 3:Berserker, 4: Archer}
 	var raw_enemies = load_level("tick_tock.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_stars", "no_inspire"]
 	var tutorial_func = funcref(self, "tick_tock_tutorial")
-	var extras = {"free_deploy":false, "required_units":{2:Cavalier, 3:Berserker, 4: Archer}, "tutorial": tutorial_func, "flags":flags}
+	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
 	
 	return LevelTypes.Timed.new("Tick Tock", allies, enemies, 7, null, extras)
 	
 func flying_solo():
-	var allies = []
+	var allies = {2:Cavalier, 3:Berserker, 4: Archer}
 	var raw_enemies = load_level("flying_solo.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_stars", "no_inspire"]
-	var extras = {"free_deploy":false, "required_units":{2:Cavalier, 3:Berserker, 4: Archer}, "flags":flags}
+	var extras = {"free_deploy":false, "flags":flags}
 	return LevelTypes.Timed.new("Flying Solo", allies, enemies, 7, null, extras)
 	
 
@@ -457,13 +463,13 @@ func assassin_tutorial():
 	return tutorial
 	
 func assassin():
-	var allies = []
+	var allies = {3:Assassin}
 	var raw_enemies = load_level("assassin.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var tutorial_func = funcref(self, "assassin_tutorial")
 	var flags = ["no_stars", "no_inspire"]
 	var reinforcements = {3: {5:Cavalier}}
-	var extras = {"free_deploy":false, "required_units":{3:Assassin}, "flags":flags, "tutorial":tutorial_func, "reinforcements":reinforcements}
+	var extras = {"free_deploy":false, "flags":flags, "tutorial":tutorial_func, "reinforcements":reinforcements}
 	return LevelTypes.Timed.new("Assassin", allies, enemies, 7, null, extras)
 	
 
@@ -476,12 +482,12 @@ func deploy_tutorial():
 	return tutorial
 	
 func deploy():
-	var allies = []
+	var allies = {2: Cavalier, 3:Archer, 4:Assassin, Vector2(3, 6): Berserker}
 	var raw_enemies = load_level("deploy.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var tutorial_func = funcref(self, "deploy_tutorial")
 	var flags = ["no_stars", "no_inspire"]
-	var extras = {"required_units":{2: Cavalier, 3:Archer, 4:Assassin, Vector2(3, 6): Berserker}, "flags":flags, "tutorial":tutorial_func}
+	var extras = {"flags":flags, "tutorial":tutorial_func}
 	return LevelTypes.Timed.new("Deploy", allies, enemies, 7, null, extras)
 	
 
@@ -494,12 +500,12 @@ func mutation_tutorial():
 	
 	
 func mutation():
-	var allies = []
+	var allies = {2: Cavalier, 3:Archer, 4:Assassin, Vector2(3, 6): Berserker}
 	var raw_enemies = load_level("mutation.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var tutorial_func = funcref(self, "mutation_tutorial")
 	var flags = ["no_stars", "no_inspire"]
-	var extras = {"required_units":{2: Cavalier, 3:Archer, 4:Assassin, Vector2(3, 6): Berserker}, "flags":flags, "tutorial":tutorial_func}
+	var extras = {"flags":flags, "tutorial":tutorial_func}
 	return LevelTypes.Timed.new("Mutation", allies, enemies, 7, null, extras)
 	
 func rising_tides_tutorial():
@@ -510,12 +516,12 @@ func rising_tides_tutorial():
 
 #might be too hard
 func rising_tides():
-	var allies = []
+	var allies = {2: Cavalier, 3:Archer, 4:Assassin, Vector2(3, 6): Berserker}
 	var raw_enemies = load_level("rising_tides.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var tutorial_func = funcref(self, "rising_tides_tutorial")
 	var flags = ["no_stars", "no_inspire"]
-	var extras = {"required_units":{2: Cavalier, 3:Archer, 4:Assassin, Vector2(3, 6): Berserker}, "tutorial": tutorial_func, "flags":flags}
+	var extras = {"tutorial": tutorial_func, "flags":flags}
 	return LevelTypes.Timed.new("Rising Tides", allies, enemies, 7, null, extras)
 	
 func inspire_tutorial():
@@ -545,22 +551,22 @@ func inspire_tutorial():
 	return tutorial
 	
 func inspire():
-	var allies = []
+	var allies = {1: Berserker, 5: Cavalier}
 	var raw_enemies = load_level("inspire.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var tutorial_func = funcref(self, "inspire_tutorial")
 	var flags = ["no_stars"]
 	var reinforcements = {3: {2: Archer, 3: Assassin}}
-	var extras = {"free_deploy":false, "required_units":{1: Berserker, 5: Cavalier}, "tutorial": tutorial_func, "reinforcements":reinforcements, "flags":flags}
+	var extras = {"free_deploy":false, "tutorial": tutorial_func, "reinforcements":reinforcements, "flags":flags}
 	return LevelTypes.Timed.new("Power of Friendship", allies, enemies, 7, null, extras)
 	
 	
 func swamp():
-	var allies = []
+	var allies = {2: Cavalier, 3:Archer, 4:Assassin, Vector2(3, 6): Berserker}
 	var raw_enemies = load_level("swamp.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_stars"]
-	var extras = {"required_units":{2: Cavalier, 3:Archer, 4:Assassin, Vector2(3, 6): Berserker}, "flags":flags}
+	var extras = {"flags":flags}
 	return LevelTypes.Timed.new("Dagobah", allies, enemies, 7, null, extras)
 
 	
@@ -590,7 +596,7 @@ func stormdancer_tutorial():
 	text = ["Defense stays on a Hero until its next turn."]
 	add_forced_action(tutorial, 3, Vector2(3, 7), fa_text1, Vector2(3, 4), fa_text1, text)
 	
-	text = ["When Heroes Defend, they cannot be KOed by any means or shoved."]
+	text = ["When Heroes Defend, they cannot be shoved or KOed by any means."]
 	add_enemy_end_rule(tutorial, 3, text)
 	
 	text = ["Clear the level before the start of your next turn!",  
@@ -600,15 +606,14 @@ func stormdancer_tutorial():
 	return tutorial
 	
 func stormdancer():
-	var allies = []
+	var allies = {3: Stormdancer}
 	var raw_enemies = load_level("stormdancer.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var tutorial_func = funcref(self, "stormdancer_tutorial")
 	var flags = ["no_stars"]
 	var reinforcements = {3: {3: Cavalier}, 4: {Vector2(1, 2): Berserker}}
-	var extras = {"free_deploy":false, "required_units":{3: Stormdancer}, "tutorial": tutorial_func, "reinforcements":reinforcements, "flags":flags}
+	var extras = {"free_deploy":false, "tutorial": tutorial_func, "reinforcements":reinforcements, "flags":flags}
 	return LevelTypes.Timed.new("Stormdancer", allies, enemies, 4, null, extras)
-
 
 func double_time_tutorial():
 	var tutorial = TutorialPrototype.instance()
@@ -618,29 +623,29 @@ func double_time_tutorial():
 	return tutorial
 
 func double_time():
-	var allies = []
+	var allies = {1: Stormdancer, 2: Cavalier, 3:Berserker, 4:Assassin, 5: Archer}
 	var raw_enemies = load_level("double_time.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_stars"]
 	var tutorial_func = funcref(self, "double_time_tutorial")
-	var extras = {"required_units":{1: Stormdancer, 2: Cavalier, 3:Berserker, 4:Assassin, 5: Archer}, "tutorial":tutorial_func, "flags":flags}
+	var extras = {"tutorial":tutorial_func, "flags":flags}
 	return LevelTypes.Timed.new("Double Time", allies, enemies, 7, null, extras)
 	
 
 func defuse_the_bomb():
-	var allies = []
+	var allies = {1: Stormdancer, 2: Cavalier, 3:Berserker, 4:Assassin, 5: Archer}
 	var raw_enemies = load_level("defuse_the_bomb.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_stars"]
-	var extras = {"required_units":{1: Stormdancer, 2: Cavalier, 3:Berserker, 4:Assassin, 5: Archer}, "flags":flags}
+	var extras = {"flags":flags}
 	return LevelTypes.Timed.new("Defuse the Bomb", allies, enemies, 3, null, extras)
 
 func spoopy_ghosts():
-	var allies = []
+	var allies = {1: Stormdancer, 2: Cavalier, 3:Berserker, 4:Assassin, 5: Archer}
 	var raw_enemies = load_level("spoopy_ghosts.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_stars"]
-	var extras = {"required_units":{1: Stormdancer, 2: Cavalier, 3:Berserker, 4:Assassin, 5: Archer}, "flags":flags}
+	var extras = {"flags":flags}
 	return LevelTypes.Timed.new("Spoopy Ghosts", allies, enemies, 7, null, extras)
 	
 func pyromancer_tutorial():
@@ -662,14 +667,48 @@ func pyromancer_tutorial():
 	return tutorial
 	
 func pyromancer():
-	var allies = []
+	var allies = {3: Pyromancer}
 	var raw_enemies = load_level("pyromancer.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var tutorial_func = funcref(self, "pyromancer_tutorial")
 	var flags = ["no_stars"]
-	var extras = {"free_deploy":false, "required_units":{3: Pyromancer}, "tutorial": tutorial_func, "flags":flags}
-	return LevelTypes.Timed.new("Stormdancer", allies, enemies, 4, null, extras)
+	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
+	return LevelTypes.Timed.new("Pyromancer", allies, enemies, 4, null, extras)
+	
+#need level in between for selecting fifth unit
 
+func minesweeper_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	var text = ["From now on, you will be able to select the 5th Hero for each level from the roster of Unlocked Heroes."]
+	add_player_start_rule(tutorial, 0, text)
+	return tutorial
+	
+func minesweeper():
+	var allies = {1: Archer, 2: Cavalier, 4: Stormdancer, 5: Assassin}
+	var raw_enemies = load_level("minesweeper.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var tutorial_func = funcref(self, "minesweeper_tutorial")
+	var flags = ["no_stars"]
+	var extras = {"tutorial": tutorial_func, "flags":flags}
+	return LevelTypes.Timed.new("Minesweeper", allies, enemies, 7, null, extras)
+	
+
+func star_power_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	var text = [" Now, when you kill enemies, you build up Star Power!",
+	"For every 7 enemies killed, you gain 1 Star.",
+	"Use a Star to reactivate a Hero on cooldown."]
+	add_player_start_rule(tutorial, 0, text)
+
+	return tutorial
+	
+func star_power():
+	var allies = {1: Archer, 2: Cavalier, 4: Berserker, 5: Stormdancer}
+	var raw_enemies = load_level("star_power.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var tutorial_func = funcref(self, "star_power_tutorial")
+	var extras = {"tutorial": tutorial_func}
+	return LevelTypes.Timed.new("Star Power", allies, enemies, 7, null, extras)
 
 func corsair_tutorial():
 	var tutorial = TutorialPrototype.instance()
@@ -698,13 +737,13 @@ func corsair_tutorial():
 	return tutorial
 
 func corsair():
-	var allies = []
+	var allies = {3: Corsair}
 	var raw_enemies = load_level("corsair.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var tutorial_func = funcref(self, "corsair_tutorial")
 	var flags = ["no_stars"]
 	var reinforcements = {4: {Vector2(3, 5): Berserker, Vector2(2, 6): Archer}}
-	var extras = {"free_deploy":false, "required_units":{3: Corsair}, "reinforcements":reinforcements, "tutorial": tutorial_func, "flags":flags}
+	var extras = {"free_deploy":false, "reinforcements":reinforcements, "tutorial": tutorial_func, "flags":flags}
 	return LevelTypes.Timed.new("Corsair", allies, enemies, 4, null, extras)
 	
 func frost_knight_tutorial():
@@ -736,42 +775,93 @@ func frost_knight_tutorial():
 	return tutorial
 	
 func frost_knight():
-	var allies = []
+	var allies = {2: Archer, 3: FrostKnight}
 	var raw_enemies = load_level("frost_knight.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var tutorial_func = funcref(self, "frost_knight_tutorial")
 	var flags = ["no_stars"]
-	var extras = {"free_deploy":false, "required_units":{2: Archer, 3: FrostKnight}, "tutorial": tutorial_func, "flags":flags}
+	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
 	return LevelTypes.Timed.new("Frost Knight", allies, enemies, 4, null, extras)
+	
+func howl():
+	var allies = {1: Archer, 2: Corsair, 4: Berserker, 5: FrostKnight}
+	var raw_enemies = load_level("howl.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	return LevelTypes.Timed.new("Howl", allies, enemies, 7, null)
+	
+func howl2():
+	var allies = {1: Assassin, 2: Corsair, 4: Pyromancer, 5: FrostKnight}
+	var raw_enemies = load_level("howl.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	return LevelTypes.Timed.new("Howl 2", allies, enemies, 7, null)
 
+func saint_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	var fa_text1 = "The Saint is in your care."
+	var text = ["The Saint's Indirect Attack is Purify.", 
+	"When it moves to a tile, the Saint removes all special effects of adjacent Enemies."]
+	
+	add_forced_action(tutorial, 1, Vector2(3, 4), fa_text1, Vector2(3, 3), fa_text1, text)
+	
+	text = ["The Saint Inspires other Heroes to Defend."]
+	add_forced_action(tutorial, 1, Vector2(2, 4), "", Vector2(2, 2), "", text)
+	
+	add_forced_action(tutorial, 2, Vector2(2, 2), "", Vector2(0, 2), "")
+	text = ["If the Saint reaches the top of the board, it transforms into the Crusader."]
+	add_forced_action(tutorial, 2, Vector2(3, 3), "", Vector2(3, 1), "", text)
+	
+	add_forced_action(tutorial, 3, Vector2(0, 2), "", Vector2(4, 2), "")
+	
+	fa_text1 = "Unlike the Saint, the Crusader is no pacifist."
+	text = ["The Crusader's Direct Attack is Holy Blade.", 
+	"The Crusader teleports in front of an Enemy within movement range and silences it, dealing 3 damage."]
+	add_forced_action(tutorial, 3, Vector2(3, 1), fa_text1, Vector2(5, 4), fa_text1, text)
+	
+	add_forced_action(tutorial, 4, Vector2(4, 2), "", Vector2(4, 7), "")
+	fa_text1 = "The Crusader is stronger when protecting others."
+	text = ["Holy Blade gains +1 damage for each Hero behind the Crusader."] 
+	add_forced_action(tutorial, 4, Vector2(5, 5), fa_text1, Vector2(3, 4), fa_text1, text)
+	
+	
+	
+	return tutorial
 
-#SAINT LEVEL
-#func saint_level_allies():
-#	return {2: Saint, 4: Assassin}
-#	
-#func saint_level_enemies():
-#	var phase = EnemyWrappers.CuratedPhase.new(3)
-#	phase.add_wave({Vector2(5, 4): make(Drummer, 4, [poisonous]), Vector2(4, 6): make(Fortifier, 4), 
-#	Vector2(5, 6): make(Grunt, 3), Vector2(4, 4): make(Grunt, 4, [poisonous]),
-#	Vector2(6, 7): make(Grunt, 2)})
-#	phase.add_reinforcements({Vector2(5, 5): make(Grunt, 2, [poisonous])})
-#	return EnemyWrappers.FinitePhasedWrapper.new([phase])
-#	
-#func saint_level_extras():
-#	var complex_tooltip1 = [{"coords":Vector2(2, 7), "text":""}, {"coords":Vector2(3, 7), "text": ""}, {"coords":Vector2(4, 8), "text": ""}, {"coords":Vector2(4, 6), "text": ""}]
-#	var complex_tooltip2 = [{"coords":Vector2(3, 7), "text":""}, {"coords":Vector2(4, 8), "text": ""}, {"coords":Vector2(4, 6), "text": ""}, 
-#	{"coords":Vector2(4, 7), "text": ""},  {"coords":Vector2(4, 6), "text": ""}, {"coords":Vector2(5, 8), "text": ""}]
-#	var complex_tooltip3 = [{"coords":Vector2(5, 9), "text":""}, {"coords":Vector2(6, 9), "text": ""}, {"coords":Vector2(6, 8), "text": ""}, 
-#	{"coords":Vector2(5, 8), "text": ""},  {"coords":Vector2(4, 8), "text": ""}, {"coords":Vector2(5, 7), "text": ""}]
-#	
-#	var saint_level_instructions = [
-#	make_complex_tip("The Saint is at your service. The Saint is a Pivot Unit, meaning its Inspire ability, Protect, always triggers after it moves.", "Activate Inspire: Protect.", complex_tooltip1),
-#	make_complex_tip("The Saint's passive ability is Purify. When it moves to a tile, the Saint removes all special effects of adjacent enemies if another Player Unit is already adjacent to the enemy.", "Purify an enemy.", complex_tooltip2),
-#	make_complex_tip("The Saint can also support allies with Intervention, moving them backwards one space.", "Use Intervention.", complex_tooltip3),
-#	]
-#	return {"instructions":saint_level_instructions, "free_deploy":false}
-#
-#func saint_level():
-#	return LevelTypes.RoomSeal.new(saint_level_allies(), saint_level_enemies(), level9_ref, saint_level_extras())
-#
-#var saint_level_ref = funcref(self, "saint_level")
+func saint():
+	var allies = {Vector2(2, 4): Cavalier, Vector2(3, 4): Saint}
+	var raw_enemies = load_level("saint.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var tutorial_func = funcref(self, "saint_tutorial")
+	var reinforcements = {4: {2: Berserker, 1: Archer, 3: Assassin}}
+	var flags = ["no_stars"]
+	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags, "reinforcements":reinforcements}
+	return LevelTypes.Timed.new("Saint", allies, enemies, 4, null, extras)
+	
+func corrosion():
+	var allies = {1: Berserker, 2: Archer, 4: Cavalier, 5: Saint}
+	var raw_enemies = load_level("corrosion.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	return LevelTypes.Timed.new("Howl 2", allies, enemies, 7, null)
+	
+func shifting_sands_tutorial():
+	var tutorial = TutorialPrototype.instance()
+	var text = ["This is Shifter Tile.", "After a Hero or Enemy moves on a Shifter tile, they are shoved in the direction the tile is facing."]
+	add_player_start_rule(tutorial, 1, text, Vector2(3, 5))
+	
+	text = ["After being stepped on, a Shifter Tile rotates clockwise."]
+	add_forced_action(tutorial, 1, Vector2(3, 7), "", Vector2(3, 5), "", text)
+	return tutorial
+
+func shifting_sands():
+	var allies = {3: Berserker}
+	var raw_enemies = load_level("shifting_sands.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var tutorial_func = funcref(self, "shifting_sands_tutorial")
+	var extras = {"tutorial": tutorial_func, "free_deploy": false, "shifting_sands":{Vector2(3, 5): 4}}
+	return LevelTypes.Timed.new("Shifting Sands", allies, enemies, 7, null, extras)
+	
+func shifting_sands2():
+	var allies = {1: FrostKnight, 2: Corsair, 4: Cavalier, 5: Saint}
+	var raw_enemies = load_level("shifting_sands2.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var extras = {"shifting_sands":{Vector2(3, 5): 1, Vector2(5, 5): 3}}#, Vector2(1, 3): 4}}
+	return LevelTypes.Timed.new("We're In Deep Shift!", allies, enemies, 7, null, extras)

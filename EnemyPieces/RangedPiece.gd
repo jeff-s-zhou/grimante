@@ -6,32 +6,22 @@ extends "EnemyPiece.gd"
 # var b="textvar"
 
 var max_hp = 5
-var DESCRIPTION = "After moving, shoots a Fireball forward, which hits the first Player Unit in the column. Enemy Units will block the Fireball. If the Dragon's health is greater than or equal to the Player Units shield, it is KOed."
+var DESCRIPTION = "Before moving, shoots a Blue Fireball forward. The Blue Fireball ignores Enemies and hits the first Hero in the column, reducing its Armor by 1. If a Hero's Armor reaches 0, it is KOed."
 
 const fireball_prototype = preload("res://EnemyPieces/Components/DragonFireball.tscn")
 
 func initialize(max_hp, modifiers, prototype):
 	.initialize("Dragon", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype)
 
-func turn_update_helper():
-	if !self.stunned and self.hp != 0:
-		self.move(movement_value)
-
-
-func turn_attack_update():
-	if self.hp != 0 and !self.silenced and !self.stunned:
-		var fireball_range = get_parent().get_range(self.coords, [1, 9], "PLAYER", true, [3, 4])
+func turn_start():
+	if !self.silenced:
+		var fireball_range = get_parent().get_range(self.coords, [1, 9], "PLAYER", false, [3, 4])
 		if fireball_range != []:
 			fireball(fireball_range[0])
-	.turn_attack_update()
-
 
 func fireball(coords):
 	add_animation(self, "animate_fireball", true, [coords])
-	if self.current_animation_sequence != null:
-		get_parent().pieces[coords].player_attacked(self, self.current_animation_sequence)
-	else:
-		get_parent().pieces[coords].player_attacked(self)
+	get_parent().pieces[coords].damage_armor(1)
 
 func animate_fireball(coords):
 	add_anim_count()
@@ -44,7 +34,7 @@ func animate_fireball(coords):
 	
 	var target_pos = (get_parent().locations[coords].get_pos() - get_pos())
 
-	get_node("Tween").interpolate_property(fireball, "transform/pos", fireball.get_pos(), target_pos, 0.7, Tween.TRANS_LINEAR, Tween.EASE_OUT)
+	get_node("Tween").interpolate_property(fireball, "transform/pos", fireball.get_pos(), target_pos, 0.7, Tween.TRANS_SINE, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	

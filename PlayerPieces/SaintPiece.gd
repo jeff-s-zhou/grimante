@@ -6,6 +6,10 @@ const UNIT_TYPE = "Saint"
 
 var pathed_range
 
+var alter_ego
+
+const CrusaderPrototype = preload("res://PlayerPieces/CrusaderPiece.tscn")
+
 
 const ATTACK_DESCRIPTION = ["""
 Intervention. Target an ally within 2 range. If the tile immediately south of it is empty, move it to that tile.
@@ -21,122 +25,48 @@ func _ready():
 	self.unit_name = UNIT_TYPE
 	self.attack_description = ATTACK_DESCRIPTION
 	self.passive_description = PASSIVE_DESCRIPTION
-	self.assist_type = ASSIST_TYPES.invulnerable
+	self.assist_type = ASSIST_TYPES.defense
 	
 func handle_assist():
 	if self.assist_flag:
 		self.assist_flag = false
 	self.AssistSystem.activate_assist(self.assist_type, self)
+	
+func initialize(cursor_area):
+	self.alter_ego = CrusaderPrototype.instance()
+	self.alter_ego.alter_ego = self
+	self.alter_ego.set_pos(Vector2(-999, -999))
+	get_node("/root/Combat").initialize_crusader(self.alter_ego)
+	.initialize(cursor_area)
 
 func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
 
-	
-func get_attack_range():
-	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, self.movement_value], "ENEMY")
-	var return_range = []
-	for coords in unfiltered_range:
-		if get_parent().locations.has(coords + Vector2(0, 1)) and !get_parent().pieces.has(coords + Vector2(0, 1)): #only return enemies with their backs open
-			return_range.append(coords)
-	return return_range
-
-
-func get_intervention_range():
-	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, self.movement_value], "PLAYER")
-	var return_range = []
-	for coords in unfiltered_range:
-		if get_parent().locations.has(coords + Vector2(0, 1)) and !get_parent().pieces.has(coords + Vector2(0, 1)): #only return enemies with their backs open
-			return_range.append(coords)
-	return return_range
-
 
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
-	var action_range = get_attack_range() + get_movement_range()
+	var action_range = get_movement_range()
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
 	.display_action_range()
-	for coords in get_intervention_range():
-		get_parent().get_at_location(coords).assist_highlight()
 
-func _is_within_attack_range(new_coords):
-	var attack_range = get_attack_range()
-	return new_coords in attack_range
 	
 func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
 	
-func _is_within_intervention_range(new_coords):
-	return new_coords in get_intervention_range()
-
-#calls animate_move_to_pos as the last part of sequence
-#animate_move_to_pos is what emits the required signals
-func animate_purify(attack_coords):
-	add_anim_count()
-	var position_coords = attack_coords + Vector2(0, 1)
-
-	get_node("Tween 2").interpolate_property(self, "visibility/opacity", 1, 0, 0.7, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	get_node("Tween 2").interpolate_property(get_node("SaintFlash"), "visibility/opacity", 0, 1, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	get_node("Tween 2").start()
-	yield(get_node("Tween 2"), "tween_complete")
-	yield(get_node("Tween 2"), "tween_complete")
-	var location = get_parent().locations[position_coords]
-	var new_position = location.get_pos()
-	set_pos(new_position)
-	
-	var attack_location = get_parent().locations[attack_coords]
-	var difference = 2 * (attack_location.get_pos() - get_pos())/3
-	var attack_position = attack_location.get_pos() - difference
-	
-	get_node("Tween 2").interpolate_property(self, "visibility/opacity", 0, 1, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	get_node("Tween 2").interpolate_property(get_node("SaintFlash"), "visibility/opacity", 1, 0, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	get_node("Tween 2").start()
-	animate_move_to_pos(attack_position, 200, true, Tween.TRANS_SINE, Tween.EASE_IN)
-	yield(self, "animation_done")
-	subtract_anim_count()
-	
-func animate_directly_above_purify(attack_coords):
-	add_anim_count()
-	var attack_location = get_parent().locations[attack_coords]
-	var difference = 2 * (attack_location.get_pos() - get_pos())/3
-	var attack_position = attack_location.get_pos() - difference
-	animate_move_to_pos(attack_position, 200, true, Tween.TRANS_SINE, Tween.EASE_IN)
-	yield(self, "animation_done")
-	subtract_anim_count()
 
 func act(new_coords):
-	if _is_within_attack_range(new_coords):
-		handle_pre_assisted()
-		intervene(new_coords)
-		placed()
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
 		var args = [new_coords, 300, true]
 		add_animation(self, "animate_move_and_hop", true, args)
 		set_coords(new_coords)
+		var transformed = transform()
 		purify_passive(new_coords)
-		#imbue(new_coords)
-		placed()
-	elif _is_within_intervention_range(new_coords):
-		handle_pre_assisted()
-		intervene(new_coords)
-		placed()
+		if !transformed:
+			placed()
 	else:
 		invalid_move()
-
-
-func purify(new_coords):
-	if new_coords == self.coords + Vector2(0, -1):
-		add_animation(self, "animate_directly_above_purify", true, [new_coords])
-	else:
-		add_animation(self, "animate_purify", true, [new_coords])
-	var action = get_new_action()
-	action.add_call("set_silenced", [true], new_coords)
-	action.execute()
-	var return_position = get_parent().locations[new_coords + Vector2(0, 1)].get_pos()
-	add_animation(self, "animate_move_to_pos", true, [return_position, 200, true])
-	set_coords(new_coords + Vector2(0, 1))
-	#imbue(return_position)
 	
 
 func purify_passive(new_coords):
@@ -146,14 +76,48 @@ func purify_passive(new_coords):
 	action.execute()
 
 
-func intervene(new_coords):
-	var piece = get_parent().pieces[new_coords]
-	piece.move(Vector2(0, 1))
-	piece.enqueue_animation_sequence()
+#if we've reached the top of the map
+func transform():
+	for i in range(0, 7):
+		if self.coords == get_parent().get_top_of_column(i):
+			switch_out()
+			return true
+	return false
+	
+func switch_out():
+	remove_from_group("player_pieces")
+	get_parent().remove_piece(self.coords)
+	add_animation(self, "animate_switch_out", true)
+	
+	print("saint's global pos is " + str(get_parent().locations[self.coords].get_global_pos()))
+	self.alter_ego.switch_in(self.coords)
+			
+func switch_in(coords):
+	self.AssistSystem.clear_assist()
+	add_to_group("player_pieces")
+	get_parent().add_piece(coords, self, true)
+	var pos = get_parent().locations[coords].get_pos()
+	add_animation(self, "animate_switch_in", true, [pos])
+	placed()
+	
+func animate_switch_out():
+	add_anim_count()
+	get_node("Tween 2").interpolate_property(get_node("Flash"), "visibility/opacity", 0, 1, 0.7, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
+	set_pos(Vector2(-999, -999))
+	emit_signal("animation_done")
+	subtract_anim_count()
+	
+func animate_switch_in(pos):
+	set_opacity(1)
+	#set_pos(pos)
+	print(get_global_pos())
+	get_node("Tween 2").interpolate_property(get_node("Flash"), "visibility/opacity", 1, 0, 0.7, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
+	emit_signal("animation_done")
+	
 
 func predict(new_coords):
-	if _is_within_attack_range(new_coords):
-		pass
-
-func cast_ultimate():
 	pass

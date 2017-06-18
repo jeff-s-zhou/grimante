@@ -1,6 +1,7 @@
-[gd_scene load_steps=3 format=1]
+[gd_scene load_steps=4 format=1]
 
 [ext_resource path="res://UI/FinalHeroScreen.gd" type="Script" id=1]
+[ext_resource path="res://Assets/processed_fonts/final_hero_amaranth_36.fnt" type="BitmapFont" id=2]
 
 [sub_resource type="StyleBoxFlat" id=1]
 
@@ -17,19 +18,39 @@ draw_bg = true
 
 [node name="FinalHeroScreen" type="Node2D"]
 
+visibility/visible = false
+z/z = 99
+z/relative = false
 script/script = ExtResource( 1 )
 
 [node name="Panel" type="Panel" parent="."]
 
-visibility/opacity = 0.7
+visibility/opacity = 0.8
 focus/ignore_mouse = true
 focus/stop_mouse = false
 size_flags/horizontal = 2
 size_flags/vertical = 2
 margin/left = 0.0
 margin/top = 0.0
-margin/right = 611.0
+margin/right = 618.0
 margin/bottom = 212.0
 custom_styles/panel = SubResource( 1 )
+
+[node name="Label" type="Label" parent="."]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 154.0
+margin/top = 25.0
+margin/right = 455.0
+margin/bottom = 61.0
+custom_fonts/font = ExtResource( 2 )
+text = "SELECT FINAL HERO"
+align = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
 
 

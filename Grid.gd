@@ -8,8 +8,8 @@ extends Node2D
 var locations = {}
 var pieces = {}
 
-var shadow_wall_tile_range = []
-var shifting_sands_tiles = []
+var shadow_tile_range = []
+var shifting_sands = []
 
 var deploying = false
 
@@ -84,11 +84,14 @@ func _ready():
 func set_deploying(flag, deploy_tiles=null):
 	self.deploying = flag
 	if deploying:
+		
+		
 		if deploy_tiles != null:
 			for deploy_tile_coords in deploy_tiles:
 				if self.locations.has(deploy_tile_coords):
 					self.locations[deploy_tile_coords].set_deployable_indicator(true)
 	else:
+		get_node("FinalHeroScreen").queue_free()
 		reset_deployable_indicators()
 	
 	
@@ -98,19 +101,19 @@ func predict(coords):
 	
 
 		
-func initialize_shadow_wall_tiles(shadow_wall_tile_range):
-	self.shadow_wall_tile_range = shadow_wall_tile_range
-	for coords in shadow_wall_tile_range:
-		self.locations[coords].set_shadow_wall(true)
+func initialize_shadow_tiles(shadow_tile_range):
+	self.shadow_tile_range = shadow_tile_range
+	for coords in shadow_tile_range:
+		self.locations[coords].set_shadow(true)
 		
-func initialize_shifting_sands_tiles(shifting_sands_tiles):
-	self.shifting_sands_tiles = shifting_sands_tiles
-	for coords in shifting_sands_tiles:
+func initialize_shifting_sands(shifting_sands):
+	self.shifting_sands = shifting_sands
+	for coords in shifting_sands:
 		#self.locations[coords].set_shifting_sands(3)
-		self.locations[coords].set_shifting_sands(self.shifting_sands_tiles[coords])
+		self.locations[coords].set_shifting_sands(self.shifting_sands[coords])
 		
 func handle_sand_shifts(new_coords):
-	if new_coords in self.shifting_sands_tiles:
+	if new_coords in self.shifting_sands:
 		var direction = self.locations[new_coords].shifting_direction
 		var change_vector = get_change_vector(direction)
 		var piece = self.pieces[new_coords].shift(change_vector)
@@ -129,28 +132,33 @@ func is_offsides(coords):
 func update_furthest_back_coords():
 	self.furthest_back_coords = Vector2(0, 0) #reset to furthest up
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
-		var new_pos = self.locations[player_piece.coords].get_pos()
-		var old_pos = self.locations[self.furthest_back_coords].get_pos()
-		if new_pos.y > old_pos.y:
-			self.furthest_back_coords = player_piece.coords
+		if player_piece.coords != null:
+			var new_pos = self.locations[player_piece.coords].get_pos()
+			var old_pos = self.locations[self.furthest_back_coords].get_pos()
+			if new_pos.y > old_pos.y:
+				self.furthest_back_coords = player_piece.coords
 
 
 #so we know what target
 func set_target(target):
-	if self.selected != null and !(target.coords in self.shadow_wall_tile_range):
+	if self.selected != null and !(target.coords in self.shadow_tile_range):
 		self.selected.select_action_target(target)
 
 
 func add_piece_on_bar(piece):
-	pass
+	add_child(piece)
+	get_node("FinalHeroScreen").initialize(piece)
 
-func add_piece(coords, piece):
+#child_free is when the saint and crusader swap locations
+#and for adding from the FinalHeroScreen
+func add_piece(coords, piece, child_free=false):
 	self.pieces[coords] = piece
 	self.locations[coords].set_pickable(false)
 	piece.coords = coords
 	var location = self.locations[coords]
 	
-	add_child(piece)
+	if !child_free:
+		add_child(piece)
 	piece.set_global_pos(location.get_global_pos())
 	
 
@@ -178,7 +186,7 @@ func deploy_swap_pieces(coords1, coords2):
 
 
 func get_location(coords):
-	self.locations[coords]
+	return self.locations[coords]
 
 func has_piece(coords):
 	return self.pieces.has(coords)
@@ -386,10 +394,10 @@ func get_range_helper(return_set, change_vector, coords, magnitude_range, side, 
 					break #break regardless on first collision
 	
 			elif side:
-				if pieces.has(new_coords) and pieces[new_coords].side == side and !(new_coords in self.shadow_wall_tile_range):
+				if pieces.has(new_coords) and pieces[new_coords].side == side and !(new_coords in self.shadow_tile_range):
 					return_set.append(new_coords)
 
-			elif locations.has(new_coords) and !pieces.has(new_coords)  and !(new_coords in self.shadow_wall_tile_range): #only return empty locations
+			elif locations.has(new_coords) and !pieces.has(new_coords)  and !(new_coords in self.shadow_tile_range): #only return empty locations
 				return_set.append(new_coords)
 
 func cube_to_hex(h): # axial

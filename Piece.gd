@@ -20,8 +20,6 @@ var mid_animation = false
 
 var mid_leaping_animation = false
 
-var stunned = false
-
 var unit_name = "" setget , get_unit_name
 
 var coords #enemies move automatically each turn a certain number of spaces forward
@@ -98,10 +96,6 @@ func set_seen(flag):
 			for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
 				if enemy_piece != self:
 					enemy_piece.check_global_seen()
-		elif self.side == "PLAYER":
-			for player_piece in get_tree().get_nodes_in_group("player_pieces"):
-				if player_piece != self:
-					player_piece.check_global_seen()
 	else:
 		get_node("SeenIcon").show()
 
@@ -238,6 +232,7 @@ func handle_shifting_sands():
 	if location.shifting_direction != null:
 		var change_vector = self.grid.get_change_vector(location.shifting_direction)
 		self.move(change_vector)
+		location.rotate_shifting()
 		
 
 func hooked(new_coords):
@@ -352,7 +347,6 @@ func receive_shove(pusher, distance):
 	var distance_increment = self.grid.hex_normalize(distance)
 	var direction = self.grid.get_direction_from_vector(distance)
 	
-	
 	#if the piece is a player piece and is defending, return Vector2(0, 0)
 	if self.side == "PLAYER" and self.invulnerable_flag:
 		return Vector2(0, 0)
@@ -380,6 +374,9 @@ func handle_nonlethal_shove(pusher):
 func dies_to_collision(pusher):
 	return false
 	
+
+func is_slime():
+	return false
 
 
 	

@@ -165,7 +165,8 @@ func smash_move(new_coords):
 func smash(smash_range):
 	var action = get_new_action()
 	action.add_call("set_stunned", [true], smash_range)
-	action.add_call("attacked", [self.aoe_damage], smash_range)
+	#the false flag is so it doesn't interrupt the stun it just set lol
+	action.add_call("attacked", [self.aoe_damage, 0.0, false], smash_range)
 	action.execute()
 
 

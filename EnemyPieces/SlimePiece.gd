@@ -16,6 +16,16 @@ func move(distance, passed_animation_sequence=null):
 	add_animation(self, "hide_sludge", false)
 	.move(distance)
 	add_animation(self, "show_sludge", false)
+	
+	
+func delete_self():
+	add_animation(self, "hide_sludge", false)
+	.delete_self()
+	
+	
+func is_slime():
+	if !self.silenced:
+		return true
 
 func hide_sludge():
 	print("calling hide sludge")

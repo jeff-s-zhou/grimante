@@ -21,7 +21,7 @@ func has_star():
 	return self.star_count > 0
 
 func add_star():
-	if not self.enabled:
+	if self.enabled:
 		self.star_count += 1
 		get_node("TextureButton").set_disabled(false)
 		get_node("/root/AnimationQueue").enqueue(self, "animate_add_star", false, [self.star_count])

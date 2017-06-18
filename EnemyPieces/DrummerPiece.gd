@@ -14,7 +14,7 @@ func initialize(max_hp, modifiers, prototype):
 #every enemy turn, update all units in its column? after resetting all units? but then this update has to be called first...
 #a method call called aura effects? that's looped through before other shit?
 
-func aura_update():
+func turn_start():
 	if !self.silenced:
 		var column_range = get_parent().get_range(self.coords, [1, 9], "ENEMY", false, [3, 4])
 		column_range += get_parent().get_range(self.coords, [1, 9], "ENEMY", false, [0, 1])

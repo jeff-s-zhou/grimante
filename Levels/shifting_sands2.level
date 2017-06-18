@@ -1,0 +1,20 @@
+{"hp":"4", "turn":0, "pos_x":5, "name":"slime", "modifiers":{}, "pos_y":6}
+{"hp":"1", "turn":0, "pos_x":2, "name":"slime", "modifiers":{}, "pos_y":5}
+{"hp":"6", "turn":0, "pos_x":5, "name":"melee", "modifiers":{"Poisonous":"Poisonous"}, "pos_y":3}
+{"hp":"1", "turn":0, "pos_x":2, "name":"fortifier", "modifiers":{}, "pos_y":3}
+{"hp":"2", "turn":0, "pos_x":1, "name":"grower", "modifiers":{}, "pos_y":2}
+{"hp":"3", "turn":0, "pos_x":4, "name":"grunt", "modifiers":{}, "pos_y":4}
+{"hp":"3", "turn":0, "pos_x":3, "name":"ranged", "modifiers":{}, "pos_y":1}
+{"hp":"2", "turn":0, "pos_x":3, "name":"grower", "modifiers":{"Poisonous":"Poisonous"}, "pos_y":4}
+{"hp":"2", "turn":1, "pos_x":3, "name":"fortifier", "modifiers":{"Rabid":"Rabid"}, "pos_y":3}
+{"hp":"4", "turn":1, "pos_x":5, "name":"slime", "modifiers":{"Cloaked":"Cloaked", "Shield":"Shield"}, "pos_y":3}
+{"hp":"4", "turn":1, "pos_x":4, "name":"melee", "modifiers":{"Cloaked":"Cloaked"}, "pos_y":6}
+{"hp":"1", "turn":1, "pos_x":0, "name":"ranged", "modifiers":{}, "pos_y":0}
+{"hp":"1", "turn":1, "pos_x":0, "name":"grower", "modifiers":{}, "pos_y":1}
+{"hp":"3", "turn":3, "pos_x":5, "name":"melee", "modifiers":{"Rabid":"Rabid"}, "pos_y":4}
+{"hp":"3", "turn":3, "pos_x":1, "name":"grunt", "modifiers":{"Rabid":"Rabid"}, "pos_y":4}
+{"hp":"5", "turn":3, "pos_x":5, "name":"ranged", "modifiers":{}, "pos_y":2}
+{"hp":"2", "turn":3, "pos_x":1, "name":"ranged", "modifiers":{}, "pos_y":0}
+{"hp":"2", "turn":3, "pos_x":4, "name":"slime", "modifiers":{"Cloaked":"Cloaked"}, "pos_y":4}
+{"hp":"3", "turn":3, "pos_x":2, "name":"grower", "modifiers":{}, "pos_y":3}
+{"hp":"4", "turn":3, "pos_x":3, "name":"fortifier", "modifiers":{}, "pos_y":4}

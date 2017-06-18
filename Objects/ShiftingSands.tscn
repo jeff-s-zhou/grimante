@@ -70,7 +70,7 @@ texture = ExtResource( 4 )
 
 [node name="Node2D" type="Node2D" parent="."]
 
-transform/pos = Vector2( 0, 4 )
+transform/pos = Vector2( 0, 2 )
 transform/rot = 180.0
 
 [node name="Sprite" type="Sprite" parent="Node2D"]
@@ -87,5 +87,12 @@ playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
 autoplay = "New Anim"
+
+[node name="Tween" type="Tween" parent="."]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
 
 

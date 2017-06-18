@@ -35,15 +35,13 @@ func delete_self():
 	get_node("/root/Combat").assassin = null
 	.delete_self()
 
+func queue_free():
+	get_node("/root/Combat").assassin = null
+	.queue_free()
 
 func resurrect():
 	get_node("/root/Combat").assassin = self
 	.resurrect()
-	
-	
-func delete_from_bar():
-	get_node("/root/Combat").assassin = null
-	.delete_from_bar()
 
 
 func get_backstab_damage(coords):

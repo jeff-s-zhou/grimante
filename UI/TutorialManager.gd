@@ -101,13 +101,12 @@ func has_forced_action_result():
 	
 
 func handle_forced_action_result():
-	set_process_input(true)
 	update_rule()
 
 
 func _input(event):
 	if get_node("InputHandler").is_select(event):
-		update_rule()
+		update_rule(true)
 		
 
 func has_player_turn_start_rule(turn):
@@ -119,18 +118,16 @@ func has_enemy_turn_end_rule(turn):
 
 
 func display_player_turn_start_rule(turn):
-	set_process_input(true)
 	self.current_rule = self.player_turn_start_rules[turn]
 	update_rule()
 
 
 func display_enemy_turn_end_rule(turn):
-	set_process_input(true)
 	self.current_rule = self.enemy_turn_end_rules[turn]
 	update_rule()
 
 
-func update_rule():
+func update_rule(next=false):
 	var rule
 	var coords
 	if typeof(self.current_rule) == TYPE_DICTIONARY:
@@ -152,6 +149,12 @@ func update_rule():
 		if typeof(line) == TYPE_ARRAY: #WTF? Oh this is for when we have images
 			pass
 		else:
+			#next flag is only set when the user clicks to move to the nextl ine
+			if !next:
+				get_node("Timer").set_wait_time(0.5)
+				get_node("Timer").start()
+				yield(get_node("Timer"), "timeout")
+			
 			get_node("Label").set_pos(Vector2(24, 200))
 			if line.length() < 35:
 				get_node("Label").set_bbcode("[center]" + line + "[/center]")
@@ -165,4 +168,6 @@ func update_rule():
 				get_node("Sprite").show()
 			else:
 				get_node("RuleOverlay").show()
+				
+			set_process_input(true)
 

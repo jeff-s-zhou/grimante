@@ -86,6 +86,11 @@ func set_shifting_sands(direction):
 	get_node("ShiftingSands").set_shifting_direction(direction)
 	get_node("ShiftingSands").show()
 	get_node("Sprite").hide()
+	
+func rotate_shifting():
+	if self.shifting_direction != null:
+		self.shifting_direction = (self.shifting_direction + 1) % 6
+		get_node("/root/AnimationQueue").enqueue(get_node("ShiftingSands"), "animate_rotate", true)
 		
 		
 func animate_lightning():

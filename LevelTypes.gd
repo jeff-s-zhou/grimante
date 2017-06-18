@@ -29,8 +29,8 @@ func _ready():
 
 class BaseLevelType:
 	var name = ""
-	var required_units = {}
-	var allies = null #the roster
+	var allies = {}
+	var extra_units = null
 	var deploy_roster = null
 	var enemies = null
 	var next_level = null
@@ -39,8 +39,8 @@ class BaseLevelType:
 	var flags = []
 	var free_deploy = true
 	var deploy_tiles = DEFAULT_DEPLOY_TILES
-	var shadow_wall_tiles = []
-	var shifting_sands_tiles = []
+	var shadow_tiles = []
+	var shifting_sands = []
 	var king = null
 	var end_conditions = {}
 	
@@ -49,9 +49,9 @@ class BaseLevelType:
 		self.allies = allies
 		self.enemies = enemies
 		self.next_level = next_level
-
-		if extras.has("required_units"):
-			self.required_units = extras["required_units"]
+		
+		if extras.has("extra_units"):
+			self.extra_units = extras["extra_units"]
 		if extras.has("free_deploy"):
 			self.free_deploy = extras["free_deploy"]
 		if extras.has("tutorial"):
@@ -60,10 +60,10 @@ class BaseLevelType:
 			self.reinforcements = extras["reinforcements"]
 		if extras.has("flags"):
 			self.flags = extras["flags"]
-		if extras.has("shadow_wall_tiles"):
-			self.shadow_wall_tiles = extras["shadow_wall_tiles"]
-		if extras.has("shifting_sands_tiles"):
-			self.shifting_sands_tiles = extras["shifting_sands_tiles"]
+		if extras.has("shadow_tiles"):
+			self.shadow_tiles = extras["shadow_tiles"]
+		if extras.has("shifting_sands"):
+			self.shifting_sands = extras["shifting_sands"]
 		if extras.has("king"):
 			self.king = extras["king"]
 			
