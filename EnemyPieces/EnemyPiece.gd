@@ -196,10 +196,18 @@ func reset_just_prediction_flyover():
 		self.prediction_flyover.queue_free()
 		self.prediction_flyover = null
 
+func deselect_reset():
+	get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
+	get_node("Physicals/HealthDisplay").set_health(self.temp_display_hp)
+	
+	self.predicting_hp = false
+	if self.prediction_flyover != null:
+		self.prediction_flyover.queue_free()
+		self.prediction_flyover = null
 	
 func reset_prediction_flyover():
 	get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
-	get_node("Physicals/HealthDisplay").set_health(self.temp_display_hp)
+	#get_node("Physicals/HealthDisplay").set_health(self.temp_display_hp)
 	
 	self.predicting_hp = false
 	if self.prediction_flyover != null:

@@ -3,12 +3,10 @@ extends "PlayerPiece.gd"
 
 const UNIT_TYPE = "Stormdancer"
 
-const ATTACK_DESCRIPTION = ["""Lightning Shuriken. Deal 1 damage to any enemy on the map.
+const ATTACK_DESCRIPTION = ["""Tango. Swap positions with any unit.
 """]
 
-const PASSIVE_DESCRIPTION = ["""Rain Dance. Moving to a tile casts Rain on the tile. 
-
-Tango. Select an allied unit within movement range to swap positions with it.
+const PASSIVE_DESCRIPTION = ["""Rain Dance. Moving to a tile summons a Storm on the tile. Storm tiles will cast Lightning to deal 2 damage to any enemy that moves to that tile.
 """]
 
 

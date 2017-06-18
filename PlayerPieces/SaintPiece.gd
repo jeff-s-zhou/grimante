@@ -11,12 +11,10 @@ var alter_ego
 const CrusaderPrototype = preload("res://PlayerPieces/CrusaderPiece.tscn")
 
 
-const ATTACK_DESCRIPTION = ["""
-Intervention. Target an ally within 2 range. If the tile immediately south of it is empty, move it to that tile.
-"""]
+const ATTACK_DESCRIPTION = []
 
-const PASSIVE_DESCRIPTION = ["""Purify. Move to a tile. All adjacent Enemy units which are already adjacent to another Player Unit are silenced.
-"""]
+const PASSIVE_DESCRIPTION = ["Purify. When the Saint moves to a tile, Silence all adjacent enemy units, disabling all special effects.",
+"Quest. If the Saint reaches the top of the map, transforms into the Crusader."]
 
 
 func _ready():

@@ -18,8 +18,9 @@ const UNIT_TYPE = "Berserker"
 
 const ATTACK_DESCRIPTION = ["""Leap Strike. Deal 4 damage to an enemy within movement range. If the enemy is killed by the attack, move to its tile.
 """]
-const PASSIVE_DESCRIPTION = ["""Earthslam.  Moving to an empty tile deals 2 damage to all enemies adjacent to the tile and stuns them.
-"""]
+const PASSIVE_DESCRIPTION = ["Earthslam.  Moving to an empty tile deals 2 damage to all enemies adjacent to the tile and Stuns them.",
+"Stun. Enemies stunned cannot move or act their next turn. Being attacked will cancel the effect."
+]
 
 func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)

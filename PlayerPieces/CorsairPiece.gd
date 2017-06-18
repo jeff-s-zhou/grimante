@@ -11,10 +11,11 @@ var pathed_range
 
 var slash_damage = DEFAULT_SLASH_DAMAGE setget , get_slash_damage
 
-const ATTACK_DESCRIPTION = """
-"""
+const ATTACK_DESCRIPTION = ["Slash. Deal 3 damage to an adjacent enemy.",
+" Captain’s Hook. Target an enemy within 2 range and pull it adjacent to you, then Slash it."
+]
 
-const PASSIVE_DESCRIPTION = """"""
+const PASSIVE_DESCRIPTION = ["Double Time.  The Corsair can act twice in a single turn."]
 
 
 func _ready():

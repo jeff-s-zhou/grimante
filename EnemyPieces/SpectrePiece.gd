@@ -5,7 +5,7 @@ extends "EnemyPiece.gd"
 # var b="textvar"
 
 var max_hp = 5
-var DESCRIPTION = "Spectre"
+var DESCRIPTION = "Cannot be damaged for any amount higher than its current Power."
 
 func initialize(max_hp, modifiers, prototype):
 	.initialize("Spectre", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype)

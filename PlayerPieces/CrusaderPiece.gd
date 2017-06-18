@@ -9,11 +9,9 @@ const BASE_HOLY_BLADE_DAMAGE = 3
 var alter_ego
 
 
-const ATTACK_DESCRIPTION = ["""
-"""]
+const ATTACK_DESCRIPTION = ["Holy Blade. Teleport in front of any Enemy within movement range. Silence the Enemy and deal 3 + 1 damage to it for every Hero behind the Crusader."]
 
-const PASSIVE_DESCRIPTION = ["""
-"""]
+const PASSIVE_DESCRIPTION = ["Quest. If the Crusader reaches the bottom of the map, silence all adjacent enemies and transform into the Saint."]
 
 
 func _ready():

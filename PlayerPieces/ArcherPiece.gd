@@ -25,9 +25,9 @@ signal animation_finished
 
 const UNIT_TYPE = "Archer"
 
-const ATTACK_DESCRIPTION = ["""Snipe. Fire an arrow at the first enemy in a line for 3 damage. Can target diagonally. Allies will block the shot.
+const ATTACK_DESCRIPTION = ["""Piercing Arrow. Fire an arrow down a line. Deal 3 damage to the first enemy hit. If the arrow kills, it continues along the line, dealing 1 less damage to successive enemies. The arrow is blocked by Heroes.
 """]
-const PASSIVE_DESCRIPTION = ["""Running Fire. Whenever you move, attempt to Snipe down the column of your new position (failing if an ally is in the way).
+const PASSIVE_DESCRIPTION = ["""Running Fire. When moving to an empty tile, attempt to fire a Piercing Arrow down the column of your new position.
 """]
 
 

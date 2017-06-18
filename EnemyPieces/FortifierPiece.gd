@@ -4,7 +4,7 @@ extends "EnemyPiece.gd"
 # var a=2
 # var b="textvar"
 
-var DESCRIPTION = "When this enemy dies, +2 hp to adjacent enemies."
+var DESCRIPTION = "When this enemy dies, +2 hp to adjacent Enemies."
 
 func initialize(max_hp, modifiers, prototype):
 	.initialize("Seraph", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype)
