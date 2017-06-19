@@ -16,6 +16,13 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	pass
+	
+
+func decorate(string):
+	string = string.replace("{", "[color=#ff3333]")
+	string = string.replace("}", "[/color]")
+	return string
+
 
 func add_player_turn_start_rule(rule, turn, coords=null):
 	#needed for explaining coords tiles
@@ -58,7 +65,7 @@ func display_forced_action(turn):
 	if self.forced_actions.has(turn) and self.forced_actions[turn] != []:
 		var forced_action = self.forced_actions[turn][0]
 		var coords = forced_action.get_coords()
-		var string = forced_action.get_text()
+		var string = decorate(forced_action.get_text())
 		update_display_forced_action(coords, string)
 	else:
 		get_node("Sprite").hide()
@@ -149,6 +156,7 @@ func update_rule(next=false):
 		if typeof(line) == TYPE_ARRAY: #WTF? Oh this is for when we have images
 			pass
 		else:
+			line = decorate(line)
 			#next flag is only set when the user clicks to move to the nextl ine
 			if !next:
 				get_node("Timer").set_wait_time(0.5)
