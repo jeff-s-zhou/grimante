@@ -207,7 +207,7 @@ func deselect_reset():
 	
 func reset_prediction_flyover():
 	get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
-	#get_node("Physicals/HealthDisplay").set_health(self.temp_display_hp)
+	get_node("Physicals/HealthDisplay").set_health(self.temp_display_hp)
 	
 	self.predicting_hp = false
 	if self.prediction_flyover != null:

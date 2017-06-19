@@ -11,7 +11,7 @@ const UNIT_TYPE = "Assassin"
 const ATTACK_DESCRIPTION = ["""Backstab. 2 range. Teleport behind an enemy and deal 2 damage. Deals 4 damage instead if the enemy has no other enemies adjacent to it. Will fail if there is a unit behind the enemy. 
 """]
 
-const PASSIVE_DESCRIPTION = ["Opportunity Strikes. If an adjacent enemy is attacked, the Assassin attacks it for 1 damage. Will trigger Bloodlust if the Assassin is already on cooldown. Does not cancel Stun.",
+const PASSIVE_DESCRIPTION = ["Opportunity Strikes. If an adjacent enemy is attacked, the Assassin attacks it for 1 damage. Will trigger Bloodlust if the Assassin is already exhausted. Does not cancel Stun.",
 "Bloodlust. If the Assassin kills a unit, it may act again. May only activate once per turn."]
 
 const BEHIND = Vector2(0, -1)
