@@ -59,4 +59,21 @@ visibility/visible = false
 
 [node name="InputHandler" parent="." instance=ExtResource( 8 )]
 
+[node name="ContinueLabel" type="Label" parent="."]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 69.0
+margin/top = 357.0
+margin/right = 512.0
+margin/bottom = 398.0
+custom_fonts/font = ExtResource( 3 )
+custom_colors/font_color = Color( 0.160784, 0.894118, 0.678431, 1 )
+text = "Click anywhere to continue"
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
 

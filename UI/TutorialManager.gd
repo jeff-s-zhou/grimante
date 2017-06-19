@@ -12,6 +12,8 @@ signal rule_finished
 
 var current_rule = null
 
+var continue_text = "Click anywhere to continue [%s/%s]"
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
@@ -166,9 +168,15 @@ func update_rule(next=false):
 			get_node("Label").set_pos(Vector2(24, 200))
 			if line.length() < 35:
 				get_node("Label").set_bbcode("[center]" + line + "[/center]")
+				get_node("TapLabel").set_align(HALIGN_CENTER)
 			else:
 				get_node("Label").set_bbcode(line)
+				get_node("TapLabel").set_align(HALIGN_LEFT)
+			
 			get_node("Label").show()
+			
+			var filled_cont_text = continue_text % [rule.get_index(), rule.get_size()]
+			get_node("TapLabel").set_text(filled_cont_text)
 			get_node("TapLabel").show()
 			if coords != null:
 				var new_pos = get_parent().get_node("Grid").locations[coords].get_global_pos()

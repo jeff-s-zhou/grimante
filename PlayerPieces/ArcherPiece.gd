@@ -128,36 +128,6 @@ func piercing_arrow(new_coords):
 	action.execute()
 
 
-func silver_arrow(new_coords):
-	var damage_range
-	var direction = get_parent().get_direction_from_vector(new_coords - self.coords)
-	if direction == null:
-		direction = get_parent().get_diagonal_direction_from_vector(new_coords - self.coords)
-		damage_range = get_parent().get_diagonal_range(self.coords, [1, 11], "ENEMY", false, [direction, direction +1])
-	else:
-		damage_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", false, [direction, direction +1])
-	
-	var damage = self.shoot_damage
-	
-	var last_hit_coords = damage_range[-1] #by default set the last hit to the furthest enemy away in the line
-	for coords in damage_range:
-		if damage == 0:
-			last_hit_coords = coords #if it stops prematurely, the arrow stops there
-		damage -= 1
-	#animate hitting to the last coords hit
-	add_animation(self, "animate_ranged_attack", true, [last_hit_coords])
-	
-	damage = self.shoot_damage
-
-	for coords in damage_range:
-		if damage == 0:
-			break
-		var action = get_new_action(coords)
-		action.add_call("attacked", [damage])
-		action.execute()
-		damage -= 1
-	placed()
-
 func animate_ranged_attack(new_coords):
 	add_anim_count()
 	var location = get_parent().locations[new_coords]
@@ -204,19 +174,23 @@ func predict(new_coords):
 	if _is_within_movement_range(new_coords):
 		var attack_coords = get_step_shot_coords(new_coords)
 		if attack_coords != null:
-			predict_passive_ranged_attack(new_coords, attack_coords)
+			predict_ranged_attack(new_coords, attack_coords, true)
 
 	#elif the tile selected is within attack range
 	elif _is_within_attack_range(new_coords):
-		predict_ranged_attack(new_coords)
+		predict_ranged_attack(self.coords, new_coords)
 
 
-func predict_passive_ranged_attack(new_position_coords, new_attack_coords):
-	get_parent().pieces[new_attack_coords].predict(self.passive_damage, true)
-
-
-func predict_ranged_attack(new_coords):
-	get_parent().pieces[new_coords].predict(self.shoot_damage, false)
-
-
-	
+func predict_ranged_attack(position_coords, new_coords, is_passive=false):
+	var damage = self.shoot_damage
+	var line_range = self.grid.get_line_range(position_coords, new_coords - position_coords, "ENEMY")
+	var final_hit_coords
+	for coords in line_range:
+		final_hit_coords = coords
+		
+		var new_damage = damage
+		get_parent().pieces[coords].predict(new_damage, is_passive)
+		if self.grid.pieces[coords].hp <= damage and damage > 0:
+			damage -= 1
+		else:
+			break

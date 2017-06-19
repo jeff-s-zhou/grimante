@@ -19,6 +19,12 @@ func initialize(text_list, associated_graphics_dict={}):
 	self.text_list = text_list
 	self.associated_graphics_dict = associated_graphics_dict
 	
+func get_index():
+	return self.index
+
+func get_size():
+	return self.text_list.size()
+	
 func get_next_line():
 	if self.index < self.text_list.size():
 		var text = self.text_list[self.index]

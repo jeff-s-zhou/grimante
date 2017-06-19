@@ -83,10 +83,10 @@ func get_levels():
 
 
 func sandbox_allies():
-	return {2: Berserker, 4: Archer}
+	return {Vector2(2, 2): Assassin, 4: Archer}
 	
 func sandbox_enemies():
-	var enemies = {0:{ Vector2(3, 5): make(Grunt, 9), Vector2(3, 4): make(Grunt, 2)}}
+	var enemies = {0:{ Vector2(3, 2): make(Grunt, 9), Vector2(3, 4): make(Grunt, 2)}}
 	#var enemies = load_level("frost_knight.level")
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	

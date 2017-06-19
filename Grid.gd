@@ -417,7 +417,7 @@ func get_radial_range(coords, radial_range=[1, 1], side=null, collision_check=fa
 		for y in range(max(-n, -x - n), min(n, -x + n) + 1): 
 			var z = -x - y 
 			var hex_coords = coords + cube_to_hex(Vector3(x, y, z))
-			if self.locations.has(hex_coords):
+			if hex_coords != coords and self.locations.has(hex_coords):
 				if side==null and !pieces.has(hex_coords):
 					results.append(hex_coords)
 				

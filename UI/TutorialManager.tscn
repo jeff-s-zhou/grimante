@@ -5,8 +5,8 @@
 [ext_resource path="res://Assets/UI/tutorial_arrow.png" type="Texture" id=3]
 [ext_resource path="res://Assets/processed_fonts/tutorial_text_rubik_36_bold.fnt" type="BitmapFont" id=4]
 [ext_resource path="res://Assets/processed_fonts/tutorial_text_rubik_36.fnt" type="BitmapFont" id=5]
-[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=6]
-[ext_resource path="res://Assets/processed_fonts/tutorial_tap_anywhere_rubik_30.fnt" type="BitmapFont" id=7]
+[ext_resource path="res://Assets/processed_fonts/info_overlay_body_rubik_26_italic.fnt" type="BitmapFont" id=6]
+[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=7]
 
 [sub_resource type="StyleBoxFlat" id=1]
 
@@ -86,15 +86,13 @@ size_flags/horizontal = 2
 size_flags/vertical = 2
 margin/left = 30.0
 margin/top = 0.0
-margin/right = 641.0
-margin/bottom = 199.0
+margin/right = 640.0
+margin/bottom = 200.0
 custom_fonts/bold_font = ExtResource( 4 )
 custom_fonts/normal_font = ExtResource( 5 )
 bbcode/enabled = true
 bbcode/bbcode = ""
 visible_characters = -1
-
-[node name="InputHandler" parent="." instance=ExtResource( 6 )]
 
 [node name="TapLabel" type="Label" parent="."]
 
@@ -103,16 +101,19 @@ focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
-margin/left = 1.0
-margin/top = 880.0
-margin/right = 669.0
-margin/bottom = 952.0
-custom_fonts/font = ExtResource( 7 )
-text = "Tap anywhere to continue"
+margin/left = 24.0
+margin/top = 320.0
+margin/right = 634.0
+margin/bottom = 392.0
+custom_fonts/font = ExtResource( 6 )
+custom_colors/font_color = Color( 0.160784, 0.894118, 0.678431, 1 )
+text = "Click anywhere to continue"
 align = 1
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
+
+[node name="InputHandler" parent="." instance=ExtResource( 7 )]
 
 [node name="Timer" type="Timer" parent="."]
 

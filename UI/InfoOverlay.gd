@@ -8,6 +8,10 @@ var description_sequence
 
 signal description_finished
 
+#var continue_text = "\n[color=#29e4ad][i]Click anywhere to continue [%s/%s][/i][/color]"
+var continue_text = "Click anywhere to continue [%s/%s]"
+var count = 0
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
@@ -15,16 +19,20 @@ func _ready():
 	
 func _input(event):
 	if get_node("InputHandler").is_select(event):
-		if self.description_sequence.size() > 0:
+		if self.count < self.description_sequence.size():
 			display_description()
 		else:
+			self.count = 0
 			set_process_input(false)
 			emit_signal("description_finished")
 			hide()
-	
+
+
 func display_description():
-	get_node("Body").set_bbcode(self.description_sequence[0])
-	self.description_sequence.pop_front()
+	var filled_continue_text = continue_text % [str(self.count + 1), str(self.description_sequence.size())]
+	get_node("Body").set_bbcode(self.description_sequence[self.count])
+	get_node("ContinueLabel").set_text(filled_continue_text)
+	self.count += 1
 
 
 func display_enemy_info(hovered_piece):
@@ -78,10 +86,12 @@ func display_player_info(hovered_piece):
 		get_node("Header").set_pos(Vector2(70, 150))
 		get_node("HeroInfoSubOverlay").set_pos(Vector2(70, 210))
 		get_node("Body").set_pos(Vector2(70, 270))
+		get_node("ContinueLabel").set_pos(Vector2(70, 480))
 	else:
 		get_node("Header").set_pos(Vector2(70, get_viewport_rect().size.height  - 500))
 		get_node("HeroInfoSubOverlay").set_pos(Vector2(70, get_viewport_rect().size.height  - 440))
 		get_node("Body").set_pos(Vector2(70, get_viewport_rect().size.height  - 380))
+		get_node("ContinueLabel").set_pos(Vector2(70, get_viewport_rect().size.height - 170))
 		
 	get_node("Header").set_text(title.to_upper())
 	display_description()
