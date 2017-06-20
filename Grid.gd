@@ -236,23 +236,29 @@ func reset_deployable_indicators():
 func deselect():
 	self.selected.deselect()
 	self.selected = null
-	self.reset_highlighting(true)
-	self.reset_prediction()
+	self.clear_display_state(true)
+	get_parent().check_hovered()
 	
+
 #done once a piece is moved by the player	
 #right click flag is so if we know to check immediately after if cursor is still in a piece's area
 #and apparently so we know to clear flyovers...lol
-func reset_highlighting(right_click_flag=false):
+func clear_display_state(right_click_flag=false):
+	print("clearing display state")
 	for location in locations.values():
 		location.reset_highlight()
 	for piece in pieces.values():
-		piece.reset_highlight(right_click_flag)
+		piece.clear_display_state()
+
 
 #called when moved off of a tile while a player unit is selected
 func reset_prediction():
-	if !self.deploying and self.selected != null:
-		for piece in pieces.values():
-			piece.reset_prediction_highlight()
+	if !self.deploying:
+		if self.selected != null:
+			for piece in pieces.values():
+				piece.reset_prediction_highlight()
+		else:
+			clear_display_state()
 
 
 func get_line_range(coords, direction_vector, side=null, magnitude_range=[1, 8]):

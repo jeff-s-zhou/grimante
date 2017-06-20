@@ -332,10 +332,17 @@ func restart():
 	get_node("/root/DataLogger").log_restart(self.level_schematic.name, self.turn_count)
 	get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic})
 
-	
+
+#called to check if a mouse is currently inside the area of a piece
+func check_hovered():
+	var hovered = get_node("CursorArea").get_piece_hovered()
+	if hovered:
+		hovered.hovered()
+
 
 func _input(event):
 	computer_input(event)
+	
 
 func computer_input(event):
 	#select a unit

@@ -65,8 +65,8 @@ func get_unit_name():
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("ClickArea").connect("mouse_enter", self, "hover_highlight")
-	get_node("ClickArea").connect("mouse_exit", self, "hover_unhighlight")
+	get_node("ClickArea").connect("mouse_enter", self, "hovered")
+	get_node("ClickArea").connect("mouse_exit", self, "unhovered")
 	get_node("Physicals/HealthDisplay").set_z(2)
 	add_to_group("enemy_pieces")
 	#self.check_global_seen()
@@ -138,7 +138,7 @@ func input_event(event):
 		self.grid.set_target(self)
 
 
-func hover_highlight():
+func hovered():
 	get_node("Timer").set_wait_time(0.01)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
@@ -149,7 +149,7 @@ func hover_highlight():
 		self.grid.predict(self.coords)
 	
 	
-func hover_unhighlight():
+func unhovered():
 	get_node("Physicals/EnemyOverlays/White").hide()
 	if self.action_highlighted:
 		self.grid.reset_prediction()
@@ -160,22 +160,21 @@ func movement_highlight():
 	get_node("Physicals/EnemyOverlays/Red").show()
 
 #called from self.grid to reset highlighting over the whole board
-func reset_highlight(deselect_flag=false):
+func clear_display_state():
 	self.action_highlighted = false
 	get_node("Physicals/EnemyOverlays/White").hide()
-	
 	get_node("Physicals/EnemyOverlays/Orange").hide()
-	if deselect_flag:
-		reset_prediction_flyover() #it's this one? I don't remember what this broke but we need it lol
-	
 	get_node("Physicals/EnemyOverlays/Red").hide()
+	reset_prediction_flyover()
 
 
 func reset_prediction_highlight():
 	reset_prediction_flyover()
 	get_node("Physicals/EnemyOverlays/Orange").hide()
 	if self.action_highlighted:
-		get_node("Physicals/EnemyOverlays/Red").show()
+		#if you hover a red piece with a indirect attack, it hides the red and shows orange
+		#so we need to reshow the red afterwards
+		get_node("Physicals/EnemyOverlays/Red").show() 
 	
 
 

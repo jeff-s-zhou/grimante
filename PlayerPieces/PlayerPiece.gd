@@ -301,16 +301,12 @@ func assist_highlight():
 
 
 #called when the whole board's highlighting is reset
-func reset_highlight(right_click_flag=false):
+func clear_display_state():
 	get_node("Physicals/OverlayLayers/White").hide()
 	get_node("Physicals/OverlayLayers/Green").hide()
 	if(self.state != States.PLACED):
 		get_node("Physicals/AnimatedSprite").play("default")
-		
-	if right_click_flag and get_node("CollisionArea").overlaps_area(self.cursor_area):
-			self.hovered()
-#	else:
-#		get_node("Physicals/AnimatedSprite").play("cooldown")
+
 
 func reset_prediction_highlight():
 	pass
@@ -332,11 +328,10 @@ func hover_highlight():
 func unhovered():
 	get_node("Physicals/OverlayLayers/White").hide()
 	if get_parent().selected == null:
-		get_parent().reset_highlighting()
-#		
-#	elif get_parent().selected == self:
-#		reset_highlight()
-		
+		print("reached here?")
+		get_parent().clear_display_state()
+
+
 
 #called when hovered over during player turn		
 func hovered():
@@ -389,8 +384,7 @@ func deselect():
 
 func select_action_target(target):
 	#deploy TODO
-	get_parent().reset_highlighting()
-	get_parent().reset_prediction()
+	get_parent().clear_display_state()
 	get_node("BlueGlow").hide()
 	if self.deploying_flag:
 		deploy_select_action_target(target)
@@ -434,20 +428,14 @@ func swap_coords_and_pos(target):
 	target.set_global_pos(get_parent().get_location(target.coords).get_global_pos())
 	
 
-
-
 #helper function for act
 func invalid_move():
-	get_parent().reset_highlighting()
-	get_parent().reset_prediction()
+	get_parent().deselect()
 	get_node("BlueGlow").hide()
 	emit_signal("invalid_move")
-	self.state = States.DEFAULT
-	get_parent().selected = null
+
 
 #helper function for act
-
-
 func placed(ending_turn=false):
 	if ending_turn:
 		clear_assist()

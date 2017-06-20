@@ -36,8 +36,6 @@ shadow/item_mask = 0
 
 [node name="FieldEffects" parent="." instance=ExtResource( 3 )]
 
-visibility/visible = false
-
 [node name="FinalHeroScreen" parent="." instance=ExtResource( 4 )]
 
 transform/pos = Vector2( -47.6644, 188.829 )
