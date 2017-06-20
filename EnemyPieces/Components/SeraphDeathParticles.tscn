@@ -12,6 +12,7 @@ colors = ColorArray( 1, 1, 1, 1, 1, 1, 1, 0 )
 config/amount = 96
 config/lifetime = 1.3
 config/time_scale = 1.5
+config/emitting = false
 config/explosiveness = 0.01
 config/texture = ExtResource( 1 )
 params/direction = 0.0

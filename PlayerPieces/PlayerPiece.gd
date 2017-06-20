@@ -190,7 +190,7 @@ func delete_self():
 
 func animate_delete_self(blocking=true):
 	add_anim_count()
-	get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 1, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	if blocking:

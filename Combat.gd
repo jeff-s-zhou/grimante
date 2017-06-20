@@ -38,7 +38,6 @@ var assassin = null
 func _ready():
 	#TODO move this to level select once we figure out the structure
 	get_node("/root/global").load_state()
-	get_node("/root/DataLogger").load_state()
 	
 	get_node("Timer").set_active(false)
 	# Called every time the node is added to the scene.
@@ -73,7 +72,7 @@ func _ready():
 		if self.tutorial != null:
 			add_child(self.tutorial)
 
-	get_node("/root/DataLogger").log_attempt(self.level_schematic.name)
+	get_node("/root/DataLogger").log_start_attempt(self.level_schematic.name)
 
 	self.enemy_waves = self.level_schematic.enemies
 

@@ -13,7 +13,7 @@ func _ready():
 func get():
 	var tutorial = TutorialPrototype.instance()
 	
-	var text = ["A Piece {cannot be pushed} if there's another Piece behind it."]
+	var text = ["A Piece cannot be pushed if there's {another Piece behind it}."]
 	add_player_start_rule(tutorial, 1, text)
 	
 	var fa_text1 = "Block the Enemies."

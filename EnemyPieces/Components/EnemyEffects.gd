@@ -8,7 +8,7 @@ var descriptions = {
 "Poisonous": "Any Hero attacked by this Enemy is KOed.",
 "Shield": "The first attack on this Enemy is nullified, as well as any applied status effects.",
 "Cloaked": "This Enemy's health and identity is unknown until is it attacked, or a Hero moves adjacent to it.",
-"Rabid": "At the end of the Enemy Turn, if this Enemy is adjacent to a Hero, gain +2 Power.",
+"Predator": "At the end of the Enemy Turn, if this Enemy is adjacent to a Hero, gain +2 Power. Only activates once.",
 "Corrosive": "If this Enemy attacks a Hero and does not kill it, reduce its Armor by 1"
 }
 

@@ -12,19 +12,20 @@ func _ready():
 func get():
 	var tutorial = TutorialPrototype.instance()
 	
-	var text = [" Here, both Heroes have already moved and are {exhausted}.", 
+	var text = ["Here, both Heroes have already moved and are {exhausted}.", 
 	"Observe what happens when the Enemies try to move down.",
 	"Press the End Turn button when you're ready."]
 	add_player_start_rule(tutorial, 1, text)
 	
 	text = ["When an Enemy moves down onto a tile occupied by a Hero, 1 of 2 things occur:", 
 	"1. If the Enemy's Power is {greater than or equal} to the Hero's Armor, the Hero is {killed}.",
-	"2. Otherwise the Hero is {pushed down 1 tile}.",
-	"Note: If the Hero is pushed off the map, it is {killed}."]
+	"2. Otherwise the Hero is pushed down 1 tile.",
+	"Note: The Hero is {killed} if it is pushed off the board."]
 	
 	add_enemy_end_rule(tutorial, 1, text)
 	
-	text = ["The Berserker is killed, but he's not out yet!"]
+	text = ["The Berserker was killed last turn.", 
+	"Since this is a game, however, death is merely an inconvenience."]
 	
 	add_player_start_rule(tutorial, 2, text)
 	
@@ -37,7 +38,7 @@ func get():
 	add_forced_action(tutorial, 2, Vector2(4, 7), fa_text1, Vector2(1, 4), fa_text2, text)
 	
 	text = ["Each Hero can move once per turn.", 
-	"{Right Click} or press {Escape} to {deselect} a Hero."]
+	"Right Click or press Escape to deselect a Hero."]
 	add_player_start_rule(tutorial, 3, text)
 
 	

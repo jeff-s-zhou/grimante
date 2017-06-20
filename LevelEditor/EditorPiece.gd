@@ -101,7 +101,7 @@ func set_modifiers(modifiers):
 			self.set_shield(true)
 		elif modifier == enemy_modifiers["Cloaked"]:
 			self.set_cloaked(true)
-		elif modifier == enemy_modifiers["Rabid"]:
+		elif modifier == enemy_modifiers["Predator"]:
 			self.set_rabid(true)
 		elif modifier == enemy_modifiers["Corrosive"]:
 			self.set_corrosive(true)
@@ -147,11 +147,11 @@ func set_corrosive(flag):
 		
 func set_rabid(flag):
 	if flag:
-		var rabid = enemy_modifiers["Rabid"]
+		var rabid = enemy_modifiers["Predator"]
 		get_node("EnemyEffects/RabidParticles").set_emitting(true)
-		self.modifiers["Rabid"] = rabid
+		self.modifiers["Predator"] = rabid
 	else:
-		self.modifiers.erase("Rabid")
+		self.modifiers.erase("Predator")
 		get_node("EnemyEffects/RabidParticles").set_emitting(false)
 		
 

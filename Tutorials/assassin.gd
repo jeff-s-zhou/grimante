@@ -15,7 +15,7 @@ func get():
 	
 	var fa_text1 = "The Assassin is now at your disposal."
 	var fa_text2 = "The Assassin attacks by Backstabbing."
-	var text = ["The Assassin's Backstab teleports him {1 tile above} the target and deals {2} damage."]
+	var text = ["The Assassin's Backstab teleports him 1 tile above the target and deals {2} damage."]
 	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(3, 5), fa_text2, text)
 	
 	fa_text1 = "The Assassin activates a unique ability when he kills an Enemy."

@@ -26,7 +26,12 @@ func _input(event):
 			set_process_input(false)
 			emit_signal("description_finished")
 			hide()
-
+			
+	elif get_node("InputHandler").is_deselect(event):
+		self.count = 0
+		set_process_input(false)
+		emit_signal("description_finished")
+		hide()
 
 func display_description():
 	var filled_continue_text = continue_text % [str(self.count + 1), str(self.description_sequence.size())]
@@ -49,9 +54,11 @@ func display_enemy_info(hovered_piece):
 	if pos.y > get_viewport_rect().size.height/2:
 		get_node("Header").set_pos(Vector2(70, 150))
 		get_node("Body").set_pos(Vector2(70, 230))
+		get_node("ContinueLabel").set_pos(Vector2(70, 480))
 	else:
 		get_node("Header").set_pos(Vector2(70, get_viewport_rect().size.height  - 500))
 		get_node("Body").set_pos(Vector2(70, get_viewport_rect().size.height  - 420))
+		get_node("ContinueLabel").set_pos(Vector2(70, get_viewport_rect().size.height - 170))
 	
 	get_node("Header").set_text(title.to_upper())
 	if modifier_descriptions.keys() != []:

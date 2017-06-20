@@ -17,7 +17,7 @@ const Spectre = preload("res://EnemyPieces/SpectrePiece.tscn")
 var end_conditions = {"Defend":0, "Escort":1, "Timed":2, "MultiTimed":3}
 
 
-var enemy_modifiers = {"Poisonous":"Poisonous", "Shield":"Shield", "Cloaked":"Cloaked", "Corrosive":"Corrosive", "Rabid":"Rabid"}
+var enemy_modifiers = {"Poisonous":"Poisonous", "Shield":"Shield", "Cloaked":"Cloaked", "Corrosive":"Corrosive", "Predator":"Predator"}
 
 #used in the level editor
 var enemy_roster = {"grunt":Grunt, "fortifier":Fortifier, "grower":Grower, "drummer":Drummer, "melee":Melee, "ranged":Ranged, "slime":Slime, "spectre":Spectre}
@@ -60,7 +60,7 @@ enemy_modifiers["Shield"]: 14,
 enemy_modifiers["Poisonous"]: 18,
 enemy_modifiers["Cloaked"] : 10,
 enemy_modifiers["Corrosive"] : 10,
-enemy_modifiers["Rabid"] : 10
+enemy_modifiers["Predator"] : 10
 }
 
 #used in the generator
@@ -81,7 +81,7 @@ var FULL_MODIFIER_ROSTER = {
 1: enemy_modifiers["Poisonous"],
 2: enemy_modifiers["Cloaked"],
 3: enemy_modifiers["Corrosive"],
-4: enemy_modifiers["Rabid"]
+4: enemy_modifiers["Predator"]
 }
 
 const GRUNT_HEALTH_PROB_DIST = {

@@ -16,7 +16,7 @@ var hp
 var shielded = false
 var deadly = false
 var cloaked = false
-var rabid = false
+var predator = false
 var corrosive = false
 
 var currently_burning = false
@@ -111,8 +111,8 @@ func initialize_modifiers(modifiers):
 			self.set_shield(true)
 		elif modifier == enemy_modifiers["Cloaked"]:
 			self.set_cloaked(true)
-		elif modifier == enemy_modifiers["Rabid"]:
-			self.set_rabid(true)
+		elif modifier == enemy_modifiers["Predator"]:
+			self.set_predator(true)
 		elif modifier == enemy_modifiers["Corrosive"]:
 			self.set_corrosive(true)
 
@@ -126,8 +126,8 @@ func get_modifiers():
 		modifiers["Shield"] = enemy_modifiers["Shield"]
 	if self.cloaked:
 		modifiers["Cloaked"] = enemy_modifiers["Cloaked"]
-	if self.rabid:
-		modifiers["Rabid"] = enemy_modifiers["Rabid"]
+	if self.predator:
+		modifiers["Predator"] = enemy_modifiers["Predator"]
 	if self.corrosive:
 		modifiers["Corrosive"] = enemy_modifiers["Corrosive"]
 	return modifiers
@@ -410,13 +410,13 @@ func animate_set_corrosive(flag):
 	get_node("Physicals/EnemyEffects/CorrosiveParticles").set_emitting(flag)
 
 
-func set_rabid(flag):
-	self.rabid = flag
-	var name = get_node("/root/constants").enemy_modifiers["Rabid"]
+func set_predator(flag):
+	self.predator = flag
+	var name = get_node("/root/constants").enemy_modifiers["Predator"]
 	update_description(flag, name)
-	add_animation(self, "animate_set_rabid", false, [flag])
+	add_animation(self, "animate_set_predator", false, [flag])
 
-func animate_set_rabid(flag):
+func animate_set_predator(flag):
 	get_node("Physicals/EnemyEffects/RabidParticles").set_emitting(flag)
 
 
@@ -467,7 +467,7 @@ func set_silenced(flag):
 		set_shield(false)
 		set_deadly(false)
 		set_cloaked(false)
-		set_rabid(false)
+		set_predator(false)
 		set_corrosive(false)
 		add_animation(self, "animate_silenced", false)
 	else:
@@ -688,8 +688,9 @@ func turn_attack_update():
 	handle_shifting_sands()
 	
 	var adjacent_players_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
-	if adjacent_players_range != [] and self.rabid:
+	if adjacent_players_range != [] and self.predator:
 		heal(2)
+		set_predator(false)
 			
 	
 func handle_rain():

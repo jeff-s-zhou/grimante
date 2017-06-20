@@ -21,7 +21,7 @@ func initialize(modifier):
 		self.set_shield(true)
 	elif modifier == enemy_modifiers["Cloaked"]:
 		self.set_cloaked(true)
-	elif modifier == enemy_modifiers["Rabid"]:
+	elif modifier == enemy_modifiers["Predator"]:
 		self.set_rabid(true)
 	elif modifier == enemy_modifiers["Corrosive"]:
 		self.set_corrosive(true)

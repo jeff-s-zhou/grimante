@@ -10,11 +10,10 @@ const flask_prototype = preload("res://PlayerPieces/Components/PyromancerFlask.t
 var wildfire_damage = DEFAULT_WILDFIRE_DAMAGE setget , get_wildfire_damage
 
 
-const ATTACK_DESCRIPTION = ["""Fire Bomb. Lob a bomb at any enemy unit within 2 range, inflicting it with Wildfire.
-"""]
+const ATTACK_DESCRIPTION = []
 
-const PASSIVE_DESCRIPTION = ["""Wildfire. An enemy inflicted with Wildfire is dealt 2 damage immediately, and 1 damage at the start of every Player Turn. 
-"""]
+const PASSIVE_DESCRIPTION = ["Fire Bomb. Toss a bomb in the direction moved, inflicting the first enemy hit with Wildfire. Wildfire spreads to a single adjacent enemy at random, and will continue to spread up to 4 times.",
+"An enemy inflicted with Wildfire is dealt 2 damage immediately, and 1 damage at the start of every Player Turn."]
 
 var pathed_range
 

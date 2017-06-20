@@ -30,7 +30,7 @@ var enemy_modifiers = load("res://constants.gd").new().enemy_modifiers
 var shield = enemy_modifiers["Shield"]
 var poisonous = enemy_modifiers["Poisonous"]
 var cloaked = enemy_modifiers["Cloaked"]
-var rabid = enemy_modifiers["Rabid"]
+var rabid = enemy_modifiers["Predator"]
 var corrosive = enemy_modifiers["Corrosive"]
 
 #var available_unit_roster = get_node("/root/global").available_unit_roster
@@ -83,11 +83,11 @@ func get_levels():
 
 
 func sandbox_allies():
-	return {Vector2(2, 2): Assassin, 4: Archer}
+	return {2: Assassin, 4: Archer}
 	
 func sandbox_enemies():
-	var enemies = {0:{ Vector2(3, 2): make(Grunt, 9), Vector2(3, 4): make(Grunt, 2)}}
-	#var enemies = load_level("frost_knight.level")
+	#var enemies = {0:{ Vector2(3, 2): make(Grunt, 9), Vector2(3, 4): make(Grunt, 2)}}
+	var enemies = load_level("howl2.level")
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
 func sandbox_extras():
@@ -385,7 +385,7 @@ func howl():
 
 func howl2():
 	var allies = {1: Assassin, 2: Corsair, 4: Pyromancer, 5: FrostKnight}
-	var raw_enemies = load_level("howl.level")
+	var raw_enemies = load_level("howl2.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	return LevelTypes.Timed.new("Howl 2", allies, enemies, 7, null)
 
@@ -406,7 +406,7 @@ func corrosion():
 	var allies = {1: Berserker, 2: Archer, 4: Cavalier, 5: Saint}
 	var raw_enemies = load_level("corrosion.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	return LevelTypes.Timed.new("Howl 2", allies, enemies, 7, null)
+	return LevelTypes.Timed.new("Corrosion", allies, enemies, 7, null)
 
 
 func shifting_sands():
