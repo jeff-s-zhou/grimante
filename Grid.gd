@@ -33,8 +33,6 @@ const _LOCATION_Y_OFFSETS = [0, 0, 1, 1, 2, 2, 3]
 
 var selected = null
 
-var furthest_back_coords = Vector2(0, 0) #initialized to this because it's at the top of the map
-
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
@@ -108,9 +106,11 @@ func initialize_shadow_tiles(shadow_tile_range):
 		
 func initialize_shifting_sands(shifting_sands):
 	self.shifting_sands = shifting_sands
+	var i = 6 #the initial value we use for setting the light mask
 	for coords in shifting_sands:
 		#self.locations[coords].set_shifting_sands(3)
-		self.locations[coords].set_shifting_sands(self.shifting_sands[coords])
+		self.locations[coords].set_shifting_sands(self.shifting_sands[coords], i)
+		i+=1
 		
 func handle_sand_shifts(new_coords):
 	if new_coords in self.shifting_sands:
@@ -122,22 +122,6 @@ func handle_sand_shifts(new_coords):
 func debug():
 	for key in self.locations.keys():
 		self.locations[key].debug()
-
-
-func is_offsides(coords):
-	var furthest_back_player_piece_pos = self.locations[self.furthest_back_coords].get_pos()
-	var summoned_pos = self.locations[coords].get_pos()
-	return summoned_pos.y > furthest_back_player_piece_pos.y
-
-func update_furthest_back_coords():
-	self.furthest_back_coords = Vector2(0, 0) #reset to furthest up
-	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
-		if player_piece.coords != null:
-			var new_pos = self.locations[player_piece.coords].get_pos()
-			var old_pos = self.locations[self.furthest_back_coords].get_pos()
-			if new_pos.y > old_pos.y:
-				self.furthest_back_coords = player_piece.coords
-
 
 #so we know what target
 func set_target(target):
@@ -244,7 +228,6 @@ func deselect():
 #right click flag is so if we know to check immediately after if cursor is still in a piece's area
 #and apparently so we know to clear flyovers...lol
 func clear_display_state(right_click_flag=false):
-	print("clearing display state")
 	for location in locations.values():
 		location.reset_highlight()
 	for piece in pieces.values():

@@ -1,28 +1,29 @@
-[gd_scene load_steps=29 format=1]
+[gd_scene load_steps=31 format=1]
 
 [ext_resource path="res://Location.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/location.png" type="Texture" id=2]
-[ext_resource path="res://Assets/UI/location_red.png" type="Texture" id=3]
-[ext_resource path="res://Assets/UI/location_blue.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/location_blue.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/location_red.png" type="Texture" id=4]
 [ext_resource path="res://Objects/ShiftingSands.tscn" type="PackedScene" id=5]
-[ext_resource path="res://Effects/StormEffect.tscn" type="PackedScene" id=6]
-[ext_resource path="res://Assets/processed_fonts/enemy_health.fnt" type="BitmapFont" id=7]
-[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=8]
-[ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=9]
-[ext_resource path="res://Assets/UI/tile_deployable_indicator.png" type="Texture" id=10]
-[ext_resource path="res://Assets/Objects/wall_behind.png" type="Texture" id=11]
-[ext_resource path="res://Assets/Objects/wall_front.png" type="Texture" id=12]
-[ext_resource path="res://UI/ReinforcementIndicator.tscn" type="PackedScene" id=13]
-[ext_resource path="res://Assets/Allies/saint_corpse.png" type="Texture" id=14]
-[ext_resource path="res://Assets/Allies/crusader_corpse.png" type="Texture" id=15]
-[ext_resource path="res://Assets/Allies/corsair_corpse.png" type="Texture" id=16]
-[ext_resource path="res://Assets/Allies/berserker_corpse.png" type="Texture" id=17]
-[ext_resource path="res://Assets/Allies/pyromancer_corpse.png" type="Texture" id=18]
-[ext_resource path="res://Assets/Allies/assassin_corpse.png" type="Texture" id=19]
-[ext_resource path="res://Assets/Allies/archer_corpse.png" type="Texture" id=20]
-[ext_resource path="res://Assets/Allies/cavalier_corpse.png" type="Texture" id=21]
-[ext_resource path="res://Assets/Allies/stormdancer_corpse.png" type="Texture" id=22]
-[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=23]
+[ext_resource path="res://Assets/UI/location_orange.png" type="Texture" id=6]
+[ext_resource path="res://Effects/StormEffect.tscn" type="PackedScene" id=7]
+[ext_resource path="res://Assets/processed_fonts/enemy_health.fnt" type="BitmapFont" id=8]
+[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=9]
+[ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=10]
+[ext_resource path="res://Assets/UI/tile_deployable_indicator.png" type="Texture" id=11]
+[ext_resource path="res://Assets/Objects/wall_behind.png" type="Texture" id=12]
+[ext_resource path="res://Assets/Objects/wall_front.png" type="Texture" id=13]
+[ext_resource path="res://UI/ReinforcementIndicator.tscn" type="PackedScene" id=14]
+[ext_resource path="res://Assets/Allies/archer_corpse.png" type="Texture" id=15]
+[ext_resource path="res://Assets/Allies/cavalier_corpse.png" type="Texture" id=16]
+[ext_resource path="res://Assets/Allies/stormdancer_corpse.png" type="Texture" id=17]
+[ext_resource path="res://Assets/Allies/saint_corpse.png" type="Texture" id=18]
+[ext_resource path="res://Assets/Allies/corsair_corpse.png" type="Texture" id=19]
+[ext_resource path="res://Assets/Allies/pyromancer_corpse.png" type="Texture" id=20]
+[ext_resource path="res://Assets/Allies/assassin_corpse.png" type="Texture" id=21]
+[ext_resource path="res://Assets/Allies/crusader_corpse.png" type="Texture" id=22]
+[ext_resource path="res://Assets/Allies/berserker_corpse.png" type="Texture" id=23]
+[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=24]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 
@@ -31,20 +32,109 @@ points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
 
 [sub_resource type="SpriteFrames" id=2]
 
-animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"attack_hover", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"movement_hover", "speed":5.0 } ]
+animations = [ {
+"frames": [ ExtResource( 2 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 3 ) ],
+"loop": true,
+"name": "movement_hover",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "attack_hover",
+"speed": 5.0
+} ]
+
+[sub_resource type="SpriteFrames" id=6]
+
+animations = [ {
+"frames": [ ExtResource( 6 ) ],
+"loop": true,
+"name": "indirect",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 3 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+} ]
 
 [sub_resource type="SampleLibrary" id=3]
 
-samples/tile_hover = { "db":0.0, "pitch":0.5, "sample":ExtResource( 8 ) }
+samples/tile_hover = {
+"db": 0.0,
+"pitch": 0.5,
+"priority": 0,
+"sample": ExtResource( 9 )
+}
 
 [sub_resource type="SampleLibrary" id=4]
 
-samples/mouseover = { "db":0.0, "pitch":1.0, "sample":ExtResource( 9 ) }
-samples/tile_hover = { "db":-20.0, "pitch":0.9, "sample":ExtResource( 8 ) }
+samples/mouseover = {
+"db": 0.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 10 )
+}
+samples/tile_hover = {
+"db": -20.0,
+"pitch": 0.9,
+"priority": 0,
+"sample": ExtResource( 9 )
+}
 
 [sub_resource type="SpriteFrames" id=5]
 
-animations = [ { "frames":[ ExtResource( 14 ) ], "loop":true, "name":"saint", "speed":5.0 }, { "frames":[ ExtResource( 15 ) ], "loop":true, "name":"crusader", "speed":5.0 }, { "frames":[ ExtResource( 16 ) ], "loop":true, "name":"corsair", "speed":5.0 }, { "frames":[ ExtResource( 17 ) ], "loop":true, "name":"berserker", "speed":5.0 }, { "frames":[ ExtResource( 18 ) ], "loop":true, "name":"pyromancer", "speed":5.0 }, { "frames":[ ExtResource( 19 ) ], "loop":true, "name":"assassin", "speed":5.0 }, { "frames":[ ExtResource( 20 ) ], "loop":true, "name":"archer", "speed":5.0 }, { "frames":[ ExtResource( 21 ) ], "loop":true, "name":"cavalier", "speed":5.0 }, { "frames":[ ExtResource( 22 ) ], "loop":true, "name":"stormdancer", "speed":5.0 } ]
+animations = [ {
+"frames": [ ExtResource( 15 ) ],
+"loop": true,
+"name": "archer",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 16 ) ],
+"loop": true,
+"name": "cavalier",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 17 ) ],
+"loop": true,
+"name": "stormdancer",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 18 ) ],
+"loop": true,
+"name": "saint",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 19 ) ],
+"loop": true,
+"name": "corsair",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 20 ) ],
+"loop": true,
+"name": "pyromancer",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 21 ) ],
+"loop": true,
+"name": "assassin",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 22 ) ],
+"loop": true,
+"name": "crusader",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 23 ) ],
+"loop": true,
+"name": "berserker",
+"speed": 5.0
+} ]
 
 [node name="Location" type="Area2D"]
 
@@ -80,13 +170,14 @@ animation = "default"
 visibility/visible = false
 transform/rot = -180.0
 
-[node name="HighlightSprite" type="Sprite" parent="."]
+[node name="HighlightSprite" type="AnimatedSprite" parent="."]
 
 visibility/visible = false
 visibility/opacity = 0.5
-texture = ExtResource( 4 )
+frames = SubResource( 6 )
+animation = "default"
 
-[node name="StormEffect" parent="." instance=ExtResource( 6 )]
+[node name="StormEffect" parent="." instance=ExtResource( 7 )]
 
 [node name="Label" type="Label" parent="."]
 
@@ -98,7 +189,7 @@ margin/left = -19.0
 margin/top = -11.0
 margin/right = 33.0
 margin/bottom = 13.0
-custom_fonts/font = ExtResource( 7 )
+custom_fonts/font = ExtResource( 8 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 percent_visible = 1.0
 lines_skipped = 0
@@ -149,7 +240,7 @@ default/chorus_send = 0.0
 [node name="DeployableIndicator" type="Sprite" parent="."]
 
 visibility/visible = false
-texture = ExtResource( 10 )
+texture = ExtResource( 11 )
 
 [node name="WallBack" type="Sprite" parent="."]
 
@@ -158,7 +249,7 @@ transform/pos = Vector2( 0, -32 )
 transform/scale = Vector2( 0.9, 0.9 )
 z/z = -9
 z/relative = false
-texture = ExtResource( 11 )
+texture = ExtResource( 12 )
 
 [node name="WallFront" type="Sprite" parent="."]
 
@@ -167,9 +258,9 @@ transform/pos = Vector2( 0, 17 )
 transform/scale = Vector2( 0.9, 0.9 )
 z/z = 4
 z/relative = false
-texture = ExtResource( 12 )
+texture = ExtResource( 13 )
 
-[node name="ReinforcementIndicator" parent="." instance=ExtResource( 13 )]
+[node name="ReinforcementIndicator" parent="." instance=ExtResource( 14 )]
 
 visibility/visible = false
 transform/pos = Vector2( 0, 1 )
@@ -180,6 +271,6 @@ visibility/visible = false
 frames = SubResource( 5 )
 animation = "berserker"
 
-[node name="InputHandler" parent="." instance=ExtResource( 23 )]
+[node name="InputHandler" parent="." instance=ExtResource( 24 )]
 
 

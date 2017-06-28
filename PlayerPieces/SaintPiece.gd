@@ -1,7 +1,7 @@
 extends "PlayerPiece.gd"
 
 const DEFAULT_MOVEMENT_VALUE = 1
-const DEFAULT_ARMOR_VALUE = 1
+const DEFAULT_ARMOR_VALUE = 0
 const UNIT_TYPE = "Saint"
 
 var pathed_range
@@ -10,19 +10,11 @@ var alter_ego
 
 const CrusaderPrototype = preload("res://PlayerPieces/CrusaderPiece.tscn")
 
-
-const ATTACK_DESCRIPTION = []
-
-const PASSIVE_DESCRIPTION = ["Purify. When the Saint moves to a tile, Silence all adjacent enemy units, disabling all special effects.",
-"Quest. If the Saint reaches the top of the map, transforms into the Crusader."]
-
-
 func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.attack_description = ATTACK_DESCRIPTION
-	self.passive_description = PASSIVE_DESCRIPTION
+	load_description(self.unit_name)
 	self.assist_type = ASSIST_TYPES.defense
 	
 func handle_assist():
@@ -41,12 +33,22 @@ func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
 
 
+func highlight_indirect_range(movement_range):
+	var indirect_range = []
+	var enemies = get_tree().get_nodes_in_group("enemy_pieces")
+	for enemy in enemies:
+		var adjacent_range = get_parent().get_radial_range(enemy.coords, [1, 1])
+		for coords in adjacent_range:
+			if coords in movement_range:
+				get_parent().locations[coords].indirect_highlight()
+
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
 	var action_range = get_movement_range()
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
 	.display_action_range()
+	highlight_indirect_range(action_range)
 
 	
 func _is_within_movement_range(new_coords):

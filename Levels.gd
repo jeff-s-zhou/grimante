@@ -74,7 +74,7 @@ var list = [berserker_part1(), berserker_part2(), cavalier(), dead_or_alive(), r
 archer(), offsides(), tick_tock(), flying_solo(), assassin(), deploy(), mutation(),
 rising_tides(), inspire(), swamp(), stormdancer(), double_time(), defuse_the_bomb(),
 spoopy_ghosts(), pyromancer(), minesweeper(), star_power(), corsair(), frost_knight(),
-howl(), howl2(), saint(), corrosion()]
+howl(), howl2(), saint(), corrosion(), shifting_sands(), shifting_sands2()]
 
 func get_levels():
 	for i in range(0, list.size() - 1):
@@ -83,11 +83,11 @@ func get_levels():
 
 
 func sandbox_allies():
-	return {2: Assassin, 4: Archer}
+	return {3: Saint}
 	
 func sandbox_enemies():
-	#var enemies = {0:{ Vector2(3, 2): make(Grunt, 9), Vector2(3, 4): make(Grunt, 2)}}
-	var enemies = load_level("howl2.level")
+	var enemies = {0:{Vector2(2, 6): make(Grunt, 3)}}
+	#var enemies = load_level("howl2.level")
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
 func sandbox_extras():
@@ -333,7 +333,7 @@ func pyromancer():
 
 
 func minesweeper():
-	var allies = {1: Archer, 2: Cavalier, 4: Stormdancer, 5: Assassin}
+	var allies = {1: Pyromancer, 2: Cavalier, 4: Stormdancer, 5: Assassin}
 	var raw_enemies = load_level("minesweeper.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var tutorial = load("res://Tutorials/minesweeper.gd").new()
@@ -384,7 +384,7 @@ func howl():
 
 
 func howl2():
-	var allies = {1: Assassin, 2: Corsair, 4: Pyromancer, 5: FrostKnight}
+	var allies = {1: Assassin, 2: Archer, 4: Corsair, 5: FrostKnight}
 	var raw_enemies = load_level("howl2.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	return LevelTypes.Timed.new("Howl 2", allies, enemies, 7, null)

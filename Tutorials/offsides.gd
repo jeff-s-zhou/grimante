@@ -22,14 +22,14 @@ func get():
 	
 	add_forced_action(tutorial, 1, Vector2(2, 6), fa_text1, Vector2(3, 6), fa_text1)
 	
-	text = ["The Archer behind the Cavalier blocks the Enemy from advancing.", 
-	"Be careful however, as powerful enemies can still kill weaker Heroes."]
+	text = ["Placing the Archer behind the Cavalier blocks the Enemies from advancing.", 
+	"Be careful however, as powerful Enemies can still kill weaker Heroes."]
 	add_enemy_end_rule(tutorial, 1, text)
 	
-	text = ["If an Enemy reinforcement is behind {all} Heroes, the reinforcement is {blocked}."]
+	text = ["If an Enemy reinforcement is behind {all} Heroes, the reinforcement is {stopped}."]
 	add_player_start_rule(tutorial, 2, text)
 	
-	fa_text1 = "Move your units up to block the reinforcements."
+	fa_text1 = "Move your units up to stop reinforcements."
 	
 	add_forced_action(tutorial, 2, Vector2(3, 6), fa_text1, Vector2(3, 1), fa_text1)
 	

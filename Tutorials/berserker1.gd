@@ -26,13 +26,13 @@ func get():
 
 	text = ["The Berserker's Direct Attack deals {4} damage to an enemy's Power.", \
 	"If an enemy's Power reaches {0}, it is killed."]
-	fa_text1 = "Select the Berserker"
+	fa_text1 = "Select the Berserker."
 	fa_text2 = "Select the Enemy to attack it."
 	add_forced_action(tutorial, 2, Vector2(3, 5), fa_text1, Vector2(3, 3), fa_text2, text)
 	
 	text = ["When the Berserker kills an enemy, he moves to its tile. "]
-	fa_text1 = "Kill the Enemy"
-	fa_text2 = ""
+	fa_text1 = "Kill the Enemy with the Berserker."
+	fa_text2 = "Get on with it."
 	add_forced_action(tutorial, 3, Vector2(3, 5), fa_text1, Vector2(3, 4), fa_text2, text)
 	
 	text = ["Clear the board of remaining enemies to win. "]

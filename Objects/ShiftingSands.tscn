@@ -30,13 +30,13 @@ script/script = ExtResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
 
-visibility/light_mask = 4
-transform/pos = Vector2( 0, -33.3461 )
+visibility/light_mask = 0
+transform/pos = Vector2( 0, 51.6066 )
 texture = ExtResource( 2 )
 
 [node name="Sprite 2" type="Sprite" parent="."]
 
-visibility/light_mask = 4
+visibility/light_mask = 0
 transform/pos = Vector2( 0, -156 )
 texture = ExtResource( 2 )
 
@@ -54,8 +54,8 @@ range/height = 0.0
 range/z_min = -1024
 range/z_max = 1024
 range/layer_min = 0
-range/layer_max = 0
-range/item_mask = 4
+range/layer_max = 1
+range/item_mask = 0
 shadow/enabled = false
 shadow/color = Color( 0, 0, 0, 0 )
 shadow/buffer_size = 2048

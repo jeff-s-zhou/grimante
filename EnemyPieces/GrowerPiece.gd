@@ -4,10 +4,10 @@ extends "EnemyPiece.gd"
 # var a=2
 # var b="textvar"
 
-var DESCRIPTION = "This enemy gains +1 hp each turn."
+var DESCRIPTION = "Gains +1 Power at the start of every Enemy Turn."
 
 func initialize(max_hp, modifiers, prototype):
-	.initialize("Absorber", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype)
+	.initialize("Writher", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype)
 #	
 
 func turn_update():

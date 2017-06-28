@@ -29,7 +29,7 @@ func get():
 	add_forced_action(tutorial, 3, Vector2(3, 7), fa_text1, Vector2(1, 3), fa_text1)
 	
 	fa_text1 = "The Archer doesn't just have to sit still."
-	text = ["When the Archer moves, her Indirect Attack causes her to automatically fire a Piercing Arrow up."]
+	text = ["When the Archer moves, her Indirect Attack causes her to automatically fire a Piercing Arrow upwards."]
 	add_forced_action(tutorial, 4, Vector2(3, 7), fa_text1, Vector2(4, 7), fa_text1, text)
 	
 	text = ["The Archer's shots are {blocked} by other Heroes.", 

@@ -81,11 +81,14 @@ func set_shadow_wall(flag):
 		get_node("WallBack").hide()
 
 
-func set_shifting_sands(direction):
-	self.shifting_direction = direction
-	get_node("ShiftingSands").set_shifting_direction(direction)
-	get_node("ShiftingSands").show()
-	get_node("Sprite").hide()
+func set_shifting_sands(direction, mask_index):
+	#not sure if we can exceed 12 bits for the mask
+	if mask_index < 12:
+		self.shifting_direction = direction
+		get_node("ShiftingSands").set_shifting_direction(direction)
+		get_node("ShiftingSands").set_mask_index(mask_index)
+		get_node("ShiftingSands").show()
+		get_node("Sprite").hide()
 	
 func rotate_shifting():
 	if self.shifting_direction != null:
@@ -106,8 +109,12 @@ func movement_highlight():
 func attack_highlight():
 	get_node("HighlightSprite").show()
 	
+func indirect_highlight():
+	get_node("HighlightSprite").play("indirect")
+	
 func reset_highlight():
 	get_node("HighlightSprite").hide()
+	get_node("HighlightSprite").play("default")
 	if shifting_direction != null:
 		get_node("ShiftingSands").reset_highlight()
 	else:

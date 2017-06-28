@@ -11,7 +11,7 @@ var animation_state = ANIMATION_STATES.default
 const DEFAULT_SHOOT_DAMAGE = 3
 const DEFAULT_PASSIVE_DAMAGE = 3
 const DEFAULT_MOVEMENT_VALUE = 1
-const DEFAULT_ARMOR_VALUE = 2
+const DEFAULT_ARMOR_VALUE = 1
 
 var shoot_damage = DEFAULT_SHOOT_DAMAGE setget , get_shoot_damage
 var passive_damage = DEFAULT_PASSIVE_DAMAGE setget , get_passive_damage
@@ -25,21 +25,14 @@ signal animation_finished
 
 const UNIT_TYPE = "Archer"
 
-const ATTACK_DESCRIPTION = ["""Piercing Arrow. Fire an arrow down a line. Deal 3 damage to the first enemy hit. If the arrow kills, it continues along the line, dealing 1 less damage to successive enemies. The arrow is blocked by Heroes.
-"""]
-const PASSIVE_DESCRIPTION = ["""Running Fire. When moving to an empty tile, attempt to fire a Piercing Arrow down the column of your new position.
-"""]
-
 
 func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.attack_description = ATTACK_DESCRIPTION
-	self.passive_description = PASSIVE_DESCRIPTION
+	load_description(UNIT_TYPE)
 	self.assist_type = ASSIST_TYPES.movement
 	
-
 	
 func get_shoot_damage():
 	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_SHOOT_DAMAGE
@@ -55,6 +48,7 @@ func get_attack_range():
 
 func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
+
 	
 func get_step_shot_coords(coords):
 	var step_shot_range = get_parent().get_range(coords, [1, 11], "ENEMY", true, [0, 1])
@@ -62,15 +56,22 @@ func get_step_shot_coords(coords):
 		return step_shot_range[0]
 	else:
 		return null
+		
+
+func highlight_indirect_range(movement_range):
+	for coords in movement_range:
+		if get_step_shot_coords(coords) != null:
+			get_parent().locations[coords].indirect_highlight()
 
 
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
-	var action_range = get_attack_range() + get_movement_range()
+	var movement_range = get_movement_range()
+	var action_range = get_attack_range() + movement_range
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
-	
 	.display_action_range()
+	highlight_indirect_range(movement_range)
 		
 func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()

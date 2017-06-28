@@ -112,9 +112,6 @@ func _ready():
 			if !prototype in self.level_schematic.allies.values():
 				initialize_piece(prototype, true)
 	
-	
-	get_node("Grid").update_furthest_back_coords()
-	
 	deploy_wave(true)
 	
 	set_process(true)
@@ -274,18 +271,18 @@ func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon, anim
 			occupant.block_summon()
 		elif occupant.side == "ENEMY":
 			occupant.summon_buff(health, modifiers)
-	elif !get_node("Grid").is_offsides(position):
-		var enemy_piece = prototype.instance()
-		get_node("Grid").add_piece(position, enemy_piece)
-		enemy_piece.initialize(health, modifiers, prototype)
-		enemy_piece.connect("broke_defenses", self, "damage_defenses")
-		enemy_piece.connect("enemy_death", self.state_manager.get_node("StarSubsystem"), "add_kill_count")
-		#enemy_piece.get_node("Sprinkles").set_particle_endpoint(get_node("ComboSystem/ComboPointsLabel").get_global_pos())
-		enemy_piece.check_global_seen()
-		if animation_sequence != null:
-			animation_sequence.add(enemy_piece, "animate_summon", false)
-		else:
-			enemy_piece.add_animation(enemy_piece, "animate_summon", false)
+			
+	var enemy_piece = prototype.instance()
+	get_node("Grid").add_piece(position, enemy_piece)
+	enemy_piece.initialize(health, modifiers, prototype)
+	enemy_piece.connect("broke_defenses", self, "damage_defenses")
+	enemy_piece.connect("enemy_death", self.state_manager.get_node("StarSubsystem"), "add_kill_count")
+	#enemy_piece.get_node("Sprinkles").set_particle_endpoint(get_node("ComboSystem/ComboPointsLabel").get_global_pos())
+	enemy_piece.check_global_seen()
+	if animation_sequence != null:
+		animation_sequence.add(enemy_piece, "animate_summon", false)
+	else:
+		enemy_piece.add_animation(enemy_piece, "animate_summon", false)
 			
 
 func end_turn():
@@ -459,8 +456,7 @@ func enemy_phase():
 	enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
 	for enemy_piece in enemy_pieces:
 		enemy_piece.turn_attack_update()
-		
-	get_node("Grid").update_furthest_back_coords()
+
 	
 	#if there are enemy pieces, wait for them to finish
 	if(get_node("/root/AnimationQueue").is_animating()):

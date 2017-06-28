@@ -2,7 +2,7 @@ extends "PlayerPiece.gd"
 
 const DEFAULT_SLASH_DAMAGE = 3
 const DEFAULT_MOVEMENT_VALUE = 2
-const DEFAULT_ARMOR_VALUE = 4
+const DEFAULT_ARMOR_VALUE = 3
 const UNIT_TYPE = "Corsair"
 
 var moves_remaining = 2
@@ -11,19 +11,11 @@ var pathed_range
 
 var slash_damage = DEFAULT_SLASH_DAMAGE setget , get_slash_damage
 
-const ATTACK_DESCRIPTION = ["Slash. Deal 3 damage to an adjacent enemy.",
-" Captain’s Hook. Target an enemy within 2 range and pull it adjacent to you, then Slash it."
-]
-
-const PASSIVE_DESCRIPTION = ["Double Time.  The Corsair can act twice in a single turn."]
-
-
 func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.attack_description = ATTACK_DESCRIPTION
-	self.passive_description = PASSIVE_DESCRIPTION
+	load_description(self.unit_name)
 	self.assist_type = ASSIST_TYPES.movement
 
 

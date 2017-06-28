@@ -6,7 +6,7 @@ extends "EnemyPiece.gd"
 # var b="textvar"
 
 var max_hp = 5
-var DESCRIPTION = "Before moving, shoots a Blue Fireball forward. The Blue Fireball ignores Enemies and hits the first Hero in the column, reducing its Armor by 1. If a Hero's Armor reaches 0, it is KOed."
+var DESCRIPTION = "Before moving, shoots a Blue Fireball forward. The Blue Fireball ignores Enemies and hits the first Hero in the column, reducing its Armor by 1."
 
 const fireball_prototype = preload("res://EnemyPieces/Components/DragonFireball.tscn")
 

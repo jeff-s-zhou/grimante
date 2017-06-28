@@ -1,25 +1,18 @@
 extends "PlayerPiece.gd"
 
 const DEFAULT_MOVEMENT_VALUE = 2
-const DEFAULT_ARMOR_VALUE = 1
+const DEFAULT_ARMOR_VALUE = 0
 const UNIT_TYPE = "Crusader"
 
 const BASE_HOLY_BLADE_DAMAGE = 3
 
 var alter_ego
 
-
-const ATTACK_DESCRIPTION = ["Holy Blade. Teleport in front of any Enemy within movement range. Silence the Enemy and deal 3 + 1 damage to it for every Hero behind the Crusader."]
-
-const PASSIVE_DESCRIPTION = ["Quest. If the Crusader reaches the bottom of the map, silence all adjacent enemies and transform into the Saint."]
-
-
 func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.attack_description = ATTACK_DESCRIPTION
-	self.passive_description = PASSIVE_DESCRIPTION
+	load_description(self.unit_name)
 	self.assist_type = ASSIST_TYPES.defense
 	
 

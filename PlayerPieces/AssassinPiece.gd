@@ -8,12 +8,6 @@ const DEFAULT_MOVEMENT_VALUE = 2
 const DEFAULT_ARMOR_VALUE = 3
 const UNIT_TYPE = "Assassin"
 
-const ATTACK_DESCRIPTION = ["""Backstab. 2 range. Teleport behind an enemy and deal 2 damage. Deals 4 damage instead if the enemy has no other enemies adjacent to it. Will fail if there is a unit behind the enemy. 
-"""]
-
-const PASSIVE_DESCRIPTION = ["Opportunity Strikes. If an adjacent enemy is attacked, the Assassin attacks it for 1 damage. Will trigger Bloodlust if the Assassin is already exhausted. Does not cancel Stun.",
-"Bloodlust. If the Assassin kills a unit, it may act again. May only activate once per turn."]
-
 const BEHIND = Vector2(0, -1)
 
 var backstab_damage = DEFAULT_BACKSTAB_DAMAGE setget , get_backstab_damage
@@ -27,8 +21,7 @@ func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.attack_description = ATTACK_DESCRIPTION
-	self.passive_description = PASSIVE_DESCRIPTION
+	load_description(self.unit_name)
 	self.assist_type = ASSIST_TYPES.attack
 
 func delete_self():

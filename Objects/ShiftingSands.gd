@@ -10,6 +10,13 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	pass
+
+#needed because otherwise the light2d masks interfere with each other
+func set_mask_index(index):
+	var bit_value = round(pow(2, index))
+	get_node("Sprite").set_light_mask(bit_value)
+	get_node("Sprite 2").set_light_mask(bit_value)
+	get_node("Light2D").set_item_mask(bit_value)
 	
 func set_shifting_direction(direction):
 	self.set_rotd(180 + (direction * -60))

@@ -3,17 +3,10 @@ extends "PlayerPiece.gd"
 
 const UNIT_TYPE = "Stormdancer"
 
-const ATTACK_DESCRIPTION = ["""Tango. Swap positions with any unit.
-"""]
-
-const PASSIVE_DESCRIPTION = ["""Rain Dance. Moving to a tile summons a Storm on the tile. Storm tiles will cast Lightning to deal 2 damage to any enemy that moves to that tile.
-"""]
-
-
 const DEFAULT_BOLT_DAMAGE = 3
 const DEFAULT_STORM_DAMAGE = 5
 const DEFAULT_MOVEMENT_VALUE = 2
-const DEFAULT_ARMOR_VALUE = 3
+const DEFAULT_ARMOR_VALUE = 2
 
 var bolt_damage = DEFAULT_BOLT_DAMAGE setget ,get_bolt_damage
 var storm_damage = DEFAULT_STORM_DAMAGE setget ,get_storm_damage
@@ -25,8 +18,7 @@ func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.attack_description = ATTACK_DESCRIPTION
-	self.passive_description = PASSIVE_DESCRIPTION
+	load_description(self.unit_name)
 	self.assist_type = ASSIST_TYPES.defense
 
 
@@ -36,11 +28,6 @@ func handle_assist():
 		self.assist_flag = false
 	self.AssistSystem.activate_assist(self.assist_type, self)
 	
-
-func deploy():
-	get_parent().locations[self.coords].set_rain(true)
-	self.rain_coords_dict[self.coords] = true
-	.deploy()
 
 func get_bolt_damage():
 	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_BOLT_DAMAGE
@@ -91,8 +78,8 @@ func act(new_coords):
 	elif _is_within_movement_range(new_coords):
 		handle_pre_assisted()
 		add_animation(self, "animate_shunpo", true, [new_coords])
-		get_parent().locations[new_coords].set_rain(true)
-		self.rain_coords_dict[new_coords] = true
+		get_parent().locations[self.coords].set_rain(true)
+		self.rain_coords_dict[self.coords] = true
 		set_coords(new_coords)
 		placed()
 	else:
@@ -106,8 +93,8 @@ func lightning_attack(attack_coords):
 func tango(new_coords):
 	add_animation(self, "animate_shunpo", true, [new_coords])
 	var target = self.grid.pieces[new_coords]
-	get_parent().locations[new_coords].set_rain(true)
-	self.rain_coords_dict[new_coords] = true
+	get_parent().locations[self.coords].set_rain(true)
+	self.rain_coords_dict[self.coords] = true
 	swap_coords_and_pos(target)
 	if target.side == "ENEMY":
 		target.handle_rain()

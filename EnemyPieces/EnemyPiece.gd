@@ -186,49 +186,33 @@ func attack_highlight():
 func will_die_to(damage):
 	return (self.hp - damage) <= 0 and self.shielded == false
 
-#does the same thing as below, doesn't reset the health
-#needed in animate_set_hp so we can clear previous hero's prediction flyover
-#but don't mess up the set hp from delayed animations like seraph or opportunity strikes
-func reset_just_prediction_flyover():
-	self.predicting_hp = false
-	if self.prediction_flyover != null:
-		self.prediction_flyover.queue_free()
-		self.prediction_flyover = null
 
-func deselect_reset():
-	get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
-	get_node("Physicals/HealthDisplay").set_health(self.temp_display_hp)
-	
-	self.predicting_hp = false
-	if self.prediction_flyover != null:
-		self.prediction_flyover.queue_free()
-		self.prediction_flyover = null
-	
 func reset_prediction_flyover():
-	get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
-	get_node("Physicals/HealthDisplay").set_health(self.temp_display_hp)
-	
-	self.predicting_hp = false
-	if self.prediction_flyover != null:
-		self.prediction_flyover.queue_free()
-		self.prediction_flyover = null
+	if self.predicting_hp:
+		self.predicting_hp = false
+		get_node("Physicals/HealthDisplay/AnimationPlayer").stop()
+		get_node("Physicals/HealthDisplay").set_health(self.hp)
+		if self.prediction_flyover != null:
+			self.prediction_flyover.queue_free()
+			self.prediction_flyover = null
 
 
 func animate_predict_hp(hp, value, color):
-	self.predicting_hp = true
-	self.temp_display_hp = self.hp
-	get_node("Physicals/HealthDisplay/AnimationPlayer").play("HealthFlicker")
-	yield(get_node("Physicals/HealthDisplay/AnimationPlayer"), "finished")
-	
-	get_node("Physicals/HealthDisplay").set_health(hp)
-	
-	if self.prediction_flyover != null:
-		self.prediction_flyover.queue_free()
-		self.prediction_flyover = null
+	if get_parent().selected != null:
+		self.predicting_hp = true
+		self.temp_display_hp = self.hp
+		get_node("Physicals/HealthDisplay/AnimationPlayer").play("HealthFlicker")
+		yield(get_node("Physicals/HealthDisplay/AnimationPlayer"), "finished")
+		
 		get_node("Physicals/HealthDisplay").set_health(hp)
-	
-	if self.predicting_hp:
-		#right here is the conditional check
+		
+		if self.prediction_flyover != null:
+			self.prediction_flyover.queue_free()
+			self.prediction_flyover = null
+			get_node("Physicals/HealthDisplay").set_health(hp)
+		
+#		if self.predicting_hp:
+			#right here is the conditional check
 		self.prediction_flyover = self.flyover_prototype.instance()
 		add_child(self.prediction_flyover)
 		var text = self.prediction_flyover.get_node("FlyoverText")
@@ -254,7 +238,7 @@ func animate_predict_hp(hp, value, color):
 		tween.interpolate_property(text, "rect/pos", text.get_pos(), destination, 1.2, Tween.TRANS_EXPO, Tween.EASE_OUT)
 		tween.start()
 		yield(tween, "tween_complete") #this is the problem line...fuuuuck
-		self.predicting_hp = false
+		#self.predicting_hp = false
 		tween.queue_free()
 
 
@@ -561,7 +545,8 @@ func modify_hp(amount, delay=0):
 
 func animate_set_hp(hp, value, delay=0):
 	add_anim_count()
-	reset_just_prediction_flyover() #if you forget why you need this, attack same enemy quickly with 2 heroes
+	reset_prediction_flyover()
+	#reset_just_prediction_flyover() #if you forget why you need this, attack same enemy quickly with 2 heroes
 	self.mid_trailing_animation = true
 	if delay > 0:
 		var timer = Timer.new()
@@ -705,8 +690,9 @@ func handle_rain():
 func turn_update_helper():
 	if !self.stunned and self.hp != 0:
 		self.move(movement_value)
-	
 
+func is_enemy():
+	return true
 
 func summon_buff(health, modifiers):
 	heal(health)

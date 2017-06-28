@@ -3,24 +3,17 @@ extends "PlayerPiece.gd"
 const DEFAULT_FREEZE_DAMAGE = 2
 const DEFAULT_SHIELD_BASH_DAMAGE = 2
 const DEFAULT_MOVEMENT_VALUE = 1
-const DEFAULT_ARMOR_VALUE = 7
+const DEFAULT_ARMOR_VALUE = 6
 const UNIT_TYPE = "Frost Knight"
 
 var freeze_damage = DEFAULT_FREEZE_DAMAGE setget , get_freeze_damage
 var shield_bash_damage = DEFAULT_SHIELD_BASH_DAMAGE setget , get_shield_bash_damage
 
-const ATTACK_DESCRIPTION = """
-"""
-
-const PASSIVE_DESCRIPTION = """"""
-
-
 func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.attack_description = ATTACK_DESCRIPTION
-	self.passive_description = PASSIVE_DESCRIPTION
+	load_description("frostknight")
 	self.assist_type = ASSIST_TYPES.defense
 
 func get_freeze_damage():
@@ -43,13 +36,23 @@ func handle_assist():
 		self.assist_flag = false
 	self.AssistSystem.activate_assist(self.assist_type, self)
 
+func get_horizontal_range(new_coords):
+	return get_parent().get_diagonal_range(new_coords, [1, 4], "ENEMY", false, [1, 2]) + \
+	 get_parent().get_diagonal_range(new_coords, [1, 4], "ENEMY", false, [4, 5])
+	
+func highlight_indirect_range(movement_range):
+	for coords in movement_range:
+		if get_horizontal_range(coords) != []:
+			get_parent().locations[coords].indirect_highlight()
 
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
-	var action_range = get_attack_range() + get_movement_range()
+	var movement_range = get_movement_range()
+	var action_range = get_attack_range() + movement_range
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
 	.display_action_range()
+	highlight_indirect_range(movement_range)
 
 func _is_within_attack_range(new_coords):
 	var attack_range = get_attack_range()
@@ -94,10 +97,8 @@ func shield_bash(new_coords):
 	frostbringer(new_coords)
 	
 func frostbringer(new_coords):
-	#get enemies to the left
-	var horizontal_range = get_parent().get_diagonal_range(new_coords, [1, 4], "ENEMY", false, [1, 2]) + \
-	 get_parent().get_diagonal_range(new_coords, [1, 4], "ENEMY", false, [4, 5])
-	
+	#get enemies to the left and right
+	var horizontal_range = get_horizontal_range(new_coords)
 	var action = get_new_action()
 	action.add_call("set_frozen", [true], horizontal_range)
 	action.execute()

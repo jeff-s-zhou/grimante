@@ -5,26 +5,19 @@ var ANIMATION_STATES = {"default":0, "moving":1}
 var animation_state = ANIMATION_STATES.default
 
 const DEFAULT_TRAMPLE_DAMAGE = 2
+const DEFAULT_CHARGE_DAMAGE = 3
 const DEFAULT_MOVEMENT_VALUE = 11
-const DEFAULT_ARMOR_VALUE = 5
+const DEFAULT_ARMOR_VALUE = 4
 
 var trample_damage = DEFAULT_TRAMPLE_DAMAGE setget , get_trample_damage
 
-
 const UNIT_TYPE = "Cavalier"
-
-const PASSIVE_DESCRIPTION = ["""Trample. Moving through an enemy unit deals 2 damage to it.
-"""]
-
-const ATTACK_DESCRIPTION = ["""Move in a straight line, dealing 1 damage for each tile travelled to the first enemy it hits, as well as the enemy immediately behind it.
-"""]
 
 func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.attack_description = ATTACK_DESCRIPTION
-	self.passive_description = PASSIVE_DESCRIPTION
+	load_description(UNIT_TYPE)
 	self.assist_type = ASSIST_TYPES.movement
 	
 func get_trample_damage():
@@ -32,7 +25,7 @@ func get_trample_damage():
 
 #not a true getter function like the rest
 func get_charge_damage(distance_travelled):
-	return get_assist_bonus_attack() + self.attack_bonus + distance_travelled
+	return get_assist_bonus_attack() + DEFAULT_CHARGE_DAMAGE + self.attack_bonus + distance_travelled
 
 func start_attack(attack_coords):
 	var location = get_parent().locations[attack_coords]
@@ -52,7 +45,6 @@ func animate_show_spear(attack_coords):
 	var location = self.grid.locations[attack_coords]
 	var new_position = location.get_pos()
 	var angle = get_pos().angle_to_point(new_position)
-	print("angle is " + str(angle))
 	get_node("Spear").set_rot(angle)
 	
 	var tween = Tween.new()
@@ -123,17 +115,36 @@ func get_attack_range():
 	var enemy_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", true)
 	for enemy_coords in enemy_range:
 		var decremented_coords = decrement_one(enemy_coords)
-		if decremented_coords in movement_range:
+		#allow it to point blank impale adjacent enemies
+		if decremented_coords in movement_range or decremented_coords == self.coords:
 			attack_range.append(enemy_coords)
 			
 	return attack_range
-
+	
+func highlight_indirect_range():
+	var grid = get_parent()
+	var indirect_range = []
+	for i in range(0, 6):
+		var increment = grid.get_change_vector(i)
+		var trample_flag = false
+		for j in range(0, 7):
+			var coords = self.coords + (increment * j)
+			if !grid.locations.has(coords):
+				break
+			#if an enemy is spotted, all tiles past it will cause trampling
+			if grid.pieces.has(coords) and grid.pieces[coords].is_enemy():
+				trample_flag = true
+			if !grid.pieces.has(coords) and trample_flag == true:
+				grid.locations[coords].indirect_highlight()
+			
+	
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
 	var action_range = get_movement_range() + get_attack_range()
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
 	.display_action_range()
+	highlight_indirect_range()
 
 
 func _is_within_attack_range(new_coords):
@@ -201,12 +212,7 @@ func charge_attack(new_coords, attack=false):
 	var difference = new_coords - self.coords
 	var tiles_travelled = get_parent().hex_length(difference) - 1
 	start_attack(new_coords)
-	var increment = get_parent().hex_normalize(difference)
-	
 	var attack_range = [new_coords]
-	if get_parent().pieces.has(new_coords + increment): #if there's an enemy directly behind this one
-		if get_parent().pieces[new_coords + increment].side == "ENEMY":
-			attack_range.append(new_coords + increment)
 	var action = get_new_action()
 	action.add_call("attacked", [get_charge_damage(tiles_travelled)], attack_range)
 	action.execute()
@@ -240,12 +246,7 @@ func predict_charge_attack(new_coords):
 	var tiles_travelled = get_parent().hex_length(difference) - 1
 	get_parent().pieces[new_coords].predict(get_charge_damage(tiles_travelled))
 	
-	var increment = get_parent().hex_normalize(difference)
-	if get_parent().pieces.has(new_coords + increment): #if there's an enemy directly behind this one
-		if get_parent().pieces[new_coords + increment].side == "ENEMY":
-			get_parent().pieces[new_coords + increment].predict(get_charge_damage(tiles_travelled))
 	
-
 func cast_ultimate():
 	get_node("Physicals/OverlayLayers/UltimateWhite").show()
 	self.ultimate_flag = true

@@ -16,10 +16,9 @@ var assist_type = null
 
 var deploying_flag = false
 
-var overview_description
-var attack_description
-var passive_description
-var ultimate_description
+var direct_attack_description = []
+var indirect_attack_description = []
+var passive_description = []
 
 var state = States.PLACED
 var cursor_area
@@ -57,6 +56,33 @@ func _ready():
 	
 	set_process_input(true)
 	self.side = "PLAYER"
+	
+
+func load_description(unit_name):
+	var file_name = unit_name.to_lower() + ".description"
+	var save = File.new()
+	if !save.file_exists("res://LongText/" + file_name):
+		return #Error!  We don't have a save to load
+
+	# Load the file line by line
+	save.open("res://LongText/" + file_name, File.READ)
+	
+	while (!save.eof_reached()):
+		var line = save.get_line()
+		if line == "\n" or line == "":
+			continue
+		var line_parts = line.split("/")
+		var type = line_parts[0]
+		var name = line_parts[1]
+		var description = line_parts[2]
+		if type == "Direct":
+			#todo, change this so maybe it's saved as a tuple
+			self.direct_attack_description.append(name + ". " + description)
+		elif type == "Indirect":
+			self.indirect_attack_description.append(name + ". " + description)
+		elif type == "Passive":
+			self.passive_description.append(name + ". " + description)
+	save.close()
 	
 func get_assist_bonus_attack():
 	return self.AssistSystem.get_bonus_attack()
@@ -124,7 +150,7 @@ func get_movement_value():
 	var adjacent_range = get_parent().get_range(self.coords, [1, 2], "ENEMY")
 	for coords in adjacent_range:
 		if get_parent().pieces[coords].is_slime():
-			return 1
+			return self.AssistSystem.get_bonus_movement() + 1
 	return self.AssistSystem.get_bonus_movement() + movement_value
 	
 func activate_finisher():
@@ -328,7 +354,6 @@ func hover_highlight():
 func unhovered():
 	get_node("Physicals/OverlayLayers/White").hide()
 	if get_parent().selected == null:
-		print("reached here?")
 		get_parent().clear_display_state()
 
 
@@ -383,9 +408,7 @@ func deselect():
 
 
 func select_action_target(target):
-	#deploy TODO
-	get_parent().clear_display_state()
-	get_node("BlueGlow").hide()
+	get_parent().deselect()
 	if self.deploying_flag:
 		deploy_select_action_target(target)
 	else:
@@ -430,8 +453,7 @@ func swap_coords_and_pos(target):
 
 #helper function for act
 func invalid_move():
-	get_parent().deselect()
-	get_node("BlueGlow").hide()
+	#get_parent().deselect()
 	emit_signal("invalid_move")
 
 
@@ -479,8 +501,6 @@ func damage_armor(amount):
 	if !self.invulnerable_flag:
 		self.armor = self.armor - amount
 		add_animation(self, "animate_set_armor", true, [self.armor, -1 * amount])
-		if self.armor == 0:
-			delete_self()
 
 
 func animate_set_armor(armor, value, delay=0):
@@ -520,13 +540,14 @@ func animate_set_armor(armor, value, delay=0):
 
 func dies_to_collision(pusher):
 	if pusher != null and pusher.side != self.side:  #if there's a pusher and not on the same side
-		#if not invulnerable and the enemy has same or more hp than the pusher's armor, or the pusher enemy is deadly
-		#set_armor(self.armor - 1)
-		#return !self.invulnerable_flag and (pusher.is_deadly() or self.armor == 0)
-		return !self.invulnerable_flag and (pusher.is_deadly() or pusher.hp >= self.armor) 
+		#if not invulnerable and the enemy has more hp than the pusher's armor, or the pusher enemy is deadly
+		return !self.invulnerable_flag and (pusher.is_deadly() or pusher.hp > self.armor) 
 
 func get_sprite():
 	return get_node("Physicals/AnimatedSprite").get_sprite_frames().get_frame("default", 0)
+	
+func is_enemy():
+	return false
 
 #OVERRIDEN OR INHERITED FUNCTIONS
 func act(new_coords):

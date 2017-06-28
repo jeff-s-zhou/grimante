@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=1]
+[gd_scene load_steps=18 format=1]
 
 [ext_resource path="res://Combat.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/textured_background.png" type="Texture" id=2]
@@ -11,16 +11,20 @@
 [ext_resource path="res://Assets/effects/darken_layer.png" type="Texture" id=9]
 [ext_resource path="res://UI/TutorialPopup.tscn" type="PackedScene" id=10]
 [ext_resource path="res://UI/TutorialTooltip.tscn" type="PackedScene" id=11]
-[ext_resource path="res://UI/PlayerPieceInfo.tscn" type="PackedScene" id=12]
-[ext_resource path="res://AssistSystem.tscn" type="PackedScene" id=13]
-[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=14]
-[ext_resource path="res://UI/ControlBar/ControlBar.tscn" type="PackedScene" id=15]
-[ext_resource path="res://UI/InfoOverlay.tscn" type="PackedScene" id=16]
-[ext_resource path="res://UI/RestartBar.tscn" type="PackedScene" id=17]
+[ext_resource path="res://AssistSystem.tscn" type="PackedScene" id=12]
+[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=13]
+[ext_resource path="res://UI/ControlBar/ControlBar.tscn" type="PackedScene" id=14]
+[ext_resource path="res://UI/InfoOverlay.tscn" type="PackedScene" id=15]
+[ext_resource path="res://UI/RestartBar.tscn" type="PackedScene" id=16]
 
 [sub_resource type="SampleLibrary" id=1]
 
-samples/error = { "db":0.0, "pitch":1.0, "sample":ExtResource( 8 ) }
+samples/error = {
+"db": 0.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 8 )
+}
 
 [node name="Combat" type="Node2D"]
 
@@ -28,7 +32,7 @@ script/script = ExtResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
 
-transform/pos = Vector2( 797.899, 536.914 )
+transform/pos = Vector2( 352.929, 541.015 )
 z/z = -10
 texture = ExtResource( 2 )
 
@@ -105,10 +109,6 @@ wait_time = 1.0
 one_shot = false
 autostart = false
 
-[node name="PlayerPieceInfo" parent="." instance=ExtResource( 12 )]
-
-visibility/visible = false
-
 [node name="FpsLabel" type="Label" parent="."]
 
 focus/ignore_mouse = true
@@ -123,11 +123,11 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="AssistSystem" parent="." instance=ExtResource( 13 )]
+[node name="AssistSystem" parent="." instance=ExtResource( 12 )]
 
 transform/pos = Vector2( 42.6436, 30.4737 )
 
-[node name="InputHandler" parent="." instance=ExtResource( 14 )]
+[node name="InputHandler" parent="." instance=ExtResource( 13 )]
 
 [node name="AnimationCountLabel" type="Label" parent="."]
 
@@ -143,15 +143,15 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="ControlBar" parent="." instance=ExtResource( 15 )]
+[node name="ControlBar" parent="." instance=ExtResource( 14 )]
 
 transform/pos = Vector2( 0, 953 )
 
-[node name="InfoOverlay" parent="." instance=ExtResource( 16 )]
+[node name="InfoOverlay" parent="." instance=ExtResource( 15 )]
 
 visibility/visible = false
 
-[node name="RestartBar" parent="." instance=ExtResource( 17 )]
+[node name="RestartBar" parent="." instance=ExtResource( 16 )]
 
 transform/pos = Vector2( 97, 446 )
 z/z = 102

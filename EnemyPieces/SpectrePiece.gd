@@ -11,7 +11,7 @@ func initialize(max_hp, modifiers, prototype):
 	.initialize("Spectre", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype)
 
 
-func attacked(amount, delay=0.0):
+func attacked(amount, delay=0.0, interrupting=true):
 	if amount > self.hp:
 		amount = 0
-	.attacked(amount, delay)
+	.attacked(amount, delay, interrupting)

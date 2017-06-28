@@ -67,7 +67,7 @@ func display_forced_action(turn):
 	if self.forced_actions.has(turn) and self.forced_actions[turn] != []:
 		var forced_action = self.forced_actions[turn][0]
 		var coords = forced_action.get_coords()
-		var string = decorate(forced_action.get_text())
+		var string = forced_action.get_text()
 		update_display_forced_action(coords, string)
 	else:
 		get_node("Sprite").hide()
@@ -76,12 +76,13 @@ func display_forced_action(turn):
 
 
 #called from within the forced action
-func update_display_forced_action(coords, text):
+func update_display_forced_action(coords, fa_text):
 	var new_pos = get_parent().get_node("Grid").locations[coords].get_global_pos()
 	get_node("Sprite").set_pos(new_pos)
 	get_node("Sprite").show()
 	
 	get_node("Label").show()
+	var text = decorate(fa_text)
 	get_node("Label").set_bbcode("[center]" + text + "[/center]")
 	
 	if new_pos.y > get_viewport_rect().size.height/2:

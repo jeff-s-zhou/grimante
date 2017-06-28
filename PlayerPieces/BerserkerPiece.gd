@@ -3,7 +3,7 @@ extends "PlayerPiece.gd"
 #extends KinematicBody2D
 const DEFAULT_DAMAGE = 4
 const DEFAULT_AOE_DAMAGE = 2
-const DEFAULT_ARMOR_VALUE = 2
+const DEFAULT_ARMOR_VALUE = 1
 const DEFAULT_MOVEMENT_VALUE = 2
 
 var damage = DEFAULT_DAMAGE setget , get_damage
@@ -16,19 +16,12 @@ var animation_state = ANIMATION_STATES.default
 
 const UNIT_TYPE = "Berserker"
 
-const ATTACK_DESCRIPTION = ["""Leap Strike. Deal 4 damage to an enemy within movement range. If the enemy is killed by the attack, move to its tile.
-"""]
-const PASSIVE_DESCRIPTION = ["Earthslam.  Moving to an empty tile deals 2 damage to all enemies adjacent to the tile and Stuns them.",
-"Stun. Enemies stunned cannot move or act their next turn. Being attacked will cancel the effect."
-]
-
 func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.attack_description = ATTACK_DESCRIPTION
-	self.passive_description = PASSIVE_DESCRIPTION
 	self.assist_type = ASSIST_TYPES.attack
+	load_description(UNIT_TYPE)
 	
 func get_damage():
 	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_DAMAGE
@@ -41,13 +34,24 @@ func get_attack_range():
 	
 func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
+	
+func highlight_indirect_range(movement_range):
+	var indirect_range = []
+	var enemies = get_tree().get_nodes_in_group("enemy_pieces")
+	for enemy in enemies:
+		var adjacent_range = get_parent().get_radial_range(enemy.coords, [1, 1])
+		for coords in adjacent_range:
+			if coords in movement_range:
+				get_parent().locations[coords].indirect_highlight()
 
 #parameters to use for get_node("Grid").get_neighbors
 func display_action_range():
-	var action_range = get_attack_range() + get_movement_range()
+	var movement_range = get_movement_range()
+	var action_range = get_attack_range() + movement_range
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
-	.display_action_range()
+	highlight_indirect_range(movement_range)
+
 
 func _is_within_attack_range(new_coords):
 	return new_coords in get_attack_range()

@@ -2,18 +2,12 @@ extends "PlayerPiece.gd"
 
 const DEFAULT_WILDFIRE_DAMAGE = 2
 const DEFAULT_MOVEMENT_VALUE = 1
-const DEFAULT_ARMOR_VALUE = 1
+const DEFAULT_ARMOR_VALUE = 0
 const UNIT_TYPE = "Pyromancer"
 
 const flask_prototype = preload("res://PlayerPieces/Components/PyromancerFlask.tscn")
 
 var wildfire_damage = DEFAULT_WILDFIRE_DAMAGE setget , get_wildfire_damage
-
-
-const ATTACK_DESCRIPTION = []
-
-const PASSIVE_DESCRIPTION = ["Fire Bomb. Toss a bomb in the direction moved, inflicting the first enemy hit with Wildfire. Wildfire spreads to a single adjacent enemy at random, and will continue to spread up to 4 times.",
-"An enemy inflicted with Wildfire is dealt 2 damage immediately, and 1 damage at the start of every Player Turn."]
 
 var pathed_range
 
@@ -21,8 +15,7 @@ func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
-	self.attack_description = ATTACK_DESCRIPTION
-	self.passive_description = PASSIVE_DESCRIPTION
+	load_description(self.unit_name)
 	self.assist_type = ASSIST_TYPES.attack
 
 func get_wildfire_damage():
@@ -38,6 +31,12 @@ func get_movement_range():
 func get_attack_range():
 	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, self.movement_value + 1], "ENEMY")
 	return unfiltered_range
+	
+func highlight_indirect_range(movement_range):
+	for coords in movement_range:
+		var bomb_coords = get_bomb_coords(coords)
+		if bomb_coords != null:
+			get_parent().locations[coords].indirect_highlight()
 
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
@@ -45,6 +44,7 @@ func display_action_range():
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
 	.display_action_range()
+	highlight_indirect_range(action_range)
 
 func _is_within_attack_range(new_coords):
 	var attack_range = get_attack_range()
@@ -52,19 +52,25 @@ func _is_within_attack_range(new_coords):
 	
 func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
+	
+func get_bomb_coords(new_coords):
+	var line_range = self.grid.get_line_range(self.coords, new_coords - self.coords, "ENEMY")
+	if line_range != []:
+		return line_range[0]
+	else:
+		return null
 
 
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
 		
-		var line_range = self.grid.get_line_range(self.coords, new_coords - self.coords, "ENEMY")
-		
 		var args = [new_coords, 350, true]
 		add_animation(self, "animate_move_and_hop", true, args)
-		if line_range != []:
-			add_animation(self, "animate_bomb", true, [line_range[0]])
-			bomb(line_range[0])
+		var bomb_coords = get_bomb_coords(new_coords)
+		if bomb_coords != null:
+			add_animation(self, "animate_bomb", true, [bomb_coords])
+			bomb(bomb_coords)
 		set_coords(new_coords)
 		placed()
 #	elif _is_within_attack_range(new_coords):

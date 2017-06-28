@@ -378,5 +378,5 @@ func dies_to_collision(pusher):
 func is_slime():
 	return false
 
-
-	
+func is_enemy():
+	return false

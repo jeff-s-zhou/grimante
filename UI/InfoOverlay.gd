@@ -82,9 +82,10 @@ func display_player_info(hovered_piece):
 	get_node("HeroInfoSubOverlay").display_info(armor, movement, inspire_type)
 	
 	var title = hovered_piece.unit_name
-	var attack_description = hovered_piece.attack_description
+	var attack_description = hovered_piece.direct_attack_description
+	var indirect_attack_description = hovered_piece.indirect_attack_description
 	var passive_description = hovered_piece.passive_description
-	self.description_sequence = attack_description + passive_description
+	self.description_sequence = attack_description + indirect_attack_description + passive_description
 	var pos = hovered_piece.get_global_pos()
 	
 	get_node("Overlay").set_global_pos(pos)

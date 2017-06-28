@@ -18,7 +18,7 @@ func get():
 	add_player_start_rule(tutorial, 1, text)
 	
 	text = ["When an Enemy moves down onto a tile occupied by a Hero, 1 of 2 things occur:", 
-	"1. If the Enemy's Power is {greater than or equal} to the Hero's Armor, the Hero is {killed}.",
+	"1. If the Enemy's Power is {higher than} the Hero's Armor, the Hero is {killed}.",
 	"2. Otherwise the Hero is pushed down 1 tile.",
 	"Note: The Hero is {killed} if it is pushed off the board."]
 	
