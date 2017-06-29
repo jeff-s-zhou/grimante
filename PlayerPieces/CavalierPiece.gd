@@ -79,7 +79,7 @@ func animate_hop(old_coords, new_coords, down=false):
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var distance = old_location.get_pos().distance_to(new_position)
-	var time = distance/250
+	var time = distance/300
 	var old_position = Vector2(0, -20)
 	if down:
 		old_position = Vector2(0, -5)
@@ -178,26 +178,30 @@ func trample(new_coords):
 	var current_coords = self.coords
 	
 	var was_hopping = false
+	
+	var trample_coords = []
+	
 	while current_coords != new_coords:
 		current_coords = current_coords + increment
 		if get_parent().pieces.has(current_coords) and get_parent().pieces[current_coords].side == "ENEMY":
 			was_hopping = true
-			add_animation(self, "animate_move", false, [current_coords, 250, false])
+			add_animation(self, "animate_move", false, [current_coords, 300, false])
 			add_animation(self, "animate_hop", true, [current_coords - increment, current_coords])
-			var action = get_new_action()
-			action.add_call("attacked", [self.trample_damage], current_coords)
-			action.execute()
-			
+			trample_coords.append(current_coords)
 		else:
 			if was_hopping:
 				#hop down
-				add_animation(self, "animate_move", false, [current_coords, 250, false])
+				add_animation(self, "animate_move", false, [current_coords, 300, false])
 				add_animation(self, "animate_hop", true, [current_coords - increment, current_coords, true])
 				was_hopping = false
 			else:
-				add_animation(self, "animate_move", false, [current_coords, 250, false])
+				add_animation(self, "animate_move", false, [current_coords, 300, false])
 				add_animation(self, "animate_hop", true, [current_coords - increment, current_coords, true])
-
+	
+	var action = get_new_action()
+	action.add_call("attacked", [self.trample_damage], trample_coords)
+	action.execute()
+	
 	set_coords(new_coords)
 	placed()
 

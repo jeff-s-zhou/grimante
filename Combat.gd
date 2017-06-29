@@ -9,6 +9,8 @@ var enemy_waves = null
 
 var tutorial = null
 
+var enemy_reinforcements = {}
+
 var instructions = []
 var reinforcements = {}
 var turn_count = 0
@@ -112,7 +114,10 @@ func _ready():
 			if !prototype in self.level_schematic.allies.values():
 				initialize_piece(prototype, true)
 	
-	deploy_wave(true)
+	load_in_next_wave(true)
+	deploy_wave()
+	load_in_next_wave()
+	display_wave_preview()
 	
 	set_process(true)
 	set_process_input(true)	
@@ -257,23 +262,10 @@ func handle_piece_placed():
 
 #	
 #
-func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon, animation_sequence=null):
-	var position
-	if typeof(key) == TYPE_INT:
-		position = get_node("Grid").get_top_of_column(key)
-	else:
-		position = key #that way when we need to we can specify by coordinates
+func initialize_enemy_piece(coords, prototype, health, modifiers, animation_sequence=null):
 		
-	#if the spawn point is occupied, can't summon
-	if(get_node("Grid").pieces.has(position)):
-		var occupant = get_node("Grid").pieces[position]
-		if occupant.side == "PLAYER":
-			occupant.block_summon()
-		elif occupant.side == "ENEMY":
-			occupant.summon_buff(health, modifiers)
-			
 	var enemy_piece = prototype.instance()
-	get_node("Grid").add_piece(position, enemy_piece)
+	get_node("Grid").add_piece(coords, enemy_piece)
 	enemy_piece.initialize(health, modifiers, prototype)
 	enemy_piece.connect("broke_defenses", self, "damage_defenses")
 	enemy_piece.connect("enemy_death", self.state_manager.get_node("StarSubsystem"), "add_kill_count")
@@ -283,6 +275,7 @@ func initialize_enemy_piece(key, prototype, health, modifiers, mass_summon, anim
 		animation_sequence.add(enemy_piece, "animate_summon", false)
 	else:
 		enemy_piece.add_animation(enemy_piece, "animate_summon", false)
+	return true
 			
 
 func end_turn():
@@ -464,6 +457,8 @@ func enemy_phase():
 
 	
 	deploy_wave()
+	load_in_next_wave()
+	display_wave_preview()
 		
 	if(get_node("/root/AnimationQueue").is_animating()):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
@@ -592,36 +587,45 @@ func _sort_by_y_axis(enemy_piece1, enemy_piece2):
 		return false
 
 
-func deploy_wave(mass_summon=false):
-	
-	#check if cleared for multitimed system
-	#self.state_manager.pre_deploy_wave_check()
+func deploy_wave():
+	for key in self.enemy_reinforcements.keys():
+		var coords = null
+		if typeof(key) == TYPE_INT: #this lets us just specify the top of rows
+			coords = get_node("Grid").get_top_of_column(key)
+		else:
+			coords = key
 
-	#var wave = self.next_wave
-	#self.next_wave = self.enemy_waves.get_next_summon()
-	var wave = self.enemy_waves.get_next_summon(self.turn_count)
-	
+		var prototype_parts = self.enemy_reinforcements[coords]
+		var prototype = prototype_parts["prototype"]
+		var hp = prototype_parts["hp"]
+		var modifiers = prototype_parts["modifiers"]
+		if(!get_node("Grid").pieces.has(coords)):
+			initialize_enemy_piece(coords, prototype, hp, modifiers)
+			self.enemy_reinforcements.erase(key)
+
+
+func load_in_next_wave(zero_wave=false):
+	var wave
+	if zero_wave:
+		wave = self.enemy_waves.get_next_summon(self.turn_count)
+	else:
+		wave = self.enemy_waves.get_next_next_summon(self.turn_count)
 	if wave != null:
-		for key in wave.keys():
-			var prototype_parts = wave[key]
-			var prototype = prototype_parts["prototype"]
-			var hp = prototype_parts["hp"]
-			var modifiers = prototype_parts["modifiers"]
-			initialize_enemy_piece(key, prototype, hp, modifiers, mass_summon)
-
-	display_wave_preview(self.enemy_waves.preview_next_summon(self.turn_count))
-
-
-func display_wave_preview(wave):
+		for coords in wave.keys():
+			if self.enemy_reinforcements.has(coords):
+				continue
+			self.enemy_reinforcements[coords] = wave[coords]
+	
+	
+func display_wave_preview():
 	get_node("Grid").reset_reinforcement_indicators()
-	if wave != null:
-		for key in wave.keys():
-			var position = null
-			if typeof(key) == TYPE_INT:
-				position = get_node("Grid").get_top_of_column(key)
-			else:
-				position = key #that way when we need to we can specify by coordinates
-			get_node("Grid").locations[position].set_reinforcement_indicator(true)
+	for key in self.enemy_reinforcements.keys():
+		var position = null
+		if typeof(key) == TYPE_INT:
+			position = get_node("Grid").get_top_of_column(key)
+		else:
+			position = key #that way when we need to we can specify by coordinates
+		get_node("Grid").locations[position].set_reinforcement_indicator(true)
 
 
 func player_win():

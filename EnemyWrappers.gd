@@ -93,7 +93,7 @@ class FiniteCuratedWrapper:
 		else:
 			return null
 	
-	func preview_next_summon(turn_index):
+	func get_next_next_summon(turn_index):
 		if turn_index + 1 < self.waves.size():
 			return self.waves[turn_index + 1]
 		else:
