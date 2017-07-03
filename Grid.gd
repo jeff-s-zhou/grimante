@@ -224,6 +224,21 @@ func deselect():
 	get_parent().check_hovered()
 	
 
+func focus_coords(select_coords, target_coords):
+	for location in locations.values():
+		location.set_targetable(false)
+	for piece in pieces.values():
+		piece.set_targetable(false)
+	
+	if pieces.has(select_coords):
+		pieces[select_coords].set_targetable(true)
+		
+	if pieces.has(target_coords):
+		pieces[target_coords].set_targetable(true)
+	elif locations.has(target_coords):
+		locations[target_coords].set_targetable(true)
+
+
 #done once a piece is moved by the player	
 #right click flag is so if we know to check immediately after if cursor is still in a piece's area
 #and apparently so we know to clear flyovers...lol

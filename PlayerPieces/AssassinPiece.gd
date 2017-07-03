@@ -1,7 +1,7 @@
 
 extends "PlayerPiece.gd"
 
-const DEFAULT_BACKSTAB_DAMAGE = 2
+const DEFAULT_BACKSTAB_DAMAGE = 1
 const ISOLATION_BONUS = 2
 const DEFAULT_PASSIVE_DAMAGE = 1
 const DEFAULT_MOVEMENT_VALUE = 2
@@ -14,8 +14,6 @@ var backstab_damage = DEFAULT_BACKSTAB_DAMAGE setget , get_backstab_damage
 var passive_damage = DEFAULT_PASSIVE_DAMAGE setget , get_passive_damage
 
 var pathed_range
-
-var bloodlust_flag = false
 
 func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
@@ -142,26 +140,22 @@ func backstab(new_coords):
 		add_animation(self, "animate_directly_below_backstab", true, [new_coords])
 	else:
 		add_animation(self, "animate_backstab", true, [new_coords])
-	var action = get_new_action(false)
+	var action = get_new_action()
 	action.add_call("attacked", [self.get_backstab_damage(new_coords)], new_coords)
 	action.execute()
 	var return_position = get_parent().locations[new_coords + BEHIND].get_pos()
 	add_animation(self, "animate_move_to_pos", true, [return_position, 200, true])
 	set_coords(new_coords + BEHIND)
 		
-	if !self.bloodlust_flag: #hasn't triggered bloodlust yet
-		if get_parent().pieces.has(new_coords): #if it didn't kill
-			soft_placed()
-		else:
-			add_animation(self, "emit_animated_placed", false)
-			activate_bloodlust()
-	
-	else: #already triggered bloodlust
+	if get_parent().pieces.has(new_coords): #if it didn't kill
 		placed()
+	else:
+		add_animation(self, "emit_animated_placed", false)
+		activate_bloodlust()
+
 
 func activate_bloodlust():
 	self.handle_assist()
-	self.bloodlust_flag = true
 	get_parent().selected = null
 
 #neede for tutorials
@@ -172,20 +166,6 @@ func predict(new_coords):
 	if _is_within_attack_range(new_coords):
 		get_parent().pieces[new_coords].predict(self.get_backstab_damage(new_coords))
 
-func cast_ultimate():
-	get_node("Physicals/OverlayLayers/UltimateWhite").show()
-	self.ultimate_flag = true
-	get_parent().reset_highlighting()
-	display_action_range()
-	
-	
-#same as regular placed() except doesn't reset the ultimate_flag or bloodlust_flag
-func soft_placed(): 
-	self.handle_assist()
-	add_animation(self, "animate_placed", false)
-	self.state = States.PLACED
-	get_parent().selected = null
-
 
 #resets the assassin to be able to act again
 func unplaced():
@@ -194,14 +174,6 @@ func unplaced():
 	
 func animate_unplaced():
 	get_node("Physicals/AnimatedSprite").play("default")
-	
-func finisher_reactivate():
-	self.bloodlust_flag = false
-	.finisher_reactivate()
-
-func placed(ending_turn=false):
-	self.bloodlust_flag = false
-	.placed(ending_turn)
 
 
 func trigger_passive(attack_range):
@@ -212,7 +184,7 @@ func trigger_passive(attack_range):
 			action.add_call("opportunity_attacked", [self.passive_damage], attack_coords)
 			action.execute()
 	
-			if !get_parent().pieces.has(attack_coords) and !self.bloodlust_flag and self.state == States.PLACED:
+			if !get_parent().pieces.has(attack_coords) and self.state == States.PLACED:
 				activate_bloodlust()
 				unplaced()
 			add_animation(self, "animate_passive_end", true, [self.coords])

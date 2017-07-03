@@ -4,15 +4,17 @@
 
 [sub_resource type="ColorRamp" id=1]
 
-offsets = FloatArray( 0, 0.508772, 1 )
-colors = ColorArray( 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0 )
+offsets = FloatArray( 0, 0.274854, 0.754386, 1 )
+colors = ColorArray( 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0 )
 
 [node name="ComboSparklesRed" type="Particles2D"]
 
 config/amount = 25
-config/lifetime = 4.0
-config/time_scale = 3.0
+config/lifetime = 5.0
+config/time_scale = 4.0
+config/preprocess = 20.0
 config/emitting = false
+config/process_mode = 1
 config/half_extents = Vector2( 58, 52.5 )
 config/texture = ExtResource( 1 )
 params/direction = 180.0
@@ -21,7 +23,7 @@ params/linear_velocity = 20.0
 params/spin_velocity = 0.0
 params/orbit_velocity = 0.0
 params/gravity_direction = 0.0
-params/gravity_strength = 5.0
+params/gravity_strength = 4.0
 params/radial_accel = 0.0
 params/tangential_accel = 0.0
 params/damping = 0.0
@@ -41,7 +43,7 @@ emission_points = Vector2Array( -0.844828, -0.209524, -0.37931, 0.514286, 0.4827
 
 enabled = false
 radius = 1250.0
-disable_radius = 60.0
+disable_radius = 20.0
 gravity = 2.0
 absorption = 100.0
 particles_path = NodePath("..")

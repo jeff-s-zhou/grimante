@@ -75,24 +75,26 @@ func display_forced_action(turn):
 		get_node("Arrow").hide()
 
 
-#called from within the forced action
 func update_display_forced_action(coords, fa_text):
 	var new_pos = get_parent().get_node("Grid").locations[coords].get_global_pos()
+	var new_target_pos = get_parent().get_node("Grid").locations[Vector2(3, 4)].get_global_pos()
+	get_parent().get_node("Grid").focus_coords(coords, Vector2(3, 4))
 	get_node("Sprite").set_pos(new_pos)
 	get_node("Sprite").show()
+	get_node("Light2D").set_pos(new_target_pos)
+	get_node("Light2D").show()
+	#get_node("Label").show()
+	#var text = decorate(fa_text)
+	#get_node("Label").set_bbcode("[center]" + text + "[/center]")
 	
-	get_node("Label").show()
-	var text = decorate(fa_text)
-	get_node("Label").set_bbcode("[center]" + text + "[/center]")
-	
-	if new_pos.y > get_viewport_rect().size.height/2:
-		get_node("Label").set_pos(Vector2(24, 300))
-	else:
-		get_node("Label").set_pos(Vector2(24, get_viewport_rect().size.height  - 300))
+#	if new_pos.y > get_viewport_rect().size.height/2:
+#		get_node("Label").set_pos(Vector2(24, 300))
+#	else:
+#		get_node("Label").set_pos(Vector2(24, get_viewport_rect().size.height  - 300))
 		
 	
 	get_node("Arrow").set_pos(new_pos)
-	get_node("Arrow").show()
+	#get_node("Arrow").show()
 
 
 func finish_forced_action(result_rule, turn):

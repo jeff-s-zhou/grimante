@@ -34,6 +34,14 @@ func debug():
 func set_coords(coords):
 	self.coords = coords
 	
+func set_targetable(flag):
+	if flag:
+		set_opacity(1)
+		set_pickable(true)
+	else:
+		set_opacity(0.5)
+		set_pickable(false)
+	
 func add_corpse(player_piece):
 	self.corpse = player_piece
 

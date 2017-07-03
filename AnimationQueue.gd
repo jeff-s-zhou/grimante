@@ -3,8 +3,6 @@ extends Node
 var queue = []
 var mid_processing = false
 
-var stopped_flag = false
-
 var processing_queue = []
 
 var lock = Mutex.new()
@@ -26,10 +24,9 @@ func _ready():
 
 func enqueue(node, func_ref, blocking, args=[]):
 	#print("enqueuing: " + func_ref)
-	if !stopped_flag:
-		self.lock.lock()
-		self.queue.append({"node":node, "func_ref":func_ref, "blocking":blocking, "args":args})
-		self.lock.unlock()
+	self.lock.lock()
+	self.queue.append({"node":node, "func_ref":func_ref, "blocking":blocking, "args":args})
+	self.lock.unlock()
 		
 func is_busy():
 	return self.queue != [] or self.mid_processing
@@ -44,8 +41,6 @@ func debug():
 	print(self.queue)
 	print(self.mid_processing)
 	
-func set_stopped(flag):
-	self.stopped_flag = flag
 	
 func get_animation_count():
 	self.count_lock.lock()
@@ -57,7 +52,17 @@ func reset():
 	self.count_lock.lock()
 	self.animation_count = 0
 	self.count_lock.unlock()
-	set_stopped(false)
+	self.waiting_count_lock.lock()
+	self.waiting_count = 0
+	self.waiting_count_lock.unlock()   
+	self.queue = []
+	self.mid_processing = false
+	self.processing_queue = []
+	
+	self.set_process(true)
+	
+func stop():
+	self.set_process(false)
 	
 func update_animation_count(amount):
 	self.count_lock.lock()
@@ -67,7 +72,9 @@ func update_animation_count(amount):
 	if self.animation_count == 0:
 		emit_signal("animations_finished")
 	self.count_lock.unlock()
-
+	
+	
+#waiting count needed for stuff in animation_sequences
 func get_waiting_count():
 	self.waiting_count_lock.lock()
 	var count = self.waiting_count

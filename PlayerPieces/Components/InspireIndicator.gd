@@ -27,6 +27,8 @@ func animate_inspire_ready(type):
 	get_node("AnimationPlayer").play("hover")
 
 func animate_give_inspire(type):
+	self.show()
+	self.set_opacity(1)
 	get_node("InspireText").play(type)
 	get_node("InspireArrow").play(type)
 	get_node("AnimationPlayer").stop()
@@ -43,7 +45,6 @@ func animate_give_inspire(type):
 	self.hide()
 	
 func animate_receive_inspire(type):
-	
 	var arrow = get_node("InspireArrow")
 	arrow.set_opacity(0)
 	arrow.set_pos(Vector2(0, -50))

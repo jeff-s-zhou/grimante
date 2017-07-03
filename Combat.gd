@@ -38,12 +38,9 @@ var assassin = null
 
 
 func _ready():
-	#TODO move this to level select once we figure out the structure
+	get_node("/root/AnimationQueue").reset()
 	get_node("/root/global").load_state()
-	
 	get_node("Timer").set_active(false)
-	# Called every time the node is added to the scene.
-	# Initialization here
 	get_node("Grid").set_pos(Vector2(73, 270))
 	#get_node("Grid").set_pos(Vector2(400, 250))
 	#debug_mode()
@@ -59,13 +56,7 @@ func _ready():
 	
 	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("AssistSystem").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 100))
-
-	get_node("/root/AnimationQueue").reset()
-#	
-#	
 #
-#	self.level_schematic_func = get_node("/root/global").get_param("level")
-#	self.level_schematic = self.level_schematic_func.call_func()
 
 	self.level_schematic = get_node("/root/global").get_param("level")
 	if self.level_schematic.tutorial != null:
@@ -119,6 +110,7 @@ func _ready():
 	load_in_next_wave()
 	display_wave_preview()
 	
+	
 	set_process(true)
 	set_process_input(true)	
 		
@@ -131,15 +123,19 @@ func _ready():
 		
 		#handle turn 0 tutorial popups before even deploying
 		if self.tutorial != null and self.tutorial.has_player_turn_start_rule(get_turn_count()):
-			print("did we get in here?")
-			self.tutorial.display_player_turn_start_rule(get_turn_count())
 			set_process_input(false)
 			set_process(false)
+			self.tutorial.display_player_turn_start_rule(get_turn_count())
 			yield(self.tutorial, "rule_finished")
 			set_process_input(true)
 			set_process(true)
 		
 		yield(self, "deployed")
+	
+	#hiding the fifth unit select causes animations
+	if get_node("/root/AnimationQueue").is_animating():
+		yield(get_node("/root/AnimationQueue"), "animations_finished")
+	
 	
 	get_node("ControlBar/DeployButton").hide()
 	get_node("ControlBar/EndTurnButton").show()
@@ -316,9 +312,11 @@ func holding_end_turn():
 
 
 func restart():
+	set_process_input(false)
+	set_process(false)
+	get_node("/root/AnimationQueue").stop()
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	get_node("/root/AnimationQueue").set_stopped(true)
 	get_node("/root/DataLogger").log_restart(self.level_schematic.name, self.turn_count)
 	get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic})
 
@@ -383,9 +381,11 @@ func computer_input(event):
 
 	elif event.is_action("debug_level_skip") and event.is_pressed():
 		if(self.level_schematic.next_level != null):
+			set_process(false)
+			set_process_input(false)
 			if get_node("/root/AnimationQueue").is_animating():
 				yield(get_node("/root/AnimationQueue"), "animations_finished")
-			get_node("/root/AnimationQueue").set_stopped(true)
+			get_node("/root/AnimationQueue").stop()
 			get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.next_level})
 			
 			
@@ -630,8 +630,9 @@ func display_wave_preview():
 
 func player_win():
 	set_process(false)
-	get_node("/root/AnimationQueue").set_stopped(true)
-	print("in player win")
+	set_process_input(false)
+	get_node("/root/AnimationQueue").stop()
+
 	self.state = STATES.transitioning
 	
 	get_node("/root/DataLogger").log_win(self.level_schematic.name, self.turn_count)
@@ -650,7 +651,8 @@ func player_win():
 
 func enemy_win():
 	set_process(false)
-	get_node("/root/AnimationQueue").set_stopped(true)
+	set_process_input(false)
+	get_node("/root/AnimationQueue").stop()
 	
 	get_node("/root/DataLogger").log_lose(self.level_schematic.name, self.turn_count)
 	
@@ -690,7 +692,7 @@ func handle_invalid_move():
 	get_node("SamplePlayer").play("error")
 	get_node("InvalidMoveIndicator/AnimationPlayer").play("flash")
 		
-func handle_assassin_passive(attack_range):
-	if self.assassin != null:
+func handle_assassin_passive(attack_range, caller):
+	if self.assassin != null and caller != self.assassin:
 		self.assassin.trigger_passive(attack_range)
 	

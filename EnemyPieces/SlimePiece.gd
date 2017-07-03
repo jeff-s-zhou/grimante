@@ -9,6 +9,14 @@ var DESCRIPTION = "The Slime reduces the movement of all adjacent Heroes to 1."
 
 func initialize(max_hp, modifiers, prototype):
 	.initialize("Slime", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype)
+	
+func set_cloaked(flag):
+	.set_cloaked(flag)  
+	if flag:
+		get_node("Sludge").set_opacity(0)
+	else:
+		add_animation(self, "show_sludge", false)
+	
 
 #this clever shit might come back to bite me in the ass
 #I just needed to slap an animation before and after every move, so we construct the animation_sequence here
@@ -36,11 +44,3 @@ func show_sludge():
 	print("calling show sludge")
 	get_node("Tween").interpolate_property(get_node("Sludge"), "visibility/opacity", 0, 1, 0.4, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
-	
-func animate_cloaked_show():
-	get_node("Sludge").show()
-	.animate_cloaked_show()
-
-func animate_cloaked_hide():
-	get_node("Sludge").hide()
-	.animate_cloaked_hide()

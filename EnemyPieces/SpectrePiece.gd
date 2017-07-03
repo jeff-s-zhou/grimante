@@ -15,3 +15,11 @@ func attacked(amount, delay=0.0, interrupting=true):
 	if amount > self.hp:
 		amount = 0
 	.attacked(amount, delay, interrupting)
+	
+func get_actual_damage(damage):
+	if self.shielded:
+		return 0
+	elif damage > self.hp:
+		return 0
+	else:
+		return damage

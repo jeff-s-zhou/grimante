@@ -38,6 +38,14 @@ func _ready():
 	get_node("CollisionArea").connect("area_enter", self, "collide")
 	get_node("CollisionArea").connect("area_exit", self, "uncollide")
 	
+func set_targetable(flag):
+	if flag:
+		set_opacity(1)
+		get_node("ClickArea").set_pickable(true)
+	else:
+		set_opacity(1)
+		get_node("ClickArea").set_pickable(false)
+	
 func add_anim_count():
 	get_node("/root/AnimationQueue").update_animation_count(1)
 	self.debug_anim_counter += 1

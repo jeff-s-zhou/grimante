@@ -17,7 +17,17 @@
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[  ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ), ExtResource( 5 ) ], "loop":true, "name":"hurt", "speed":5.0 } ]
+animations = [ {
+"frames": [  ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
+"loop": true,
+"name": "hurt",
+"speed": 5.0
+} ]
 
 [sub_resource type="Animation" id=2]
 
@@ -29,12 +39,22 @@ tracks/0/type = "value"
 tracks/0/path = NodePath("Physicals/AnimatedSprite:animation")
 tracks/0/interp = 1
 tracks/0/imported = false
-tracks/0/keys = { "times":FloatArray( 0, 0.9 ), "transitions":FloatArray( 1, 1 ), "update":1, "values":[ "hurt", "default" ] }
+tracks/0/keys = {
+"times": FloatArray( 0, 0.9 ),
+"transitions": FloatArray( 1, 1 ),
+"update": 1,
+"values": [ "hurt", "default" ]
+}
 tracks/1/type = "value"
 tracks/1/path = NodePath("Physicals/AnimatedSprite:frame")
 tracks/1/interp = 1
 tracks/1/imported = false
-tracks/1/keys = { "times":FloatArray( 0, 0.2, 0.4, 0.6, 0.8 ), "transitions":FloatArray( 1, 1, 1, 1, 1 ), "update":1, "values":[ 0, 1, 0, 1, 0 ] }
+tracks/1/keys = {
+"times": FloatArray( 0, 0.2, 0.4, 0.6, 0.8 ),
+"transitions": FloatArray( 1, 1, 1, 1, 1 ),
+"update": 1,
+"values": [ 0, 1, 0, 1, 0 ]
+}
 
 [node name="PrototypePlayerPiece" type="KinematicBody2D"]
 

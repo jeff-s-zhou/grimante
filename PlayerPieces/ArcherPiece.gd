@@ -119,7 +119,7 @@ func piercing_arrow(new_coords):
 		
 		var new_damage = damage
 		action.add_call("attacked", [new_damage], coords)
-		if self.grid.pieces[coords].hp <= damage and damage > 0:
+		if self.grid.pieces[coords].will_die_to(damage) and damage > 0:
 			damage -= 1
 		else:
 			break
@@ -191,7 +191,7 @@ func predict_ranged_attack(position_coords, new_coords, is_passive=false):
 		
 		var new_damage = damage
 		get_parent().pieces[coords].predict(new_damage, is_passive)
-		if self.grid.pieces[coords].hp <= damage and damage > 0:
+		if self.grid.pieces[coords].will_die_to(damage) and damage > 0:
 			damage -= 1
 		else:
 			break

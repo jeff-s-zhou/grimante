@@ -14,15 +14,15 @@
 [ext_resource path="res://Assets/Objects/wall_behind.png" type="Texture" id=12]
 [ext_resource path="res://Assets/Objects/wall_front.png" type="Texture" id=13]
 [ext_resource path="res://UI/ReinforcementIndicator.tscn" type="PackedScene" id=14]
-[ext_resource path="res://Assets/Allies/archer_corpse.png" type="Texture" id=15]
-[ext_resource path="res://Assets/Allies/cavalier_corpse.png" type="Texture" id=16]
-[ext_resource path="res://Assets/Allies/stormdancer_corpse.png" type="Texture" id=17]
-[ext_resource path="res://Assets/Allies/saint_corpse.png" type="Texture" id=18]
-[ext_resource path="res://Assets/Allies/corsair_corpse.png" type="Texture" id=19]
-[ext_resource path="res://Assets/Allies/pyromancer_corpse.png" type="Texture" id=20]
-[ext_resource path="res://Assets/Allies/assassin_corpse.png" type="Texture" id=21]
-[ext_resource path="res://Assets/Allies/crusader_corpse.png" type="Texture" id=22]
-[ext_resource path="res://Assets/Allies/berserker_corpse.png" type="Texture" id=23]
+[ext_resource path="res://Assets/Allies/crusader_corpse.png" type="Texture" id=15]
+[ext_resource path="res://Assets/Allies/berserker_corpse.png" type="Texture" id=16]
+[ext_resource path="res://Assets/Allies/assassin_corpse.png" type="Texture" id=17]
+[ext_resource path="res://Assets/Allies/cavalier_corpse.png" type="Texture" id=18]
+[ext_resource path="res://Assets/Allies/archer_corpse.png" type="Texture" id=19]
+[ext_resource path="res://Assets/Allies/saint_corpse.png" type="Texture" id=20]
+[ext_resource path="res://Assets/Allies/stormdancer_corpse.png" type="Texture" id=21]
+[ext_resource path="res://Assets/Allies/pyromancer_corpse.png" type="Texture" id=22]
+[ext_resource path="res://Assets/Allies/corsair_corpse.png" type="Texture" id=23]
 [ext_resource path="res://InputHandler.tscn" type="PackedScene" id=24]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
@@ -49,21 +49,21 @@ animations = [ {
 "speed": 5.0
 } ]
 
-[sub_resource type="SpriteFrames" id=6]
+[sub_resource type="SpriteFrames" id=3]
 
 animations = [ {
-"frames": [ ExtResource( 6 ) ],
-"loop": true,
-"name": "indirect",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 3 ) ],
 "loop": true,
 "name": "default",
 "speed": 5.0
+}, {
+"frames": [ ExtResource( 6 ) ],
+"loop": true,
+"name": "indirect",
+"speed": 5.0
 } ]
 
-[sub_resource type="SampleLibrary" id=3]
+[sub_resource type="SampleLibrary" id=4]
 
 samples/tile_hover = {
 "db": 0.0,
@@ -72,7 +72,7 @@ samples/tile_hover = {
 "sample": ExtResource( 9 )
 }
 
-[sub_resource type="SampleLibrary" id=4]
+[sub_resource type="SampleLibrary" id=5]
 
 samples/mouseover = {
 "db": 0.0,
@@ -87,52 +87,52 @@ samples/tile_hover = {
 "sample": ExtResource( 9 )
 }
 
-[sub_resource type="SpriteFrames" id=5]
+[sub_resource type="SpriteFrames" id=6]
 
 animations = [ {
 "frames": [ ExtResource( 15 ) ],
 "loop": true,
-"name": "archer",
+"name": "crusader",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 16 ) ],
 "loop": true,
-"name": "cavalier",
+"name": "berserker",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 17 ) ],
 "loop": true,
-"name": "stormdancer",
+"name": "assassin",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 18 ) ],
 "loop": true,
-"name": "saint",
+"name": "cavalier",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 19 ) ],
 "loop": true,
-"name": "corsair",
+"name": "archer",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 20 ) ],
 "loop": true,
-"name": "pyromancer",
+"name": "saint",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 21 ) ],
 "loop": true,
-"name": "assassin",
+"name": "stormdancer",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 22 ) ],
 "loop": true,
-"name": "crusader",
+"name": "pyromancer",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 23 ) ],
 "loop": true,
-"name": "berserker",
+"name": "corsair",
 "speed": 5.0
 } ]
 
@@ -174,7 +174,7 @@ transform/rot = -180.0
 
 visibility/visible = false
 visibility/opacity = 0.5
-frames = SubResource( 6 )
+frames = SubResource( 3 )
 animation = "default"
 
 [node name="StormEffect" parent="." instance=ExtResource( 7 )]
@@ -217,13 +217,13 @@ params/attenuation/min_distance = 1.0
 params/attenuation/max_distance = 2048.0
 params/attenuation/distance_exp = 1.0
 config/polyphony = 1
-config/samples = SubResource( 3 )
+config/samples = SubResource( 4 )
 config/pitch_random = 0.0
 
 [node name="SamplePlayer" type="SamplePlayer" parent="."]
 
 config/polyphony = 1
-config/samples = SubResource( 4 )
+config/samples = SubResource( 5 )
 default/volume_db = 0.0
 default/pitch_scale = 1.0
 default/pan = 0.0
@@ -268,7 +268,7 @@ transform/pos = Vector2( 0, 1 )
 [node name="CorpseIndicator" type="AnimatedSprite" parent="."]
 
 visibility/visible = false
-frames = SubResource( 5 )
+frames = SubResource( 6 )
 animation = "berserker"
 
 [node name="InputHandler" parent="." instance=ExtResource( 24 )]

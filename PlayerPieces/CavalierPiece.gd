@@ -112,7 +112,7 @@ func get_attack_range():
 	var attack_range = []
 	var movement_range = get_movement_range()
 	
-	var enemy_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", true)
+	var enemy_range = get_parent().get_range(self.coords, [1, self.movement_value + 1], "ENEMY", true)
 	for enemy_coords in enemy_range:
 		var decremented_coords = decrement_one(enemy_coords)
 		#allow it to point blank impale adjacent enemies

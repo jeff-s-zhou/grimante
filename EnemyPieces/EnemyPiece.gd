@@ -181,10 +181,16 @@ func reset_prediction_highlight():
 func attack_highlight():
 	self.action_highlighted = true
 	get_node("Physicals/EnemyOverlays/Red").show()
-
+	
+func get_actual_damage(damage):
+	if self.shielded:
+		return 0
+	else:
+		return damage
 	
 func will_die_to(damage):
-	return (self.hp - damage) <= 0 and self.shielded == false
+	var actual_damage = get_actual_damage(damage)
+	return (self.hp - actual_damage) <= 0
 
 
 func reset_prediction_flyover():
@@ -244,16 +250,15 @@ func animate_predict_hp(hp, value, color):
 
 
 func predict(damage, is_passive_damage=false):
+	var actual_damage = get_actual_damage(damage)
 	var color = Color(1, 0, 0.4)
 	if is_passive_damage:
 		color = Color(1, 1, 0.0)
 		get_node("Physicals/EnemyOverlays/Orange").show()
 		if self.action_highlighted:
 			get_node("Physicals/EnemyOverlays/Red").hide()
-	if self.shielded:
-		add_animation(self, "animate_predict_hp", false, [self.hp, 0, color])
-	else:
-		add_animation(self, "animate_predict_hp", false, [max(self.hp - damage, 0), -1 * damage, color])
+	
+	add_animation(self, "animate_predict_hp", false, [max(self.hp - actual_damage, 0), -1 * actual_damage, color])
 		
 
 func animate_smash_killed():

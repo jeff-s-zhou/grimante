@@ -20,11 +20,31 @@
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 4 ), ExtResource( 5 ) ], "loop":true, "name":"damaged", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"attack_range", "speed":5.0 } ]
+animations = [ {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
+"loop": true,
+"name": "damaged",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 5 ) ],
+"loop": true,
+"name": "attack_range",
+"speed": 5.0
+} ]
 
 [sub_resource type="SampleLibrary" id=2]
 
-samples/monster_death = { "db":-5.0, "pitch":1.0, "sample":ExtResource( 17 ) }
+samples/monster_death = {
+"db": -5.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 17 )
+}
 
 [node name="GruntPiece" type="KinematicBody2D"]
 
@@ -61,6 +81,26 @@ editor/display_folded = true
 [node name="EnemyEffects" parent="Physicals" instance=ExtResource( 8 )]
 
 editor/display_folded = true
+
+[node name="DeathTouch" parent="Physicals/EnemyEffects"]
+
+config/process_mode = 1
+
+[node name="FrozenParticles" parent="Physicals/EnemyEffects"]
+
+config/process_mode = 1
+
+[node name="FireEffect" parent="Physicals/EnemyEffects"]
+
+config/process_mode = 1
+
+[node name="CorrosiveParticles" parent="Physicals/EnemyEffects"]
+
+config/process_mode = 1
+
+[node name="RabidParticles" parent="Physicals/EnemyEffects"]
+
+config/process_mode = 1
 
 [node name="FogEffect" parent="Physicals" instance=ExtResource( 9 )]
 

@@ -135,7 +135,7 @@ func bomb(new_coords, count=0):
 	action.add_call("attacked", [self.wildfire_damage], new_coords)
 	action.execute()
 	
-	if count < 3:
+	if count < 2:
 		var nearby_enemy_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 		var nearby_enemy_range_filtered = []
 		for coords in nearby_enemy_range:
