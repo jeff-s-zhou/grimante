@@ -25,6 +25,8 @@ var next_wave #the wave that was used for reinforcement indication
 
 var tabbed_flag #to check if a current description is tabbed in
 
+var has_active_star = false
+
 signal wave_deployed
 signal next_pressed
 signal reinforced
@@ -160,6 +162,9 @@ func _ready():
 	
 func get_turn_count():
 	return self.turn_count
+	
+func set_active_star(flag):
+	self.has_active_star = flag
 #	
 #
 func update_animation_count_display(count):
@@ -335,16 +340,17 @@ func _input(event):
 func computer_input(event):
 	#select a unit
 	if get_node("InputHandler").is_select(event):
+		var has_selected = get_node("Grid").selected != null
 		var hovered = get_node("CursorArea").get_piece_or_location_hovered()
 		if hovered:
 			#if during a tutorial level, make sure move is as intended
 			if self.tutorial != null:
 				if self.tutorial.move_is_valid(get_turn_count(), hovered.coords):
-					hovered.input_event(event)
+					hovered.input_event(event, has_selected, self.has_active_star)
 				else:
 					print("not valid??")
 			else:
-				hovered.input_event(event)
+				hovered.input_event(event, has_selected, self.has_active_star)
 				
 		elif get_node("Grid").selected != null:
 			get_node("Grid").selected.invalid_move()

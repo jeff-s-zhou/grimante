@@ -133,7 +133,7 @@ func get_modifiers():
 	return modifiers
 
 
-func input_event(event):
+func input_event(event, has_selected, has_star):
 	if event.is_pressed():
 		self.grid.set_target(self)
 

@@ -29,8 +29,6 @@ var assist_flag = false
 
 var invulnerable_flag = false
 
-var finisher_flag = false
-
 var armor = 0
 var movement_value = 1 setget , get_movement_value
 var attack_bonus = 0
@@ -153,20 +151,16 @@ func get_movement_value():
 			return self.AssistSystem.get_bonus_movement() + 1
 	return self.AssistSystem.get_bonus_movement() + movement_value
 	
-func activate_finisher():
-	if !self.finisher_flag and self.cooldown == 0:
-		#TODO: sparkly effects
-		self.finisher_flag = true
 	
-func finisher_reactivate():
+func star_reactivate():
 	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
-	for player_piece in player_pieces:
-		self.finisher_flag = false
 	self.state = States.DEFAULT
 	get_node("Cooldown").hide()
 	get_node("Physicals/AnimatedSprite").play("default")
 	if(get_node("CollisionArea").overlaps_area(self.cursor_area)):
 		self.hovered()
+	get_node("/root/Combat").set_active_star(false)
+
 
 func set_armor(value):
 	self.armor = value
@@ -219,6 +213,7 @@ func animate_delete_self(blocking=true):
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 1, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
+	set_pos(Vector2(-200, -200))
 	if blocking:
 		emit_signal("animation_done")
 	subtract_anim_count()
@@ -233,6 +228,7 @@ func resurrect():
 	add_to_group("player_pieces")
 	get_parent().add_piece(self.coords, self)
 	add_animation(self, "animate_summon", false)
+	star_reactivate()
 
 
 func animate_resurrect(blocking=true):
@@ -278,14 +274,6 @@ func set_coords(new_coords):
 		for coords in seen_range:
 			if get_parent().pieces[coords].cloaked:
 				get_parent().pieces[coords].set_cloaked(false)
-			
-	var res_range = get_parent().get_location_range(self.coords)
-	for coords in res_range:
-		if get_parent().locations[coords].corpse != null:
-			var location = get_parent().locations[coords]
-			location.resurrect()
-			add_animation(location, "animate_hide_corpse", false)
-	
 
 #ANIMATION FUNCTIONS
 
@@ -372,23 +360,26 @@ func hovered():
 
 
 #called when an event happens inside the click area hitput
-func input_event(event):
+func input_event(event, has_selected, has_active_star):
 	if self.deploying_flag: #if in deploy phase
-		deploy_input_event(event)
+		deploy_input_event(event, has_selected)
 		return
+		
+	if has_active_star:
+		if self.state == States.PLACED:
+			star_reactivate() #reactivate this piece for finishing
+		else:
+			return
 
-	if get_parent().selected == null and self.state != States.PLACED:
+	elif !has_selected and self.state != States.PLACED:
 		select()
-	
-	elif get_parent().selected == null and self.finisher_flag:
-		finisher_reactivate() #reactivate this piece for finishing
 
 	else: #if not selected and not self, then some piece is trying to act on this one
 		get_parent().set_target(self)
 
 
-func deploy_input_event(event):
-	if get_parent().selected == null:
+func deploy_input_event(event, has_selected):
+	if !has_selected:
 		select()
 	else:
 		get_parent().set_target(self)

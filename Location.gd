@@ -147,8 +147,11 @@ func _mouse_exited():
 	get_parent().reset_prediction()
 
 
-func input_event(event):
-	get_parent().set_target(self)
+func input_event(event, has_selected, has_active_star):
+	if has_active_star and self.corpse != null:
+		self.corpse.resurrect()
+	else:
+		get_parent().set_target(self)
 
 func external_set_opacity(value=1.0):
 	get_node("Sprite").set_opacity(value)
