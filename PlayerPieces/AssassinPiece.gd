@@ -123,10 +123,7 @@ func act(new_coords):
 		var args = [new_coords, 350, true]
 		add_animation(self, "animate_move_and_hop", true, args)
 		set_coords(new_coords)
-		if self.bloodlust_flag:
-			soft_placed() #in the case that it resets again using its passive
-		else:
-			placed()
+		placed()
 	elif _is_within_attack_range(new_coords):
 		handle_pre_assisted()
 		#get_node("/root/Combat").display_overlay(self.unit_name)

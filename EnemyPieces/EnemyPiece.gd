@@ -5,6 +5,10 @@ extends "res://Piece.gd"
 # var a=2
 # var b="textvar"
 
+const yellow_explosion_scene = preload("res://EnemyPieces/Components/YellowExplosionParticles.tscn")
+const green_explosion_scene = preload("res://EnemyPieces/Components/GreenExplosionParticles.tscn")
+const red_explosion_scene = preload("res://EnemyPieces/Components/RedExplosionParticles.tscn")
+
 var action_highlighted = false
 var movement_value = Vector2(0, 1)
 var default_movement_value = Vector2(0, 1)
@@ -605,13 +609,21 @@ func delete_self():
 
 
 #actually physically removes it from the board
-func animate_delete_self():
+func animate_delete_self(explosion_prototype=self.yellow_explosion_scene):
 	add_anim_count()
 	#get_node("Sprinkles").update() #update particleattractor location after all have moved
 	remove_from_group("enemy_pieces")
-	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 1, 0, 0.4, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	get_node("Tween").start()
-	yield(get_node("Tween"), "tween_complete")
+	get_node("Physicals").set_opacity(0)
+	var explosion = explosion_prototype.instance()
+	add_child(explosion)
+	explosion.set_emit_timeout(0.3)
+	explosion.set_emitting(true)
+#	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 1, 0, 0.4, Tween.TRANS_LINEAR, Tween.EASE_IN)
+#	get_node("Tween").start()
+#	yield(get_node("Tween"), "tween_complete")
+	get_node("Timer").set_wait_time(0.5)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
 	emit_signal("animation_done")
 	#get_node("Sprinkles").animate_sprinkles()
 	#yield(get_node("Sprinkles"), "animation_done")
