@@ -541,18 +541,19 @@ func modify_hp(amount, delay=0):
 		
 		if self.current_animation_sequence == null:
 			get_new_animation_sequence()
-		add_animation(self, "animate_set_hp", true, [self.hp, amount, delay])
 		if self.hp == 0: 
-			print("deleting self")
 			emit_signal("enemy_death")
+			add_animation(self, "animate_set_hp", false, [self.hp, amount, delay, false])
 			delete_self() 
 			#set_animation_sequence_blocking()
+		else:
+			add_animation(self, "animate_set_hp", true, [self.hp, amount, delay])
 			
 		enqueue_animation_sequence()
 			
 
 
-func animate_set_hp(hp, value, delay=0):
+func animate_set_hp(hp, value, delay=0, flicker_flag=true):
 	add_anim_count()
 	reset_prediction_flyover()
 	#reset_just_prediction_flyover() #if you forget why you need this, attack same enemy quickly with 2 heroes
@@ -568,9 +569,12 @@ func animate_set_hp(hp, value, delay=0):
 
 	get_node("Physicals/HealthDisplay").set_health(hp)
 	
-#	if hp == 0:
-#		get_node("SamplePlayer").play("monster_death")
+	if flicker_flag:
+		emit_signal("small_shake")
+		get_node("SamplePlayer").play("rocket glass explosion thud 2")
+
 	
+
 	var flyover = self.flyover_prototype.instance()
 	add_child(flyover)
 	var text = flyover.get_node("FlyoverText")
@@ -580,7 +584,7 @@ func animate_set_hp(hp, value, delay=0):
 		text.set("custom_colors/font_color", Color(0,1,0))
 	elif value == 0:
 		value_text = "-" + value_text
-	else:
+	elif flicker_flag:
 		get_node("AnimationPlayer").play("FlickerAnimation")
 	text.set_opacity(1.0)
 	
@@ -593,8 +597,10 @@ func animate_set_hp(hp, value, delay=0):
 	tween.interpolate_property(text, "visibility/opacity", 1, 0, 1.3, Tween.TRANS_EXPO, Tween.EASE_IN)
 	tween.start()
 	
-	yield(tween, "tween_complete") #this is the problem line...fuuuuck
-	emit_signal("animation_done")
+	yield(tween, "tween_complete")
+	#if we don't flicker, we won't have it blocking either
+	if flicker_flag:
+		emit_signal("animation_done")
 	flyover.queue_free()
 	tween.queue_free()
 	
@@ -612,8 +618,10 @@ func delete_self():
 func animate_delete_self(explosion_prototype=self.yellow_explosion_scene):
 	add_anim_count()
 	#get_node("Sprinkles").update() #update particleattractor location after all have moved
+	get_node("SamplePlayer").play("rocket glass explosion 5")
 	remove_from_group("enemy_pieces")
 	get_node("Physicals").set_opacity(0)
+	emit_signal("shake")
 	var explosion = explosion_prototype.instance()
 	add_child(explosion)
 	explosion.set_emit_timeout(0.3)

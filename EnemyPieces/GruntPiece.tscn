@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=1]
+[gd_scene load_steps=24 format=1]
 
 [ext_resource path="res://EnemyPieces/GruntPiece.gd" type="Script" id=1]
 [ext_resource path="res://EnemyPieces/Components/EnemyCollisionArea.tscn" type="PackedScene" id=2]
@@ -17,6 +17,10 @@
 [ext_resource path="res://EnemyPieces/Components/EnemyClickArea.tscn" type="PackedScene" id=15]
 [ext_resource path="res://Assets/processed_fonts/enemy_health.fnt" type="BitmapFont" id=16]
 [ext_resource path="res://Assets/processed_sounds/monster_death.smp" type="Sample" id=17]
+[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 2.smp" type="Sample" id=18]
+[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 4.smp" type="Sample" id=19]
+[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 5.smp" type="Sample" id=20]
+[ext_resource path="res://Assets/processed_sounds/rocket glass explosion thud 2.smp" type="Sample" id=21]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -26,14 +30,14 @@ animations = [ {
 "name": "default",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
-"loop": true,
-"name": "damaged",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 5 ) ],
 "loop": true,
 "name": "attack_range",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
+"loop": true,
+"name": "damaged",
 "speed": 5.0
 } ]
 
@@ -44,6 +48,30 @@ samples/monster_death = {
 "pitch": 1.0,
 "priority": 0,
 "sample": ExtResource( 17 )
+}
+"samples/rocket glass explosion 2" = {
+"db": 5.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 18 )
+}
+"samples/rocket glass explosion 4" = {
+"db": 5.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 19 )
+}
+"samples/rocket glass explosion 5" = {
+"db": 5.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 20 )
+}
+"samples/rocket glass explosion thud 2" = {
+"db": 5.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 21 )
 }
 
 [node name="GruntPiece" type="KinematicBody2D"]

@@ -12,6 +12,10 @@ const AnimationSequence = preload("res://AnimationSequence.gd")
 signal animation_done
 signal count_animation_done
 
+signal shake
+
+signal small_shake
+
 var current_animation_sequence = null
 
 var debug_anim_counter = 0

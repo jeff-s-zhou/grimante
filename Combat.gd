@@ -203,6 +203,7 @@ func initialize_crusader(new_piece):
 	new_piece.set_opacity(0)
 	new_piece.connect("invalid_move", self, "handle_invalid_move")
 	new_piece.connect("shake", self, "screen_shake")
+	new_piece.connect("small_shake", self, "small_screen_shake")
 	new_piece.connect("animated_placed", self, "handle_piece_placed")
 	get_node("Grid").add_child(new_piece)
 	new_piece.initialize(get_node("CursorArea")) #placed afterwards because we might need the piece to be on the grid	
@@ -215,6 +216,7 @@ func initialize_piece(piece, on_bar=false, key=null):
 	new_piece.set_opacity(0)
 	new_piece.connect("invalid_move", self, "handle_invalid_move")
 	new_piece.connect("shake", self, "screen_shake")
+	new_piece.connect("small_shake", self, "small_screen_shake")
 	new_piece.connect("animated_placed", self, "handle_piece_placed")	
 	
 	if new_piece.UNIT_TYPE == "Assassin":
@@ -269,6 +271,8 @@ func initialize_enemy_piece(coords, prototype, health, modifiers, animation_sequ
 	get_node("Grid").add_piece(coords, enemy_piece)
 	enemy_piece.initialize(health, modifiers, prototype)
 	enemy_piece.connect("broke_defenses", self, "damage_defenses")
+	enemy_piece.connect("shake", self, "screen_shake")
+	enemy_piece.connect("small_shake", self, "small_screen_shake")
 	enemy_piece.connect("enemy_death", self.state_manager.get_node("StarSubsystem"), "add_kill_count")
 	#enemy_piece.get_node("Sprinkles").set_particle_endpoint(get_node("ComboSystem/ComboPointsLabel").get_global_pos())
 	enemy_piece.check_global_seen()
@@ -584,8 +588,10 @@ func handle_instructions():
 		get_node("TutorialTooltip").set_tooltips(instruction["tooltips"])
 
 func screen_shake():
-	get_node("ShakeCamera").shake(0.5, 35, 10)
-
+	get_node("ShakeCamera").shake(0.6, 30, 12)
+	
+func small_screen_shake():
+	get_node("ShakeCamera").shake(0.4, 24, 5)
 
 func _sort_by_y_axis(enemy_piece1, enemy_piece2):
 		if enemy_piece1.coords.y > enemy_piece2.coords.y:

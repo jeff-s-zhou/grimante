@@ -4,7 +4,7 @@ extends "res://Piece.gd"
 # var a=2
 # var b="textvar"
 
-var States = {"LOCKED":0, "DEFAULT":1, "CLICKED": 2, "PLACED":3, "SELECTED":4}
+var States = {"LOCKED":0, "DEFAULT":1, "CLICKED": 2, "PLACED":3, "SELECTED":4, "DEAD":5}
 
 onready var AssistSystem = get_node("/root/Combat/AssistSystem")
 
@@ -36,7 +36,6 @@ var attack_bonus = 0
 const SHOVE_SPEED = 4
 
 signal invalid_move
-signal shake
 
 signal pre_attack(attack_coords)
 
@@ -155,8 +154,7 @@ func get_movement_value():
 func star_reactivate():
 	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
 	self.state = States.DEFAULT
-	get_node("Cooldown").hide()
-	get_node("Physicals/AnimatedSprite").play("default")
+	
 	if(get_node("CollisionArea").overlaps_area(self.cursor_area)):
 		self.hovered()
 	get_node("/root/Combat").set_active_star(false)
@@ -197,13 +195,13 @@ func is_placed():
 	return self.state == States.PLACED
 
 func delete_self():
-	print("deleting self at : " + str(self.coords))
 	var location = get_parent().locations[self.coords]
 	location.add_corpse(self)
 
 	add_animation(self, "animate_delete_self", true)
 	add_animation(location, "animate_add_corpse", false)
-		
+	self.state = States.DEAD
+	set_z(-9)
 	get_parent().remove_piece(self.coords)
 	remove_from_group("player_pieces")
 
@@ -213,7 +211,6 @@ func animate_delete_self(blocking=true):
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 1, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
-	set_pos(Vector2(-200, -200))
 	if blocking:
 		emit_signal("animation_done")
 	subtract_anim_count()
@@ -226,8 +223,10 @@ func delete_from_bar():
 
 func resurrect():
 	add_to_group("player_pieces")
+	set_z(0)
 	get_parent().add_piece(self.coords, self)
-	add_animation(self, "animate_summon", false)
+	add_animation(self, "animate_resurrect", true)
+	add_animation(self, "animate_reactivate", false)
 	star_reactivate()
 
 
@@ -244,19 +243,29 @@ func animate_resurrect(blocking=true):
 func initialize(cursor_area):
 	self.cursor_area = cursor_area
 	add_to_group("player_pieces")
-
+	
+func animate_reactivate():
+	get_node("Physicals/CooldownSprite").show()
+	get_node("Physicals/AnimatedSprite").set_opacity(0)
+	var sprite = get_node("Physicals/AnimatedSprite")
+	var glow_sprite = get_node("Physicals/GlowSprite")
+	
+	get_node("Tween").interpolate_property(sprite, "visibility/opacity", 0, 1, 0.4, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").interpolate_property(glow_sprite, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_QUART, Tween.EASE_IN)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	get_node("Physicals/CooldownSprite").hide()
+	yield(get_node("Tween"), "tween_complete")
+	get_node("Tween").interpolate_property(glow_sprite, "visibility/opacity", 1, 0, 0.7, Tween.TRANS_QUAD, Tween.EASE_IN_OUT)
+	get_node("Tween").start()
 
 func turn_update():
 	set_invulnerable(false)
 	set_z(0)
-	if self.cooldown > 0:
-		pass
-	else:
-		self.state = States.DEFAULT
-		get_node("Cooldown").hide()
-		get_node("Physicals/AnimatedSprite").play("default")
-		if(get_node("CollisionArea").overlaps_area(self.cursor_area)):
-			self.hovered()
+	self.state = States.DEFAULT
+	add_animation(self, "animate_reactivate", false)
+	if(get_node("CollisionArea").overlaps_area(self.cursor_area)):
+		self.hovered()
 
 
 func set_coords(new_coords):
@@ -366,7 +375,10 @@ func input_event(event, has_selected, has_active_star):
 		return
 		
 	if has_active_star:
-		if self.state == States.PLACED:
+		if has_active_star and self.state == States.DEAD:
+			self.resurrect()
+		
+		elif self.state == States.PLACED:
 			star_reactivate() #reactivate this piece for finishing
 		else:
 			return
@@ -464,12 +476,11 @@ func placed(ending_turn=false):
 
 func animate_placed(ending_turn=false):
 	#get_node("Physicals/OverlayLayers/UltimateWhite").hide()
-	if(self.cooldown > 0):
-		self.cooldown -= 1
-		get_node("Cooldown").show()
-		get_node("Cooldown/Label").set_text(str(self.cooldown))
-	get_node("Physicals/AnimatedSprite").play("cooldown")
-	
+	#get_node("Physicals/AnimatedSprite").play("cooldown")
+	get_node("Physicals/CooldownSprite").show()
+	var sprite = get_node("Physicals/AnimatedSprite")
+	get_node("Tween").interpolate_property(sprite, "visibility/opacity", 1, 0, 0.4, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").start()
 	#if we're calling it from end_turn() in combat, don't trigger all the individual placed checks
 	if !ending_turn:
 		emit_signal("animated_placed")

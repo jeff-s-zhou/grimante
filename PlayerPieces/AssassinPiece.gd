@@ -86,15 +86,16 @@ func animate_backstab(attack_coords):
 	get_node("Tween 2").interpolate_property(self, "visibility/opacity", 0, 1, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween 2").interpolate_property(get_node("AssassinFade"), "visibility/opacity", 1, 0, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween 2").start()
-	animate_move_to_pos(attack_position, 200, true, Tween.TRANS_SINE, Tween.EASE_IN)
+	animate_move_to_pos(attack_position, 300, true, Tween.TRANS_QUAD, Tween.EASE_IN)
 	subtract_anim_count()
-	
+
+
 func animate_directly_below_backstab(attack_coords):
 	add_anim_count()
 	var attack_location = get_parent().locations[attack_coords]
 	var difference = 3 * (attack_location.get_pos() - get_pos())/4
 	var attack_position = attack_location.get_pos() - difference
-	animate_move_to_pos(attack_position, 200, true, Tween.TRANS_SINE, Tween.EASE_IN)
+	animate_move_to_pos(attack_position, 300, true, Tween.TRANS_QUAD, Tween.EASE_IN)
 	subtract_anim_count()
 
 
@@ -167,10 +168,7 @@ func predict(new_coords):
 #resets the assassin to be able to act again
 func unplaced():
 	self.state = States.DEFAULT
-	add_animation(self, "animate_unplaced", false)
-	
-func animate_unplaced():
-	get_node("Physicals/AnimatedSprite").play("default")
+	add_animation(self, "animate_reactivate", false)
 
 
 func trigger_passive(attack_range):

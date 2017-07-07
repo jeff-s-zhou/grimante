@@ -1,36 +1,71 @@
-[gd_scene load_steps=11 format=1]
+[gd_scene load_steps=13 format=1]
 
 [ext_resource path="res://PlayerPieces/PrototypePlayerPiece.tscn" type="PackedScene" id=1]
 [ext_resource path="res://PlayerPieces/ArcherPiece.gd" type="Script" id=2]
-[ext_resource path="res://Assets/Allies/archer_piece.png" type="Texture" id=3]
-[ext_resource path="res://Assets/Allies/archer_piece_red.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Allies/archer_piece_cooldown.png" type="Texture" id=3]
+[ext_resource path="res://Assets/Allies/archer_piece.png" type="Texture" id=4]
 [ext_resource path="res://Assets/Allies/archer_piece_sepia.png" type="Texture" id=5]
-[ext_resource path="res://Assets/processed_sounds/bow_draw.smp" type="Sample" id=6]
-[ext_resource path="res://Assets/processed_sounds/bow_hit.smp" type="Sample" id=7]
-[ext_resource path="res://PlayerPieces/Components/ArcherArrow.tscn" type="PackedScene" id=8]
+[ext_resource path="res://Assets/Allies/archer_piece_red.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Allies/archer_glow.png" type="Texture" id=7]
+[ext_resource path="res://Assets/processed_sounds/bow_draw.smp" type="Sample" id=8]
+[ext_resource path="res://Assets/processed_sounds/bow_hit.smp" type="Sample" id=9]
+[ext_resource path="res://PlayerPieces/Components/ArcherArrow.tscn" type="PackedScene" id=10]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 3 ), ExtResource( 4 ) ], "loop":true, "name":"hurt", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"cooldown", "speed":5.0 } ]
+animations = [ {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 5 ) ],
+"loop": true,
+"name": "cooldown",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ), ExtResource( 6 ) ],
+"loop": true,
+"name": "hurt",
+"speed": 5.0
+} ]
 
 [sub_resource type="SampleLibrary" id=2]
 
-samples/bow_draw = { "db":0.0, "pitch":1.0, "sample":ExtResource( 6 ) }
-samples/bow_hit = { "db":0.0, "pitch":1.0, "sample":ExtResource( 7 ) }
+samples/bow_draw = {
+"db": 0.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 8 )
+}
+samples/bow_hit = {
+"db": 0.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 9 )
+}
 
 [node name="ArcherPiece" instance=ExtResource( 1 )]
 
 script/script = ExtResource( 2 )
 
+[node name="CooldownSprite" parent="Physicals"]
+
+texture = ExtResource( 3 )
+
 [node name="AnimatedSprite" parent="Physicals"]
 
 frames = SubResource( 1 )
+
+[node name="GlowSprite" parent="Physicals"]
+
+texture = ExtResource( 7 )
 
 [node name="SamplePlayer 2" parent="."]
 
 config/samples = SubResource( 2 )
 
-[node name="ArcherArrow" parent="." instance=ExtResource( 8 )]
+[node name="ArcherArrow" parent="." instance=ExtResource( 10 )]
 
 visibility/opacity = 0.0
 transform/pos = Vector2( 0, -10 )
