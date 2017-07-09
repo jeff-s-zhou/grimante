@@ -66,11 +66,13 @@ func get_new_action(trigger_assassin_passive=true):
 	add_child(action)
 	return action
 	
-func get_new_animation_sequence(blocking=false):
+func get_new_animation_sequence(blocking=false, stateful=true):
 	get_node("/root/AnimationQueue").update_waiting_count(1)
-	self.current_animation_sequence = self.AnimationSequence.new(blocking)
-	add_child(self.current_animation_sequence)
-	return self.current_animation_sequence
+	var sequence = self.AnimationSequence.new(blocking)
+	add_child(sequence)
+	if stateful:
+		self.current_animation_sequence = sequence
+	return sequence
 	
 func set_animation_sequence_blocking():
 	if self.current_animation_sequence != null:

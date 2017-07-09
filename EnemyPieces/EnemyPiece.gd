@@ -189,6 +189,8 @@ func attack_highlight():
 func get_actual_damage(damage):
 	if self.shielded:
 		return 0
+	elif get_parent().locations[self.coords].raining:
+		return damage + 2
 	else:
 		return damage
 	
@@ -692,24 +694,14 @@ func turn_attack_update():
 	
 	if self.stunned:
 		set_stunned(false)
-	
-	handle_rain()
+
 	handle_shifting_sands()
 	
 	var adjacent_players_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
 	if adjacent_players_range != [] and self.predator:
 		heal(2)
 		set_predator(false)
-			
-	
-func handle_rain():
-	var location = self.grid.locations[self.coords]
-	if location.raining:
-		add_animation(location, "animate_lightning", true)
-		var action = get_new_action()
-		action.add_call("attacked", [2], self.coords)
-		action.execute()
-	
+
 
 #this is written so we can easily add more stuff to the end of the turn_update before executing the animation_sequence
 func turn_update_helper():

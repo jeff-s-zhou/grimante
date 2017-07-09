@@ -3,14 +3,13 @@ extends "PlayerPiece.gd"
 
 const UNIT_TYPE = "Stormdancer"
 
-const DEFAULT_BOLT_DAMAGE = 3
-const DEFAULT_STORM_DAMAGE = 5
+const DEFAULT_SHURIKEN_DAMAGE = 1
 const DEFAULT_MOVEMENT_VALUE = 2
 const DEFAULT_ARMOR_VALUE = 2
 
-var bolt_damage = DEFAULT_BOLT_DAMAGE setget ,get_bolt_damage
-var storm_damage = DEFAULT_STORM_DAMAGE setget ,get_storm_damage
+var shuriken_damage = DEFAULT_SHURIKEN_DAMAGE setget , get_shuriken_damage
 
+const shuriken_prototype = preload("res://PlayerPieces/Components/Shuriken.tscn")
 
 var rain_coords_dict = {}
 
@@ -29,13 +28,9 @@ func handle_assist():
 	self.AssistSystem.activate_assist(self.assist_type, self)
 	
 
-func get_bolt_damage():
-	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_BOLT_DAMAGE
+func get_shuriken_damage():
+	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_SHURIKEN_DAMAGE
 
-#not a true getter
-func get_storm_damage():
-	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_STORM_DAMAGE
-	
 
 func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
@@ -73,6 +68,7 @@ func act(new_coords):
 	if _is_within_swap_range(new_coords):
 		handle_pre_assisted()
 		tango(new_coords)
+		shuriken_storm(new_coords)
 		placed()
 		
 	elif _is_within_movement_range(new_coords):
@@ -81,14 +77,78 @@ func act(new_coords):
 		get_parent().locations[self.coords].set_rain(true)
 		self.rain_coords_dict[self.coords] = true
 		set_coords(new_coords)
+		shuriken_storm(new_coords)
 		placed()
 	else:
 		invalid_move()
 
-
-func lightning_attack(attack_coords):
-	get_parent().pieces[attack_coords].attacked(self.bolt_damage)
+func shuriken_storm(new_coords):
+	var attack_range_dict = {}
+	var attack_range = get_parent().get_diagonal_range(new_coords, [1, 8], "ENEMY", true)
+	for coords in attack_range:
+		if get_parent().locations[coords].raining:
+			attack_range_dict[coords] = true
+		else:
+			attack_range_dict[coords] = false
+	if attack_range.size() > 0:
+		add_animation(self, "animate_spin", false)
+		throw_shurikens(attack_range, attack_range_dict)
 	
+	
+func animate_spin():
+	get_node("Physicals/SpinningForm").show()
+	get_node("Physicals/AnimatedSprite").hide()
+	var max_i = 18
+	for i in range(0, max_i):
+		var speed = 0
+		var multiplier = quadratic(i, max_i)
+		if multiplier == 0:
+			speed = 0.2
+		else:
+			speed = 0.2/multiplier
+		animate_spin_helper(speed)
+		yield(get_node("Tween 2"), "tween_complete")
+	
+	get_node("Physicals/AnimatedSprite").show()
+	get_node("Physicals/SpinningForm").hide()
+	
+func animate_spin_helper(speed):
+	var top = get_node("Physicals/SpinningForm/Top")
+	var bottom = get_node("Physicals/SpinningForm/Bottom")
+	var shadow = get_node("Shadow")
+	var start_angle = top.get_rotd()
+	var stop_angle = top.get_rotd() - 60
+	get_node("Tween 2").interpolate_property(bottom, "frame", 0, 6, speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").interpolate_property(top, "transform/rot", start_angle, stop_angle, speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").interpolate_property(shadow, "transform/rot", start_angle, stop_angle, speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").start()
+	get_node("Tween").start()
+	yield(get_node("Tween 2"), "tween_complete")
+
+func quadratic(i, max_range):
+	var factor = 1.0/max_range
+	var x_squared = pow(i, 2.0)
+	return (-1.0 * (1.0/max_range) * pow(i, 2.0)) + i
+	
+func throw_shurikens(attack_range, attack_range_dict):
+	#attack_range.invert()
+	var delay = 0.25
+	for coords in attack_range:
+		#if true, that means enemy is on a lightning tile
+		if attack_range_dict[coords]:
+			var tile = get_parent().locations[coords]
+			add_animation(tile, "animate_lightning", false)
+		add_animation(self, "animate_shuriken_helper", true, [coords, delay])
+		get_parent().pieces[coords].attacked(self.shuriken_damage)
+		delay -= (delay/1.5)
+
+func animate_shuriken_helper(attack_coords, delay):
+	var shuriken = self.shuriken_prototype.instance()
+	add_child(shuriken)
+	var global_position = get_parent().locations[attack_coords].get_global_pos()
+	shuriken.animate_attack(global_position, 900, delay)
+	yield(shuriken, "animation_done")
+	emit_signal("animation_done")
 
 func tango(new_coords):
 	add_animation(self, "animate_shunpo", true, [new_coords])
@@ -96,8 +156,6 @@ func tango(new_coords):
 	get_parent().locations[self.coords].set_rain(true)
 	self.rain_coords_dict[self.coords] = true
 	swap_coords_and_pos(target)
-	if target.side == "ENEMY":
-		target.handle_rain()
 	
 func animate_shunpo(new_coords):
 	add_anim_count()
