@@ -238,6 +238,11 @@ func focus_coords(select_coords, target_coords):
 	elif locations.has(target_coords):
 		locations[target_coords].set_targetable(true)
 
+func unfocus():
+	for location in locations.values():
+		location.set_targetable(true)
+	for piece in pieces.values():
+		piece.set_targetable(true)
 
 #done once a piece is moved by the player	
 #right click flag is so if we know to check immediately after if cursor is still in a piece's area

@@ -11,7 +11,6 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	self.y_difference = 7
-	add_star()
 	
 func disable():
 	self.hide()

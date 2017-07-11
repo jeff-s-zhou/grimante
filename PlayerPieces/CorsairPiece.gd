@@ -1,7 +1,7 @@
 extends "PlayerPiece.gd"
 
-const DEFAULT_SLASH_DAMAGE = 3
-const DEFAULT_MOVEMENT_VALUE = 2
+const DEFAULT_SHOOT_DAMAGE = 3
+const DEFAULT_MOVEMENT_VALUE = 1
 const DEFAULT_ARMOR_VALUE = 3
 const UNIT_TYPE = "Corsair"
 
@@ -9,7 +9,9 @@ var moves_remaining = 2
 
 var pathed_range
 
-var slash_damage = DEFAULT_SLASH_DAMAGE setget , get_slash_damage
+var shoot_damage = DEFAULT_SHOOT_DAMAGE setget , get_shoot_damage
+
+const BULLET_PROTOTYPE = preload("res://PlayerPieces/Components/Bullet.tscn")
 
 func _ready():
 	set_armor(DEFAULT_ARMOR_VALUE)
@@ -19,8 +21,8 @@ func _ready():
 	self.assist_type = ASSIST_TYPES.movement
 
 
-func get_slash_damage():
-	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_SLASH_DAMAGE
+func get_shoot_damage():
+	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_SHOOT_DAMAGE
 
 func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
@@ -29,10 +31,10 @@ func get_attack_range():
 	return get_parent().get_range(self.coords, [1, 2], "ENEMY")
 	
 func get_hook_range():
-	return get_parent().get_range(self.coords, [1, 3], "ENEMY", true)
+	return get_parent().get_range(self.coords, [1, 8], "ENEMY", true)
 	
 func get_assist_hook_range():
-	return get_parent().get_range(self.coords, [1, 3], "PLAYER", true)
+	return get_parent().get_range(self.coords, [1, 8], "PLAYER", true)
 	
 
 func finisher_reactivate():
@@ -84,59 +86,65 @@ func _is_within_movement_range(new_coords):
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
-		var args = [new_coords, 350, true]
-		add_animation(self, "animate_move_and_hop", true, args)
+		move_shoot(new_coords)
 		set_coords(new_coords)
-		placed()
-	elif _is_within_attack_range(new_coords):
-		handle_pre_assisted()
-		add_animation(self, "animate_slash", true, [new_coords])
-		slash(new_coords)
-		add_animation(self, "animate_slash_end", true, [self.coords])
 		placed()
 	elif _is_within_hook_range(new_coords):
 		handle_pre_assisted()
-		add_animation(self, "animate_extend_hook", true, [new_coords])
-		var adjacent_coords = hook(new_coords)
-		add_animation(self, "animate_retract_hook", true, [new_coords])
-		add_animation(self, "animate_slash", true, [adjacent_coords])
-		slash(adjacent_coords)
-		add_animation(self, "animate_slash_end", true, [self.coords])
+		hook(new_coords)
 		placed()
 	elif _is_within_assist_hook_range(new_coords):
 		handle_pre_assisted()
-		add_animation(self, "animate_extend_hook", true, [new_coords])
-		var adjacent_coords = hook(new_coords)
-		add_animation(self, "animate_retract_hook", true, [new_coords])
+		hook(new_coords)
 		placed()
 	else:
 		invalid_move()
 
 
-func slash(new_coords):
-	var action = get_new_action()
-	action.add_call("attacked", [self.slash_damage], new_coords)
-	action.execute()
-
-func animate_slash(attack_coords):
-	var location = get_parent().locations[attack_coords]
-	var difference = 4 * (location.get_pos() - get_pos())/5
-	var new_position = location.get_pos() - difference
-	animate_move_to_pos(new_position, 450, true, Tween.TRANS_SINE, Tween.EASE_IN)
-
-func animate_slash_end(original_coords):
-	var location = get_parent().locations[original_coords]
-	var new_position = location.get_pos()
-	animate_move_to_pos(new_position, 300, true)
+func move_shoot(move_coords):
+	var damage = self.shoot_damage
 	
-func animate_extend_hook(new_coords):
+	#reverse the subtraction because we're getting the range in the opposite direction
+	var line_range = self.grid.get_line_range(self.coords, self.coords - move_coords, "ENEMY")
+	if line_range != []:
+		var attack_coords = line_range[0]
+		print("printing attack coords")
+		print(attack_coords)
+		var action = get_new_action()
+		
+		#okay. the bullet HAS to be blocking so the damage is handled at the right time
+		var args = [move_coords, 500, false]
+		add_animation(self, "animate_move_and_hop", false, args)
+		add_animation(self, "animate_shoot", true, [attack_coords])
+		action.add_call("attacked", [self.shoot_damage], attack_coords)
+		action.execute()
+	else: #if just moving, block other shit from happening
+		var args = [move_coords, 500, true]
+		add_animation(self, "animate_move_and_hop", true, args)
+
+func animate_shoot(attack_coords):
+	var bullet = BULLET_PROTOTYPE.instance()
+	get_parent().add_child(bullet)
+	var final_pos = get_parent().locations[attack_coords].get_pos()
+	var distance = (final_pos - get_pos()).length()
+	var speed = 2200
+	
+	var angle = get_pos().angle_to_point(final_pos)
+	bullet.set_rot(angle)
+	
+	get_node("Tween 2").interpolate_property(bullet, "transform/pos", get_pos(), final_pos, distance/speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
+	emit_signal("animation_done")
+	bullet.queue_free()
+	
+func animate_extend_hook(start_coords, end_coords):
 	add_anim_count()
-	var new_pos = get_parent().locations[new_coords].get_pos()
-	var current_pos = get_parent().locations[self.coords].get_pos()
+	var new_pos = get_parent().locations[end_coords].get_pos()
+	var current_pos = get_parent().locations[start_coords].get_pos()
 	var angle = get_pos().angle_to_point(new_pos)
 	
 	var distance_length = (new_pos - current_pos).length()
-	
 	get_node("CorsairHook").animate_extend(distance_length, angle)
 	yield(get_node("CorsairHook"), "animation_done")
 	get_node("Timer").set_wait_time(0.1)
@@ -145,21 +153,34 @@ func animate_extend_hook(new_coords):
 	emit_signal("animation_done")
 	subtract_anim_count()
 	
-func animate_retract_hook(new_coords):
+func animate_retract_hook():
 	add_anim_count()
-	var new_pos = get_parent().locations[new_coords].get_pos()
-	var current_pos = get_parent().locations[self.coords].get_pos()
-	var distance_length = (new_pos - current_pos).length()
 	
-	get_node("CorsairHook").animate_retract(distance_length, 600)
+	get_node("CorsairHook").animate_retract(630)
 	yield(get_node("CorsairHook"), "animation_done")
 	emit_signal("animation_done")
 	subtract_anim_count()
 	
 func hook(new_coords):
-	var adjacent_coords = get_parent().hex_normalize(new_coords - self.coords) + self.coords
-	get_parent().pieces[new_coords].hooked(adjacent_coords)
-	return adjacent_coords
+	add_animation(self, "animate_extend_hook", true, [self.coords, new_coords])
+	
+	var armor_or_hp
+	var target = get_parent().pieces[new_coords]
+	if target.side == "PLAYER":
+		armor_or_hp = target.armor
+	elif target.side == "ENEMY":
+		armor_or_hp = target.hp
+		
+	if armor_or_hp > self.armor:
+		var adjacent_coords = new_coords - get_parent().hex_normalize(new_coords - self.coords)
+		hooked(adjacent_coords)
+		print("hooking")
+		print(new_coords)
+		add_animation(self, "animate_retract_hook", true)
+	else:
+		var adjacent_coords = self.coords + get_parent().hex_normalize(new_coords - self.coords)
+		get_parent().pieces[new_coords].hooked(adjacent_coords)
+		add_animation(self, "animate_retract_hook", true)
 
 
 func predict(new_coords):

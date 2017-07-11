@@ -46,74 +46,60 @@ func add_forced_action(action, turn):
 		self.forced_actions[turn] = [action]
 
 
+func display_forced_action(turn):
+	if self.forced_actions.has(turn) and self.forced_actions[turn] != []:
+		var forced_action = self.forced_actions[turn][0]
+		var initial_coords = forced_action.get_initial_coords()
+		var target_coords = forced_action.get_final_coords()
+		
+		var initial_pos = get_parent().get_node("Grid").locations[initial_coords].get_global_pos()
+		var target_pos = get_parent().get_node("Grid").locations[target_coords].get_global_pos()
+		get_parent().get_node("Grid").focus_coords(initial_coords, target_coords)
+		get_node("Sprite").set_pos(initial_pos)
+		get_node("Sprite").show()
+		get_node("Light2D").set_pos(target_pos)
+		get_node("Light2D").show()
+		
+		if forced_action.has_arrow():
+			get_node("Arrow").set_pos(initial_pos)
+			get_node("Arrow").show()
+		
+		return true
+	else:
+		return false
+
+
 func move_is_valid(turn, coords):
 	if self.forced_actions.has(turn) and self.forced_actions[turn] != []:
 		var forced_action = self.forced_actions[turn][0]
 		var valid = forced_action.move_is_valid(coords, turn)
 		if valid:
-			var next_state = forced_action.get_next_state()
-			if typeof(next_state) == TYPE_ARRAY: #it's the targeted coords and description
-				var coords = next_state[0]
-				var text = next_state[1]
-				update_display_forced_action(coords, text)
-			else:
-				finish_forced_action(next_state, turn)
-				
+			forced_action.update()
+			if forced_action.is_finished():
+				get_parent().get_node("Grid").unfocus()
+				get_node("Sprite").hide()
+				get_node("Light2D").hide()
+				get_node("Arrow").hide()
+			#only need to update anything on screen if we're displaying visible arrows
+			elif forced_action.has_arrow():
+				var target_coords = forced_action.get_final_coords()
+				var target_pos = get_parent().get_node("Grid").locations[target_coords].get_global_pos()
+				get_node("Arrow").set_pos(target_pos)
+				get_node("Arrow").show()
 		return valid
 	return true
 
 
-func display_forced_action(turn):
-	if self.forced_actions.has(turn) and self.forced_actions[turn] != []:
-		var forced_action = self.forced_actions[turn][0]
-		var coords = forced_action.get_coords()
-		var string = forced_action.get_text()
-		update_display_forced_action(coords, string)
-	else:
-		get_node("Sprite").hide()
-		get_node("Label").hide()
-		get_node("Arrow").hide()
 
-
-func update_display_forced_action(coords, fa_text):
-	var new_pos = get_parent().get_node("Grid").locations[coords].get_global_pos()
-	var new_target_pos = get_parent().get_node("Grid").locations[Vector2(3, 4)].get_global_pos()
-	get_parent().get_node("Grid").focus_coords(coords, Vector2(3, 4))
-	get_node("Sprite").set_pos(new_pos)
-	get_node("Sprite").show()
-	get_node("Light2D").set_pos(new_target_pos)
-	get_node("Light2D").show()
-	#get_node("Label").show()
-	#var text = decorate(fa_text)
-	#get_node("Label").set_bbcode("[center]" + text + "[/center]")
-	
-#	if new_pos.y > get_viewport_rect().size.height/2:
-#		get_node("Label").set_pos(Vector2(24, 300))
-#	else:
-#		get_node("Label").set_pos(Vector2(24, get_viewport_rect().size.height  - 300))
+func handle_forced_action_result(turn):
+	if self.forced_actions.has(turn):
+		if self.forced_actions[turn][0].has_result():
+			self.current_rule = self.forced_actions[turn][0].result_rule
+			update_rule()
+		self.forced_actions[turn].pop_front()
+		return true
+	return false
 		
-	
-	get_node("Arrow").set_pos(new_pos)
-	#get_node("Arrow").show()
-
-
-func finish_forced_action(result_rule, turn):
-	#check here if there's another forced action for the turn
-	self.forced_actions[turn].pop_front()
-	if result_rule != null:
-		self.current_rule = result_rule
-	
-	get_node("Sprite").hide()
-	get_node("Label").hide()
-	get_node("Arrow").hide()
-	
-
-func has_forced_action_result():
-	return self.current_rule != null
-	
-
-func handle_forced_action_result():
-	update_rule()
 
 
 func _input(event):

@@ -84,8 +84,8 @@ func act(new_coords):
 	
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
-		var args = [new_coords, 350, true]
-		add_animation(self, "animate_move_and_hop", true, args)
+		var args = [new_coords, 350, false]
+		add_animation(self, "animate_move_and_hop", false, args)
 		set_coords(new_coords)
 		var coords = get_step_shot_coords(self.coords)
 		if coords != null:
@@ -102,12 +102,6 @@ func act(new_coords):
 	else:
 		invalid_move()
 
-func ranged_attack(new_coords, damage):
-	add_animation(self, "animate_ranged_attack", true, [new_coords])
-	var action = get_new_action(new_coords)
-	action.add_call("attacked", [damage])
-	action.execute()
-		
 		
 func piercing_arrow(new_coords):
 	var damage = self.shoot_damage
@@ -133,7 +127,8 @@ func animate_ranged_attack(new_coords):
 	add_anim_count()
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
-	var angle = get_pos().angle_to_point(new_position)
+	var start_pos = get_parent().locations[self.coords].get_pos()
+	var angle = start_pos.angle_to_point(new_position)
 	
 	var arrow = get_node("ArcherArrow")
 	arrow.set_rot(angle)
@@ -141,18 +136,17 @@ func animate_ranged_attack(new_coords):
 	var speed = 2200
 	var time = distance/speed
 	
-	get_node("Tween 2").interpolate_property(arrow, "visibility/opacity", 0, 1, 0.6, Tween.TRANS_SINE, Tween.EASE_IN)
-	get_node("Tween 2").start()
-	yield(get_node("Tween 2"), "tween_complete")
+	get_node("Tween 2").interpolate_property(arrow, "visibility/opacity", 0, 1, 0.3, Tween.TRANS_SINE, Tween.EASE_IN)
 	
 	var offset = Vector2(0, -10)
-	var new_arrow_pos = (location.get_pos() - get_pos()) + offset
+	var new_arrow_pos = (location.get_pos() - start_pos) + offset
 	
 	#draw back
 	get_node("SamplePlayer 2").play("bow_draw")
 	var draw_back_position = arrow.get_pos() - (40 * (new_arrow_pos - arrow.get_pos()).normalized())
 	get_node("Tween 2").interpolate_property(arrow, "transform/pos", arrow.get_pos(), draw_back_position, 1.1, Tween.TRANS_SINE, Tween.EASE_OUT)
 	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
 	yield(get_node("Tween 2"), "tween_complete")
 	
 	get_node("Tween 2").interpolate_property(arrow, "transform/pos", arrow.get_pos(), new_arrow_pos, time, Tween.TRANS_LINEAR, Tween.EASE_IN)

@@ -12,11 +12,9 @@ var state = self.STATES.unit_select
 
 var unit_coords
 
-var unit_text
-
 var target_coords
 
-var target_text
+var arrow_flag
 
 var result_rule
 
@@ -26,11 +24,10 @@ func _ready():
 	# Initialization here
 	pass
 
-func initialize(unit_coords, unit_text, target_coords, target_text, result_text_list=null):
+func initialize(unit_coords, target_coords, result_text_list=null, display_arrow=false):
+	self.arrow_flag = display_arrow
 	self.unit_coords = unit_coords
-	self.unit_text = unit_text
 	self.target_coords = target_coords
-	self.target_text = target_text
 	if result_text_list != null:
 		var result_rule = RulePrototype.instance()
 		result_rule.initialize(result_text_list)
@@ -40,6 +37,11 @@ func initialize(unit_coords, unit_text, target_coords, target_text, result_text_
 func display_current_phase():
 	pass
 
+func update():
+	if self.state == self.STATES.unit_select:
+		self.state = self.STATES.target_select
+	elif self.state == self.STATES.target_select:
+		self.state = self.STATES.result
 	
 func move_is_valid(coords, turn):
 	if self.state == self.STATES.unit_select:
@@ -54,27 +56,17 @@ func move_is_valid(coords, turn):
 			return false
 
 
-func get_next_state():
-	if self.state == self.STATES.unit_select:
-		self.state = self.STATES.target_select
-		return [self.target_coords, self.target_text]
-	elif self.state == self.STATES.target_select:
-		return self.result_rule
-
-			
-func get_coords():
-	if self.state == self.STATES.unit_select:
-		return self.unit_coords
-	elif self.state == self.STATES.target_select:
-		return self.target_coords
-		
-func get_text():
-	if self.state == self.STATES.unit_select:
-		return self.unit_text
-	elif self.state == self.STATES.target_select:
-		#if we just want one message for both parts of the forced action
-		if self.target_text == "" or self.target_text == null:
-			return self.unit_text
-		else:
-			return self.target_text
+func is_finished():
+	return self.state == self.STATES.result
 	
+func has_arrow():
+	return self.arrow_flag
+	
+func has_result():
+	return self.result_rule != null
+	
+func get_initial_coords():
+	return self.unit_coords
+
+func get_final_coords():
+	return self.target_coords

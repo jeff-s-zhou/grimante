@@ -1,6 +1,6 @@
 extends "PlayerPiece.gd"
 
-const DEFAULT_WILDFIRE_DAMAGE = 2
+const DEFAULT_WILDFIRE_DAMAGE = 3
 const DEFAULT_MOVEMENT_VALUE = 1
 const DEFAULT_ARMOR_VALUE = 0
 const UNIT_TYPE = "Pyromancer"
@@ -23,14 +23,8 @@ func get_wildfire_damage():
 
 
 func get_movement_range():
-	var movement_range = get_parent().get_range(self.coords, [1,self.movement_value + 1], null, false, [-1, 2])
-	if self.movement_value == 2:
-		movement_range += get_parent().get_diagonal_range(self.coords, [1,2], null, false, [-1, 1])
+	var movement_range = get_parent().get_radial_range(self.coords, [1, self.movement_value + 1])
 	return movement_range
-	
-func get_attack_range():
-	var unfiltered_range = get_parent().get_radial_range(self.coords, [1, self.movement_value + 1], "ENEMY")
-	return unfiltered_range
 	
 func highlight_indirect_range(movement_range):
 	for coords in movement_range:

@@ -25,6 +25,8 @@ var next_wave #the wave that was used for reinforcement indication
 
 var tabbed_flag #to check if a current description is tabbed in
 
+var mid_forced_action = false
+
 var has_active_star = false
 
 signal wave_deployed
@@ -241,19 +243,20 @@ func initialize_piece(piece, on_bar=false, key=null):
 	
 
 func handle_piece_placed():
-	if self.tutorial != null and self.tutorial.has_forced_action_result():
+	if self.tutorial != null:
 		set_process_input(false)
 		set_process(false)
 		if get_node("/root/AnimationQueue").is_animating():
 			yield(get_node("/root/AnimationQueue"), "animations_finished")
-		self.tutorial.handle_forced_action_result()
-		yield(self.tutorial, "rule_finished")
+		if self.tutorial.handle_forced_action_result(self.turn_count):
+			yield(self.tutorial, "rule_finished")
+		print("reached here")
 		set_process_input(true)
 		set_process(true)
 
-	if self.tutorial != null:
-		self.tutorial.display_forced_action(self.turn_count)
-	
+		self.mid_forced_action = self.tutorial.display_forced_action(self.turn_count)
+
+
 	#shouldn't interfere with any other forced actions, since it'll only end when all pieces are placed
 	if !get_node("ControlBar/StarButton").has_star():
 		#check if we can automatically end turn
@@ -266,7 +269,6 @@ func handle_piece_placed():
 #	
 #
 func initialize_enemy_piece(coords, prototype, health, modifiers, animation_sequence=null):
-		
 	var enemy_piece = prototype.instance()
 	get_node("Grid").add_piece(coords, enemy_piece)
 	enemy_piece.initialize(health, modifiers, prototype)
@@ -284,6 +286,7 @@ func initialize_enemy_piece(coords, prototype, health, modifiers, animation_sequ
 			
 
 func end_turn():
+	print("ending turn")
 	self.state = STATES.transitioning
 	get_node("ControlBar/EndTurnButton").set_disabled(true)
 	
@@ -359,7 +362,10 @@ func computer_input(event):
 		elif get_node("Grid").selected != null:
 			get_node("Grid").selected.invalid_move()
 	
-	#deselect a unit
+	#don't handle any other input during forced actions
+	if self.mid_forced_action:
+		return
+		
 	if get_node("InputHandler").is_deselect(event): 
 		if get_node("Grid").selected:
 			get_node("Grid").deselect()
@@ -370,7 +376,7 @@ func computer_input(event):
 		if self.state == self.STATES.player_turn:
 			end_turn()
 			
-	elif event.is_action("detailed_description") :
+	elif event.is_action("detailed_description"):
 		if event.is_pressed() and !event.is_echo():
 			var hovered_piece = get_node("CursorArea").get_piece_hovered()
 			if hovered_piece == null:
@@ -528,7 +534,7 @@ func start_player_phase():
 	
 	
 	if self.tutorial != null:
-		self.tutorial.display_forced_action(get_turn_count())
+		self.mid_forced_action = self.tutorial.display_forced_action(get_turn_count())
 
 	self.state = STATES.player_turn
 

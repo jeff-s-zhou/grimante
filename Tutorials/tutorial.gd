@@ -23,7 +23,7 @@ func add_enemy_end_rule(tutorial, turn, text_list):
 	enemy_end_rule.initialize(text_list)
 	tutorial.add_enemy_turn_end_rule(enemy_end_rule, turn)
 
-func add_forced_action(tutorial, turn, initial_coords, text, final_coords, text2, result=null):
+func add_forced_action(tutorial, turn, initial_coords, final_coords, result=null, has_arrow=false):
 	var forced_action = ForcedActionPrototype.instance()
-	forced_action.initialize(initial_coords, text, final_coords, text2, result)
+	forced_action.initialize(initial_coords, final_coords, result, has_arrow)
 	tutorial.add_forced_action(forced_action, turn)

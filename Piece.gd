@@ -214,10 +214,8 @@ func animate_short_hop(speed, new_coords):
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
 	
-	#var one_tile_travelled = 115
-	#var time = 100 * (distance/one_tile_travelled)/speed
 	var time = distance/speed
-	time = max(0.35, time)
+	time = max(0.30, time) #if short hop looks weird, switch this back to 0.35
 
 	var old_height = Vector2(0, -5)
 	var vertical = min(-2 * distance/3, -60)

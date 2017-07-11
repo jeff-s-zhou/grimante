@@ -6,6 +6,8 @@ extends Node2D
 
 signal animation_done
 
+onready var original_pos = get_node("Sprite").get_pos()
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
@@ -24,11 +26,11 @@ func animate_extend(distance_length, angle):
 	yield(get_node("Tween"), "tween_complete")
 	emit_signal("animation_done")
 	
-func animate_retract(distance_length, speed):
+func animate_retract(speed):
 	var sprite = get_node("Sprite")
-	var distance = Vector2(0, distance_length)
-	get_node("Tween").interpolate_property(sprite, "transform/pos", sprite.get_pos(), sprite.get_pos() - distance, distance_length/speed, Tween.TRANS_QUAD, Tween.EASE_IN)
+	var distance = original_pos - sprite.get_pos()
+	get_node("Tween").interpolate_property(sprite, "transform/pos", sprite.get_pos(), original_pos, distance.length()/speed, Tween.TRANS_QUAD, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	emit_signal("animation_done")
-	set_rotd(0)
+	#set_rotd(0)
