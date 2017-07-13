@@ -193,7 +193,12 @@ func _is_within_ally_shove_range(coords):
 	
 func is_placed():
 	return self.state == States.PLACED
-
+	
+func walk_off(coords_distance):
+	add_animation(self, "animate_walk_off", true, [coords_distance])
+	self.grid.remove_piece(self.coords)
+	remove_from_group("player_pieces")
+	
 func delete_self():
 	var location = get_parent().locations[self.coords]
 	location.add_corpse(self)
@@ -549,6 +554,9 @@ func get_sprite():
 	return get_node("Physicals/AnimatedSprite").get_sprite_frames().get_frame("default", 0)
 	
 func is_enemy():
+	return false
+	
+func displays_line():
 	return false
 
 #OVERRIDEN OR INHERITED FUNCTIONS

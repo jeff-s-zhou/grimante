@@ -7,7 +7,7 @@ extends "EnemyPiece.gd"
 var DESCRIPTION = "Gains +1 Power at the start of every Enemy Turn."
 
 func initialize(max_hp, modifiers, prototype):
-	.initialize("Writher", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype)
+	.initialize("Writher", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, self.YELLOW_EXPLOSION_SCENE)
 #	
 
 func turn_update():

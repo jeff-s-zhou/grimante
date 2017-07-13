@@ -7,7 +7,7 @@ extends "EnemyPiece.gd"
 var DESCRIPTION = "Causes all enemy pieces in the column (including itself) to move +1 tiles each turn."
 
 func initialize(max_hp, modifiers, prototype):
-	.initialize("Griffon", DESCRIPTION, Vector2(0, 2), max_hp, modifiers, prototype)
+	.initialize("Griffon", DESCRIPTION, Vector2(0, 2), max_hp, modifiers, prototype, self.GREEN_EXPLOSION_SCENE)
 	animate_wind()
 
 #okay, I think we need a system for temporary buffs?

@@ -11,7 +11,7 @@ var DESCRIPTION = "Before moving, shoots a Blue Fireball forward. The Blue Fireb
 const fireball_prototype = preload("res://EnemyPieces/Components/DragonFireball.tscn")
 
 func initialize(max_hp, modifiers, prototype):
-	.initialize("Dragon", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype)
+	.initialize("Dragon", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, self.RED_EXPLOSION_SCENE)
 
 func turn_start():
 	if !self.silenced:

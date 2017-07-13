@@ -5,9 +5,11 @@ extends "res://Piece.gd"
 # var a=2
 # var b="textvar"
 
-const yellow_explosion_scene = preload("res://EnemyPieces/Components/YellowExplosionParticles.tscn")
-const green_explosion_scene = preload("res://EnemyPieces/Components/GreenExplosionParticles.tscn")
-const red_explosion_scene = preload("res://EnemyPieces/Components/RedExplosionParticles.tscn")
+const YELLOW_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/YellowExplosionParticles.tscn")
+const GREEN_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/GreenExplosionParticles.tscn")
+const RED_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/RedExplosionParticles.tscn")
+
+var explosion_prototype = self.YELLOW_EXPLOSION_SCENE
 
 var action_highlighted = false
 var movement_value = Vector2(0, 1)
@@ -78,12 +80,13 @@ func _ready():
 	#set_opacity(0)
 
 
-func initialize(unit_name, hover_description, movement_value, max_hp, modifiers, prototype):
+func initialize(unit_name, hover_description, movement_value, max_hp, modifiers, prototype, explosion_prototype):
 	self.unit_name = unit_name
 	self.hover_description = hover_description
 	self.movement_value = movement_value
 	self.default_movement_value = movement_value
 	self.prototype = prototype
+	self.explosion_prototype = explosion_prototype
 	initialize_hp(max_hp)
 	if modifiers != null:
 		initialize_modifiers(modifiers)
@@ -266,10 +269,6 @@ func predict(damage, is_passive_damage=false):
 	
 	add_animation(self, "animate_predict_hp", false, [max(self.hp - actual_damage, 0), -1 * actual_damage, color])
 		
-
-func animate_smash_killed():
-	get_node("Physicals").hide()
-
 
 	
 func set_stunned(flag):
@@ -499,11 +498,7 @@ func handle_payload(payload):
 func handle_post_payload(payload):
 	if payload["hp_change"] < 0:
 		#handle assassin's passive
-		pass
-	
-func resolve_death():
-	if hp == 0:
-		delete_self()
+		pass	
 
 
 func heal(amount, delay=0.0):
@@ -528,12 +523,6 @@ func opportunity_attacked(amount):
 		set_shield(false)
 	else:
 		modify_hp(amount * -1, 1)
-
-
-#for the berserker's smash kill which should instantly remove
-func smash_killed(damage):
-	add_animation(self, "animate_smash_killed", false)
-	attacked(damage)
 
 
 func modify_hp(amount, delay=0):
@@ -571,7 +560,7 @@ func animate_set_hp(hp, value, delay=0, flicker_flag=true):
 
 	get_node("Physicals/HealthDisplay").set_health(hp)
 	
-	if flicker_flag:
+	if flicker_flag and value < 0:
 		emit_signal("small_shake")
 		get_node("SamplePlayer").play("rocket glass explosion thud 2")
 
@@ -608,36 +597,33 @@ func animate_set_hp(hp, value, delay=0, flicker_flag=true):
 	
 	self.mid_trailing_animation = false
 	subtract_anim_count()
+	
+func walk_off(coords_distance):
+	add_animation(self, "animate_walk_off", true, [coords_distance])
+	self.grid.remove_piece(self.coords)
+	remove_from_group("enemy_pieces")
 
 
 #removes it from the self.grid, which prevents any interaction with other pieces
 func delete_self():
 	add_animation(self, "animate_delete_self", true)
 	self.grid.remove_piece(self.coords)
-
-
-#actually physically removes it from the board
-func animate_delete_self(explosion_prototype=self.yellow_explosion_scene):
-	add_anim_count()
-	#get_node("Sprinkles").update() #update particleattractor location after all have moved
-	get_node("SamplePlayer").play("rocket glass explosion 5")
 	remove_from_group("enemy_pieces")
+
+#actually physically deletes it
+func animate_delete_self():
+	add_anim_count()
+	get_node("SamplePlayer").play("rocket glass explosion 5")
 	get_node("Physicals").set_opacity(0)
 	emit_signal("shake")
-	var explosion = explosion_prototype.instance()
+	var explosion = self.explosion_prototype.instance()
 	add_child(explosion)
 	explosion.set_emit_timeout(0.3)
 	explosion.set_emitting(true)
-#	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 1, 0, 0.4, Tween.TRANS_LINEAR, Tween.EASE_IN)
-#	get_node("Tween").start()
-#	yield(get_node("Tween"), "tween_complete")
 	get_node("Timer").set_wait_time(0.5)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
 	emit_signal("animation_done")
-	#get_node("Sprinkles").animate_sprinkles()
-	#yield(get_node("Sprinkles"), "animation_done")
-	#get_node("/root/Combat/ComboSystem").increase_combo()
 	subtract_anim_count()
 	#let it resolve any other animations
 	print("enemy deleting self")

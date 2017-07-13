@@ -95,6 +95,10 @@ func set_deploying(flag, deploy_tiles=null):
 	
 func predict(coords):
 	if !self.deploying and self.selected != null:
+		if self.selected.displays_line():
+			if self.pieces.has(coords):
+				get_node("DottedLine").draw_dotted(self.selected.get_pos(), self.pieces[coords].get_pos())
+				get_node("DottedLine").show()
 		self.selected.predict(coords)
 	
 
@@ -248,6 +252,7 @@ func unfocus():
 #right click flag is so if we know to check immediately after if cursor is still in a piece's area
 #and apparently so we know to clear flyovers...lol
 func clear_display_state(right_click_flag=false):
+	get_node("DottedLine").hide()
 	for location in locations.values():
 		location.reset_highlight()
 	for piece in pieces.values():
@@ -256,6 +261,7 @@ func clear_display_state(right_click_flag=false):
 
 #called when moved off of a tile while a player unit is selected
 func reset_prediction():
+	get_node("DottedLine").hide()
 	if !self.deploying:
 		if self.selected != null:
 			for piece in pieces.values():
@@ -512,7 +518,10 @@ func get_bottom_of_column(column):
 			
 	return Vector2(column, _LOCATION_Y_OFFSETS[column] + column_count - 1)
 
-
-
-
-
+#get distance in position from a distance in coords
+func get_real_distance(coords_distance):
+	var length = coords_distance.length()
+	var unit_vector = hex_normalize(coords_distance)
+	var start_pos = self.locations[Vector2(3, 3)].get_pos()
+	var end_pos = self.locations[Vector2(3, 3) + unit_vector].get_pos()
+	return length * (end_pos - start_pos)

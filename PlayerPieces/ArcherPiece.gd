@@ -32,7 +32,9 @@ func _ready():
 	self.unit_name = UNIT_TYPE
 	load_description(UNIT_TYPE)
 	self.assist_type = ASSIST_TYPES.movement
-	
+
+func displays_line():
+	return true
 	
 func get_shoot_damage():
 	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_SHOOT_DAMAGE

@@ -98,6 +98,7 @@ func shuriken_storm(new_coords):
 func animate_spin():
 	get_node("Physicals/SpinningForm").show()
 	get_node("Physicals/AnimatedSprite").hide()
+	animate_jump()
 	var max_i = 18
 	for i in range(0, max_i):
 		var speed = 0
@@ -111,6 +112,26 @@ func animate_spin():
 	
 	get_node("Physicals/AnimatedSprite").show()
 	get_node("Physicals/SpinningForm").hide()
+	
+func animate_jump():
+	var timer = Timer.new()
+	add_child(timer)
+	var physicals = get_node("Physicals")
+	var start_pos = physicals.get_pos()
+	var end_pos = physicals.get_pos() + Vector2(0, -85)
+	timer.set_wait_time(0.2)
+	timer.start()
+	yield(timer, "timeout")
+	get_node("Tween 3").interpolate_property(physicals, "transform/pos", start_pos, end_pos, 0.3, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+	get_node("Tween 3").start()
+	yield(get_node("Tween 3"), "tween_complete")
+	
+	timer.set_wait_time(0.4)
+	timer.start()
+	yield(timer, "timeout")
+	timer.queue_free()
+	get_node("Tween 3").interpolate_property(physicals, "transform/pos", end_pos, start_pos, 0.3, Tween.TRANS_QUAD, Tween.EASE_IN)
+	get_node("Tween 3").start()
 	
 func animate_spin_helper(speed):
 	var top = get_node("Physicals/SpinningForm/Top")

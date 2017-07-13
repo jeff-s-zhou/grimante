@@ -9,7 +9,7 @@ var max_hp = 5
 var DESCRIPTION = "After moving, attacks all adjacent Heroes. If its Power is greater than or equal to the Hero's Armor, the Hero is KOed."
 
 func initialize(max_hp, modifiers, prototype):
-	.initialize("Werewolf", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype)
+	.initialize("Werewolf", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, self.RED_EXPLOSION_SCENE)
 
 
 func turn_update_helper():

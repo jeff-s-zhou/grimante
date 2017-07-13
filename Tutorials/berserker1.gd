@@ -27,10 +27,10 @@ func get():
 	"If an enemy's Power reaches {0}, it is killed."]
 	add_forced_action(tutorial, 2, Vector2(3, 5), Vector2(3, 3), text)
 	
-	text = ["When the Berserker kills an enemy, he moves to its tile. "]
+	text = ["When the Berserker kills an enemy, he moves to its tile."]
 	add_forced_action(tutorial, 3, Vector2(3, 5), Vector2(3, 4), text)
 	
-	text = ["Clear the board of remaining enemies to win. "]
+	text = ["Clear the board of remaining enemies to win."]
 	add_player_start_rule(tutorial, 4, text)
 	
 	return tutorial

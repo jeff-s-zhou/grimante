@@ -58,9 +58,6 @@ func _is_within_attack_range(new_coords):
 	
 func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
-	
-func play_smash_sound():
-	get_node("SamplePlayer").play("explode3")
 
 func jump_to(new_coords, dust=false):
 	add_anim_count()
@@ -87,13 +84,14 @@ func jump_to(new_coords, dust=false):
 	
 	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
 		get_node("Physicals").get_pos(), old_height, time/2.0, Tween.TRANS_QUART, Tween.EASE_IN)
-	get_node("Tween").interpolate_callback(self, time/2 - 0.1, "play_smash_sound")
 	get_node("Tween 2").start()
 	yield(get_node("Tween 2"), "tween_complete")
+	
 	if dust:
 		get_parent().get_node("FieldEffects").emit_dust(self.get_pos())
 	self.mid_leaping_animation = false
 	set_z(0)
+	get_node("SamplePlayer").play("explode3")
 	emit_signal("shake")
 	emit_signal("animation_done")
 	subtract_anim_count()
@@ -139,18 +137,14 @@ func act(new_coords):
 func smash_attack(new_coords):
 	add_animation(self, "animate_move", false, [new_coords, 350, false])
 	add_animation(self, "jump_to", true, [new_coords])
+	var action = get_new_action()
+	action.add_call("attacked", [self.damage], new_coords)
+	action.execute()
 	if get_parent().pieces[new_coords].will_die_to(self.damage):
-		var action = get_new_action()
-		action.add_call("smash_killed", [self.damage], new_coords)
-		action.execute()
 		set_coords(new_coords)
 		placed()
-
 	#else leap back
 	else:
-		var action = get_new_action()
-		action.add_call("attacked", [self.damage], new_coords)
-		action.execute()
 		add_animation(self, "animate_move", false, [self.coords, 300, false])
 		add_animation(self, "jump_back", true, [self.coords])
 		placed()

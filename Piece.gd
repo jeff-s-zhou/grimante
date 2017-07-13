@@ -204,8 +204,7 @@ func animate_move_and_hop(new_coords, speed=250, blocking=true, trans_type=Tween
 	else:
 		yield(get_node("Tween"), "tween_complete")
 		subtract_anim_count()
-		
-	
+
 func animate_short_hop(speed, new_coords):
 	#add_anim_count()
 	self.mid_leaping_animation = true
@@ -213,7 +212,9 @@ func animate_short_hop(speed, new_coords):
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
+	animate_short_hop_to_pos(speed, distance)
 	
+func animate_short_hop_to_pos(speed, distance):
 	var time = distance/speed
 	time = max(0.30, time) #if short hop looks weird, switch this back to 0.35
 
@@ -238,6 +239,33 @@ func animate_short_hop(speed, new_coords):
 	self.mid_leaping_animation = false
 	#emit_signal("animation_done")
 	#subtract_anim_count()
+	
+
+func walk_off(coords_distance):
+	pass
+
+func animate_walk_off(coords_distance):
+	add_anim_count()
+	var speed = 300
+	var distance = get_parent().get_real_distance(coords_distance)
+	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), get_pos() + distance, distance.length()/speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").start()
+	get_node("Tween 2").interpolate_property(self, "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").start()
+	animate_short_hop_to_pos(speed, distance.length())
+	yield(get_node("Tween"), "tween_complete")
+	#need this in because apparently Tween emits the signal slightly early
+	get_node("Timer").set_wait_time(0.1)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
+	emit_signal("animation_done")
+	subtract_anim_count()
+	get_node("Timer").set_wait_time(1)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
+	self.queue_free()
+
+
 
 func handle_shifting_sands():
 	var location = self.grid.locations[self.coords]
@@ -302,7 +330,11 @@ func move_helper(coords, blocking=false):
 		set_coords(self.coords + furthest_distance)
 
 	if walked_off:
-		delete_self()
+		print("printing distancez")
+		print(distance)
+		walk_off(distance)
+		
+		#this might cause problems lol, signal is in EnemyPiece.gd
 		if self.side == "ENEMY" and distance_increment == Vector2(0, 1):
 			emit_signal("broke_defenses")
 

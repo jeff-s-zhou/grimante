@@ -680,6 +680,7 @@ func enemy_win():
 		print("yielded in enemy win")
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 	
+	print("uhhh, got past the yield?")
 	get_node("Timer2").set_wait_time(0.5)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
@@ -688,6 +689,7 @@ func enemy_win():
 	
 	
 func damage_defenses():
+	print("caught damage defenses")
 	enemy_win()
 		
 func display_overlay(unit_name):

@@ -83,12 +83,12 @@ func get_levels():
 
 
 func sandbox_allies():
-	return {3: Archer}
+	return {2: Cavalier, 4: Berserker}
 	
 func sandbox_enemies():
-	var enemies = {0:{Vector2(3, 1): make(Grunt, 3), Vector2(2, 2): make(Grunt, 5)},
-	1:{Vector2(3, 4): make(Grunt, 4, [cloaked])}}
-	#var enemies = load_level("howl2.level")
+#	var enemies = {0:{Vector2(3, 4): make(Grunt, 3), Vector2(2, 5): make(Grunt, 1), Vector2(5, 5):make(Grunt, 1)},
+#	1:{Vector2(3, 4): make(Grunt, 4, [cloaked])}}
+	var enemies = load_level("tutorial1.level")
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
 func sandbox_extras():

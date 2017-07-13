@@ -23,7 +23,7 @@ func get():
 	add_forced_action(tutorial, 2, Vector2(0, 4), fa_text1, Vector2(0, 0), fa_text2, text)
 	
 	text = ["The Cavalier can Charge an enemy when it has an open path to it.", \
-	"Charge deals {1 damage for each tile travelled} to the first enemy it hits, and the enemy behind it."]
+	"Charge deals {3 + 1 damage for each tile travelled} to the first enemy it hits."]
 	fa_text1 = "Use the Cavalier's Direct Attack, Charge."
 	fa_text2 = ""
 	add_forced_action(tutorial, 3, Vector2(0, 0), fa_text1, Vector2(5, 5), fa_text2, text)

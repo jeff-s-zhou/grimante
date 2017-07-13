@@ -33,6 +33,8 @@ func is_busy():
 
 func is_animating():
 #	print(self.queue != [] or self.mid_processing or get_animation_count() > 0 or get_waiting_count() > 0)
+	print(self.queue)
+	print(self.mid_processing)
 	return self.queue != [] or self.mid_processing or get_animation_count() > 0 or get_waiting_count() > 0
 	#return get_animation_count() > 0
 	
@@ -60,9 +62,17 @@ func reset():
 	self.processing_queue = []
 	
 	self.set_process(true)
-	
+
+
+#current issue is stopping when there's an animation waiting to be executed
+
 func stop():
 	self.set_process(false)
+	self.lock.try_lock()
+	self.processing_queue = self.queue
+	self.queue = []
+	self.lock.unlock()
+	process_animations()
 	
 func update_animation_count(amount):
 	self.count_lock.lock()
