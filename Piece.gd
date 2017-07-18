@@ -385,7 +385,6 @@ func receive_shove(pusher, distance):
 	
 	handle_nonlethal_shove(pusher) #needed for corrosive interaction
 
-
 	var old_coords = self.coords
 	var distance_length = self.grid.hex_length(distance)
 	var distance_increment = self.grid.hex_normalize(distance)
@@ -404,7 +403,13 @@ func receive_shove(pusher, distance):
 			move_helper(collide_coords - distance_increment, true)
 			return (self.coords - old_coords)
 		else:
-			#TODO make it brace up against the piece behind it
+			var location = self.grid.locations[self.coords]
+			var location_right_after = self.grid.locations[collide_coords]
+			var difference =  (location_right_after.get_pos() - location.get_pos())/4
+			var old_pos = location.get_pos()
+			var collide_pos = old_pos + difference 
+			add_animation(self, "animate_move_to_pos", true, [collide_pos, 300, true])
+			add_animation(self, "animate_move_to_pos", true, [old_pos, 300, true]) 
 			return Vector2(0, 0)
 	else:
 		move_helper(self.coords + distance, true)

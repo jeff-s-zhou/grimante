@@ -70,11 +70,13 @@ func make(prototype, hp, modifiers=null):
 	
 	
 
-var list = [berserker_part1(), berserker_part2(), cavalier(), dead_or_alive(), reinforcements(),
-archer(), offsides(), tick_tock(), flying_solo(), assassin(), deploy(), mutation(),
-rising_tides(), inspire(), swamp(), stormdancer(), double_time(), defuse_the_bomb(),
-spoopy_ghosts(), pyromancer(), minesweeper(), star_power(), corsair(), frost_knight(),
-howl(), howl2(), saint(), corrosion(), shifting_sands(), shifting_sands2()]
+#var list = [berserker_part1(), berserker_part2(), cavalier(), dead_or_alive(), reinforcements(),
+#archer(), offsides(), tick_tock(), flying_solo(), assassin(), deploy(), mutation(),
+#rising_tides(), inspire(), swamp(), stormdancer(), double_time(), defuse_the_bomb(),
+#spoopy_ghosts(), pyromancer(), minesweeper(), star_power(), corsair(), frost_knight(),
+#howl(), howl2(), saint(), corrosion(), shifting_sands(), shifting_sands2()]
+
+var list = [tutorial1()]
 
 func get_levels():
 	for i in range(0, list.size() - 1):
@@ -83,89 +85,76 @@ func get_levels():
 
 
 func sandbox_allies():
-	return {2: Cavalier, 4: Berserker}
+	return {3:Cavalier, 2: Assassin}
 	
 func sandbox_enemies():
-#	var enemies = {0:{Vector2(3, 4): make(Grunt, 3), Vector2(2, 5): make(Grunt, 1), Vector2(5, 5):make(Grunt, 1)},
+#	var enemies = {0:{Vector2(1, 4): make(Grunt, 5), Vector2(1, 2): make(Grunt, 3), Vector2(3, 3): make(Grunt, 3)},
 #	1:{Vector2(3, 4): make(Grunt, 4, [cloaked])}}
-	var enemies = load_level("tutorial1.level")
+	var enemies = load_level("rule_of_three.level")
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
 func sandbox_extras():
 	#return {"shifting_sands_tiles": {Vector2(3, 6): 4}, "tutorial":tutorial}
+	var tutorial = load("res://Tutorials/tutorial3.gd").new()
+	var tutorial_func = funcref(tutorial, "get")
+	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire"]
+	#return {"flags":flags, "tutorial":tutorial_func}
+	#return {"flags":flags}
 	return {}
-
+	
 func sandbox():  
 	return LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies(), 3, null, sandbox_extras()) 
 
-
-#BERSERKER PART 1
-func berserker_part1():
-	var allies = {3: Berserker} 
-	var raw_enemies = load_level("berserker_part1.level")
+func tutorial1():
+	var allies = {2: Cavalier, 4:Berserker} 
+	var raw_enemies = load_level("tutorial1.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	
 	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire"]
-	var tutorial = load("res://Tutorials/berserker1.gd").new()
+	var tutorial = load("res://Tutorials/tutorial1.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
 	var extras = {"free_deploy":false, "tutorial":tutorial_func, "flags":flags}
 	
-	return LevelTypes.Timed.new("Berserker Part 1", allies, enemies, 7, null, extras)
+	return LevelTypes.Timed.new("Dynamic Duo", allies, enemies, 7, null, extras)
 
 
-#BERSERKER PART 2
-func berserker_part2():
-	var allies = {3: Berserker}
-	var raw_enemies = load_level("berserker_part2.level")
+func tutorial2():
+	var allies = {2: Berserker, 4: Cavalier}
+	var raw_enemies = load_level("tutorial2.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	
 	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire"]
-	var tutorial = load("res://Tutorials/berserker2.gd").new()
+	var tutorial = load("res://Tutorials/tutorial2.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
 	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
 	
-	return LevelTypes.Timed.new("Berserker Part 2", allies, enemies, 7, null, extras)
+	return LevelTypes.Timed.new("Death and Axes", allies, enemies, 7, null, extras)
 
 
-#CAVALIER
-func cavalier():
-	var allies = {3: Cavalier}
-	var raw_enemies = load_level("cavalier.level")
+func tutorial3():
+	var allies = {2: Cavalier, 4:Berserker}
+	var raw_enemies = load_level("tutorial3.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	
 	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire"]
-	var tutorial = load("res://Tutorials/cavalier.gd").new()
+	var tutorial = load("res://Tutorials/tutorial3.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
 	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
 	
-	return LevelTypes.Timed.new("Cavalier", allies, enemies, 7, null, extras)
+	return LevelTypes.Timed.new("The Indirect Blade is the Deadliest", allies, enemies, 7, null, extras)
 
 
-#DEAD OR ALIVE
-func dead_or_alive():
-	var allies = {Vector2(4, 6): Cavalier, Vector2(2, 5): Berserker}
-	var raw_enemies = load_level("dead_or_alive.level")
+func first_steps():
+	var allies = {2: Berserker, 4: Cavalier}
+	var raw_enemies = load_level("first_steps.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	
-	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire", "placed"]
-	var tutorial = load("res://Tutorials/dead_or_alive.gd").new()
+	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire"]
+	var tutorial = load("res://Tutorials/first_steps.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
 	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
 	
-	return LevelTypes.Timed.new("Dead or Alive", allies, enemies, 7, null, extras)
-	
-
-func reinforcements():
-	var allies = {4: Berserker, 2: Cavalier}
-	var raw_enemies = load_level("reinforcements.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	
-	var flags = ["no_stars", "no_turns", "no_inspire"]
-	var tutorial = load("res://Tutorials/reinforcements.gd").new()
-	var tutorial_func = funcref(tutorial, "get")
-	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
-	
-	return LevelTypes.Timed.new("Reinforcements!", allies, enemies, 7, null, extras)
+	return LevelTypes.Timed.new("Baby's First Fight Against the Forces of Evil", allies, enemies, 7, null, extras)
 
 
 func archer():
@@ -173,24 +162,35 @@ func archer():
 	var raw_enemies = load_level("archer.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var reinforcements = {5: { Vector2(5, 7): Berserker}}
-	var flags = ["no_stars", "no_turns", "no_inspire"]
+	var flags = ["no_stars", "no_turns", "no_inspire", "no_waves"]
 	var tutorial = load("res://Tutorials/archer.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
 	var extras = {"free_deploy":false, "reinforcements":reinforcements, "tutorial": tutorial_func, "flags":flags}
 	
-	return LevelTypes.Timed.new("Archer", allies, enemies, 7, null, extras)
-	
+	return LevelTypes.Timed.new("Take a Bow", allies, enemies, 7, null, extras)
 
-func offsides():
-	var allies = {2:Cavalier, 4: Archer}
-	var raw_enemies = load_level("offsides.level")
+
+func rule_of_three():
+	var allies = {2: Berserker, 3:Archer, 4:Cavalier}
+	var raw_enemies = load_level("rule_of_three.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var tutorial = load("res://Tutorials/offsides.gd").new()
+	var flags = ["no_stars", "no_turns", "no_inspire", "no_waves"]
+	var tutorial = load("res://Tutorials/rule_of_three.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
-	var flags = ["no_stars", "no_turns", "no_inspire"]
-	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
+	var extras = {"free_deploy":false, "flags":flags, "tutorial":tutorial_func}
 	
-	return LevelTypes.Timed.new("Offsides!", allies, enemies, 7, null, extras)
+	return LevelTypes.Timed.new("Love Triangle", allies, enemies, 7, null, extras)
+	
+func tutorial4():
+	var allies = {2: Cavalier, 4:Archer}
+	var raw_enemies = load_level("tutorial4.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_stars", "no_turns", "no_inspire"]
+	var tutorial = load("res://Tutorials/tutorial4.gd").new()
+	var tutorial_func = funcref(tutorial, "get")
+	var extras = {"free_deploy":false, "flags":flags, "tutorial":tutorial_func}
+	
+	return LevelTypes.Timed.new("", allies, enemies, 7, null, extras)
 
 	
 func tick_tock():
@@ -201,7 +201,7 @@ func tick_tock():
 	var tutorial = load("res://Tutorials/tick_tock.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
 	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
-	
+	#var extras = {"free_deploy":false, "flags":flags}
 	return LevelTypes.Timed.new("Tick Tock", allies, enemies, 7, null, extras)
 
 

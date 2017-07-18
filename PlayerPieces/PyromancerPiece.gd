@@ -39,10 +39,6 @@ func display_action_range():
 		get_parent().get_at_location(coords).movement_highlight()
 	.display_action_range()
 	highlight_indirect_range(action_range)
-
-func _is_within_attack_range(new_coords):
-	var attack_range = get_attack_range()
-	return new_coords in attack_range
 	
 func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
@@ -146,8 +142,7 @@ func reset_currently_burning():
 		enemy_piece.currently_burning = false
 
 func predict(new_coords):
-	if _is_within_attack_range(new_coords):
-		pass
+	pass
 
 func cast_ultimate():
 	pass

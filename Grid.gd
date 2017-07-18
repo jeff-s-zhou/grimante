@@ -220,9 +220,10 @@ func reset_reinforcement_indicators():
 func reset_deployable_indicators():
 	for location in locations.values():
 		location.set_deployable_indicator(false)
-		
-func deselect():
-	self.selected.deselect()
+
+#acting is so we know when to properly unglow animations in PlayerPiece
+func deselect(acting=false):
+	self.selected.deselect(acting)
 	self.selected = null
 	self.clear_display_state(true)
 	get_parent().check_hovered()

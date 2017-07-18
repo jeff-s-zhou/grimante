@@ -78,9 +78,24 @@ func act(new_coords):
 		self.rain_coords_dict[self.coords] = true
 		set_coords(new_coords)
 		shuriken_storm(new_coords)
-		placed()
+		attack_placed()
 	else:
 		invalid_move()
+		
+#used so we can call the placed animation at the end of the spin
+func attack_placed():
+	handle_assist()
+	get_node("BlueGlow").hide()
+	self.state = States.PLACED
+	self.attack_bonus = 0
+	self.movement_value = self.DEFAULT_MOVEMENT_VALUE
+	get_parent().selected = null
+	
+#need to always unglow because of the spinning shit
+func deselect(acting=false):
+	self.state = States.DEFAULT
+	add_animation(self, "animate_unglow", false)
+	get_node("BlueGlow").hide()
 
 func shuriken_storm(new_coords):
 	var attack_range_dict = {}
@@ -104,14 +119,16 @@ func animate_spin():
 		var speed = 0
 		var multiplier = quadratic(i, max_i)
 		if multiplier == 0:
-			speed = 0.2
+			speed = 0.15
 		else:
-			speed = 0.2/multiplier
+			speed = 0.15/multiplier
 		animate_spin_helper(speed)
 		yield(get_node("Tween 2"), "tween_complete")
 	
 	get_node("Physicals/AnimatedSprite").show()
 	get_node("Physicals/SpinningForm").hide()
+	animate_placed()
+
 	
 func animate_jump():
 	var timer = Timer.new()
@@ -119,9 +136,9 @@ func animate_jump():
 	var physicals = get_node("Physicals")
 	var start_pos = physicals.get_pos()
 	var end_pos = physicals.get_pos() + Vector2(0, -85)
-	timer.set_wait_time(0.2)
-	timer.start()
-	yield(timer, "timeout")
+#	timer.set_wait_time(0.1)
+#	timer.start()
+#	yield(timer, "timeout")
 	get_node("Tween 3").interpolate_property(physicals, "transform/pos", start_pos, end_pos, 0.3, Tween.TRANS_CUBIC, Tween.EASE_OUT)
 	get_node("Tween 3").start()
 	yield(get_node("Tween 3"), "tween_complete")
@@ -133,15 +150,15 @@ func animate_jump():
 	get_node("Tween 3").interpolate_property(physicals, "transform/pos", end_pos, start_pos, 0.3, Tween.TRANS_QUAD, Tween.EASE_IN)
 	get_node("Tween 3").start()
 	
-func animate_spin_helper(speed):
+func animate_spin_helper(time):
 	var top = get_node("Physicals/SpinningForm/Top")
 	var bottom = get_node("Physicals/SpinningForm/Bottom")
 	var shadow = get_node("Shadow")
 	var start_angle = top.get_rotd()
 	var stop_angle = top.get_rotd() - 60
-	get_node("Tween 2").interpolate_property(bottom, "frame", 0, 6, speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	get_node("Tween").interpolate_property(top, "transform/rot", start_angle, stop_angle, speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	get_node("Tween").interpolate_property(shadow, "transform/rot", start_angle, stop_angle, speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").interpolate_property(bottom, "frame", 0, 6, time, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").interpolate_property(top, "transform/rot", start_angle, stop_angle, time, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").interpolate_property(shadow, "transform/rot", start_angle, stop_angle, time, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween 2").start()
 	get_node("Tween").start()
 	yield(get_node("Tween 2"), "tween_complete")

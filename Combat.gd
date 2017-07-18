@@ -1,6 +1,6 @@
 extends Node2D
 
-const STATES = {"player_turn":0, "enemy_turn":1, "transitioning":3, "deploying":4, "instruction":5}
+const STATES = {"player_turn":0, "enemy_turn":1, "transitioning":3, "deploying":4, "instruction":5, "end":6}
 
 const Berserker = preload("res://PlayerPieces/BerserkerPiece.tscn")
 
@@ -244,17 +244,23 @@ func initialize_piece(piece, on_bar=false, key=null):
 
 func handle_piece_placed():
 	if self.tutorial != null:
-		set_process_input(false)
-		set_process(false)
-		if get_node("/root/AnimationQueue").is_animating():
-			yield(get_node("/root/AnimationQueue"), "animations_finished")
-		if self.tutorial.handle_forced_action_result(self.turn_count):
-			yield(self.tutorial, "rule_finished")
-		print("reached here")
-		set_process_input(true)
-		set_process(true)
-
-		self.mid_forced_action = self.tutorial.display_forced_action(self.turn_count)
+		if self.tutorial.has_forced_action_result(self.turn_count):
+			set_process_input(false)
+			set_process(false)
+			if get_node("/root/AnimationQueue").is_animating():
+				yield(get_node("/root/AnimationQueue"), "animations_finished")
+			if self.tutorial.handle_forced_action_result(self.turn_count):
+				print("handling forced action result")
+				yield(self.tutorial, "rule_finished")
+			self.mid_forced_action = false
+			set_process_input(true)
+			set_process(true)
+		
+		if self.tutorial.has_forced_action(self.turn_count):
+			self.mid_forced_action = true
+			if get_node("/root/AnimationQueue").is_animating():
+				yield(get_node("/root/AnimationQueue"), "animations_finished")
+			self.tutorial.display_forced_action(self.turn_count)
 
 
 	#shouldn't interfere with any other forced actions, since it'll only end when all pieces are placed
@@ -496,10 +502,11 @@ func enemy_phase():
 		set_process_input(true)
 		set_process(true)
 	
-	get_node("PhaseShifter").player_phase_animation()
-	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
-	self.state_manager.update(self.turn_count)
-	start_player_phase()
+	if self.state != STATES.end:
+		get_node("PhaseShifter").player_phase_animation()
+		yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
+		self.state_manager.update(self.turn_count)
+		start_player_phase()
 
 
 
@@ -511,9 +518,6 @@ func start_player_phase():
 	if self.reinforcements.has(get_turn_count()):
 		reinforce()
 		yield(self, "reinforced")
-	if (self.instructions.size() > 0):
-		handle_instructions()
-		yield(self, "next_pressed")
 	
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 		player_piece.turn_update()
@@ -522,19 +526,15 @@ func start_player_phase():
 		self.tutorial.display_player_turn_start_rule(get_turn_count())
 		set_process_input(false)
 		set_process(false)
-		#this is all for the tutorial level to teach shoving
-		if self.turn_count == 1 and self.level_schematic.flags.has("placed"):
-			var player_pieces = get_tree().get_nodes_in_group("player_pieces")
-			for player_piece in player_pieces:
-				player_piece.placed(true)
 
 		yield(self.tutorial, "rule_finished")
 		set_process(true)
 		set_process_input(true)
 	
 	
-	if self.tutorial != null:
-		self.mid_forced_action = self.tutorial.display_forced_action(get_turn_count())
+	if self.tutorial != null and self.tutorial.has_forced_action(self.turn_count):
+		self.mid_forced_action = true
+		self.tutorial.display_forced_action(get_turn_count())
 
 	self.state = STATES.player_turn
 
@@ -547,51 +547,6 @@ func reinforce():
 		yield(self, "done_initializing")
 	emit_signal("reinforced")
 
-
-func handle_instructions():
-	get_node("Timer2").set_wait_time(0.3)
-	get_node("Timer2").start()
-	yield(get_node("Timer2"), "timeout")
-	
-	var instruction = self.instructions[0]
-	self.instructions.pop_front()
-	var tip_text = instruction["tip_text"]
-	var objective_text = instruction["objective_text"]
-	#if there's no instruction text in the first place, piss off
-	if !tip_text and !objective_text:
-		emit_signal("next_pressed")
-		return
-		
-	var popup = get_node("TutorialPopup")
-	popup.set_text(tip_text, objective_text)
-		
-	get_node("PhaseShifter/AnimationPlayer").play("start_blur")
-	
-	get_node("Tween").interpolate_property(popup, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_SINE, Tween.EASE_IN)
-	
-	var end_pos = popup.get_pos() + Vector2(0, get_viewport_rect().size.height/2 + 100)
-	get_node("Tween").interpolate_property(popup, "transform/pos",popup.get_pos(), end_pos, 0.7, Tween.TRANS_BACK, Tween.EASE_OUT)
-	get_node("Tween").start()
-	yield(get_node("Tween"), "tween_complete")
-	popup.transition_in()
-	yield(popup, "done")
-	
-	yield(popup, "next")
-	popup.transition_out()
-	get_node("Tween").interpolate_property(popup, "visibility/opacity", 1, 0, 0.7, Tween.TRANS_SINE, Tween.EASE_IN)
-	
-	var end_pos = Vector2((get_viewport_rect().size.width)/2, -100)
-	get_node("Tween").interpolate_property(popup, "transform/pos", popup.get_pos(), end_pos, 0.7, Tween.TRANS_BACK, Tween.EASE_IN)
-	get_node("Tween").start()
-	yield(get_node("Tween"), "tween_complete")
-	get_node("PhaseShifter/AnimationPlayer").play("end_blur")
-	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
-	emit_signal("next_pressed")
-	
-	if instruction.has("tooltip"):
-		get_node("TutorialTooltip").set_tooltip(instruction["tooltip"])
-	elif instruction.has("tooltips"):
-		get_node("TutorialTooltip").set_tooltips(instruction["tooltips"])
 
 func screen_shake():
 	get_node("ShakeCamera").shake(0.6, 30, 12)
@@ -647,11 +602,10 @@ func display_wave_preview():
 
 
 func player_win():
+	self.state = STATES.end
 	set_process(false)
 	set_process_input(false)
 	get_node("/root/AnimationQueue").stop()
-
-	self.state = STATES.transitioning
 	
 	get_node("/root/DataLogger").log_win(self.level_schematic.name, self.turn_count)
 	
@@ -659,7 +613,6 @@ func player_win():
 	get_node("/root/global").save_state()
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	
 	get_node("Timer2").set_wait_time(0.5)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
@@ -668,19 +621,16 @@ func player_win():
 
 
 func enemy_win():
+	self.state = STATES.end
 	set_process(false)
 	set_process_input(false)
 	get_node("/root/AnimationQueue").stop()
-	
 	get_node("/root/DataLogger").log_lose(self.level_schematic.name, self.turn_count)
 	
-	self.state = STATES.transitioning
 	print(get_node("/root/AnimationQueue").is_animating())
 	if get_node("/root/AnimationQueue").is_animating():
-		print("yielded in enemy win")
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 	
-	print("uhhh, got past the yield?")
 	get_node("Timer2").set_wait_time(0.5)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")

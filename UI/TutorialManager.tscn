@@ -60,8 +60,10 @@ custom_styles/panel = SubResource( 1 )
 [node name="Sprite" type="Sprite" parent="."]
 
 visibility/visible = false
-visibility/opacity = 0.8
+visibility/opacity = 0.6
 visibility/light_mask = 4
+z/z = 97
+z/relative = false
 texture = ExtResource( 2 )
 
 [node name="Light2D" type="Light2D" parent="."]
@@ -102,6 +104,8 @@ autoplay = "autoplay"
 
 visibility/visible = false
 transform/pos = Vector2( 0, 4.53695 )
+z/z = 98
+z/relative = false
 
 [node name="Sprite" type="Sprite" parent="Arrow"]
 

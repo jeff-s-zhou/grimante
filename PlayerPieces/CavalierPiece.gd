@@ -42,6 +42,7 @@ func animate_charge(new_position):
 	emit_signal("shake")
 
 func animate_show_spear(attack_coords):
+	add_anim_count()
 	var location = self.grid.locations[attack_coords]
 	var new_position = location.get_pos()
 	var angle = get_pos().angle_to_point(new_position)
@@ -53,6 +54,8 @@ func animate_show_spear(attack_coords):
 	tween.start()
 	yield(tween, "tween_complete")
 	emit_signal("animation_done")
+	subtract_anim_count()
+	
 	tween.queue_free()
 	
 func animate_hide_spear():
@@ -179,15 +182,15 @@ func trample(new_coords):
 	
 	var was_hopping = false
 	
-	var trample_coords = []
-	
 	while current_coords != new_coords:
 		current_coords = current_coords + increment
 		if get_parent().pieces.has(current_coords) and get_parent().pieces[current_coords].side == "ENEMY":
 			was_hopping = true
 			add_animation(self, "animate_move", false, [current_coords, 300, false])
 			add_animation(self, "animate_hop", true, [current_coords - increment, current_coords])
-			trample_coords.append(current_coords)
+			var action = get_new_action()
+			action.add_call("attacked", [self.trample_damage], current_coords)
+			action.execute()
 		else:
 			if was_hopping:
 				#hop down
@@ -197,10 +200,6 @@ func trample(new_coords):
 			else:
 				add_animation(self, "animate_move", false, [current_coords, 300, false])
 				add_animation(self, "animate_hop", true, [current_coords - increment, current_coords, true])
-	
-	var action = get_new_action()
-	action.add_call("attacked", [self.trample_damage], trample_coords)
-	action.execute()
 	
 	set_coords(new_coords)
 	placed()

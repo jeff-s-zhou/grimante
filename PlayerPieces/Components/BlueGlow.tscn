@@ -12,7 +12,12 @@ tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite:visibility/opacity")
 tracks/0/interp = 1
 tracks/0/imported = false
-tracks/0/keys = { "times":FloatArray( 0, 0.6, 1.2 ), "transitions":FloatArray( 1, 1, 1 ), "update":0, "values":[ 0.4, 1.0, 0.4 ] }
+tracks/0/keys = {
+"times": FloatArray( 0, 0.6, 1.2 ),
+"transitions": FloatArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.4, 1.0, 0.4 ]
+}
 
 [node name="BlueGlow" type="Node2D"]
 
@@ -32,6 +37,6 @@ anims/glow = SubResource( 1 )
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
-autoplay = "glow"
+autoplay = ""
 
 

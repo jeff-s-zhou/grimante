@@ -31,10 +31,10 @@ func get_attack_range():
 	return get_parent().get_range(self.coords, [1, 2], "ENEMY")
 	
 func get_hook_range():
-	return get_parent().get_range(self.coords, [1, 8], "ENEMY", true)
+	return get_parent().get_range(self.coords, [2, 8], "ENEMY", true)
 	
 func get_assist_hook_range():
-	return get_parent().get_range(self.coords, [1, 8], "PLAYER", true)
+	return get_parent().get_range(self.coords, [2, 8], "PLAYER", true)
 	
 
 func finisher_reactivate():
@@ -59,12 +59,27 @@ func emit_animated_placed():
 	emit_signal("animated_placed")
 	
 
+func get_shoot_coords(move_coords):
+	#reverse the subtraction because we're getting the range in the opposite direction
+	var line_range = self.grid.get_line_range(self.coords, self.coords - move_coords, "ENEMY")
+	if line_range != []:
+		return line_range[0]
+
+
+func highlight_indirect_range(movement_range):
+	for coords in movement_range:
+		if get_shoot_coords(coords) != null:
+			get_parent().locations[coords].indirect_highlight()
+	
+
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
-	var action_range = get_attack_range() + get_movement_range() + get_hook_range()
+	var movement_range = get_movement_range()
+	var action_range = get_attack_range() + movement_range + get_hook_range()
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
 	.display_action_range()
+	highlight_indirect_range(movement_range)
 
 func _is_within_attack_range(new_coords):
 	var attack_range = get_attack_range()
@@ -105,11 +120,8 @@ func move_shoot(move_coords):
 	var damage = self.shoot_damage
 	
 	#reverse the subtraction because we're getting the range in the opposite direction
-	var line_range = self.grid.get_line_range(self.coords, self.coords - move_coords, "ENEMY")
-	if line_range != []:
-		var attack_coords = line_range[0]
-		print("printing attack coords")
-		print(attack_coords)
+	var attack_coords = get_shoot_coords(move_coords)
+	if attack_coords != null:
 		var action = get_new_action()
 		
 		#okay. the bullet HAS to be blocking so the damage is handled at the right time
@@ -184,8 +196,16 @@ func hook(new_coords):
 
 
 func predict(new_coords):
-	if _is_within_attack_range(new_coords):
-		pass
+	if _is_within_movement_range(new_coords):
+		predict_shoot(new_coords)
+
+		
+func predict_shoot(move_coords):
+	var damage = self.shoot_damage
+	var attack_coords = get_shoot_coords(move_coords)
+	if attack_coords != null:
+		var action = get_new_action()
+		get_parent().pieces[attack_coords].predict(self.shoot_damage, true)
 
 func cast_ultimate():
 	pass

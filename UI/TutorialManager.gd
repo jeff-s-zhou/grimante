@@ -44,29 +44,32 @@ func add_forced_action(action, turn):
 		self.forced_actions[turn].append(action)
 	else:
 		self.forced_actions[turn] = [action]
+		
+
+func has_forced_action(turn):
+	return self.forced_actions.has(turn) and self.forced_actions[turn] != []
 
 
 func display_forced_action(turn):
-	if self.forced_actions.has(turn) and self.forced_actions[turn] != []:
-		var forced_action = self.forced_actions[turn][0]
-		var initial_coords = forced_action.get_initial_coords()
-		var target_coords = forced_action.get_final_coords()
-		
-		var initial_pos = get_parent().get_node("Grid").locations[initial_coords].get_global_pos()
-		var target_pos = get_parent().get_node("Grid").locations[target_coords].get_global_pos()
-		get_parent().get_node("Grid").focus_coords(initial_coords, target_coords)
-		get_node("Sprite").set_pos(initial_pos)
-		get_node("Sprite").show()
-		get_node("Light2D").set_pos(target_pos)
-		get_node("Light2D").show()
-		
-		if forced_action.has_arrow():
-			get_node("Arrow").set_pos(initial_pos)
-			get_node("Arrow").show()
-		
-		return true
-	else:
-		return false
+	var forced_action = self.forced_actions[turn][0]
+	var initial_coords = forced_action.get_initial_coords()
+	var target_coords = forced_action.get_final_coords()
+	
+	var initial_pos = get_parent().get_node("Grid").locations[initial_coords].get_global_pos()
+	var target_pos = get_parent().get_node("Grid").locations[target_coords].get_global_pos()
+	get_parent().get_node("Grid").focus_coords(initial_coords, target_coords)
+	
+	#so the text is more readable
+	if forced_action.has_text():
+		get_node("Sprite").set_opacity(0.8)
+	get_node("Sprite").set_pos(initial_pos)
+	get_node("Sprite").show()
+	get_node("Light2D").set_pos(target_pos)
+	get_node("Light2D").show()
+	
+	if forced_action.has_arrow():
+		get_node("Arrow").set_pos(initial_pos)
+		get_node("Arrow").show()
 
 
 func move_is_valid(turn, coords):
@@ -80,8 +83,18 @@ func move_is_valid(turn, coords):
 				get_node("Sprite").hide()
 				get_node("Light2D").hide()
 				get_node("Arrow").hide()
+				get_node("Label").hide()
+				get_node("Sprite").set_opacity(0.6)
+				
+				self.current_rule = self.forced_actions[turn][0].result_rule
+				self.forced_actions[turn].pop_front()
+				
 			#only need to update anything on screen if we're displaying visible arrows
 			elif forced_action.has_arrow():
+				if forced_action.has_text():
+					get_node("Label").set_bbcode(decorate(forced_action.text))
+					get_node("Label").show()
+				
 				var target_coords = forced_action.get_final_coords()
 				var target_pos = get_parent().get_node("Grid").locations[target_coords].get_global_pos()
 				get_node("Arrow").set_pos(target_pos)
@@ -89,17 +102,12 @@ func move_is_valid(turn, coords):
 		return valid
 	return true
 
-
+func has_forced_action_result(turn):
+	return self.forced_actions.has(turn) and self.forced_actions[turn] != [] and self.forced_actions[turn][0].has_result()
 
 func handle_forced_action_result(turn):
-	if self.forced_actions.has(turn):
-		if self.forced_actions[turn][0].has_result():
-			self.current_rule = self.forced_actions[turn][0].result_rule
-			update_rule()
-		self.forced_actions[turn].pop_front()
-		return true
-	return false
-		
+	update_rule()
+	
 
 
 func _input(event):
@@ -138,7 +146,9 @@ func update_rule(next=false):
 	if line == null:
 		self.current_rule = null
 		get_node("RuleOverlay").hide()
+		get_node("Sprite").set_opacity(0.6)
 		get_node("Sprite").hide()
+		get_node("Light2D").hide()
 		get_node("Label").hide()
 		get_node("TapLabel").hide()
 		set_process_input(false)
@@ -169,6 +179,7 @@ func update_rule(next=false):
 			get_node("TapLabel").show()
 			if coords != null:
 				var new_pos = get_parent().get_node("Grid").locations[coords].get_global_pos()
+				get_node("Sprite").set_opacity(0.8)
 				get_node("Sprite").set_pos(new_pos)
 				get_node("Sprite").show()
 			else:

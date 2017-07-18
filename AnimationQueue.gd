@@ -15,6 +15,8 @@ var waiting_count = 0
 
 var animation_count = 0
 
+var stopped = false
+
 signal animation_count_update(count)
 
 signal animations_finished
@@ -24,25 +26,23 @@ func _ready():
 
 func enqueue(node, func_ref, blocking, args=[]):
 	#print("enqueuing: " + func_ref)
-	self.lock.lock()
-	self.queue.append({"node":node, "func_ref":func_ref, "blocking":blocking, "args":args})
-	self.lock.unlock()
+	if !self.stopped:
+		self.lock.lock()
+		self.queue.append({"node":node, "func_ref":func_ref, "blocking":blocking, "args":args})
+		self.lock.unlock()
 		
 func is_busy():
 	return self.queue != [] or self.mid_processing
 
 func is_animating():
 #	print(self.queue != [] or self.mid_processing or get_animation_count() > 0 or get_waiting_count() > 0)
-	print(self.queue)
-	print(self.mid_processing)
-	return self.queue != [] or self.mid_processing or get_animation_count() > 0 or get_waiting_count() > 0
+	return self.processing_queue != [] or self.queue != [] or self.mid_processing or get_animation_count() > 0 or get_waiting_count() > 0
 	#return get_animation_count() > 0
 	
 func debug():
 	print(str(get_animation_count()) + " is the animation_count")
 	print(self.queue)
 	print(self.mid_processing)
-	
 	
 func get_animation_count():
 	self.count_lock.lock()
@@ -51,6 +51,7 @@ func get_animation_count():
 	return count
 	
 func reset():
+	self.stopped = false
 	self.count_lock.lock()
 	self.animation_count = 0
 	self.count_lock.unlock()
@@ -60,26 +61,26 @@ func reset():
 	self.queue = []
 	self.mid_processing = false
 	self.processing_queue = []
-	
 	self.set_process(true)
 
 
 #current issue is stopping when there's an animation waiting to be executed
 
 func stop():
-	self.set_process(false)
-	self.lock.try_lock()
-	self.processing_queue = self.queue
-	self.queue = []
-	self.lock.unlock()
-	process_animations()
+	self.stopped = true
+#	self.set_process(false)
+#	self.lock.try_lock()
+#	self.processing_queue = self.queue
+#	self.queue = []
+#	self.lock.unlock()
+#	process_animations()
 	
 func update_animation_count(amount):
 	self.count_lock.lock()
 	self.animation_count += amount
 #	print("animation_count: " + str(self.animation_count))
 	emit_signal("animation_count_update", self.animation_count)
-	if self.animation_count == 0:
+	if self.queue == [] and !self.mid_processing and get_animation_count() == 0:
 		emit_signal("animations_finished")
 	self.count_lock.unlock()
 	
@@ -142,10 +143,3 @@ func process_animations():
 	self.mid_processing = false
 	if self.queue == [] and !self.mid_processing and get_animation_count() == 0:
 		emit_signal("animations_finished")
-#	if self.queue == [] and self.processing_queue == []:
-#		emit_signal("animations_finished")
-
-	
-#	if self.queue == [] and self.processing_queue == []:
-#		yield(node, "strict_animation_done")
-#		emit_signal("animations_finished")

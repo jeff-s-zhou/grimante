@@ -1,20 +1,50 @@
 [gd_scene load_steps=11 format=1]
 
 [ext_resource path="res://PlayerPieces/Components/InspireIndicator.gd" type="Script" id=1]
-[ext_resource path="res://Assets/UI/Inspire/inspire_move_text.png" type="Texture" id=2]
-[ext_resource path="res://Assets/UI/Inspire/inspire_attack_text.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/Inspire/inspire_attack_text.png" type="Texture" id=2]
+[ext_resource path="res://Assets/UI/Inspire/inspire_move_text.png" type="Texture" id=3]
 [ext_resource path="res://Assets/UI/Inspire/inspire_defense_text.png" type="Texture" id=4]
-[ext_resource path="res://Assets/UI/Inspire/inspire_move_arrow.png" type="Texture" id=5]
-[ext_resource path="res://Assets/UI/Inspire/inspire_attack_arrow.png" type="Texture" id=6]
+[ext_resource path="res://Assets/UI/Inspire/inspire_attack_arrow.png" type="Texture" id=5]
+[ext_resource path="res://Assets/UI/Inspire/inspire_move_arrow.png" type="Texture" id=6]
 [ext_resource path="res://Assets/UI/Inspire/inspire_defense_arrow.png" type="Texture" id=7]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 2 ) ], "loop":true, "name":"movement", "speed":5.0 }, { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"attack", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"defense", "speed":5.0 } ]
+animations = [ {
+"frames": [ ExtResource( 2 ) ],
+"loop": true,
+"name": "attack",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 3 ) ],
+"loop": true,
+"name": "movement",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "defense",
+"speed": 5.0
+} ]
 
 [sub_resource type="SpriteFrames" id=2]
 
-animations = [ { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"movement", "speed":5.0 }, { "frames":[ ExtResource( 6 ) ], "loop":true, "name":"attack", "speed":5.0 }, { "frames":[ ExtResource( 7 ) ], "loop":true, "name":"defense", "speed":5.0 } ]
+animations = [ {
+"frames": [ ExtResource( 5 ) ],
+"loop": true,
+"name": "attack",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 6 ) ],
+"loop": true,
+"name": "movement",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 7 ) ],
+"loop": true,
+"name": "defense",
+"speed": 5.0
+} ]
 
 [sub_resource type="Animation" id=3]
 
@@ -26,7 +56,12 @@ tracks/0/type = "value"
 tracks/0/path = NodePath("InspireArrow:transform/pos")
 tracks/0/interp = 1
 tracks/0/imported = false
-tracks/0/keys = { "times":FloatArray( 0, 0.8 ), "transitions":FloatArray( 1, 1 ), "update":0, "values":[ Vector2( 0, -42 ), Vector2( 0, -35 ) ] }
+tracks/0/keys = {
+"times": FloatArray( 0, 0.8 ),
+"transitions": FloatArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( 0, -42 ), Vector2( 0, -35 ) ]
+}
 
 [node name="InspireIndicator" type="Node2D"]
 

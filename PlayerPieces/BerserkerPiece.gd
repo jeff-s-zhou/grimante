@@ -107,7 +107,7 @@ func jump_back(new_coords):
 	var speed = 300
 	var time = distance/speed
 
-	var old_height = Vector2(0, 0)
+	var old_height = Vector2(0, -5)
 	var new_height = Vector2(0, (-1 * distance/2.0))
 	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
 		get_node("Physicals").get_pos(), new_height, time/2.0, Tween.TRANS_QUAD, Tween.EASE_OUT)
@@ -138,9 +138,10 @@ func smash_attack(new_coords):
 	add_animation(self, "animate_move", false, [new_coords, 350, false])
 	add_animation(self, "jump_to", true, [new_coords])
 	var action = get_new_action()
+	
 	action.add_call("attacked", [self.damage], new_coords)
 	action.execute()
-	if get_parent().pieces[new_coords].will_die_to(self.damage):
+	if !get_parent().pieces.has(new_coords):
 		set_coords(new_coords)
 		placed()
 	#else leap back

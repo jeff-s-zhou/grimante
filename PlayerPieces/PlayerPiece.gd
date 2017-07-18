@@ -126,16 +126,13 @@ func assist(piece, assist_type):
 	add_animation(get_node("InspireIndicator"), "animate_give_inspire", true, [assist_type])
 	add_animation(self, "animate_assist", false, [piece, assist_type])
 	add_animation(piece.get_node("InspireIndicator"), "animate_receive_inspire", true, [assist_type])
-	
+
 
 #direct the particles to a certain coords
 func animate_assist(piece, assist_type):
-	add_anim_count()
 	var pos_difference = piece.get_pos() - get_pos()
 	get_node("Physicals/ComboSparkleManager").animate_assist(assist_type, pos_difference)
 	yield(get_node("Physicals/ComboSparkleManager"), "animation_done")
-	#emit_signal("animation_done")
-	subtract_anim_count()
 
 	
 func clear_assist():
@@ -251,11 +248,12 @@ func initialize(cursor_area):
 	
 func animate_reactivate():
 	get_node("Physicals/CooldownSprite").show()
-	get_node("Physicals/AnimatedSprite").set_opacity(0)
+	#get_node("Physicals/AnimatedSprite").set_opacity(0)
 	var sprite = get_node("Physicals/AnimatedSprite")
 	var glow_sprite = get_node("Physicals/GlowSprite")
 	
-	get_node("Tween").interpolate_property(sprite, "visibility/opacity", 0, 1, 0.4, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	var start_opacity = sprite.get_opacity()
+	get_node("Tween").interpolate_property(sprite, "visibility/opacity", start_opacity, 1, 0.4, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").interpolate_property(glow_sprite, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_QUART, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
@@ -263,6 +261,7 @@ func animate_reactivate():
 	yield(get_node("Tween"), "tween_complete")
 	get_node("Tween").interpolate_property(glow_sprite, "visibility/opacity", 1, 0, 0.7, Tween.TRANS_QUAD, Tween.EASE_IN_OUT)
 	get_node("Tween").start()
+
 
 func turn_update():
 	set_invulnerable(false)
@@ -344,7 +343,6 @@ func reset_prediction_highlight():
 
 #called on mouse entering the ClickArea
 func hover_highlight():
-	
 	if(self.state != States.PLACED):
 		#get_node("SamplePlayer").play("tile_hover")
 		get_node("Physicals/OverlayLayers/White").show()
@@ -406,17 +404,33 @@ func select():
 	get_parent().selected = self
 	hovered()
 	get_node("SamplePlayer").play("mouseover")
+	add_animation(self, "animate_glow", false)
 	self.state = States.CLICKED
 	get_node("BlueGlow").show()
 
 
-func deselect():
+func deselect(acting=false):
 	self.state = States.DEFAULT
+	if !acting: #if acting, we unglow the piece after its animation is done or from invalid move
+		add_animation(self, "animate_unglow", false)
 	get_node("BlueGlow").hide()
+	
+	
+func animate_glow():
+	get_node("AnimationPlayer").play("glow")
+	
+func animate_unglow():
+	get_node("AnimationPlayer").stop()
+	var glow_sprite = get_node("Physicals/GlowSprite")
+	var current_opacity = glow_sprite.get_opacity()
+	get_node("Tween").interpolate_property(glow_sprite, "visibility/opacity", current_opacity, 0, 0.2, Tween.TRANS_QUART, Tween.EASE_IN)
+	get_node("Tween").start()
 
 
 func select_action_target(target):
-	get_parent().deselect()
+	get_parent().deselect(true)
+#	self.state = States.DEFAULT
+#	get_node("BlueGlow").hide()
 	if self.deploying_flag:
 		deploy_select_action_target(target)
 	else:
@@ -437,6 +451,7 @@ func _is_within_deploy_range(coords):
 	
 func deploy_select_action_target(target):
 	if _is_within_deploy_range(target.coords):
+		add_animation(self, "animate_unglow", false)
 		if get_parent().has_piece(target.coords) and target.side == "PLAYER":
 			swap_coords_and_pos(target)
 			get_parent().selected = null
@@ -462,6 +477,7 @@ func swap_coords_and_pos(target):
 #helper function for act
 func invalid_move():
 	#get_parent().deselect()
+	add_animation(self, "animate_unglow", false)
 	emit_signal("invalid_move")
 
 
@@ -471,7 +487,8 @@ func placed(ending_turn=false):
 		clear_assist()
 	else:
 		handle_assist()
-	add_animation(self, "animate_placed", false, [ending_turn])
+	if self.state != States.PLACED:
+		add_animation(self, "animate_placed", false, [ending_turn])
 	get_node("BlueGlow").hide()
 	self.state = States.PLACED
 	self.attack_bonus = 0
@@ -482,6 +499,7 @@ func placed(ending_turn=false):
 func animate_placed(ending_turn=false):
 	#get_node("Physicals/OverlayLayers/UltimateWhite").hide()
 	#get_node("Physicals/AnimatedSprite").play("cooldown")
+	animate_unglow()
 	get_node("Physicals/CooldownSprite").show()
 	var sprite = get_node("Physicals/AnimatedSprite")
 	get_node("Tween").interpolate_property(sprite, "visibility/opacity", 1, 0, 0.4, Tween.TRANS_LINEAR, Tween.EASE_IN)

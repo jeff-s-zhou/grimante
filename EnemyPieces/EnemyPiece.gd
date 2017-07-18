@@ -530,17 +530,19 @@ func modify_hp(amount, delay=0):
 		self.hp = min((max(0, self.hp + amount)), 9) #has to be between 0 and 9
 		self.temp_display_hp = self.hp
 		
-		if self.current_animation_sequence == null:
-			get_new_animation_sequence()
+#		if self.current_animation_sequence == null:
+#			get_new_animation_sequence()
 		if self.hp == 0: 
+			get_node("ClickArea").set_pickable(false)
+			self.grid.remove_piece(self.coords)
+			add_animation(self, "animate_set_hp", false, [self.hp, amount, delay])
+			remove_from_group("enemy_pieces")
 			emit_signal("enemy_death")
-			add_animation(self, "animate_set_hp", false, [self.hp, amount, delay, false])
-			delete_self() 
 			#set_animation_sequence_blocking()
 		else:
-			add_animation(self, "animate_set_hp", true, [self.hp, amount, delay])
-			
-		enqueue_animation_sequence()
+			add_animation(self, "animate_set_hp", false, [self.hp, amount, delay])
+#			
+#		enqueue_animation_sequence()
 			
 
 
@@ -556,7 +558,9 @@ func animate_set_hp(hp, value, delay=0, flicker_flag=true):
 		timer.start()
 		yield(timer, "timeout")
 		timer.queue_free()
-		
+	
+	if hp == 0:
+		animate_delete_self()
 
 	get_node("Physicals/HealthDisplay").set_health(hp)
 	
@@ -603,12 +607,6 @@ func walk_off(coords_distance):
 	self.grid.remove_piece(self.coords)
 	remove_from_group("enemy_pieces")
 
-
-#removes it from the self.grid, which prevents any interaction with other pieces
-func delete_self():
-	add_animation(self, "animate_delete_self", true)
-	self.grid.remove_piece(self.coords)
-	remove_from_group("enemy_pieces")
 
 #actually physically deletes it
 func animate_delete_self():

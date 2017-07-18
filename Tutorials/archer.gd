@@ -13,7 +13,7 @@ func _ready():
 func get():
 	var tutorial = TutorialPrototype.instance()
 	
-	var text = ["The Archer's Piercing Arrow hits the closest target in any hexagonal direction for {3} damage."]
+	var text = ["The Archer's Direct Attack: Piercing Arrow hits the closest target in any hexagonal direction for {3} damage."]
 	
 	add_forced_action(tutorial, 1, Vector2(3, 7), "", Vector2(3, 4), "", text)
 	

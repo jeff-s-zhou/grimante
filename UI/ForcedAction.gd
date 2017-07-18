@@ -18,16 +18,19 @@ var arrow_flag
 
 var result_rule
 
+var text
+
 
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	pass
 
-func initialize(unit_coords, target_coords, result_text_list=null, display_arrow=false):
+func initialize(unit_coords, target_coords, result_text_list=null, display_arrow=true, text=null):
 	self.arrow_flag = display_arrow
 	self.unit_coords = unit_coords
 	self.target_coords = target_coords
+	self.text = text
 	if result_text_list != null:
 		var result_rule = RulePrototype.instance()
 		result_rule.initialize(result_text_list)
@@ -64,6 +67,9 @@ func has_arrow():
 	
 func has_result():
 	return self.result_rule != null
+	
+func has_text():
+	return self.text != null
 	
 func get_initial_coords():
 	return self.unit_coords

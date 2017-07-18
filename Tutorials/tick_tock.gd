@@ -14,9 +14,10 @@ func get():
 	var text = ["Clear the board within the {turn limit} displayed at the top of the screen, or else you lose!"]
 	add_player_start_rule(tutorial, 1, text)
 	
-	var text = ["Special Enemies with abilities have appeared!", "Press Tab over them to read what their abilities do."]
+	var text = ["Special Enemies with abilities have appeared!", 
+	"Blue Enemies have abilities that affect other Enemies.",
+	"Yellow Enemies either have no abilities, or have abilities that affect themselves.",
+	"Press Tab over Enemies to read what their abilities do."]
 	add_enemy_end_rule(tutorial, 1, text)
-	
-	var text = ["Don't forget to move past Enemy reinforcements to cancel them!"]
-	add_player_start_rule(tutorial, 3, text)
+
 	return tutorial
