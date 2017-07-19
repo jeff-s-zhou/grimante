@@ -111,3 +111,47 @@ class FiniteAlteredWrapper extends FiniteCuratedWrapper:
 	func _init(turn_power_levels, waves, big_wave_threshold=1400).(turn_power_levels, waves, big_wave_threshold):
 		for wave in self.waves:
 			generator.alter_wave(wave)
+			
+			
+class RandomReinforcementsWrapper:
+	var generator = load("res://EnemyListGenerator.gd").new()
+	var waves
+	var power_levels
+	var enemy_roster
+	var modifier_roster
+	
+	func _init(new_waves, power_levels, enemy_roster, modifier_roster):
+		if typeof(new_waves) == TYPE_DICTIONARY:
+			var keys = new_waves.keys()
+			self.waves = []
+			keys.sort()
+			for key in keys:
+				self.waves.append(new_waves[key])
+		else:
+			self.waves = new_waves
+			
+		self.power_levels = power_levels
+		self.enemy_roster = enemy_roster
+		self.modifier_roster = modifier_roster
+	
+	#only called on the initial enemies
+	func get_next_summon(turn_index):
+		return self.waves[0]
+	
+	#called for reinforcements
+	func get_next_next_summon(turn_index, projected_enemy_coords, player_coords):
+		if turn_index + 1 < self.power_levels.size() and self.power_levels[turn_index + 1] > 0:
+			var power_level = self.power_levels[turn_index + 1]
+			var wave = generator.generate_reinforcement_wave(power_level, projected_enemy_coords, 
+			player_coords, self.enemy_roster, self.modifier_roster)
+			return wave
+		else:
+			return null
+		
+	func get_turns_til_next_wave(turn_index):
+		#so we get the turn index for the next turn
+		for i in range(turn_index + 1, self.power_levels.size()):
+			if self.power_levels[i] > 0:
+				return (i - turn_index)
+		return null
+

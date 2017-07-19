@@ -85,12 +85,12 @@ func get_levels():
 
 
 func sandbox_allies():
-	return {3:Cavalier, 2: Assassin}
+	return {1: Berserker, 3:Corsair, 2: Assassin}
 	
 func sandbox_enemies():
-#	var enemies = {0:{Vector2(1, 4): make(Grunt, 5), Vector2(1, 2): make(Grunt, 3), Vector2(3, 3): make(Grunt, 3)},
-#	1:{Vector2(3, 4): make(Grunt, 4, [cloaked])}}
-	var enemies = load_level("rule_of_three.level")
+	var enemies = {0:{Vector2(3, 3): make(Ranged, 9)},
+	1:{Vector2(3, 4): make(Grunt, 4, [cloaked])}}
+	#var enemies = load_level("rule_of_three.level")
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
 func sandbox_extras():

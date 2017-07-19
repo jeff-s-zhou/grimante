@@ -566,6 +566,7 @@ func animate_set_hp(hp, value, delay=0, flicker_flag=true):
 	
 	if flicker_flag and value < 0:
 		emit_signal("small_shake")
+		get_node("Physicals/Cracks").crack()
 		get_node("SamplePlayer").play("rocket glass explosion thud 2")
 
 	

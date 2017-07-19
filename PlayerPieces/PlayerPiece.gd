@@ -10,6 +10,8 @@ onready var AssistSystem = get_node("/root/Combat/AssistSystem")
 
 const flyover_prototype = preload("res://EnemyPieces/Components/Flyover.tscn")
 
+var explosion_prototype = preload("res://PlayerPieces/Components/Explosion.tscn")
+
 onready var ASSIST_TYPES = AssistSystem.ASSIST_TYPES
 
 var assist_type = null
@@ -210,12 +212,22 @@ func delete_self():
 
 func animate_delete_self(blocking=true):
 	add_anim_count()
-	get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 1, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	get_node("Tween").start()
-	yield(get_node("Tween"), "tween_complete")
-	if blocking:
-		emit_signal("animation_done")
+	get_node("SamplePlayer").play("rocket glass explosion 5")
+	get_node("Physicals").set_opacity(0)
+	get_node("Shadow").set_opacity(0)
+	emit_signal("shake")
+	var explosion = self.explosion_prototype.instance()
+	add_child(explosion)
+	explosion.set_emit_timeout(0.3)
+	explosion.set_emitting(true)
+	get_node("Timer").set_wait_time(0.5)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
+	emit_signal("animation_done")
 	subtract_anim_count()
+	get_node("Timer").set_wait_time(3)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
 	
 
 func delete_from_bar():

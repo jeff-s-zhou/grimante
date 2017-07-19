@@ -1,26 +1,27 @@
-[gd_scene load_steps=24 format=1]
+[gd_scene load_steps=25 format=1]
 
 [ext_resource path="res://EnemyPieces/GruntPiece.gd" type="Script" id=1]
 [ext_resource path="res://EnemyPieces/Components/EnemyCollisionArea.tscn" type="PackedScene" id=2]
 [ext_resource path="res://Assets/Allies/piece_shadow.png" type="Texture" id=3]
 [ext_resource path="res://Assets/Enemies/grunt_piece.png" type="Texture" id=4]
 [ext_resource path="res://Assets/Enemies/grunt_piece_red.png" type="Texture" id=5]
-[ext_resource path="res://EnemyPieces/Components/EnemyOverlayLayers.tscn" type="PackedScene" id=6]
-[ext_resource path="res://EnemyPieces/Components/HealthDisplay.tscn" type="PackedScene" id=7]
-[ext_resource path="res://EnemyPieces/Components/EnemyEffects.tscn" type="PackedScene" id=8]
-[ext_resource path="res://EnemyPieces/Components/FogEffect.tscn" type="PackedScene" id=9]
-[ext_resource path="res://EnemyPieces/Components/Sprinkles.tscn" type="PackedScene" id=10]
-[ext_resource path="res://EnemyPieces/Components/FlickerAnimation.tres" type="Animation" id=11]
-[ext_resource path="res://EnemyPieces/Components/SummonAnimation.tres" type="Animation" id=12]
-[ext_resource path="res://UI/SeenIcon.tscn" type="PackedScene" id=13]
-[ext_resource path="res://Assets/processed_fonts/flyover.fnt" type="BitmapFont" id=14]
-[ext_resource path="res://EnemyPieces/Components/EnemyClickArea.tscn" type="PackedScene" id=15]
-[ext_resource path="res://Assets/processed_fonts/enemy_health.fnt" type="BitmapFont" id=16]
-[ext_resource path="res://Assets/processed_sounds/monster_death.smp" type="Sample" id=17]
-[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 2.smp" type="Sample" id=18]
-[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 4.smp" type="Sample" id=19]
-[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 5.smp" type="Sample" id=20]
-[ext_resource path="res://Assets/processed_sounds/rocket glass explosion thud 2.smp" type="Sample" id=21]
+[ext_resource path="res://EnemyPieces/Components/Cracks.tscn" type="PackedScene" id=6]
+[ext_resource path="res://EnemyPieces/Components/EnemyOverlayLayers.tscn" type="PackedScene" id=7]
+[ext_resource path="res://EnemyPieces/Components/HealthDisplay.tscn" type="PackedScene" id=8]
+[ext_resource path="res://EnemyPieces/Components/EnemyEffects.tscn" type="PackedScene" id=9]
+[ext_resource path="res://EnemyPieces/Components/FogEffect.tscn" type="PackedScene" id=10]
+[ext_resource path="res://EnemyPieces/Components/Sprinkles.tscn" type="PackedScene" id=11]
+[ext_resource path="res://EnemyPieces/Components/FlickerAnimation.tres" type="Animation" id=12]
+[ext_resource path="res://EnemyPieces/Components/SummonAnimation.tres" type="Animation" id=13]
+[ext_resource path="res://UI/SeenIcon.tscn" type="PackedScene" id=14]
+[ext_resource path="res://Assets/processed_fonts/flyover.fnt" type="BitmapFont" id=15]
+[ext_resource path="res://EnemyPieces/Components/EnemyClickArea.tscn" type="PackedScene" id=16]
+[ext_resource path="res://Assets/processed_fonts/enemy_health.fnt" type="BitmapFont" id=17]
+[ext_resource path="res://Assets/processed_sounds/monster_death.smp" type="Sample" id=18]
+[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 2.smp" type="Sample" id=19]
+[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 4.smp" type="Sample" id=20]
+[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 5.smp" type="Sample" id=21]
+[ext_resource path="res://Assets/processed_sounds/rocket glass explosion thud 2.smp" type="Sample" id=22]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -47,31 +48,31 @@ samples/monster_death = {
 "db": -5.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 17 )
+"sample": ExtResource( 18 )
 }
 "samples/rocket glass explosion 2" = {
 "db": 5.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 18 )
+"sample": ExtResource( 19 )
 }
 "samples/rocket glass explosion 4" = {
 "db": 5.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 19 )
+"sample": ExtResource( 20 )
 }
 "samples/rocket glass explosion 5" = {
 "db": 5.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 20 )
+"sample": ExtResource( 21 )
 }
 "samples/rocket glass explosion thud 2" = {
 "db": 5.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 21 )
+"sample": ExtResource( 22 )
 }
 
 [node name="GruntPiece" type="KinematicBody2D"]
@@ -100,13 +101,17 @@ texture = ExtResource( 3 )
 frames = SubResource( 1 )
 animation = "damaged"
 
-[node name="EnemyOverlays" parent="Physicals" instance=ExtResource( 6 )]
+[node name="Cracks" parent="Physicals" instance=ExtResource( 6 )]
+
+transform/pos = Vector2( 0, 0 )
+
+[node name="EnemyOverlays" parent="Physicals" instance=ExtResource( 7 )]
 
 editor/display_folded = true
 
-[node name="HealthDisplay" parent="Physicals" instance=ExtResource( 7 )]
+[node name="HealthDisplay" parent="Physicals" instance=ExtResource( 8 )]
 
-[node name="EnemyEffects" parent="Physicals" instance=ExtResource( 8 )]
+[node name="EnemyEffects" parent="Physicals" instance=ExtResource( 9 )]
 
 editor/display_folded = true
 
@@ -130,25 +135,25 @@ config/process_mode = 1
 
 config/process_mode = 1
 
-[node name="FogEffect" parent="Physicals" instance=ExtResource( 9 )]
+[node name="FogEffect" parent="Physicals" instance=ExtResource( 10 )]
 
 visibility/visible = false
 
-[node name="Sprinkles" parent="." instance=ExtResource( 10 )]
+[node name="Sprinkles" parent="." instance=ExtResource( 11 )]
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 playback/process_mode = 1
 playback/default_blend_time = 0.0
 root/root = NodePath("..")
-anims/FlickerAnimation = ExtResource( 11 )
-anims/SummonAnimation = ExtResource( 12 )
+anims/FlickerAnimation = ExtResource( 12 )
+anims/SummonAnimation = ExtResource( 13 )
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
 autoplay = ""
 
-[node name="SeenIcon" parent="." instance=ExtResource( 13 )]
+[node name="SeenIcon" parent="." instance=ExtResource( 14 )]
 
 transform/pos = Vector2( 32, -38 )
 
@@ -167,7 +172,7 @@ margin/left = -25.0
 margin/top = 16.0
 margin/right = 19.0
 margin/bottom = 56.0
-custom_fonts/font = ExtResource( 14 )
+custom_fonts/font = ExtResource( 15 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 0
@@ -184,7 +189,7 @@ playback/active = false
 playback/repeat = false
 playback/speed = 1.0
 
-[node name="ClickArea" parent="." instance=ExtResource( 15 )]
+[node name="ClickArea" parent="." instance=ExtResource( 16 )]
 
 [node name="Timer" type="Timer" parent="."]
 
@@ -203,7 +208,7 @@ margin/left = -40.0
 margin/top = -16.0
 margin/right = 0.0
 margin/bottom = 10.0
-custom_fonts/font = ExtResource( 16 )
+custom_fonts/font = ExtResource( 17 )
 custom_colors/font_color = Color( 1, 0, 0.914063, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 percent_visible = 1.0

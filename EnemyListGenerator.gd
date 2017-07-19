@@ -153,9 +153,9 @@ func get_unit_hp(prototype):
 func generate_random_coords(vertical_prob_dist=constants.coords_vertical_prob_dist, horizontal_prob_dist=constants.coords_horizontal_prob_dist):
 	var x = get_value_from_prob_dist(horizontal_prob_dist)
 	var y = get_value_from_prob_dist(vertical_prob_dist) + constants.y_coords_offsets[x]
-	
 	return Vector2(x, y)
 	
+
 func get_value_from_prob_dist(prob_dist):
 	var total_weights = get_total_weights(prob_dist)
 	var random_value = total_weights * randf()

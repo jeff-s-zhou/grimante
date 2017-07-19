@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=1]
+[gd_scene load_steps=6 format=1]
 
 [ext_resource path="res://PlayerPieces/Components/CorsairHook.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Allies/corsair_hook.png" type="Texture" id=2]
 [ext_resource path="res://Assets/effects/hook_mask.png" type="Texture" id=3]
+[ext_resource path="res://Assets/effects/corsair_tip_mask.png" type="Texture" id=4]
 
 [sub_resource type="CanvasItemMaterial" id=1]
 
@@ -23,14 +24,13 @@ playback/speed = 1.0
 
 [node name="Sprite" type="Sprite" parent="."]
 
-visibility/light_mask = 2
+visibility/light_mask = 6
 material/material = SubResource( 1 )
-transform/pos = Vector2( 0, -375 )
+transform/pos = Vector2( 0, 392.805 )
 texture = ExtResource( 2 )
 
 [node name="Light2D" type="Light2D" parent="."]
 
-visibility/light_mask = 2
 enabled = true
 editor_only = false
 texture = ExtResource( 3 )
@@ -49,6 +49,29 @@ shadow/enabled = false
 shadow/color = Color( 0, 0, 0, 0 )
 shadow/buffer_size = 2048
 shadow/esm_multiplier = 80.0
-shadow/item_mask = 2
+shadow/item_mask = 0
+
+[node name="Light2D1" type="Light2D" parent="."]
+
+transform/pos = Vector2( 1.50739, 686.456 )
+enabled = true
+editor_only = false
+texture = ExtResource( 4 )
+offset = Vector2( 0, 0 )
+scale = 1.0
+color = Color( 1, 1, 1, 1 )
+energy = 1.0
+mode = 3
+range/height = 0.0
+range/z_min = -1024
+range/z_max = 1024
+range/layer_min = 0
+range/layer_max = 0
+range/item_mask = 4
+shadow/enabled = false
+shadow/color = Color( 0, 0, 0, 0 )
+shadow/buffer_size = 2048
+shadow/esm_multiplier = 80.0
+shadow/item_mask = 0
 
 
