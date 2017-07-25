@@ -25,6 +25,9 @@ func add_star():
 		self.star_count += 1
 		get_node("TextureButton").set_disabled(false)
 		get_node("/root/AnimationQueue").enqueue(self, "animate_add_star", false, [self.star_count])
+		
+func refund():
+	add_star()
 	
 func animate_add_star(crystal_count):
 	get_node("Toppings/Label").set_text(str(star_count))

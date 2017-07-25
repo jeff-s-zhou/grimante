@@ -11,10 +11,10 @@ func initialize(max_hp, modifiers, prototype):
 	.initialize("Spectre", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, self.YELLOW_EXPLOSION_SCENE)
 
 
-func attacked(amount, delay=0.0, interrupting=true):
+func attacked(amount, delay=0.0):
 	if amount > self.hp:
 		amount = 0
-	.attacked(amount, delay, interrupting)
+	.attacked(amount, delay)
 	
 func get_actual_damage(damage):
 	if self.shielded:

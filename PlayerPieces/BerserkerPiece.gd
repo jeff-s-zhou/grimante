@@ -91,7 +91,7 @@ func jump_to(new_coords, dust=false):
 		get_parent().get_node("FieldEffects").emit_dust(self.get_pos())
 	self.mid_leaping_animation = false
 	set_z(0)
-	get_node("SamplePlayer").play("explode3")
+	get_node("SamplePlayer 2").play("explode3")
 	emit_signal("shake")
 	emit_signal("animation_done")
 	subtract_anim_count()
@@ -166,7 +166,7 @@ func smash(smash_range):
 	var action = get_new_action()
 	action.add_call("set_stunned", [true], smash_range)
 	#the false flag is so it doesn't interrupt the stun it just set lol
-	action.add_call("attacked", [self.aoe_damage, 0.0, false], smash_range)
+	action.add_call("attacked", [self.aoe_damage], smash_range)
 	action.execute()
 
 

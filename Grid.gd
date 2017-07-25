@@ -13,6 +13,14 @@ var shifting_sands = []
 
 var deploying = false
 
+var deploy_tiles
+
+const DEPLOY_TILES_5 = [Vector2(1, 6), Vector2(2, 6),
+Vector2(3, 7), Vector2(4, 7), Vector2(5, 8)
+]
+
+const DEPLOY_TILES_4 = [Vector2(2, 6), Vector2(3, 6), Vector2(3, 7), Vector2(4, 7)]
+
 
 #starts at 1, 2, 2, 3, 3, 4, 4, 5, 5,
 #ends at 8, 8, 9, 9, 10, 10, 11, 11, 12
@@ -79,18 +87,25 @@ func _ready():
 #				selector.triangulate_set_pos()
 #				self.pyromancer_selectors[tri_coords] = selector
 
-func set_deploying(flag, deploy_tiles=null):
-	self.deploying = flag
+func set_deploying(deploying_flag, flags={}):
+	self.deploying = deploying_flag
 	if deploying:
-		
-		
-		if deploy_tiles != null:
-			for deploy_tile_coords in deploy_tiles:
-				if self.locations.has(deploy_tile_coords):
-					self.locations[deploy_tile_coords].set_deployable_indicator(true)
+		if flags.has("no_fifth"):
+			self.deploy_tiles = DEPLOY_TILES_4
+		else:
+			get_node("FinalHeroScreen").show()
+			self.deploy_tiles = DEPLOY_TILES_5
+			
+		for deploy_tile_coords in self.deploy_tiles:
+			if self.locations.has(deploy_tile_coords):
+				self.locations[deploy_tile_coords].set_deployable_indicator(true)
 	else:
 		get_node("FinalHeroScreen").queue_free()
 		reset_deployable_indicators()
+		
+	
+func is_within_deploy_range(coords):
+	return coords in self.deploy_tiles
 	
 	
 func predict(coords):

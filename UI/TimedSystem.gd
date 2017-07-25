@@ -25,7 +25,8 @@ func initialize(level_schematic, star_button_handle, flags):
 	
 	
 	self.enemies = level_schematic.enemies
-	self.num_turns = level_schematic.num_turns
+	if !flags.has("no_turns"):
+		self.num_turns = level_schematic.num_turns
 	self.turns_til_wave = self.enemies.get_turns_til_next_wave(0)
 	
 	if flags.has("no_turns"):
@@ -53,7 +54,7 @@ func update(turn_count):
 			get_node("WaveCountdown").set_text(str(self.turns_til_wave - 1))
 		else:
 			get_node("WaveCountdown").set_text("-")
-		
+
 		
 func check_enemy_win(turn_count): #only checks part of the condition. other is in the game loop	
 	if self.flags.has("no_turns"):

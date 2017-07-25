@@ -79,16 +79,17 @@ func act(new_coords):
 		placed()
 	elif _is_within_assist_range(new_coords):
 		handle_pre_assisted()
-		shield_bash(new_coords)
+		shield_bash(new_coords, false)
 		placed()
 	else:
 		invalid_move()
 
 
-func shield_bash(new_coords):
-	var action = get_new_action()
-	action.add_call("set_frozen", [true], new_coords)
-	action.execute()
+func shield_bash(new_coords, freeze=true):
+	if freeze:
+		var action = get_new_action()
+		action.add_call("set_frozen", [true], new_coords)
+		action.execute()
 	#var offset = get_parent().hex_normalize(new_coords - self.coords)
 	print("in shield bash")
 	#print(offset)

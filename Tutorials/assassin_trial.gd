@@ -12,6 +12,9 @@ func _ready():
 
 func get():
 	var tutorial = TutorialPrototype.instance()
-	var text = ["Hint: Move your Heroes forward in order to reduce the area in which Enemies can reinforce."]
-	add_player_start_rule(tutorial, 1, text)
+
+	var text = ["This is the Assassin's Trial. Clear the board in 1 turn."]
+	
+	add_player_start_rule(tutorial, 0, text)
+
 	return tutorial

@@ -17,14 +17,18 @@ func animate_clear_inspire():
 	self.hide()
 	
 func animate_inspire_ready(type):
+	get_node("/root/AnimationQueue").update_animation_count(1)
 	self.set_opacity(0)
 	get_node("InspireArrow").set_rotd(0)
 	self.show()
-	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	get_node("InspireText").play(type)
 	get_node("InspireArrow").play(type)
 	get_node("AnimationPlayer").play("hover")
+	yield(get_node("Tween"), "tween_complete")
+	get_node("/root/AnimationQueue").update_animation_count(-1)
+	emit_signal("animation_done")
 
 func animate_give_inspire(type):
 	get_node("/root/AnimationQueue").update_animation_count(1)

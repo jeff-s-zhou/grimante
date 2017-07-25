@@ -4,6 +4,7 @@ extends "PlayerPiece.gd"
 const UNIT_TYPE = "Stormdancer"
 
 const DEFAULT_SHURIKEN_DAMAGE = 1
+const LIGHTNING_BONUS_DAMAGE = 2
 const DEFAULT_MOVEMENT_VALUE = 2
 const DEFAULT_ARMOR_VALUE = 2
 
@@ -85,7 +86,7 @@ func act(new_coords):
 #used so we can call the placed animation at the end of the spin
 func attack_placed():
 	handle_assist()
-	get_node("BlueGlow").hide()
+	get_node("SelectedGlow").hide()
 	self.state = States.PLACED
 	self.attack_bonus = 0
 	self.movement_value = self.DEFAULT_MOVEMENT_VALUE
@@ -95,7 +96,7 @@ func attack_placed():
 func deselect(acting=false):
 	self.state = States.DEFAULT
 	add_animation(self, "animate_unglow", false)
-	get_node("BlueGlow").hide()
+	get_node("SelectedGlow").hide()
 
 func shuriken_storm(new_coords):
 	var attack_range_dict = {}
@@ -172,12 +173,14 @@ func throw_shurikens(attack_range, attack_range_dict):
 	#attack_range.invert()
 	var delay = 0.25
 	for coords in attack_range:
+		var damage = self.shuriken_damage
 		#if true, that means enemy is on a lightning tile
 		if attack_range_dict[coords]:
 			var tile = get_parent().locations[coords]
 			add_animation(tile, "animate_lightning", false)
+			damage = self.shuriken_damage + LIGHTNING_BONUS_DAMAGE
 		add_animation(self, "animate_shuriken_helper", true, [coords, delay])
-		get_parent().pieces[coords].attacked(self.shuriken_damage)
+		get_parent().pieces[coords].attacked(damage)
 		delay -= (delay/1.5)
 
 func animate_shuriken_helper(attack_coords, delay):

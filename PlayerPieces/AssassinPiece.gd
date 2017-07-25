@@ -5,7 +5,7 @@ const DEFAULT_BACKSTAB_DAMAGE = 1
 const ISOLATION_BONUS = 2
 const DEFAULT_PASSIVE_DAMAGE = 1
 const DEFAULT_MOVEMENT_VALUE = 2
-const DEFAULT_ARMOR_VALUE = 1
+const DEFAULT_ARMOR_VALUE = 0
 const UNIT_TYPE = "Assassin"
 
 const BEHIND = Vector2(0, -1)
@@ -176,7 +176,7 @@ func trigger_passive(attack_range):
 		if _is_within_passive_range(attack_coords):
 			add_animation(self, "animate_passive", true, [attack_coords])
 			var action = get_new_action(false)
-			action.add_call("opportunity_attacked", [self.passive_damage], attack_coords)
+			action.add_call("attacked", [self.passive_damage], attack_coords)
 			action.execute()
 	
 			if !get_parent().pieces.has(attack_coords) and self.state == States.PLACED:
@@ -189,7 +189,7 @@ func animate_passive(attack_coords):
 	var location = get_parent().locations[attack_coords]
 	var difference = 2 * (location.get_pos() - get_pos())/3
 	var new_position = location.get_pos() - difference
-	animate_move_to_pos(new_position, 450, true, Tween.TRANS_SINE, Tween.EASE_IN)
+	animate_move_to_pos(new_position, 450, true, Tween.TRANS_SINE, Tween.EASE_IN, 0.5)
 
 func animate_passive_end(original_coords):
 	var location = get_parent().locations[original_coords]

@@ -13,7 +13,12 @@ tracks/0/type = "value"
 tracks/0/path = NodePath("Sprite 2:visibility/opacity")
 tracks/0/interp = 1
 tracks/0/imported = false
-tracks/0/keys = { "times":FloatArray( 0, 0.8, 1.6 ), "transitions":FloatArray( 1, 1, 1 ), "update":0, "values":[ 0.0, 1.0, 0.0 ] }
+tracks/0/keys = {
+"times": FloatArray( 0, 0.8, 1.6 ),
+"transitions": FloatArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 1.0, 0.0 ]
+}
 
 [node name="ReinforcementIndicator" type="Node2D"]
 

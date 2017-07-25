@@ -1,13 +1,13 @@
-[gd_scene load_steps=10 format=1]
+[gd_scene load_steps=11 format=1]
 
 [ext_resource path="res://PlayerPieces/PrototypePlayerPiece.tscn" type="PackedScene" id=1]
 [ext_resource path="res://PlayerPieces/BerserkerPiece.gd" type="Script" id=2]
 [ext_resource path="res://Assets/Allies/berserker_piece_cooldown.png" type="Texture" id=3]
 [ext_resource path="res://Assets/Allies/berserker_piece.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Allies/berserker_piece_sepia.png" type="Texture" id=5]
-[ext_resource path="res://Assets/Allies/berserker_piece_red.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Allies/berserker_piece_red.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Allies/berserker_piece_sepia.png" type="Texture" id=6]
 [ext_resource path="res://Assets/Allies/berserker_glow.png" type="Texture" id=7]
-[ext_resource path="res://PlayerPieces/Components/BerserkerSampleLibrary.tres" type="SampleLibrary" id=8]
+[ext_resource path="res://Assets/processed_sounds/explode3.smp" type="Sample" id=8]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -17,16 +17,25 @@ animations = [ {
 "name": "default",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 5 ) ],
-"loop": true,
-"name": "cooldown",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 4 ), ExtResource( 6 ) ],
+"frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
 "loop": true,
 "name": "hurt",
 "speed": 5.0
+}, {
+"frames": [ ExtResource( 6 ) ],
+"loop": true,
+"name": "cooldown",
+"speed": 5.0
 } ]
+
+[sub_resource type="SampleLibrary" id=2]
+
+samples/explode3 = {
+"db": 0.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 8 )
+}
 
 [node name="BerserkerPiece" instance=ExtResource( 1 )]
 
@@ -48,9 +57,9 @@ texture = ExtResource( 7 )
 
 editor/display_folded = true
 
-[node name="SamplePlayer" parent="."]
+[node name="SamplePlayer 2" parent="."]
 
-config/samples = ExtResource( 8 )
+config/samples = SubResource( 2 )
 
 [node name="Tween2" type="Tween" parent="."]
 

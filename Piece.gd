@@ -151,12 +151,12 @@ func animate_summon():
 	subtract_anim_count()
 
 	
-func animate_move_to_pos(position, speed, blocking=false, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
+func animate_move_to_pos(position, speed, blocking=false, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN, delay=0):
 	add_anim_count()
 	var tween = Tween.new()
 	add_child(tween)
 	var distance = get_pos().distance_to(position)
-	tween.interpolate_property(self, "transform/pos", get_pos(), position, float(distance)/speed, trans_type, ease_type)
+	tween.interpolate_property(self, "transform/pos", get_pos(), position, float(distance)/speed, trans_type, ease_type, delay)
 	tween.start()
 	if blocking:
 		yield(tween, "tween_complete")
@@ -423,6 +423,9 @@ func handle_nonlethal_shove(pusher):
 func dies_to_collision(pusher):
 	return false
 	
+func star_input_event(event):
+	return false
+
 
 func is_slime():
 	return false

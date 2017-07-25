@@ -6,6 +6,7 @@ extends Node2D
 
 var player_turn_start_rules = {}
 var enemy_turn_end_rules = {}
+var enemy_turn_start_rules = {}
 var forced_actions = {} #dict of lists
 
 signal rule_finished
@@ -36,7 +37,12 @@ func add_player_turn_start_rule(rule, turn, coords=null):
 
 func add_enemy_turn_end_rule(rule, turn):
 	self.enemy_turn_end_rules[turn] = rule
-
+	
+func add_enemy_turn_start_rule(rule, turn, coords=null):
+	if coords != null:
+		self.enemy_turn_start_rules[turn] = {"rule":rule, "coords":coords}
+	else:
+		self.enemy_turn_start_rules[turn] = rule
 
 func add_forced_action(action, turn):
 	add_child(action)
@@ -86,7 +92,8 @@ func move_is_valid(turn, coords):
 				get_node("Label").hide()
 				get_node("Sprite").set_opacity(0.6)
 				
-				self.current_rule = self.forced_actions[turn][0].result_rule
+				if self.forced_actions[turn][0].has_result():
+					self.current_rule = self.forced_actions[turn][0].result_rule
 				self.forced_actions[turn].pop_front()
 				
 			#only need to update anything on screen if we're displaying visible arrows
@@ -103,7 +110,7 @@ func move_is_valid(turn, coords):
 	return true
 
 func has_forced_action_result(turn):
-	return self.forced_actions.has(turn) and self.forced_actions[turn] != [] and self.forced_actions[turn][0].has_result()
+	return self.current_rule != null
 
 func handle_forced_action_result(turn):
 	update_rule()
@@ -121,12 +128,18 @@ func has_player_turn_start_rule(turn):
 
 func has_enemy_turn_end_rule(turn):
 	return self.enemy_turn_end_rules.has(turn)
+	
+func has_enemy_turn_start_rule(turn):
+	return self.enemy_turn_start_rules.has(turn)
 
 
 func display_player_turn_start_rule(turn):
 	self.current_rule = self.player_turn_start_rules[turn]
 	update_rule()
 
+func display_enemy_turn_start_rule(turn):
+	self.current_rule = self.enemy_turn_start_rules[turn]
+	update_rule()
 
 func display_enemy_turn_end_rule(turn):
 	self.current_rule = self.enemy_turn_end_rules[turn]

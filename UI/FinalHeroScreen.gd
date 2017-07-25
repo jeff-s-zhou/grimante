@@ -24,7 +24,7 @@ func _ready():
 #the control flow is that it's passed to grid through initialize_piece in combat
 #and then passed here?
 func initialize(unused_piece):
-	self.show() #we only show this screen if we have pieces to select lol
+	#we only show this screen if we have pieces to select lol
 	self.pieces.append(unused_piece)
 	unused_piece.set_pos(Vector2(-999, -999)) #get it out of the way
 	

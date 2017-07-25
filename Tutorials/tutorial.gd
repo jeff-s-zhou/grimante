@@ -18,6 +18,11 @@ func add_player_start_rule(tutorial, turn, text_list, coords=null):
 	player_start_rule.initialize(text_list)
 	tutorial.add_player_turn_start_rule(player_start_rule, turn, coords)
 	
+func add_enemy_start_rule(tutorial, turn, text_list, coords=null):
+	var enemy_start_rule = RulePrototype.instance()
+	enemy_start_rule.initialize(text_list)
+	tutorial.add_enemy_turn_start_rule(enemy_start_rule, turn, coords)
+	
 func add_enemy_end_rule(tutorial, turn, text_list):
 	var enemy_end_rule = RulePrototype.instance()
 	enemy_end_rule.initialize(text_list)

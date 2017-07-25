@@ -40,7 +40,6 @@ signal animation_done
 
 var assassin = null
 
-
 func _ready():
 	get_node("/root/AnimationQueue").reset()
 	get_node("/root/global").load_state()
@@ -49,10 +48,6 @@ func _ready():
 	#get_node("Grid").set_pos(Vector2(400, 250))
 	#debug_mode()
 	#debug_full_roster()
-	get_node("ControlBar/DeployButton").connect("pressed", self, "handle_deploy")
-	get_node("ControlBar/EndTurnButton").connect("released", self, "handle_end_turn_released")
-	get_node("ControlBar/EndTurnButton").connect("holding", self, "holding_end_turn")
-	get_node("ControlBar/EndTurnButton").set_disabled(true)
 	
 	get_node("RestartBar").connect("bar_filled", self, "restart")
 	
@@ -62,7 +57,7 @@ func _ready():
 	get_node("AssistSystem").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 100))
 #
 
-	self.level_schematic = get_node("/root/global").get_param("level")
+	self.level_schematic = get_node("/root/global").get_param("level").get_level()
 	if self.level_schematic.tutorial != null:
 		var tutorial_func = self.level_schematic.tutorial
 		self.tutorial = tutorial_func.call_func()
@@ -74,20 +69,20 @@ func _ready():
 	self.enemy_waves = self.level_schematic.enemies
 
 	self.reinforcements = self.level_schematic.reinforcements
-	
-	
+		
 	#we store the initial wave count as the first value in the array
 
 	if self.level_schematic.end_conditions.has(constants.end_conditions.Timed):
+		self.state_manager = load("res://UI/TimedSystem.tscn").instance()
+	elif self.level_schematic.end_conditions.has(constants.end_conditions.Sandbox):
 		self.state_manager = load("res://UI/TimedSystem.tscn").instance()
 	else:
 		self.state_manager= load("res://UI/ClearRoomSystem.tscn").instance()
 
 	add_child(self.state_manager)
-	self.state_manager.initialize(self.level_schematic, get_node("ControlBar/StarButton"), self.level_schematic.flags)
+	self.state_manager.initialize(self.level_schematic, get_node("ControlBar/StarBar"), self.level_schematic.flags)
 	
-	if self.level_schematic.flags.has("no_stars"):
-		get_node("ControlBar/StarButton").disable()
+	get_node("ControlBar").initialize(self.level_schematic.flags, self)
 	
 	get_node("AssistSystem").initialize(self.level_schematic.flags)
 
@@ -114,13 +109,12 @@ func _ready():
 	load_in_next_wave()
 	display_wave_preview()
 	
-	
 	set_process(true)
 	set_process_input(true)	
 		
 	if self.level_schematic.free_deploy:
 		get_node("ControlBar/DeployButton").show()
-		get_node("Grid").set_deploying(true, self.level_schematic.deploy_tiles)
+		get_node("Grid").set_deploying(true, self.level_schematic.flags)
 		
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			player_piece.start_deploy_phase()
@@ -171,10 +165,7 @@ func set_active_star(flag):
 #
 func update_animation_count_display(count):
 	get_node("AnimationCountLabel").set_text(str(count))
-	
-	
-func is_within_deploy_range(coords):
-	return coords in self.level_schematic.deploy_tiles
+
 	
 func debug_full_roster():
 	var Berserker = load("res://PlayerPieces/BerserkerPiece.tscn")
@@ -208,7 +199,7 @@ func initialize_crusader(new_piece):
 	new_piece.connect("small_shake", self, "small_screen_shake")
 	new_piece.connect("animated_placed", self, "handle_piece_placed")
 	get_node("Grid").add_child(new_piece)
-	new_piece.initialize(get_node("CursorArea")) #placed afterwards because we might need the piece to be on the grid	
+	new_piece.initialize(get_node("CursorArea"), self.level_schematic.flags) #placed afterwards because we might need the piece to be on the grid	
 
 func initialize_piece(piece, on_bar=false, key=null):
 	if !get_node("/root/global").available_unit_roster.has(piece):
@@ -235,7 +226,7 @@ func initialize_piece(piece, on_bar=false, key=null):
 		get_node("Grid").add_piece(position, new_piece)
 
 	#these require the piece to have been added as a child
-	new_piece.initialize(get_node("CursorArea")) #placed afterwards because we might need the piece to be on the grid
+	new_piece.initialize(get_node("CursorArea"), self.level_schematic.flags) #placed afterwards because we might need the piece to be on the grid
 	
 	new_piece.animate_summon()
 	yield(new_piece.get_node("Tween"), "tween_complete")
@@ -244,27 +235,35 @@ func initialize_piece(piece, on_bar=false, key=null):
 
 func handle_piece_placed():
 	if self.tutorial != null:
+		print("handling piece placed?")
 		if self.tutorial.has_forced_action_result(self.turn_count):
+			print("handling forced action result")
 			set_process_input(false)
 			set_process(false)
 			if get_node("/root/AnimationQueue").is_animating():
 				yield(get_node("/root/AnimationQueue"), "animations_finished")
-			if self.tutorial.handle_forced_action_result(self.turn_count):
-				print("handling forced action result")
-				yield(self.tutorial, "rule_finished")
+			self.tutorial.handle_forced_action_result(self.turn_count)
+			yield(self.tutorial, "rule_finished")
 			self.mid_forced_action = false
 			set_process_input(true)
 			set_process(true)
 		
 		if self.tutorial.has_forced_action(self.turn_count):
 			self.mid_forced_action = true
+			set_process_input(false)
+			set_process(false)
 			if get_node("/root/AnimationQueue").is_animating():
 				yield(get_node("/root/AnimationQueue"), "animations_finished")
 			self.tutorial.display_forced_action(self.turn_count)
+			set_process_input(true)
+			set_process(true)
+			
+		else:
+			self.mid_forced_action = false
 
 
 	#shouldn't interfere with any other forced actions, since it'll only end when all pieces are placed
-	if !get_node("ControlBar/StarButton").has_star():
+	if !get_node("ControlBar/StarBar").has_star():
 		#check if we can automatically end turn
 		var player_pieces = get_tree().get_nodes_in_group("player_pieces")
 		for player_piece in player_pieces:
@@ -356,14 +355,22 @@ func computer_input(event):
 		var has_selected = get_node("Grid").selected != null
 		var hovered = get_node("CursorArea").get_piece_or_location_hovered()
 		if hovered:
-			#if during a tutorial level, make sure move is as intended
-			if self.tutorial != null:
-				if self.tutorial.move_is_valid(get_turn_count(), hovered.coords):
-					hovered.input_event(event, has_selected, self.has_active_star)
-				else:
-					print("not valid??")
+
+			#if a star is active, handle it appropriately
+			if self.has_active_star:
+				self.has_active_star = false
+				var successful = hovered.star_input_event(event)
+				if !successful:
+					get_node("ControlBar/StarBar").refund()
 			else:
-				hovered.input_event(event, has_selected, self.has_active_star)
+				#if during a tutorial level, make sure move is as intended
+				if self.tutorial != null:
+					if self.tutorial.move_is_valid(get_turn_count(), hovered.coords):
+						hovered.input_event(event, has_selected)
+					else:
+						print("not valid??")
+				else:
+					hovered.input_event(event, has_selected)
 				
 		elif get_node("Grid").selected != null:
 			get_node("Grid").selected.invalid_move()
@@ -453,6 +460,14 @@ func _process(delta):
 		
 		
 func enemy_phase():
+	if self.tutorial != null and self.tutorial.has_enemy_turn_start_rule(get_turn_count()):
+		self.tutorial.display_enemy_turn_start_rule(get_turn_count())
+		set_process_input(false)
+		set_process(false)
+		yield(self.tutorial, "rule_finished")
+		set_process_input(true)
+		set_process(true)
+	
 	var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
 	
 	enemy_pieces.sort_custom(self, "_sort_by_y_axis") #ensures the pieces in front move first
@@ -572,9 +587,18 @@ func deploy_wave():
 		var prototype = prototype_parts["prototype"]
 		var hp = prototype_parts["hp"]
 		var modifiers = prototype_parts["modifiers"]
-		if(!get_node("Grid").pieces.has(coords)):
+		
+		if get_node("Grid").pieces.has(coords):
+			var piece = get_node("Grid").pieces[coords]
+			if piece.side == "PLAYER":
+				piece.block_summon()
+				#initialize_enemy_piece(coords, prototype, hp, modifiers)
+			else:
+				piece.summon_buff(hp, modifiers)
+				
+		else:
 			initialize_enemy_piece(coords, prototype, hp, modifiers)
-			self.enemy_reinforcements.erase(key)
+		self.enemy_reinforcements.erase(key)
 
 
 func load_in_next_wave(zero_wave=false):
@@ -617,7 +641,10 @@ func player_win():
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
 	
-	get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.level_schematic.next_level})
+	if self.level_schematic.is_sub_level():
+		get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.next_level})
+	else:
+		get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.level_schematic.next_level})
 
 
 func enemy_win():
@@ -637,7 +664,16 @@ func enemy_win():
 	
 	get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level": self.level_schematic})
 	
-	
+
+func next_level():
+	get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.next_level})
+
+func previous_level():
+	print("in previous level")
+	print (self.level_schematic.previous_level)
+	get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.previous_level})
+
+
 func damage_defenses():
 	print("caught damage defenses")
 	enemy_win()

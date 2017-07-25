@@ -44,12 +44,6 @@ func set_targetable(flag):
 	
 func add_corpse(player_piece):
 	self.corpse = player_piece
-
-func resurrect():
-	if !get_parent().pieces.has(coords):
-		self.corpse.resurrect()
-		self.corpse = null
-		
 	
 func animate_add_corpse():
 	get_node("CorpseIndicator").set_animation(self.corpse.unit_name.to_lower())
@@ -146,9 +140,17 @@ func _mouse_exited():
 		get_node("Sprite").set_opacity(0.4)
 	get_parent().reset_prediction()
 
+func star_input_event(event):
+	if self.corpse != null and !get_parent().pieces.has(coords):
+		self.corpse.resurrect()
+		self.corpse = null
+		return true
+	
+	return false
 
-func input_event(event, has_selected, has_active_star):
-		get_parent().set_target(self)
+	
+func input_event(event, has_selected):
+	get_parent().set_target(self)
 
 func external_set_opacity(value=1.0):
 	get_node("Sprite").set_opacity(value)

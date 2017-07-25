@@ -140,7 +140,7 @@ func get_modifiers():
 	return modifiers
 
 
-func input_event(event, has_selected, has_star):
+func input_event(event, has_selected):
 	if event.is_pressed():
 		self.grid.set_target(self)
 
@@ -505,9 +505,7 @@ func heal(amount, delay=0.0):
 	modify_hp(amount, delay)
 
 
-func attacked(amount, delay=0.0, interrupting=true):
-	if interrupting and self.stunned:
-		set_stunned(false)
+func attacked(amount, delay=0.0):
 	set_cloaked(false)
 	
 	if self.shielded:
@@ -517,12 +515,12 @@ func attacked(amount, delay=0.0, interrupting=true):
 
 
 #called by the assassin's passive
-func opportunity_attacked(amount):
-	#set_cloaked(false) we don't need this, right?
-	if self.shielded:
-		set_shield(false)
-	else:
-		modify_hp(amount * -1, 1)
+#func opportunity_attacked(amount):
+#	#set_cloaked(false) we don't need this, right?
+#	if self.shielded:
+#		set_shield(false)
+#	else:
+#		modify_hp(amount * -1)
 
 
 func modify_hp(amount, delay=0):
@@ -625,11 +623,10 @@ func animate_delete_self():
 	emit_signal("animation_done")
 	subtract_anim_count()
 	#let it resolve any other animations
-	print("enemy deleting self")
-	print(self.debug_anim_counter)
 	get_node("Timer").set_wait_time(3)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
+	print("enemy deleting self")
 	print(self.debug_anim_counter)
 	self.queue_free()
 

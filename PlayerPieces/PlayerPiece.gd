@@ -119,10 +119,8 @@ func handle_assist():
 
 #start emitting the particles
 func activate_assist(assist_type):
-	print("activating assist here?")
-	add_animation(get_node("InspireIndicator"), "animate_inspire_ready", false, [assist_type])
 	add_animation(get_node("Physicals/ComboSparkleManager"), "animate_activate_assist", false, [assist_type])
-
+	add_animation(get_node("InspireIndicator"), "animate_inspire_ready", true, [assist_type])
 	
 func assist(piece, assist_type):
 	add_animation(get_node("InspireIndicator"), "animate_give_inspire", true, [assist_type])
@@ -153,10 +151,10 @@ func get_movement_value():
 func star_reactivate():
 	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
 	self.state = States.DEFAULT
-	
+	add_animation(self, "animate_reactivate", false)
 	if(get_node("CollisionArea").overlaps_area(self.cursor_area)):
+		print("hovering???")
 		self.hovered()
-	get_node("/root/Combat").set_active_star(false)
 
 
 func set_armor(value):
@@ -201,6 +199,8 @@ func walk_off(coords_distance):
 func delete_self():
 	var location = get_parent().locations[self.coords]
 	location.add_corpse(self)
+	get_node("ClickArea").set_pickable(false)
+	get_node("CollisionArea").set_monitorable(false)
 
 	add_animation(self, "animate_delete_self", true)
 	add_animation(location, "animate_add_corpse", false)
@@ -236,17 +236,23 @@ func delete_from_bar():
 
 
 func resurrect():
+	print("resurrecting")
 	add_to_group("player_pieces")
 	set_z(0)
-	get_parent().add_piece(self.coords, self)
+	get_parent().add_piece(self.coords, self, true)
+	var location = get_parent().locations[self.coords]
+	add_animation(location, "animate_hide_corpse", false)
 	add_animation(self, "animate_resurrect", true)
-	add_animation(self, "animate_reactivate", false)
 	star_reactivate()
 
 
 func animate_resurrect(blocking=true):
+	get_node("CollisionArea").set_monitorable(true)
+	get_node("ClickArea").set_pickable(true)
+	set_pos(get_parent().locations[self.coords].get_pos())
 	add_anim_count()
-	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").interpolate_property(get_node("Shadow"), "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	if blocking:
@@ -254,9 +260,13 @@ func animate_resurrect(blocking=true):
 	subtract_anim_count()
 	
 
-func initialize(cursor_area):
+func initialize(cursor_area, flags):
 	self.cursor_area = cursor_area
 	add_to_group("player_pieces")
+	if flags.has("no_inspire"):
+		pass
+	else:
+		get_node("SelectedGlow").initialize(self.assist_type)
 	
 func animate_reactivate():
 	get_node("Physicals/CooldownSprite").show()
@@ -381,22 +391,18 @@ func hovered():
 	if get_parent().selected == null and self.state != States.PLACED:
 		display_action_range()
 
-
+func star_input_event(event):
+	if self.state == States.PLACED:
+		star_reactivate() #reactivate this piece for finishing
+		return true
+	else:
+		return false
 
 #called when an event happens inside the click area hitput
-func input_event(event, has_selected, has_active_star):
+func input_event(event, has_selected):
 	if self.deploying_flag: #if in deploy phase
 		deploy_input_event(event, has_selected)
 		return
-		
-	if has_active_star:
-		if has_active_star and self.state == States.DEAD:
-			self.resurrect()
-		
-		elif self.state == States.PLACED:
-			star_reactivate() #reactivate this piece for finishing
-		else:
-			return
 
 	elif !has_selected and self.state != States.PLACED:
 		select()
@@ -418,14 +424,14 @@ func select():
 	get_node("SamplePlayer").play("mouseover")
 	add_animation(self, "animate_glow", false)
 	self.state = States.CLICKED
-	get_node("BlueGlow").show()
+	get_node("SelectedGlow").show()
 
 
 func deselect(acting=false):
 	self.state = States.DEFAULT
 	if !acting: #if acting, we unglow the piece after its animation is done or from invalid move
 		add_animation(self, "animate_unglow", false)
-	get_node("BlueGlow").hide()
+	get_node("SelectedGlow").hide()
 	
 	
 func animate_glow():
@@ -442,7 +448,7 @@ func animate_unglow():
 func select_action_target(target):
 	get_parent().deselect(true)
 #	self.state = States.DEFAULT
-#	get_node("BlueGlow").hide()
+#	get_node("SelectedGlow").hide()
 	if self.deploying_flag:
 		deploy_select_action_target(target)
 	else:
@@ -458,7 +464,7 @@ func start_deploy_phase():
 
 	
 func _is_within_deploy_range(coords):
-	return get_node("/root/Combat").is_within_deploy_range(coords)
+	return get_parent().is_within_deploy_range(coords)
 	
 	
 func deploy_select_action_target(target):
@@ -501,7 +507,7 @@ func placed(ending_turn=false):
 		handle_assist()
 	if self.state != States.PLACED:
 		add_animation(self, "animate_placed", false, [ending_turn])
-	get_node("BlueGlow").hide()
+	get_node("SelectedGlow").hide()
 	self.state = States.PLACED
 	self.attack_bonus = 0
 	self.movement_value = self.DEFAULT_MOVEMENT_VALUE

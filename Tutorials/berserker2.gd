@@ -22,8 +22,7 @@ func get():
 	add_forced_action(tutorial, 1, Vector2(3, 7), fa_text1, Vector2(3, 5), fa_text2, text)
 	
 	text = ["The Berserker's Indirect Attack {Stuns} enemies.", \
-	"The Stun Effect prevents enemies from moving their next turn.", 
-	"However, the effect is {cancelled} if an enemy is attacked while stunned."]
+	"The Stun Effect prevents enemies from moving their next turn."]
 	fa_text1 = "Attack these High Power enemies."
 	fa_text2 = ""
 	add_forced_action(tutorial, 2, Vector2(3, 5), fa_text1, Vector2(3, 3), fa_text2, text)
