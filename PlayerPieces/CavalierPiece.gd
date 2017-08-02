@@ -7,14 +7,14 @@ var animation_state = ANIMATION_STATES.default
 const DEFAULT_TRAMPLE_DAMAGE = 2
 const DEFAULT_CHARGE_DAMAGE = 3
 const DEFAULT_MOVEMENT_VALUE = 11
-const DEFAULT_ARMOR_VALUE = 4
+const DEFAULT_SHIELD = true
 
 var trample_damage = DEFAULT_TRAMPLE_DAMAGE setget , get_trample_damage
 
 const UNIT_TYPE = "Cavalier"
 
 func _ready():
-	set_armor(DEFAULT_ARMOR_VALUE)
+	set_shield(DEFAULT_SHIELD)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	load_description(UNIT_TYPE)

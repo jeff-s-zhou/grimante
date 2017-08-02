@@ -196,7 +196,7 @@ func animate_move_and_hop(new_coords, speed=250, blocking=true, trans_type=Tween
 	if blocking:
 		yield(get_node("Tween"), "tween_complete")
 		#need this in because apparently Tween emits the signal slightly early
-		get_node("Timer").set_wait_time(0.1)
+		get_node("Timer").set_wait_time(0.01)
 		get_node("Timer").start()
 		yield(get_node("Timer"), "timeout")
 		emit_signal("animation_done")
@@ -278,7 +278,7 @@ func handle_shifting_sands():
 func hooked(new_coords):
 	add_animation(self, "animate_move", false, [new_coords, 600, false, Tween.TRANS_QUAD])
 	set_coords(new_coords)
-	
+
 
 func move(distance):
 
@@ -303,7 +303,6 @@ func move(distance):
 		var distance_travelled  = self.coords - old_coords
 		var remaining_distance = distance - distance_travelled
 		self.shove(collide_coords, remaining_distance)
-	#execute the whole sequence outside of the function
 
 
 #helper function to either move a piece, or have it fall off the map
@@ -378,12 +377,8 @@ func shove(collide_coords, distance):
 			move_helper(self.coords + distance_shoved)
 
 
+
 func receive_shove(pusher, distance):
-	if dies_to_collision(pusher): #check if they're going to die from collision
-		delete_self()
-		return null
-	
-	handle_nonlethal_shove(pusher) #needed for corrosive interaction
 
 	var old_coords = self.coords
 	var distance_length = self.grid.hex_length(distance)
@@ -391,30 +386,64 @@ func receive_shove(pusher, distance):
 	var direction = self.grid.get_direction_from_vector(distance)
 	
 	#if the piece is a player piece and is defending, return Vector2(0, 0)
-	if self.side == "PLAYER" and self.invulnerable_flag:
-		return Vector2(0, 0)
+	if self.side == "ENEMY" and self.shielded:
+		return false
 	
-	#see if there's a piece behind it blocking things
 	var collide_range = self.grid.get_range(self.coords, [1, distance_length + 1], "ANY", true, [direction, direction + 1])
 	var collide_coords = null
 	if collide_range.size() > 0:
 		collide_coords = collide_range[0]
-		if self.coords != collide_coords - distance_increment: 
-			move_helper(collide_coords - distance_increment, true)
-			return (self.coords - old_coords)
+		#if there is a piece directly behind this one
+		if self.coords == collide_coords - distance_increment: 
+			var other_piece = get_parent().pieces[collide_coords]
+			if other_piece.hp < self.hp:
+				#TODO: animate leaping onto the other piece
+				other_piece.delete_self()
+			else:
+				self.delete_self()
 		else:
-			var location = self.grid.locations[self.coords]
-			var location_right_after = self.grid.locations[collide_coords]
-			var difference =  (location_right_after.get_pos() - location.get_pos())/4
-			var old_pos = location.get_pos()
-			var collide_pos = old_pos + difference 
-			add_animation(self, "animate_move_to_pos", true, [collide_pos, 300, true])
-			add_animation(self, "animate_move_to_pos", true, [old_pos, 300, true]) 
-			return Vector2(0, 0)
+			move_helper(self.coords + distance, true)
 	else:
 		move_helper(self.coords + distance, true)
 		
 		return distance
+
+
+#func receive_shove(pusher, distance):
+#	if dies_to_collision(pusher): #check if they're going to die from collision
+#		delete_self()
+#		return null
+#
+#	var old_coords = self.coords
+#	var distance_length = self.grid.hex_length(distance)
+#	var distance_increment = self.grid.hex_normalize(distance)
+#	var direction = self.grid.get_direction_from_vector(distance)
+#	
+#	#if the piece is a player piece and is defending, return Vector2(0, 0)
+#	if self.side == "PLAYER" and self.shielded:
+#		return Vector2(0, 0)
+#	
+#	#see if there's a piece behind it blocking things
+#	var collide_range = self.grid.get_range(self.coords, [1, distance_length + 1], "ANY", true, [direction, direction + 1])
+#	var collide_coords = null
+#	if collide_range.size() > 0:
+#		collide_coords = collide_range[0]
+#		if self.coords != collide_coords - distance_increment: 
+#			move_helper(collide_coords - distance_increment, true)
+#			return (self.coords - old_coords)
+#		else:
+#			var location = self.grid.locations[self.coords]
+#			var location_right_after = self.grid.locations[collide_coords]
+#			var difference =  (location_right_after.get_pos() - location.get_pos())/4
+#			var old_pos = location.get_pos()
+#			var collide_pos = old_pos + difference 
+#			add_animation(self, "animate_move_to_pos", true, [collide_pos, 300, true])
+#			add_animation(self, "animate_move_to_pos", true, [old_pos, 300, true]) 
+#			return Vector2(0, 0)
+#	else:
+#		move_helper(self.coords + distance, true)
+#		
+#		return distance
 		
 func handle_nonlethal_shove(pusher):
 	pass

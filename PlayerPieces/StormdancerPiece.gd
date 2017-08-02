@@ -6,7 +6,7 @@ const UNIT_TYPE = "Stormdancer"
 const DEFAULT_SHURIKEN_DAMAGE = 1
 const LIGHTNING_BONUS_DAMAGE = 2
 const DEFAULT_MOVEMENT_VALUE = 2
-const DEFAULT_ARMOR_VALUE = 2
+const DEFAULT_SHIELD = true
 
 var shuriken_damage = DEFAULT_SHURIKEN_DAMAGE setget , get_shuriken_damage
 
@@ -15,7 +15,7 @@ const shuriken_prototype = preload("res://PlayerPieces/Components/Shuriken.tscn"
 var rain_coords_dict = {}
 
 func _ready():
-	set_armor(DEFAULT_ARMOR_VALUE)
+	set_shield(DEFAULT_SHIELD)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	load_description(self.unit_name)

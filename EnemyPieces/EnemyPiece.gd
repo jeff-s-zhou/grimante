@@ -688,7 +688,53 @@ func turn_attack_update():
 #this is written so we can easily add more stuff to the end of the turn_update before executing the animation_sequence
 func turn_update_helper():
 	if !self.stunned and self.hp != 0:
-		self.move(movement_value)
+		self.move_attack(movement_value)
+		
+	
+func move_attack(distance):
+	#leap the respective distance. If it kills, move to the tile. If it doesn't, leap back.
+	var new_coords = self.coords + distance
+	
+	#successfully walked off
+	if !get_parent().locations.has(new_coords):
+		walk_off(distance)
+		
+	#has something to attack
+	elif get_parent().pieces.has(new_coords) and get_parent().pieces[new_coords].side == "PLAYER":
+		add_animation(self, "animate_move_and_hop", true, [new_coords, 300])
+		var success = get_parent().pieces[new_coords].attacked(self)
+			
+		if success:
+			set_coords(new_coords)
+		else:
+			add_animation(self, "animate_move_and_hop", false, [self.coords, 300, false])
+	
+	#otherwise just move forward
+	else:
+		add_animation(self, "animate_move_and_hop", false, [new_coords, 300, false])
+		set_coords(new_coords)
+#
+#
+#func animate_start_attack_shield(new_coords, speed=250, blocking=true):
+#	add_anim_count()
+#	var location = self.grid.locations[new_coords]
+#	var position = location.get_pos()
+#	
+#	var distance = get_pos().distance_to(position)
+#	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
+#	get_node("Tween").start()
+#	animate_short_hop(speed, new_coords)
+#	if blocking:
+#		yield(get_node("Tween"), "tween_complete")
+#		#need this in because apparently Tween emits the signal slightly early
+#		get_node("Timer").set_wait_time(0.1)
+#		get_node("Timer").start()
+#		yield(get_node("Timer"), "timeout")
+#		emit_signal("animation_done")
+#		subtract_anim_count()
+#	else:
+#		yield(get_node("Tween"), "tween_complete")
+#		subtract_anim_count()
 
 func is_enemy():
 	return true
@@ -697,6 +743,7 @@ func summon_buff(health, modifiers):
 	heal(health)
 	if modifiers != null:
 		initialize_modifiers(modifiers)
+
 		
 func deathrattle():
 	if self.frozen and self.hp == 0:

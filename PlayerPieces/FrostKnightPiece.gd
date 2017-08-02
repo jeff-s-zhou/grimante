@@ -3,14 +3,14 @@ extends "PlayerPiece.gd"
 const DEFAULT_FREEZE_DAMAGE = 2
 const DEFAULT_SHIELD_BASH_DAMAGE = 2
 const DEFAULT_MOVEMENT_VALUE = 1
-const DEFAULT_ARMOR_VALUE = 6
+const DEFAULT_SHIELD = true
 const UNIT_TYPE = "Frost Knight"
 
 var freeze_damage = DEFAULT_FREEZE_DAMAGE setget , get_freeze_damage
 var shield_bash_damage = DEFAULT_SHIELD_BASH_DAMAGE setget , get_shield_bash_damage
 
 func _ready():
-	set_armor(DEFAULT_ARMOR_VALUE)
+	set_shield(DEFAULT_SHIELD)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	load_description("frostknight")
@@ -35,6 +35,10 @@ func handle_assist():
 	if self.assist_flag:
 		self.assist_flag = false
 	self.AssistSystem.activate_assist(self.assist_type, self)
+	
+func turn_update():
+	.turn_update()
+	set_shield(true)
 
 func get_horizontal_range(new_coords):
 	return get_parent().get_diagonal_range(new_coords, [1, 4], "ENEMY", false, [1, 2]) + \
@@ -99,10 +103,14 @@ func shield_bash(new_coords, freeze=true):
 	
 func frostbringer(new_coords):
 	#get enemies to the left and right
+	add_animation(self, "animate_frostbringer", false, [new_coords])
 	var horizontal_range = get_horizontal_range(new_coords)
 	var action = get_new_action()
 	action.add_call("set_frozen", [true], horizontal_range)
 	action.execute()
+	
+func animate_frostbringer(new_coords):
+	get_parent().get_node("FieldEffects").emit_frost(new_coords)
 	
 
 func predict(new_coords):

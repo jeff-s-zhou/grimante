@@ -13,7 +13,6 @@ func _ready():
 
 func initialize(piece):
 	get_node("Sprite").set_texture(piece.get_sprite())
-	get_node("ArmorDisplay").set_armor(piece.DEFAULT_ARMOR_VALUE)
 	self.piece = piece
 
 #this is wrong, find the proper arguments in a sec

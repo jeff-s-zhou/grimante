@@ -5,21 +5,7 @@ extends "EnemyPiece.gd"
 # var b="textvar"
 
 var max_hp = 5
-var DESCRIPTION = "Cannot be damaged for any amount higher than its current Power."
+var DESCRIPTION = "Cannot be Direct Attacked."
 
 func initialize(max_hp, modifiers, prototype):
 	.initialize("Spectre", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, self.YELLOW_EXPLOSION_SCENE)
-
-
-func attacked(amount, delay=0.0):
-	if amount > self.hp:
-		amount = 0
-	.attacked(amount, delay)
-	
-func get_actual_damage(damage):
-	if self.shielded:
-		return 0
-	elif damage > self.hp:
-		return 0
-	else:
-		return damage

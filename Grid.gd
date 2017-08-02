@@ -19,7 +19,7 @@ const DEPLOY_TILES_5 = [Vector2(1, 6), Vector2(2, 6),
 Vector2(3, 7), Vector2(4, 7), Vector2(5, 8)
 ]
 
-const DEPLOY_TILES_4 = [Vector2(2, 6), Vector2(3, 6), Vector2(3, 7), Vector2(4, 7)]
+const DEPLOY_TILES_4 = [Vector2(1, 6), Vector2(2, 6), Vector2(4, 7), Vector2(5, 8)]
 
 
 #starts at 1, 2, 2, 3, 3, 4, 4, 5, 5,
@@ -91,7 +91,7 @@ func set_deploying(deploying_flag, flags={}):
 	self.deploying = deploying_flag
 	if deploying:
 		if flags.has("no_fifth"):
-			self.deploy_tiles = DEPLOY_TILES_4
+			self.deploy_tiles = DEPLOY_TILES_5 #liable to change
 		else:
 			get_node("FinalHeroScreen").show()
 			self.deploy_tiles = DEPLOY_TILES_5

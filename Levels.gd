@@ -86,13 +86,10 @@ func get_levels():
 
 
 func sandbox_allies():
-	return {1: Berserker, 2: Archer, 3: Pyromancer, 4: Stormdancer, 5: Assassin}
-	
-func sandbox_allies2():
-	return {1: Pyromancer, 3:Archer, 2: Stormdancer}
+	return {3: Archer}
 	
 func sandbox_enemies():
-	var enemies = {0:{Vector2(3, 5): make(Ranged, 7)}}
+	var enemies = {0:{Vector2(3, 6): make(Spectre, 5)}}
 	#var enemies = load_level("defuse_the_bomb.level")
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
@@ -268,7 +265,7 @@ func assassin():
 
 
 func deploy():
-	var allies = {2: Cavalier, 3:Archer, 4:Assassin, Vector2(3, 6): Berserker}
+	var allies = {1: Cavalier, 2:Archer, 4:Assassin, 5: Berserker}
 	var raw_enemies = load_level("deploy.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var tutorial = load("res://Tutorials/deploy.gd").new()
@@ -279,7 +276,7 @@ func deploy():
 
 	
 func mutation():
-	var allies = {2: Cavalier, 3:Archer, 4:Assassin, Vector2(3, 6): Berserker}
+	var allies = {1: Cavalier, 2: Berserker, 4:Archer, 5:Assassin}
 	var raw_enemies = load_level("mutation.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var tutorial = load("res://Tutorials/mutation.gd").new()
@@ -401,11 +398,11 @@ func howl():
 	return LevelTypes.Timed.new("Howl", allies, enemies, 6, null)
 
 
-func howl2():
-	var allies = {1: Assassin, 2: Archer, 4: Corsair, 5: FrostKnight}
-	var raw_enemies = load_level("howl2.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	return LevelTypes.Timed.new("Howl 2", allies, enemies, 6, null)
+#func howl2():
+#	var allies = {1: Assassin, 2: Archer, 4: Corsair, 5: FrostKnight}
+#	var raw_enemies = load_level("howl2.level")
+#	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+#	return LevelTypes.Timed.new("Howl 2", allies, enemies, 6, null)
 
 
 func saint():

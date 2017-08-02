@@ -29,9 +29,8 @@ var cooldown = 0
 
 var assist_flag = false
 
-var invulnerable_flag = false
+var shielded = false
 
-var armor = 0
 var movement_value = 1 setget , get_movement_value
 var attack_bonus = 0
 
@@ -83,6 +82,21 @@ func load_description(unit_name):
 			self.passive_description.append(name + ". " + description)
 	save.close()
 	
+func set_shield(flag):
+	if self.shielded != flag:
+		self.shielded = flag
+		add_animation(self, "animate_set_shield", false, [flag])
+
+
+func animate_set_shield(flag):
+	if flag:
+		#TODO: play a sound here
+		get_node("Physicals/HeroShield").display()
+	else:
+		get_node("SamplePlayer").play("window glass break smash 2")
+		get_node("Physicals/HeroShield").animate_explode()
+
+
 func get_assist_bonus_attack():
 	return self.AssistSystem.get_bonus_attack()
 
@@ -90,19 +104,9 @@ func get_assist_bonus_attack():
 #call this function right before being assisted
 func handle_pre_assisted():
 	self.AssistSystem.assist(self)
-	set_invulnerable(self.AssistSystem.get_bonus_invulnerable())
+	if self.AssistSystem.get_bonus_invulnerable():
+		set_shield(true)
 
-func set_invulnerable(flag):
-	if self.invulnerable_flag != flag:
-		self.invulnerable_flag = flag
-		add_animation(self, "animate_set_invulnerable", false, [self.invulnerable_flag])
-	
-func animate_set_invulnerable(flag):
-	if flag:
-		get_node("Physicals/OverlayLayers/UltimateWhite").show()
-	else:
-		get_node("Physicals/OverlayLayers/UltimateWhite").hide()
-	
 	
 func trigger_assist_flag():
 	self.assist_flag = true
@@ -157,11 +161,6 @@ func star_reactivate():
 		self.hovered()
 
 
-func set_armor(value):
-	self.armor = value
-	#get_node("Physicals/ArmorDisplay/Label").set_text(str(value))
-	get_node("Physicals/ArmorDisplay").set_armor(self.armor)
-
 #called once the unit positions are finalized in the deployment phase
 func deploy():
 	self.deploying_flag = false
@@ -172,10 +171,8 @@ func deploy():
 			get_parent().pieces[coords].set_cloaked(false)
 	
 func block_summon():
-	if !self.invulnerable_flag:
+	if !self.shielded:
 		delete_self()
-		#add_animation(self, "animate_delete_self", true)
-		
 
 	
 func set_cooldown(cooldown):
@@ -202,7 +199,7 @@ func delete_self():
 	get_node("ClickArea").set_pickable(false)
 	get_node("CollisionArea").set_monitorable(false)
 
-	add_animation(self, "animate_delete_self", true)
+	add_animation(self, "animate_delete_self", false)
 	add_animation(location, "animate_add_corpse", false)
 	self.state = States.DEAD
 	set_z(-9)
@@ -210,7 +207,7 @@ func delete_self():
 	remove_from_group("player_pieces")
 
 
-func animate_delete_self(blocking=true):
+func animate_delete_self():
 	add_anim_count()
 	get_node("SamplePlayer").play("rocket glass explosion 5")
 	get_node("Physicals").set_opacity(0)
@@ -223,7 +220,7 @@ func animate_delete_self(blocking=true):
 	get_node("Timer").set_wait_time(0.5)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
-	emit_signal("animation_done")
+	#emit_signal("animation_done")
 	subtract_anim_count()
 	get_node("Timer").set_wait_time(3)
 	get_node("Timer").start()
@@ -286,7 +283,6 @@ func animate_reactivate():
 
 
 func turn_update():
-	set_invulnerable(false)
 	set_z(0)
 	self.state = States.DEFAULT
 	add_animation(self, "animate_reactivate", false)
@@ -527,64 +523,19 @@ func animate_placed(ending_turn=false):
 		emit_signal("animated_placed")
 	
 	
-func player_attacked(enemy):
-	if dies_to_collision(enemy):
+func attacked(enemy):
+	if !self.shielded or enemy.is_deadly():
 		delete_self()
-#		if animation_sequence != null: #if it's part of another unit's animation sequence
-#			animation_sequence.add(self, "animate_delete_self", true)
-#		else:
-#			add_animation(self, "animate_delete_self", true)
+		return true
+	else:
+		set_shield(false)
+		return false
 
 
 func handle_nonlethal_shove(shover):
 	pass
-	
-
-func damage_armor(amount):
-	if !self.invulnerable_flag:
-		self.armor = self.armor - amount
-		add_animation(self, "animate_set_armor", true, [self.armor, -1 * amount])
 
 
-func animate_set_armor(armor, value, delay=0):
-	add_anim_count()
-	if delay > 0:
-		get_node("Timer").set_wait_time(delay)
-		get_node("Timer").start()
-		yield(get_node("Timer"), "timeout")
-
-	get_node("Physicals/ArmorDisplay").set_armor(armor)
-
-	var flyover = self.flyover_prototype.instance()
-	add_child(flyover)
-	var text = flyover.get_node("FlyoverText")
-	var value_text = str(value)
-	if value > 0:
-		value_text = "+" + value_text
-		text.set("custom_colors/font_color", Color(0,1,0))
-	else:
-		get_node("AnimationPlayer").play("flicker")
-	text.set_opacity(1.0)
-	
-	text.set_text(value_text)
-
-	var destination = text.get_pos() - Vector2(0, 200)
-	var tween = Tween.new()
-	add_child(tween)
-	tween.interpolate_property(text, "rect/pos", text.get_pos(), destination, 1.3, Tween.TRANS_EXPO, Tween.EASE_OUT_IN)
-	tween.interpolate_property(text, "visibility/opacity", 1, 0, 1.3, Tween.TRANS_EXPO, Tween.EASE_IN)
-	tween.start()
-	yield(tween, "tween_complete")
-	emit_signal("animation_done")
-	flyover.queue_free()
-	tween.queue_free()
-	subtract_anim_count()
-
-
-func dies_to_collision(pusher):
-	if pusher != null and pusher.side != self.side:  #if there's a pusher and not on the same side
-		#if not invulnerable and the enemy has more hp than the pusher's armor, or the pusher enemy is deadly
-		return !self.invulnerable_flag and (pusher.is_deadly() or pusher.hp > self.armor) 
 
 func get_sprite():
 	return get_node("Physicals/AnimatedSprite").get_sprite_frames().get_frame("default", 0)

@@ -1,7 +1,7 @@
 extends "PlayerPiece.gd"
 
 const DEFAULT_MOVEMENT_VALUE = 2
-const DEFAULT_ARMOR_VALUE = 0
+const DEFAULT_SHIELD = false
 const UNIT_TYPE = "Crusader"
 
 const BASE_HOLY_BLADE_DAMAGE = 3
@@ -9,7 +9,7 @@ const BASE_HOLY_BLADE_DAMAGE = 3
 var alter_ego
 
 func _ready():
-	set_armor(DEFAULT_ARMOR_VALUE)
+	set_shield(DEFAULT_SHIELD)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	load_description(self.unit_name)

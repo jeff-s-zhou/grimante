@@ -21,12 +21,22 @@ tracks/0/type = "value"
 tracks/0/path = NodePath("BurningEffect:visibility/opacity")
 tracks/0/interp = 1
 tracks/0/imported = false
-tracks/0/keys = { "times":FloatArray( 0, 0.9, 1.8 ), "transitions":FloatArray( 1, 1, 1 ), "update":0, "values":[ 0.3, 0.8, 0.3 ] }
+tracks/0/keys = {
+"times": FloatArray( 0, 0.9, 1.8 ),
+"transitions": FloatArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.3, 0.8, 0.3 ]
+}
 tracks/1/type = "value"
 tracks/1/path = NodePath("Bubble:visibility/opacity")
 tracks/1/interp = 1
 tracks/1/imported = false
-tracks/1/keys = { "times":FloatArray( 0, 0.9, 1.8 ), "transitions":FloatArray( 1, 1, 1 ), "update":0, "values":[ 0.5, 1.0, 0.5 ] }
+tracks/1/keys = {
+"times": FloatArray( 0, 0.9, 1.8 ),
+"transitions": FloatArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.5, 1.0, 0.5 ]
+}
 
 [node name="EnemyEffects" type="Node2D"]
 
@@ -60,17 +70,25 @@ texture = ExtResource( 3 )
 
 [node name="DeathTouch" parent="." instance=ExtResource( 4 )]
 
+config/process_mode = 1
+
 [node name="FrozenParticles" parent="." instance=ExtResource( 5 )]
 
 transform/pos = Vector2( 0, -2 )
+config/process_mode = 1
 
 [node name="FireEffect" parent="." instance=ExtResource( 6 )]
 
 transform/pos = Vector2( 0, 15 )
+config/process_mode = 1
 
 [node name="CorrosiveParticles" parent="." instance=ExtResource( 7 )]
 
+config/process_mode = 1
+
 [node name="RabidParticles" parent="." instance=ExtResource( 8 )]
+
+config/process_mode = 1
 
 [node name="Bubble" type="Sprite" parent="."]
 

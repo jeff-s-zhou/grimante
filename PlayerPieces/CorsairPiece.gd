@@ -2,7 +2,7 @@ extends "PlayerPiece.gd"
 
 const DEFAULT_SHOOT_DAMAGE = 3
 const DEFAULT_MOVEMENT_VALUE = 1
-const DEFAULT_ARMOR_VALUE = 3
+const DEFAULT_SHIELD = true
 const UNIT_TYPE = "Corsair"
 
 var moves_remaining = 2
@@ -14,7 +14,7 @@ var shoot_damage = DEFAULT_SHOOT_DAMAGE setget , get_shoot_damage
 const BULLET_PROTOTYPE = preload("res://PlayerPieces/Components/Bullet.tscn")
 
 func _ready():
-	set_armor(DEFAULT_ARMOR_VALUE)
+	set_shield(DEFAULT_SHIELD)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	load_description(self.unit_name)
@@ -108,10 +108,10 @@ func act(new_coords):
 		handle_pre_assisted()
 		hook(new_coords)
 		placed()
-	elif _is_within_assist_hook_range(new_coords):
-		handle_pre_assisted()
-		hook(new_coords)
-		placed()
+#	elif _is_within_assist_hook_range(new_coords):
+#		handle_pre_assisted()
+#		hook(new_coords)
+#		placed()
 	else:
 		invalid_move()
 
@@ -183,11 +183,9 @@ func hook(new_coords):
 	elif target.side == "ENEMY":
 		armor_or_hp = target.hp
 		
-	if armor_or_hp > self.armor:
+	if armor_or_hp > 3:
 		var adjacent_coords = new_coords - get_parent().hex_normalize(new_coords - self.coords)
 		hooked(adjacent_coords)
-		print("hooking")
-		print(new_coords)
 		add_animation(self, "animate_retract_hook", true)
 	else:
 		var adjacent_coords = self.coords + get_parent().hex_normalize(new_coords - self.coords)

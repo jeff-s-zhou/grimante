@@ -1,7 +1,7 @@
 extends "PlayerPiece.gd"
 
 const DEFAULT_MOVEMENT_VALUE = 1
-const DEFAULT_ARMOR_VALUE = 0
+const DEFAULT_SHIELD = false
 const UNIT_TYPE = "Saint"
 
 var pathed_range
@@ -11,7 +11,7 @@ var alter_ego
 const CrusaderPrototype = preload("res://PlayerPieces/CrusaderPiece.tscn")
 
 func _ready():
-	set_armor(DEFAULT_ARMOR_VALUE)
+	set_shield(DEFAULT_SHIELD)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	load_description(self.unit_name)

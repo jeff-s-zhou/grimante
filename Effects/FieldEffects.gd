@@ -56,7 +56,18 @@ func emit_wind(coords):
 	yield(tween, "tween_complete")
 	tween.queue_free()
 	wind.queue_free()
-	
-	
-	#queue free the tween and wind particles
 
+
+func emit_frost(coords):
+	var half_x = get_viewport().get_rect().size.x/2
+	get_node("Frost").set_global_pos(Vector2(half_x, 0))
+	print(get_node("Frost").get_pos())
+	
+	print("emitting frost?")
+	var current_pos = get_parent().locations[coords].get_pos()
+	get_node("Frost").set_pos(Vector2(get_node("Frost").get_pos().x, current_pos.y))
+	get_node("Frost").flash_frost()
+
+
+func hide_frost():
+	get_node("Frost").clear()

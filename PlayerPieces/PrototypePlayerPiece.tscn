@@ -6,8 +6,8 @@
 [ext_resource path="res://Assets/Allies/berserker_piece.png" type="Texture" id=4]
 [ext_resource path="res://Assets/Allies/berserker_piece_red.png" type="Texture" id=5]
 [ext_resource path="res://PlayerPieces/Components/OverlayLayers.tscn" type="PackedScene" id=6]
-[ext_resource path="res://PlayerPieces/Components/ArmorDisplay.tscn" type="PackedScene" id=7]
-[ext_resource path="res://PlayerPieces/Components/ComboSparkleManager.tscn" type="PackedScene" id=8]
+[ext_resource path="res://PlayerPieces/Components/ComboSparkleManager.tscn" type="PackedScene" id=7]
+[ext_resource path="res://PlayerPieces/Components/HeroShield.tscn" type="PackedScene" id=8]
 [ext_resource path="res://PlayerPieces/Components/UltimateBar.tscn" type="PackedScene" id=9]
 [ext_resource path="res://PlayerPieces/Components/PlayerClickArea.tscn" type="PackedScene" id=10]
 [ext_resource path="res://PlayerPieces/Components/PieceSampleLibrary.tres" type="SampleLibrary" id=11]
@@ -109,11 +109,9 @@ visibility/opacity = 0.0
 
 [node name="OverlayLayers" parent="Physicals" instance=ExtResource( 6 )]
 
-[node name="ArmorDisplay" parent="Physicals" instance=ExtResource( 7 )]
+[node name="ComboSparkleManager" parent="Physicals" instance=ExtResource( 7 )]
 
-visibility/visible = false
-
-[node name="ComboSparkleManager" parent="Physicals" instance=ExtResource( 8 )]
+[node name="HeroShield" parent="Physicals" instance=ExtResource( 8 )]
 
 [node name="UltimateBar" parent="." instance=ExtResource( 9 )]
 

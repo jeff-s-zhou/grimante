@@ -3,7 +3,7 @@ extends "PlayerPiece.gd"
 #extends KinematicBody2D
 const DEFAULT_DAMAGE = 4
 const DEFAULT_AOE_DAMAGE = 2
-const DEFAULT_ARMOR_VALUE = 1
+const DEFAULT_SHIELD = false
 const DEFAULT_MOVEMENT_VALUE = 2
 
 var damage = DEFAULT_DAMAGE setget , get_damage
@@ -17,7 +17,7 @@ var animation_state = ANIMATION_STATES.default
 const UNIT_TYPE = "Berserker"
 
 func _ready():
-	set_armor(DEFAULT_ARMOR_VALUE)
+	set_shield(DEFAULT_SHIELD)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	self.assist_type = ASSIST_TYPES.attack
