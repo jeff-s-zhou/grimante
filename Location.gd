@@ -41,7 +41,10 @@ func set_targetable(flag):
 	else:
 		set_opacity(0.5)
 		set_pickable(false)
-	
+
+func is_targetable():
+	return self.is_pickable()
+
 func add_corpse(player_piece):
 	self.corpse = player_piece
 	
@@ -52,8 +55,9 @@ func animate_add_corpse():
 func animate_hide_corpse():
 	get_node("CorpseIndicator").hide()
 	
-func set_reinforcement_indicator(flag):
-	if flag:
+func set_reinforcement_indicator(type=null):
+	if type != null:
+		get_node("ReinforcementIndicator").display(type)
 		get_node("ReinforcementIndicator").show()
 	else:
 		get_node("ReinforcementIndicator").hide()
@@ -61,9 +65,10 @@ func set_reinforcement_indicator(flag):
 		
 func set_deployable_indicator(flag):
 	if flag:
-		get_node("DeployableIndicator").show()
+		get_node("DeployIndicator").display("friendly")
+		get_node("DeployIndicator").show()
 	else:
-		get_node("DeployableIndicator").hide()
+		get_node("DeployIndicator").hide()
 	
 func set_rain(flag):
 	self.raining = flag

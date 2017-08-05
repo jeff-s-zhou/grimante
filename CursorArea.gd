@@ -44,14 +44,20 @@ func get_location_hovered():
 				return area
 	return null
 
+#this is probably buggy as fuck.
+#and is what allows people to select locations sometimes instead of pieces
+#only reutrn the areas whose parents return true for is_targetable??
 func get_piece_or_location_hovered():
 	var areas = get_overlapping_areas()
 	for area in areas:
-		if area.get_name() == "CollisionArea": #hackey, since CollisionArea is the one that has monitorable enabled but ClickArea doesn't
-			return area.get_parent()
+		if area.get_name() == "CollisionArea": 
+			var parent = area.get_parent()
+			if parent.is_targetable(): #only check things that we can normally pick
+				return area.get_parent()
 	for area in areas:
 		if area.get_name().find("Location") != -1: #the Locations have unique modifiers to their name because they're all children of one class
-			return area
+			if area.is_targetable():
+				return area
 	return null
 
 func get_modifier_mock_hovered():

@@ -7,7 +7,7 @@ extends "EnemyPiece.gd"
 var DESCRIPTION = "When this enemy dies, +2 hp to adjacent Enemies."
 
 func initialize(max_hp, modifiers, prototype):
-	.initialize("Seraph", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, self.GREEN_EXPLOSION_SCENE)
+	.initialize("Seraph", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, TYPES.assist)
 
 func deathrattle():
 	if !self.silenced and self.hp == 0:

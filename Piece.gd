@@ -26,6 +26,8 @@ var mid_leaping_animation = false
 
 var unit_name = "" setget , get_unit_name
 
+var shielded = false
+
 var coords #enemies move automatically each turn a certain number of spaces forward
 
 onready var grid = get_parent()
@@ -45,10 +47,13 @@ func _ready():
 func set_targetable(flag):
 	if flag:
 		set_opacity(1)
-		get_node("ClickArea").set_pickable(true)
+		get_node("CollisionArea").set_pickable(true)
 	else:
 		set_opacity(1)
-		get_node("ClickArea").set_pickable(false)
+		get_node("CollisionArea").set_pickable(false)
+		
+func is_targetable():
+	return get_node("CollisionArea").is_pickable()
 	
 func add_anim_count():
 	get_node("/root/AnimationQueue").update_animation_count(1)
@@ -196,7 +201,7 @@ func animate_move_and_hop(new_coords, speed=250, blocking=true, trans_type=Tween
 	if blocking:
 		yield(get_node("Tween"), "tween_complete")
 		#need this in because apparently Tween emits the signal slightly early
-		get_node("Timer").set_wait_time(0.01)
+		get_node("Timer").set_wait_time(0.02)
 		get_node("Timer").start()
 		yield(get_node("Timer"), "timeout")
 		emit_signal("animation_done")
@@ -280,170 +285,41 @@ func hooked(new_coords):
 	set_coords(new_coords)
 
 
-func move(distance):
-
-	var old_coords = self.coords
+func receive_shove(distance):
+	var new_coords = self.coords + distance
 	
-	var distance_length = self.grid.hex_length(distance)
-	var distance_increment = self.grid.hex_normalize(distance)
-	var direction = self.grid.get_direction_from_vector(distance)
-	var collide_range = self.grid.get_range(self.coords, [1, distance_length + 1], "ANY", true, [direction, direction + 1])
-	var collide_coords = null
-	
-	#if there's something in front, we shove it
-	if collide_range.size() > 0:
-		collide_coords = collide_range[0]
-		if self.coords != collide_coords - distance_increment: 
-			move_helper(collide_coords - distance_increment, true)
-	else: #else just move forward all the way
-		move_helper(self.coords + distance, false)
-	
-	#if there was a collision
-	if collide_coords != null:
-		var distance_travelled  = self.coords - old_coords
-		var remaining_distance = distance - distance_travelled
-		self.shove(collide_coords, remaining_distance)
-
-
-#helper function to either move a piece, or have it fall off the map
-func move_helper(coords, blocking=false):
-	var distance = coords - self.coords 
-	var distance_length = self.grid.hex_length(distance)
-	var distance_increment = self.grid.hex_normalize(distance)
-	var furthest_distance = Vector2(0, 0)
-	var walked_off = false
-	for i in range(0, distance_length):
-		if !get_parent().locations.has(self.coords + (i + 1) * distance_increment):
-			walked_off = true
-			break
+	var unit_distance = get_parent().hex_normalize(distance)
+	#gets knocked off
+	if !get_parent().locations.has(new_coords):
+		if unit_distance == Vector2(0, 1) and self.side == "ENEMY":
+			walk_off(distance)
 		else:
-			furthest_distance = (i + 1) * distance_increment
+			walk_off(distance, false) #delete self instead of triggering a lose condition
+		
+	#will land on something
+	elif get_parent().pieces.has(new_coords):
+		add_animation(self, "animate_move_and_hop", true, [new_coords, 300])
+		var success = get_parent().pieces[new_coords].smashed(self)
 			
-	var furthest_distance_length = self.grid.hex_length(furthest_distance)
-	
-	var speed = 300 * furthest_distance_length
-	if furthest_distance_length > 0:
-		
-		#if walked off, we block so that delete self is animated sequentially
-		add_animation(self, "animate_move_and_hop", walked_off, [self.coords + furthest_distance, speed, walked_off])
-		set_coords(self.coords + furthest_distance)
-
-	if walked_off:
-		print("printing distancez")
-		print(distance)
-		walk_off(distance)
-		
-		#this might cause problems lol, signal is in EnemyPiece.gd
-		if self.side == "ENEMY" and distance_increment == Vector2(0, 1):
-			emit_signal("broke_defenses")
-
-
-#at this point we've moved forward to cover all empty spaces
-#with remaining moves, try to push the obstacle immediately in front
-func shove(collide_coords, distance):
-	var old_coords = self.coords
-	var distance_length = self.grid.hex_length(distance)
-	var distance_increment = self.grid.hex_normalize(distance)
-	var moves_left = distance_length
-	var direction = self.grid.get_direction_from_vector(distance)
-
-	if distance_length > 0:
-		
-		#push up against it
-		var location = self.grid.locations[collide_coords]
-		var location_right_before = self.grid.locations[collide_coords - distance_increment]
-		var difference =  (location.get_pos() - location_right_before.get_pos())/4
-		var old_pos = location_right_before.get_pos()
-		var collide_pos = old_pos + difference 
-		var new_distance = (self.coords + distance) - collide_coords + self.grid.hex_normalize(distance)
-
-		add_animation(self, "animate_move_to_pos", true, [collide_pos, 300, true])
-		add_animation(self, "animate_move_to_pos", true, [old_pos, 300, true]) 
-		
-		var distance_shoved = get_parent().pieces[collide_coords].receive_shove(self, distance)
-		if distance_shoved == null: #that means it killed the piece it shoved
-			
-			#TODO: this might be broken lol. used to have move helper before the if
-			if old_coords + distance != self.coords: #if we still haven't travelled the full distance after killing
-				#recursively call move from the position of the first killed player unit
-				move(old_coords + distance - self.coords)
-				return
-			else:
-				move_helper(collide_coords)
-		elif distance_shoved == Vector2(0, 0): #the piece wasn't able to be pushed back then don't leap
-			pass
-			#animation_sequence.add(self, "animate_move", true, [self.coords, 300, true])
+		if success: #if the piece wasn't shielded or this piece is poisonous
+			set_coords(new_coords)
 		else:
-			move_helper(self.coords + distance_shoved)
+			add_animation(self, "animate_move_and_hop", false, [self.coords, 300, false])
 
-
-
-func receive_shove(pusher, distance):
-
-	var old_coords = self.coords
-	var distance_length = self.grid.hex_length(distance)
-	var distance_increment = self.grid.hex_normalize(distance)
-	var direction = self.grid.get_direction_from_vector(distance)
-	
-	#if the piece is a player piece and is defending, return Vector2(0, 0)
-	if self.side == "ENEMY" and self.shielded:
-		return false
-	
-	var collide_range = self.grid.get_range(self.coords, [1, distance_length + 1], "ANY", true, [direction, direction + 1])
-	var collide_coords = null
-	if collide_range.size() > 0:
-		collide_coords = collide_range[0]
-		#if there is a piece directly behind this one
-		if self.coords == collide_coords - distance_increment: 
-			var other_piece = get_parent().pieces[collide_coords]
-			if other_piece.hp < self.hp:
-				#TODO: animate leaping onto the other piece
-				other_piece.delete_self()
-			else:
-				self.delete_self()
-		else:
-			move_helper(self.coords + distance, true)
+	#otherwise just move forward
 	else:
-		move_helper(self.coords + distance, true)
-		
-		return distance
+		add_animation(self, "animate_move_and_hop", false, [new_coords, 300, false])
+		set_coords(new_coords)
 
 
-#func receive_shove(pusher, distance):
-#	if dies_to_collision(pusher): #check if they're going to die from collision
-#		delete_self()
-#		return null
-#
-#	var old_coords = self.coords
-#	var distance_length = self.grid.hex_length(distance)
-#	var distance_increment = self.grid.hex_normalize(distance)
-#	var direction = self.grid.get_direction_from_vector(distance)
-#	
-#	#if the piece is a player piece and is defending, return Vector2(0, 0)
-#	if self.side == "PLAYER" and self.shielded:
-#		return Vector2(0, 0)
-#	
-#	#see if there's a piece behind it blocking things
-#	var collide_range = self.grid.get_range(self.coords, [1, distance_length + 1], "ANY", true, [direction, direction + 1])
-#	var collide_coords = null
-#	if collide_range.size() > 0:
-#		collide_coords = collide_range[0]
-#		if self.coords != collide_coords - distance_increment: 
-#			move_helper(collide_coords - distance_increment, true)
-#			return (self.coords - old_coords)
-#		else:
-#			var location = self.grid.locations[self.coords]
-#			var location_right_after = self.grid.locations[collide_coords]
-#			var difference =  (location_right_after.get_pos() - location.get_pos())/4
-#			var old_pos = location.get_pos()
-#			var collide_pos = old_pos + difference 
-#			add_animation(self, "animate_move_to_pos", true, [collide_pos, 300, true])
-#			add_animation(self, "animate_move_to_pos", true, [old_pos, 300, true]) 
-#			return Vector2(0, 0)
-#	else:
-#		move_helper(self.coords + distance, true)
-#		
-#		return distance
+func smashed(attacker):
+	if !self.shielded or attacker.is_deadly():
+		delete_self(true)
+		return true
+	else:
+		set_shield(false)
+		return false
+
 		
 func handle_nonlethal_shove(pusher):
 	pass

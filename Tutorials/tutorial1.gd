@@ -34,11 +34,11 @@ func get():
 	
 	#TURN 2
 	text = ["You have attacked an Enemy.", 
-	"The Berserker's Direct Attack deals {4} damage to an Enemy's Health."]
+	"The Berserker's Direct Attack deals {4} damage to an Enemy's health."]
 	add_forced_action(tutorial, 2, Vector2(4, 5), Vector2(4, 3), text)
 	
 	text = ["The Cavalier's Charge deals {3 + 1 damage for each tile travelled} to the first Enemy it hits.",
-	"If an Enemy's Health reaches {0}, it is killed."]
+	"If an Enemy's health reaches {0}, it is killed."]
 	add_forced_action(tutorial, 2, Vector2(0, 4), Vector2(0, 1), text)
 	
 	#TURN 3

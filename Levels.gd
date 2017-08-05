@@ -86,10 +86,10 @@ func get_levels():
 
 
 func sandbox_allies():
-	return {3: Archer}
+	return {2: FrostKnight}
 	
 func sandbox_enemies():
-	var enemies = {0:{Vector2(3, 6): make(Spectre, 5)}}
+	var enemies = {0:{Vector2(4, 6): make(Grunt, 3)}}
 	#var enemies = load_level("defuse_the_bomb.level")
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
@@ -185,7 +185,7 @@ func rule_of_three():
 	var tutorial_func = funcref(tutorial, "get")
 	var extras = {"free_deploy":false, "flags":flags, "tutorial":tutorial_func}
 	
-	return LevelTypes.Timed.new("Love Triangle", allies, enemies, 7, null, extras)
+	return LevelTypes.Timed.new("Love Triangle Hexagons", allies, enemies, 7, null, extras)
 	
 func tutorial4():
 	var allies = {2: Cavalier, 4:Archer}
@@ -194,10 +194,10 @@ func tutorial4():
 	var flags = ["no_stars", "no_turns", "no_inspire"]
 	var tutorial = load("res://Tutorials/tutorial4.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
-	var reinforcements = {4: { Vector2(2, 6): Berserker}}
+	var reinforcements = {3: { Vector2(2, 6): Berserker}}
 	var extras = {"free_deploy":false, "flags":flags, "tutorial":tutorial_func, "reinforcements":reinforcements}
 	
-	return LevelTypes.Timed.new("", allies, enemies, 7, null, extras)
+	return LevelTypes.Timed.new("Negative Reinforcement", allies, enemies, 7, null, extras)
 
 	
 func tick_tock():
@@ -209,7 +209,7 @@ func tick_tock():
 	var tutorial_func = funcref(tutorial, "get")
 	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
 	#var extras = {"free_deploy":false, "flags":flags}
-	return LevelTypes.Timed.new("Tick Tock", allies, enemies, 7, null, extras)
+	return LevelTypes.Timed.new("Racial Diversity", allies, enemies, 7, null, extras)
 
 
 func flying_solo():
@@ -273,18 +273,23 @@ func deploy():
 	var flags = ["no_inspire", "no_fifth"]
 	var extras = {"flags":flags, "tutorial":tutorial_func}
 	return LevelTypes.Timed.new("Deploy", allies, enemies, 7, null, extras)
-
 	
-func mutation():
-	var allies = {1: Cavalier, 2: Berserker, 4:Archer, 5:Assassin}
-	var raw_enemies = load_level("mutation.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var tutorial = load("res://Tutorials/mutation.gd").new()
-	var tutorial_func = funcref(tutorial, "get")
-	var flags = ["no_inspire", "no_fifth"]
-	var extras = {"flags":flags, "tutorial":tutorial_func}
-	return LevelTypes.Timed.new("Mutation", allies, enemies, 7, null, extras)
 
+func speed_run():
+	var allies = {1: Cavalier, 2:Archer, 4:Assassin, 5: Berserker}
+	var raw_enemies = load_level("speed_run.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_inspire", "no_fifth"]
+	var extras = {"flags":flags}
+	return LevelTypes.Timed.new("Speed Run", allies, enemies, 2, null, extras)
+	
+func sludge_lord():
+	var allies = {1: Cavalier, 2:Archer, 4:Assassin, 5: Berserker}
+	var raw_enemies = load_level("sludge_lord.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_inspire", "no_fifth"]
+	var extras = {"flags":flags}
+	return LevelTypes.Timed.new("Jake Paul and Crew", allies, enemies, 2, null, extras)
 	
 func inspire():
 	var allies = {1: Berserker, 5: Cavalier}

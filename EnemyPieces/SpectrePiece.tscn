@@ -27,6 +27,10 @@ script/script = ExtResource( 2 )
 
 frames = SubResource( 1 )
 
+[node name="CollisionArea" parent="."]
+
+input/pickable = false
+
 
 [editable path="Physicals/EnemyOverlays"]
 [editable path="Physicals/EnemyEffects"]

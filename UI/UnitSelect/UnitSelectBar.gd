@@ -50,13 +50,6 @@ func _ready():
 			location.set_pos(Vector2(2 * tile_x_spacing * (i - 6), tile_y_spacing))
 		
 
-
-func queue_free():
-	for coords in self.pieces:
-		self.pieces[coords].delete_from_bar()
-	.queue_free()
-		
-
 #both are called from the Locations init'd on the bar. not used 
 func predict(coords):
 	pass

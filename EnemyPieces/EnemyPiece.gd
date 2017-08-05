@@ -8,8 +8,12 @@ extends "res://Piece.gd"
 const YELLOW_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/YellowExplosionParticles.tscn")
 const GREEN_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/GreenExplosionParticles.tscn")
 const RED_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/RedExplosionParticles.tscn")
+const TYPES = {"assist":"assist", "attack":"attack", "selfish":"selfish"}
+var type
 
 var explosion_prototype = self.YELLOW_EXPLOSION_SCENE
+
+
 
 var action_highlighted = false
 var movement_value = Vector2(0, 1)
@@ -19,7 +23,6 @@ var predicting_hp = false
 
 var hp
 
-var shielded = false
 var deadly = false
 var cloaked = false
 var predator = false
@@ -32,8 +35,6 @@ var silenced = false
 var stunned = false
 
 var temp_display_hp #what we reset to when resetting prediction, in case original hp is already changed
-
-var type
 
 var prototype = null
 
@@ -71,29 +72,39 @@ func get_unit_name():
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("ClickArea").connect("mouse_enter", self, "hovered")
-	get_node("ClickArea").connect("mouse_exit", self, "unhovered")
+	get_node("CollisionArea").connect("mouse_enter", self, "hovered")
+	get_node("CollisionArea").connect("mouse_exit", self, "unhovered")
 	get_node("Physicals/HealthDisplay").set_z(2)
-	add_to_group("enemy_pieces")
 	#self.check_global_seen()
 	self.side = "ENEMY"
 	#set_opacity(0)
 
 
-func initialize(unit_name, hover_description, movement_value, max_hp, modifiers, prototype, explosion_prototype):
+func initialize(unit_name, hover_description, movement_value, max_hp, modifiers, prototype, type):
 	self.unit_name = unit_name
 	self.hover_description = hover_description
 	self.movement_value = movement_value
 	self.default_movement_value = movement_value
 	self.prototype = prototype
-	self.explosion_prototype = explosion_prototype
+	self.type = type
+	if self.type == TYPES.assist:
+		self.explosion_prototype = GREEN_EXPLOSION_SCENE
+	elif self.type == TYPES.attack:
+		self.explosion_prototype = RED_EXPLOSION_SCENE
+	elif self.type == TYPES.selfish:
+		self.explosion_prototype = YELLOW_EXPLOSION_SCENE
+	
 	initialize_hp(max_hp)
 	if modifiers != null:
 		initialize_modifiers(modifiers)
+	
+		
+func added_to_grid():
+	add_to_group("enemy_pieces")
+	add_animation(self, "animate_summon", false)
 	var adjacent_players_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
 	if adjacent_players_range != []:
 		set_cloaked(false)
-		
 	
 func set_hp(hp):
 	self.hp = hp
@@ -463,6 +474,7 @@ func set_silenced(flag):
 		set_predator(false)
 		set_corrosive(false)
 		add_animation(self, "animate_silenced", false)
+		get_node("CollisionArea").set_pickable(true)
 	else:
 		add_animation(self, "animate_unsilenced", false)
 	self.silenced = flag
@@ -530,18 +542,23 @@ func modify_hp(amount, delay=0):
 		
 #		if self.current_animation_sequence == null:
 #			get_new_animation_sequence()
-		if self.hp == 0: 
-			get_node("ClickArea").set_pickable(false)
-			self.grid.remove_piece(self.coords)
+		if self.hp == 0:
 			add_animation(self, "animate_set_hp", false, [self.hp, amount, delay])
-			remove_from_group("enemy_pieces")
-			emit_signal("enemy_death")
+			delete_self()
 			#set_animation_sequence_blocking()
 		else:
 			add_animation(self, "animate_set_hp", false, [self.hp, amount, delay])
 #			
 #		enqueue_animation_sequence()
-			
+
+
+func delete_self(isolated_call=false):
+	if isolated_call:
+		add_animation(self, "animate_delete_self", false)
+	get_node("CollisionArea").set_pickable(false)
+	self.grid.remove_piece(self.coords)
+	remove_from_group("enemy_pieces")
+	emit_signal("enemy_death")
 
 
 func animate_set_hp(hp, value, delay=0, flicker_flag=true):
@@ -601,10 +618,12 @@ func animate_set_hp(hp, value, delay=0, flicker_flag=true):
 	self.mid_trailing_animation = false
 	subtract_anim_count()
 	
-func walk_off(coords_distance):
+func walk_off(coords_distance, exits_bottom=true):
 	add_animation(self, "animate_walk_off", true, [coords_distance])
 	self.grid.remove_piece(self.coords)
 	remove_from_group("enemy_pieces")
+	if exits_bottom:
+		emit_signal("broke_defenses")
 
 
 #actually physically deletes it
@@ -628,7 +647,7 @@ func animate_delete_self():
 	yield(get_node("Timer"), "timeout")
 	print("enemy deleting self")
 	print(self.debug_anim_counter)
-	self.queue_free()
+	queue_free()
 
 
 func set_coords(new_coords, sequence=null):
@@ -709,33 +728,14 @@ func move_attack(distance):
 		else:
 			add_animation(self, "animate_move_and_hop", false, [self.coords, 300, false])
 	
+	elif get_parent().pieces.has(new_coords) and get_parent().pieces[new_coords].side == "ENEMY":
+		return
+	
 	#otherwise just move forward
 	else:
 		add_animation(self, "animate_move_and_hop", false, [new_coords, 300, false])
 		set_coords(new_coords)
 #
-#
-#func animate_start_attack_shield(new_coords, speed=250, blocking=true):
-#	add_anim_count()
-#	var location = self.grid.locations[new_coords]
-#	var position = location.get_pos()
-#	
-#	var distance = get_pos().distance_to(position)
-#	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
-#	get_node("Tween").start()
-#	animate_short_hop(speed, new_coords)
-#	if blocking:
-#		yield(get_node("Tween"), "tween_complete")
-#		#need this in because apparently Tween emits the signal slightly early
-#		get_node("Timer").set_wait_time(0.1)
-#		get_node("Timer").start()
-#		yield(get_node("Timer"), "timeout")
-#		emit_signal("animation_done")
-#		subtract_anim_count()
-#	else:
-#		yield(get_node("Tween"), "tween_complete")
-#		subtract_anim_count()
-
 func is_enemy():
 	return true
 
@@ -751,3 +751,7 @@ func deathrattle():
 		for coords in neighbor_coords_range:
 			var neighbor = get_parent().pieces[coords]
 			neighbor.attacked(2, 1.5) #delay it by 1.5 so it happens when this piece dies
+			
+func queue_free():
+	remove_from_group("enemy_pieces")
+	.queue_free()

@@ -13,7 +13,10 @@ func _ready():
 
 func get_size():
 	return get_node("Sprite").get_item_rect().size
-	
+
+func is_targetable():
+	return true
+
 func set_coords(coords):
 	self.coords = coords
 	get_node("Label").set_text(str(self.coords))

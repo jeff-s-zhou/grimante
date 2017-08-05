@@ -275,19 +275,15 @@ func handle_piece_placed():
 #
 func initialize_enemy_piece(coords, prototype, health, modifiers, animation_sequence=null):
 	var enemy_piece = prototype.instance()
-	get_node("Grid").add_piece(coords, enemy_piece)
+	get_node("Grid").add_child(enemy_piece)
+	#get_node("Grid").add_piece(coords, enemy_piece)
 	enemy_piece.initialize(health, modifiers, prototype)
 	enemy_piece.connect("broke_defenses", self, "damage_defenses")
 	enemy_piece.connect("shake", self, "screen_shake")
 	enemy_piece.connect("small_shake", self, "small_screen_shake")
 	enemy_piece.connect("enemy_death", self.state_manager.get_node("StarSubsystem"), "add_kill_count")
-	#enemy_piece.get_node("Sprinkles").set_particle_endpoint(get_node("ComboSystem/ComboPointsLabel").get_global_pos())
 	enemy_piece.check_global_seen()
-	if animation_sequence != null:
-		animation_sequence.add(enemy_piece, "animate_summon", false)
-	else:
-		enemy_piece.add_animation(enemy_piece, "animate_summon", false)
-	return true
+	return enemy_piece
 			
 
 func end_turn():
@@ -355,6 +351,9 @@ func computer_input(event):
 		var has_selected = get_node("Grid").selected != null
 		var hovered = get_node("CursorArea").get_piece_or_location_hovered()
 		if hovered:
+			print(hovered.get_name())
+			print(hovered.is_targetable())
+		if hovered and hovered.is_targetable():
 
 			#if a star is active, handle it appropriately
 			if self.has_active_star:
@@ -576,29 +575,20 @@ func _sort_by_y_axis(enemy_piece1, enemy_piece2):
 
 
 func deploy_wave():
-	for key in self.enemy_reinforcements.keys():
-		var coords = null
-		if typeof(key) == TYPE_INT: #this lets us just specify the top of rows
-			coords = get_node("Grid").get_top_of_column(key)
-		else:
-			coords = key
-
-		var prototype_parts = self.enemy_reinforcements[coords]
-		var prototype = prototype_parts["prototype"]
-		var hp = prototype_parts["hp"]
-		var modifiers = prototype_parts["modifiers"]
-		
+	for coords in self.enemy_reinforcements.keys():
+		var piece = self.enemy_reinforcements[coords]
 		if get_node("Grid").pieces.has(coords):
-			var piece = get_node("Grid").pieces[coords]
-			if piece.side == "PLAYER":
-				piece.block_summon()
-				#initialize_enemy_piece(coords, prototype, hp, modifiers)
+			var blocking_piece = get_node("Grid").pieces[coords]
+			if blocking_piece.side == "PLAYER":
+				blocking_piece.block_summon()
+				piece.queue_free()
 			else:
-				piece.summon_buff(hp, modifiers)
+				blocking_piece.summon_buff(piece.hp, piece.get_modifiers())
+				piece.queue_free()
 				
 		else:
-			initialize_enemy_piece(coords, prototype, hp, modifiers)
-		self.enemy_reinforcements.erase(key)
+			get_node("Grid").add_piece(coords, piece, true)
+		self.enemy_reinforcements.erase(coords)
 
 
 func load_in_next_wave(zero_wave=false):
@@ -607,22 +597,30 @@ func load_in_next_wave(zero_wave=false):
 		wave = self.enemy_waves.get_next_summon(self.turn_count)
 	else:
 		wave = self.enemy_waves.get_next_next_summon(self.turn_count)
+	
 	if wave != null:
-		for coords in wave.keys():
-			if self.enemy_reinforcements.has(coords):
-				continue
-			self.enemy_reinforcements[coords] = wave[coords]
+		for key in wave.keys():
+			var coords = null
+			if typeof(key) == TYPE_INT: #this lets us just specify the top of rows
+				coords = get_node("Grid").get_top_of_column(key)
+			else:
+				coords = key
+	
+			var prototype_parts = wave[coords]
+			var prototype = prototype_parts["prototype"]
+			var hp = prototype_parts["hp"]
+			var modifiers = prototype_parts["modifiers"]
+
+			var enemy_piece = initialize_enemy_piece(coords, prototype, hp, modifiers)
+			self.enemy_reinforcements[coords] = enemy_piece
+
 	
 	
 func display_wave_preview():
 	get_node("Grid").reset_reinforcement_indicators()
-	for key in self.enemy_reinforcements.keys():
-		var position = null
-		if typeof(key) == TYPE_INT:
-			position = get_node("Grid").get_top_of_column(key)
-		else:
-			position = key #that way when we need to we can specify by coordinates
-		get_node("Grid").locations[position].set_reinforcement_indicator(true)
+	for coords in self.enemy_reinforcements.keys():
+		var type = self.enemy_reinforcements[coords].type
+		get_node("Grid").locations[coords].set_reinforcement_indicator(type)
 
 
 func player_win():

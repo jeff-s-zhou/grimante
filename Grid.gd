@@ -163,6 +163,7 @@ func add_piece(coords, piece, child_free=false):
 	if !child_free:
 		add_child(piece)
 	piece.set_global_pos(location.get_global_pos())
+	piece.added_to_grid()
 	
 
 
@@ -230,7 +231,7 @@ func get_at_location(coords):
 		
 func reset_reinforcement_indicators():
 	for location in locations.values():
-		location.set_reinforcement_indicator(false)
+		location.set_reinforcement_indicator(null)
 		
 func reset_deployable_indicators():
 	for location in locations.values():

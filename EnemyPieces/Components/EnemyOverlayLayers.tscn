@@ -16,7 +16,12 @@ tracks/0/type = "value"
 tracks/0/path = NodePath("Blue:visibility/opacity")
 tracks/0/interp = 1
 tracks/0/imported = false
-tracks/0/keys = { "times":FloatArray( 0, 0.8, 1.6 ), "transitions":FloatArray( 1, 1, 1 ), "update":0, "values":[ 0.2, 0.6, 0.2 ] }
+tracks/0/keys = {
+"times": FloatArray( 0, 0.8, 1.6 ),
+"transitions": FloatArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.2, 0.6, 0.2 ]
+}
 
 [sub_resource type="Animation" id=2]
 
@@ -28,7 +33,12 @@ tracks/0/type = "value"
 tracks/0/path = NodePath("Blue:visibility/opacity")
 tracks/0/interp = 1
 tracks/0/imported = false
-tracks/0/keys = { "times":FloatArray( 0.5 ), "transitions":FloatArray( 1 ), "update":0, "values":[ 0.1 ] }
+tracks/0/keys = {
+"times": FloatArray( 0.5 ),
+"transitions": FloatArray( 1 ),
+"update": 0,
+"values": [ 0.1 ]
+}
 
 [node name="EnemyOverlays" type="Node2D"]
 
@@ -51,7 +61,7 @@ texture = ExtResource( 3 )
 
 [node name="Blue" type="Sprite" parent="."]
 
-visibility/opacity = 0.1
+visibility/opacity = 0.0
 texture = ExtResource( 4 )
 
 [node name="White" type="Sprite" parent="."]

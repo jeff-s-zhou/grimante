@@ -35,10 +35,10 @@ func handle_assist():
 	if self.assist_flag:
 		self.assist_flag = false
 	self.AssistSystem.activate_assist(self.assist_type, self)
-	
-func turn_update():
-	.turn_update()
-	set_shield(true)
+
+#func turn_update():
+#	.turn_update()
+#	set_shield(true)
 
 func get_horizontal_range(new_coords):
 	return get_parent().get_diagonal_range(new_coords, [1, 4], "ENEMY", false, [1, 2]) + \
@@ -83,23 +83,37 @@ func act(new_coords):
 		placed()
 	elif _is_within_assist_range(new_coords):
 		handle_pre_assisted()
-		shield_bash(new_coords, false)
+		shield_bash(new_coords)
 		placed()
 	else:
 		invalid_move()
 
 
-func shield_bash(new_coords, freeze=true):
-	if freeze:
+func shield_bash(new_coords):
+	
+	var target = get_parent().pieces[new_coords]
+	var distance = get_parent().hex_normalize(new_coords - self.coords)
+	var pos_distance = get_parent().get_real_distance(distance)
+	
+	var back_up_pos = self.get_pos() - pos_distance/4
+	var shove_pos = self.get_pos() + pos_distance/4
+	var original_pos = self.get_pos()
+	
+	var arguments = [back_up_pos, 100, true, Tween.TRANS_QUAD, Tween.EASE_OUT]
+	add_animation(self, "animate_move_to_pos", true, arguments)
+	
+	arguments = [shove_pos, 450, true, Tween.TRANS_SINE, Tween.EASE_IN]
+	add_animation(self, "animate_move_to_pos", true, arguments)
+	
+	target.receive_shove(distance)
+	
+	if target.side == "ENEMY":
 		var action = get_new_action()
 		action.add_call("set_frozen", [true], new_coords)
 		action.execute()
-	#var offset = get_parent().hex_normalize(new_coords - self.coords)
-	print("in shield bash")
-	#print(offset)
-	move(new_coords - self.coords)
-	enqueue_animation_sequence()
-	frostbringer(new_coords)
+
+	add_animation(self, "animate_move_to_pos", true, [original_pos, 200, true])
+	
 	
 func frostbringer(new_coords):
 	#get enemies to the left and right

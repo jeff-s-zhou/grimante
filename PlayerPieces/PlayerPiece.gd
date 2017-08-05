@@ -29,8 +29,6 @@ var cooldown = 0
 
 var assist_flag = false
 
-var shielded = false
-
 var movement_value = 1 setget , get_movement_value
 var attack_bonus = 0
 
@@ -49,8 +47,8 @@ signal animated_placed(hero_name)
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("ClickArea").connect("mouse_enter", self, "hovered")
-	get_node("ClickArea").connect("mouse_exit", self, "unhovered")
+	get_node("CollisionArea").connect("mouse_enter", self, "hovered")
+	get_node("CollisionArea").connect("mouse_exit", self, "unhovered")
 	
 	set_process_input(true)
 	self.side = "PLAYER"
@@ -173,6 +171,8 @@ func deploy():
 func block_summon():
 	if !self.shielded:
 		delete_self()
+	else:
+		set_shield(false)
 
 	
 func set_cooldown(cooldown):
@@ -188,15 +188,15 @@ func _is_within_ally_shove_range(coords):
 func is_placed():
 	return self.state == States.PLACED
 	
-func walk_off(coords_distance):
+func walk_off(coords_distance, exits_bottom=true):
 	add_animation(self, "animate_walk_off", true, [coords_distance])
 	self.grid.remove_piece(self.coords)
 	remove_from_group("player_pieces")
 	
-func delete_self():
+func delete_self(isolated_call=true):
 	var location = get_parent().locations[self.coords]
 	location.add_corpse(self)
-	get_node("ClickArea").set_pickable(false)
+	get_node("CollisionArea").set_pickable(false)
 	get_node("CollisionArea").set_monitorable(false)
 
 	add_animation(self, "animate_delete_self", false)
@@ -225,11 +225,11 @@ func animate_delete_self():
 	get_node("Timer").set_wait_time(3)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
-	
 
-func delete_from_bar():
+
+func queue_free():
 	remove_from_group("player_pieces")
-	queue_free()
+	.queue_free()
 
 
 func resurrect():
@@ -245,7 +245,7 @@ func resurrect():
 
 func animate_resurrect(blocking=true):
 	get_node("CollisionArea").set_monitorable(true)
-	get_node("ClickArea").set_pickable(true)
+	get_node("CollisionArea").set_pickable(true)
 	set_pos(get_parent().locations[self.coords].get_pos())
 	add_anim_count()
 	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
@@ -264,6 +264,9 @@ func initialize(cursor_area, flags):
 		pass
 	else:
 		get_node("SelectedGlow").initialize(self.assist_type)
+		
+func added_to_grid():
+	pass
 	
 func animate_reactivate():
 	get_node("Physicals/CooldownSprite").show()
@@ -359,7 +362,7 @@ func reset_prediction_highlight():
 	#get_node("Physicals/PredictionLayer").hide()
 	
 
-#called on mouse entering the ClickArea
+#called on mouse entering the CollisionArea
 func hover_highlight():
 	if(self.state != States.PLACED):
 		#get_node("SamplePlayer").play("tile_hover")
@@ -368,7 +371,7 @@ func hover_highlight():
 		pass
 
 
-#called on mouse exiting the ClickArea
+#called on mouse exiting the CollisionArea
 func unhovered():
 	get_node("Physicals/OverlayLayers/White").hide()
 	if get_parent().selected == null:
@@ -450,8 +453,6 @@ func select_action_target(target):
 	else:
 		act(target.coords)
 		handle_shifting_sands()
-		
-		
 
 
 func start_deploy_phase():
@@ -521,15 +522,13 @@ func animate_placed(ending_turn=false):
 	#if we're calling it from end_turn() in combat, don't trigger all the individual placed checks
 	if !ending_turn:
 		emit_signal("animated_placed")
-	
-	
-func attacked(enemy):
-	if !self.shielded or enemy.is_deadly():
-		delete_self()
-		return true
-	else:
-		set_shield(false)
-		return false
+
+
+func is_deadly():
+	return false
+
+func attacked(attacker):
+	return smashed(attacker)
 
 
 func handle_nonlethal_shove(shover):

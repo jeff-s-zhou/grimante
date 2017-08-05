@@ -9,8 +9,8 @@ points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
 
 [node name="CollisionArea" type="Area2D"]
 
-transform/pos = Vector2( 0, -4 )
-input/pickable = false
+transform/pos = Vector2( 0, -6 )
+input/pickable = true
 shapes/0/shape = SubResource( 1 )
 shapes/0/transform = Matrix32( 0.505871, 0, 0, 0.553837, 0, 0 )
 shapes/0/trigger = true

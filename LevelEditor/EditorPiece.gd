@@ -36,6 +36,9 @@ func initialize_on_bar(prototype_name):
 	self.state = STATES.bar
 	set_z(3)
 	
+func is_targetable():
+	return true
+	
 		
 func initialize(name, turn, coords, hp, modifiers=null):
 	self.name = name
