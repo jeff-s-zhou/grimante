@@ -2,8 +2,8 @@
 
 [ext_resource path="res://UI/HeroInfoSubOverlay.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/armor_icon.png" type="Texture" id=2]
-[ext_resource path="res://Assets/processed_fonts/info_overlay_body_rubik_26.fnt" type="BitmapFont" id=3]
-[ext_resource path="res://Assets/UI/movement_icon_small.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/movement_icon_small.png" type="Texture" id=3]
+[ext_resource path="res://Assets/processed_fonts/info_overlay_body_rubik_26.fnt" type="BitmapFont" id=4]
 [ext_resource path="res://Assets/UI/inspire_arrow_small.png" type="Texture" id=5]
 
 [node name="HeroInfoSubOverlay" type="Node2D"]
@@ -12,29 +12,13 @@ script/script = ExtResource( 1 )
 
 [node name="ArmorIcon" type="Sprite" parent="."]
 
-transform/pos = Vector2( 34.3098, 14.5484 )
+transform/pos = Vector2( 105.987, 14.5484 )
 texture = ExtResource( 2 )
-
-[node name="ArmorLabel" type="Label" parent="."]
-
-focus/ignore_mouse = true
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 0
-margin/left = 0.0
-margin/top = 1.0
-margin/right = 40.0
-margin/bottom = 31.0
-custom_fonts/font = ExtResource( 3 )
-text = "3"
-percent_visible = 1.0
-lines_skipped = 0
-max_lines_visible = -1
 
 [node name="MovementIcon" type="Sprite" parent="."]
 
-transform/pos = Vector2( 104.31, 14.5484 )
-texture = ExtResource( 4 )
+transform/pos = Vector2( 45.6652, 13.7339 )
+texture = ExtResource( 3 )
 
 [node name="MovementLabel" type="Label" parent="."]
 
@@ -42,11 +26,11 @@ focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
-margin/left = 68.0
-margin/top = 1.0
-margin/right = 108.0
-margin/bottom = 31.0
-custom_fonts/font = ExtResource( 3 )
+margin/left = 9.0
+margin/top = 0.0
+margin/right = 49.0
+margin/bottom = 30.0
+custom_fonts/font = ExtResource( 4 )
 text = "3"
 percent_visible = 1.0
 lines_skipped = 0
@@ -54,7 +38,7 @@ max_lines_visible = -1
 
 [node name="InspireIcon" type="Sprite" parent="."]
 
-transform/pos = Vector2( 203.297, 14.5484 )
+transform/pos = Vector2( 211.442, 13.7339 )
 texture = ExtResource( 5 )
 
 [node name="InspireLabel" type="Label" parent="."]
@@ -63,11 +47,11 @@ focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
-margin/left = 137.0
-margin/top = 0.0
-margin/right = 185.0
-margin/bottom = 30.0
-custom_fonts/font = ExtResource( 3 )
+margin/left = 145.0
+margin/top = -1.0
+margin/right = 193.0
+margin/bottom = 29.0
+custom_fonts/font = ExtResource( 4 )
 text = "ATK"
 percent_visible = 1.0
 lines_skipped = 0

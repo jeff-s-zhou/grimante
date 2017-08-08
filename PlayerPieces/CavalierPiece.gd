@@ -33,7 +33,7 @@ func start_attack(attack_coords):
 	
 	var difference = 4 * (location.get_pos() - get_parent().locations[decremented_coords].get_pos())/5
 	var new_position = location.get_pos() - difference
-	add_animation(self, "animate_show_spear", true, [attack_coords])
+	#add_animation(self, "animate_show_spear", true, [attack_coords])
 	add_animation(self, "animate_charge", true, [new_position])
 	
 func animate_charge(new_position):
@@ -70,7 +70,7 @@ func animate_hide_spear():
 func end_attack(original_coords):
 	var location = get_parent().locations[original_coords]
 	var new_position = location.get_pos()
-	add_animation(self, "animate_hide_spear", false)
+	#add_animation(self, "animate_hide_spear", false)
 	add_animation(self, "animate_move_to_pos", true, [new_position, 300, true, Tween.TRANS_SINE, Tween.EASE_IN])
 	
 

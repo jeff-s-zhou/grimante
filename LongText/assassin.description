@@ -1,5 +1,5 @@
 Direct/Backstab/Teleport to the empty tile directly above an Enemy within movement range and deal 1 damage. +2 damage if the Enemy has no other Enemies adjacent to it.
 
-Indirect/Opportunity Strikes/If an Enemy adjacent to the Assassin is attacked, the Assassin attacks it for 1 damage. Will trigger Bloodlust if the Assassin is exhausted. Does not cancel Stun. Will not Inspire.
+Indirect/Opportunity Strikes/If an Enemy adjacent to the Assassin is attacked, the Assassin attacks it for 1 damage.
 
 Passive/Bloodlust/If the Assassin kills a unit, it may act again.

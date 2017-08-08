@@ -16,6 +16,8 @@ var shifting_direction = null
 
 var corpse = null
 
+var indirect_highlighting = true
+
 signal animation_done
 signal count_animation_done
 
@@ -30,6 +32,9 @@ func _ready():
 	
 func debug():
 	get_node("Label").set_text(str(coords.x) + "," + str(coords.y))
+	
+func hide_indirect_highlighting():
+	self.indirect_highlighting = false
 	
 func set_coords(coords):
 	self.coords = coords
@@ -117,7 +122,8 @@ func attack_highlight():
 	get_node("HighlightSprite").show()
 	
 func indirect_highlight():
-	get_node("HighlightSprite").play("indirect")
+	if self.indirect_highlighting:
+		get_node("HighlightSprite").play("indirect")
 	
 func reset_highlight():
 	get_node("HighlightSprite").hide()
@@ -144,7 +150,7 @@ func _mouse_exited():
 	else:
 		get_node("Sprite").set_opacity(0.4)
 	get_parent().reset_prediction()
-
+	
 func star_input_event(event):
 	if self.corpse != null and !get_parent().pieces.has(coords):
 		self.corpse.resurrect()

@@ -107,6 +107,41 @@ class FiniteCuratedWrapper:
 		return null
 
 
+class TrialWrapper:
+	var waves
+	
+	func _init(new_waves):
+		if typeof(new_waves) == TYPE_DICTIONARY:
+			var keys = new_waves.keys()
+			self.waves = []
+			keys.sort()
+			for key in keys:
+				self.waves.append(new_waves[key])
+		else:
+			self.waves = new_waves
+		
+	func get_next_summon(turn_index):
+		if turn_index < self.waves.size():
+			var wave = self.waves[turn_index]
+			return wave
+		else:
+			return null
+	
+	func get_next_next_summon(turn_index):
+		if turn_index + 1 < self.waves.size():
+			return self.waves[turn_index + 1]
+		else:
+			return null
+		
+	func get_turns_til_next_wave(turn_index):
+		#so we get the turn index for the next turn
+		for i in range(turn_index + 1, self.waves.size()):
+			if self.waves[i] != null and !self.waves[i].empty():
+				return (i - turn_index)
+		return null
+
+
+
 class FiniteAlteredWrapper extends FiniteCuratedWrapper:
 	func _init(turn_power_levels, waves, big_wave_threshold=1400).(turn_power_levels, waves, big_wave_threshold):
 		for wave in self.waves:

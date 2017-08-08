@@ -19,6 +19,6 @@ func get():
 	"When you're ready, press the Green Right Arrow to attempt the Trial."
 	]
 	
-	add_player_start_rule(tutorial, 0, text)
+	add_player_start_rule(tutorial, 1, text)
 
 	return tutorial

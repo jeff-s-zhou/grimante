@@ -85,12 +85,8 @@ func _ready():
 	get_node("ControlBar").initialize(self.level_schematic.flags, self)
 	
 	get_node("AssistSystem").initialize(self.level_schematic.flags)
-
-	if self.level_schematic.shadow_tiles.size() > 0:
-		get_node("Grid").initialize_shadow_tiles(self.level_schematic.shadow_tiles)
 	
-	if self.level_schematic.shifting_sands.size() > 0:
-		get_node("Grid").initialize_shifting_sands(self.level_schematic.shifting_sands)	
+	get_node("Grid").initialize(self.level_schematic.flags)
 
 	#key is the coords, value is the piece
 	for key in self.level_schematic.allies.keys():
@@ -350,9 +346,6 @@ func computer_input(event):
 	if get_node("InputHandler").is_select(event):
 		var has_selected = get_node("Grid").selected != null
 		var hovered = get_node("CursorArea").get_piece_or_location_hovered()
-		if hovered:
-			print(hovered.get_name())
-			print(hovered.is_targetable())
 		if hovered and hovered.is_targetable():
 
 			#if a star is active, handle it appropriately
@@ -372,7 +365,9 @@ func computer_input(event):
 					hovered.input_event(event, has_selected)
 				
 		elif get_node("Grid").selected != null:
-			get_node("Grid").selected.invalid_move()
+			if self.tutorial != null and !self.tutorial.has_forced_action(get_turn_count()):
+				get_node("Grid").selected.invalid_move()
+				get_node("Grid").deselect()
 	
 	#don't handle any other input during forced actions
 	if self.mid_forced_action:
@@ -624,43 +619,54 @@ func display_wave_preview():
 
 
 func player_win():
-	self.state = STATES.end
-	set_process(false)
-	set_process_input(false)
-	get_node("/root/AnimationQueue").stop()
-	
-	get_node("/root/DataLogger").log_win(self.level_schematic.name, self.turn_count)
-	
-	#saves the progress made, right now just the units unlocked
-	get_node("/root/global").save_state()
-	if get_node("/root/AnimationQueue").is_animating():
-		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	get_node("Timer2").set_wait_time(0.5)
-	get_node("Timer2").start()
-	yield(get_node("Timer2"), "timeout")
-	
-	if self.level_schematic.is_sub_level():
-		get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.next_level})
+	if self.level_schematic.seamless:
+		pass
 	else:
-		get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.level_schematic.next_level})
-
+			
+		self.state = STATES.end
+		set_process(false)
+		set_process_input(false)
+		get_node("/root/AnimationQueue").stop()
+		
+		get_node("/root/DataLogger").log_win(self.level_schematic.name, self.turn_count)
+		
+		#saves the progress made, right now just the units unlocked
+		get_node("/root/global").save_state()
+		if get_node("/root/AnimationQueue").is_animating():
+			yield(get_node("/root/AnimationQueue"), "animations_finished")
+		get_node("Timer2").set_wait_time(0.5)
+		get_node("Timer2").start()
+		yield(get_node("Timer2"), "timeout")
+		
+		if self.level_schematic.is_sub_level():
+			get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.next_level})
+		else:
+			get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.level_schematic.next_level})
+	
 
 func enemy_win():
-	self.state = STATES.end
-	set_process(false)
-	set_process_input(false)
-	get_node("/root/AnimationQueue").stop()
-	get_node("/root/DataLogger").log_lose(self.level_schematic.name, self.turn_count)
-	
-	print(get_node("/root/AnimationQueue").is_animating())
-	if get_node("/root/AnimationQueue").is_animating():
-		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	
-	get_node("Timer2").set_wait_time(0.5)
-	get_node("Timer2").start()
-	yield(get_node("Timer2"), "timeout")
-	
-	get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level": self.level_schematic})
+	if self.level_schematic.seamless:
+		#clear enemies
+		#readd the first wave
+		#self.turn_count = 0
+		pass
+	else:
+		
+		self.state = STATES.end
+		set_process(false)
+		set_process_input(false)
+		get_node("/root/AnimationQueue").stop()
+		get_node("/root/DataLogger").log_lose(self.level_schematic.name, self.turn_count)
+		
+		print(get_node("/root/AnimationQueue").is_animating())
+		if get_node("/root/AnimationQueue").is_animating():
+			yield(get_node("/root/AnimationQueue"), "animations_finished")
+		
+		get_node("Timer2").set_wait_time(0.5)
+		get_node("Timer2").start()
+		yield(get_node("Timer2"), "timeout")
+		
+		get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level": self.level_schematic})
 	
 
 func next_level():

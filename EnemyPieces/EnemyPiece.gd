@@ -170,6 +170,7 @@ func hovered():
 func unhovered():
 	get_node("Physicals/EnemyOverlays/White").hide()
 	if self.action_highlighted:
+		print("unhovering in enemy")
 		self.grid.reset_prediction()
 
 #when another unit is able to move to this location, it calls this function
@@ -750,8 +751,9 @@ func deathrattle():
 		var neighbor_coords_range = get_parent().get_range(self.coords, [1,2], "ENEMY")
 		for coords in neighbor_coords_range:
 			var neighbor = get_parent().pieces[coords]
-			neighbor.attacked(2, 1.5) #delay it by 1.5 so it happens when this piece dies
+			neighbor.attacked(2)
 			
 func queue_free():
-	remove_from_group("enemy_pieces")
+	if is_in_group("enemy_pieces"):
+		remove_from_group("enemy_pieces")
 	.queue_free()

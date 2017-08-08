@@ -8,7 +8,32 @@
 
 [sub_resource type="CanvasItemShader" id=1]
 
-_code = { "fragment":"uniform texture vignette;\nfloat radius = 0.0015;\nvec3 col = vec3(0);\n\ncol+= texscreen(SCREEN_UV+vec2(-radius,-radius));\ncol+= texscreen(SCREEN_UV+vec2(0,-radius));\ncol+= texscreen(SCREEN_UV+vec2(radius,-radius));\n\ncol+= texscreen(SCREEN_UV+vec2(-radius,0));\ncol+= texscreen(SCREEN_UV+vec2(0,0));\ncol+= texscreen(SCREEN_UV+vec2(radius,0));\n\n\ncol+= texscreen(SCREEN_UV+vec2(-radius,radius));\ncol+= texscreen(SCREEN_UV+vec2(0,radius));\ncol+= texscreen(SCREEN_UV+vec2(radius,radius));\n\ncol/=9.0;\nCOLOR.rgb=col;", "fragment_ofs":0, "light":"", "light_ofs":0, "vertex":"", "vertex_ofs":0 }
+_code = {
+"fragment": "uniform texture vignette;
+float radius = 0.0015;
+vec3 col = vec3(0);
+
+col+= texscreen(SCREEN_UV+vec2(-radius,-radius));
+col+= texscreen(SCREEN_UV+vec2(0,-radius));
+col+= texscreen(SCREEN_UV+vec2(radius,-radius));
+
+col+= texscreen(SCREEN_UV+vec2(-radius,0));
+col+= texscreen(SCREEN_UV+vec2(0,0));
+col+= texscreen(SCREEN_UV+vec2(radius,0));
+
+
+col+= texscreen(SCREEN_UV+vec2(-radius,radius));
+col+= texscreen(SCREEN_UV+vec2(0,radius));
+col+= texscreen(SCREEN_UV+vec2(radius,radius));
+
+col/=9.0;
+COLOR.rgb=col;",
+"fragment_ofs": 0,
+"light": "",
+"light_ofs": 0,
+"vertex": "",
+"vertex_ofs": 0
+}
 
 [sub_resource type="CanvasItemMaterial" id=2]
 
@@ -19,19 +44,29 @@ shader_param/vignette = ExtResource( 2 )
 [sub_resource type="Animation" id=3]
 
 resource/name = "blur"
-length = 1.8
+length = 1.2
 loop = false
 step = 0.1
 tracks/0/type = "value"
 tracks/0/path = NodePath("TextureFrame:visibility/opacity")
 tracks/0/interp = 1
 tracks/0/imported = false
-tracks/0/keys = { "times":FloatArray( 0, 0.4, 1.4, 1.8 ), "transitions":FloatArray( 1, 1, 1, 1 ), "update":0, "values":[ 0.0, 1.0, 1.0, 0.0 ] }
+tracks/0/keys = {
+"times": FloatArray( 0, 0.2, 0.9, 1.2 ),
+"transitions": FloatArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 1.0, 1.0, 0.0 ]
+}
 tracks/1/type = "value"
 tracks/1/path = NodePath("Text:visibility/opacity")
 tracks/1/interp = 1
 tracks/1/imported = false
-tracks/1/keys = { "times":FloatArray( 0, 0.4, 1.4, 1.8 ), "transitions":FloatArray( 1, 1, 1, 1 ), "update":0, "values":[ 0.0, 1.0, 1.0, 0.0 ] }
+tracks/1/keys = {
+"times": FloatArray( 0, 0.1, 0.8, 1 ),
+"transitions": FloatArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 1.0, 1.0, 0.0 ]
+}
 
 [sub_resource type="Animation" id=4]
 
@@ -43,7 +78,12 @@ tracks/0/type = "value"
 tracks/0/path = NodePath("TextureFrame:visibility/opacity")
 tracks/0/interp = 1
 tracks/0/imported = false
-tracks/0/keys = { "times":FloatArray( 0, 0.4 ), "transitions":FloatArray( 1, 1 ), "update":0, "values":[ 1.0, 0.0 ] }
+tracks/0/keys = {
+"times": FloatArray( 0, 0.4 ),
+"transitions": FloatArray( 1, 1 ),
+"update": 0,
+"values": [ 1.0, 0.0 ]
+}
 
 [sub_resource type="Animation" id=5]
 
@@ -55,11 +95,26 @@ tracks/0/type = "value"
 tracks/0/path = NodePath("TextureFrame:visibility/opacity")
 tracks/0/interp = 1
 tracks/0/imported = false
-tracks/0/keys = { "times":FloatArray( 0, 0.4 ), "transitions":FloatArray( 1, 1 ), "update":0, "values":[ 0.0, 1.0 ] }
+tracks/0/keys = {
+"times": FloatArray( 0, 0.4 ),
+"transitions": FloatArray( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 1.0 ]
+}
 
 [sub_resource type="SpriteFrames" id=6]
 
-animations = [ { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"enemy_phase", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"player_phase", "speed":5.0 } ]
+animations = [ {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "enemy_phase",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 5 ) ],
+"loop": true,
+"name": "player_phase",
+"speed": 5.0
+} ]
 
 [node name="PhaseShifter" type="Node2D"]
 
@@ -78,8 +133,8 @@ size_flags/horizontal = 2
 size_flags/vertical = 2
 margin/left = 0.0
 margin/top = 0.0
-margin/right = -1336.0
-margin/bottom = -896.0
+margin/right = -1856.0
+margin/bottom = -1016.0
 texture = ExtResource( 2 )
 stretch_mode = 0
 

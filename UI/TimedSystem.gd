@@ -33,7 +33,7 @@ func initialize(level_schematic, star_button_handle, flags):
 		get_node("TurnsHeader").hide()
 		get_node("TurnCountdown").hide()
 	else:
-		get_node("TurnCountdown").set_text(str(self.num_turns - 1))
+		get_node("TurnCountdown").set_text(str(1) + "/" + str(self.num_turns))
 		
 	if flags.has("no_waves"):
 		get_node("WaveHeader").hide()
@@ -46,7 +46,7 @@ func initialize(level_schematic, star_button_handle, flags):
 
 func update(turn_count):
 	if !self.flags.has("no_turns"):
-		get_node("TurnCountdown").set_text(str(self.num_turns - (turn_count + 1)))
+		get_node("TurnCountdown").set_text(str(turn_count + 1) + "/" + str(self.num_turns))
 	
 	if !self.flags.has("no_waves"):
 		self.turns_til_wave = self.enemies.get_turns_til_next_wave(turn_count)

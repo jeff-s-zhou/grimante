@@ -75,11 +75,11 @@ func display_enemy_info(hovered_piece):
 	
 func display_player_info(hovered_piece):
 	set_process_input(true)
-	var armor = hovered_piece.DEFAULT_ARMOR_VALUE
+	var shielded = hovered_piece.DEFAULT_SHIELD
 	var movement = hovered_piece.DEFAULT_MOVEMENT_VALUE
 	var inspire_type = hovered_piece.assist_type
 	
-	get_node("HeroInfoSubOverlay").display_info(armor, movement, inspire_type)
+	get_node("HeroInfoSubOverlay").display_info(shielded, movement, inspire_type)
 	
 	var title = hovered_piece.unit_name
 	var attack_description = hovered_piece.direct_attack_description

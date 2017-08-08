@@ -11,8 +11,11 @@ func _ready():
 	# Initialization here
 	pass
 
-func display_info(armor, movement, inspire_type):
-	get_node("ArmorLabel").set_text(str(armor))
+func display_info(shielded, movement, inspire_type):
+	if shielded:
+		get_node("ArmorIcon").show()
+	else:
+		get_node("ArmorIcon").hide()
 	get_node("MovementLabel").set_text(str(movement))
 	if inspire_type == ASSIST_TYPES.attack:
 		get_node("InspireLabel").set_text("ATK")

@@ -15,6 +15,6 @@ func get():
 
 	var text = ["This is the Assassin's Trial. Clear the board in 1 turn."]
 	
-	add_player_start_rule(tutorial, 0, text)
+	add_player_start_rule(tutorial, 1, text)
 
 	return tutorial

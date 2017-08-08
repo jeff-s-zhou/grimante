@@ -80,6 +80,20 @@ func load_description(unit_name):
 			self.passive_description.append(name + ". " + description)
 	save.close()
 	
+	
+func add_anim_count():
+	get_node("/root/AnimationQueue").update_animation_count(1)
+	get_node("CollisionArea").set_pickable(false) #so we don't have targeting shenanigans mid animation
+	self.debug_anim_counter += 1
+	self.mid_animation = true
+	
+func subtract_anim_count():
+	get_node("/root/AnimationQueue").update_animation_count(-1)
+	self.debug_anim_counter -=1
+	if self.debug_anim_counter == 0:
+		get_node("CollisionArea").set_pickable(true)
+	self.mid_animation = false
+	
 func set_shield(flag):
 	if self.shielded != flag:
 		self.shielded = flag
@@ -228,7 +242,8 @@ func animate_delete_self():
 
 
 func queue_free():
-	remove_from_group("player_pieces")
+	if is_in_group("player_pieces"):
+		remove_from_group("player_pieces")
 	.queue_free()
 
 
@@ -375,6 +390,7 @@ func hover_highlight():
 func unhovered():
 	get_node("Physicals/OverlayLayers/White").hide()
 	if get_parent().selected == null:
+		#print(get_name() + " is calling clearing display state in unhovered" )
 		get_parent().clear_display_state()
 
 

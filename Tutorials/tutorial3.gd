@@ -40,7 +40,8 @@ func get():
 	
 
 	#TURN 3
-	text = ["Clear the board this turn."]
+	text = ["Look for orange highlighted tiles to let you know when you can Indirect Attack.",
+	"Clear the board this turn."]
 	add_player_start_rule(tutorial, 3, text)
 	return tutorial
 

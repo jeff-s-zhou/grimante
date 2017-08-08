@@ -68,7 +68,9 @@ func load_level(file_name):
 func make(prototype, hp, modifiers=null):
 	return {"prototype": prototype, "hp": hp, "modifiers":modifiers}
 	
-	
+var list = [tutorial1(), tutorial2(), tutorial3(), first_steps(), archer(), 
+rule_of_three(), tutorial4(), tick_tock(), flying_solo(), star_power(), assassin(),
+deploy(), speed_run(), sludge_lord()]
 
 #var list = [berserker_part1(), berserker_part2(), cavalier(), dead_or_alive(), reinforcements(),
 #archer(), offsides(), tick_tock(), flying_solo(), assassin(), deploy(), mutation(),
@@ -76,20 +78,17 @@ func make(prototype, hp, modifiers=null):
 #spoopy_ghosts(), pyromancer(), minesweeper(), star_power(), corsair(), frost_knight(),
 #howl(), howl2(), saint(), corrosion(), shifting_sands(), shifting_sands2()]
 
-var list = [tutorial1()]
-
 func get_levels():
 	for i in range(0, list.size() - 1):
 		#change this call to set_next_level
 		list[i].set_next_level(list[i+1])
 	return list
 
-
 func sandbox_allies():
-	return {2: FrostKnight}
+	return {2: FrostKnight, 4: Assassin, 3: Archer}
 	
 func sandbox_enemies():
-	var enemies = {0:{Vector2(4, 6): make(Grunt, 3)}}
+	var enemies = {0:{Vector2(4, 5): make(Grunt, 8), Vector2(3, 3): make(Grunt, 3), Vector2(2, 1): make(Grunt, 2)}}
 	#var enemies = load_level("defuse_the_bomb.level")
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
@@ -103,20 +102,17 @@ func sandbox_extras():
 	return {}
 	
 func sandbox():  
-	return LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies(), 3, null, sandbox_extras()) 
+	var challenge1 = LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies(), 1, null, sandbox_extras()) 
+	var challenge2 = LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies(), 1, null, sandbox_extras())
+	return LevelTypes.Trial.new("Trial", [challenge1, challenge2])
 
-func sandbox2():
-	var part1 = LevelTypes.Timed.new("Test Name", sandbox_allies(), sandbox_enemies(), 3, null, sandbox_extras()) 
-	var part2 = LevelTypes.Sandbox.new("Test Name", sandbox_allies(), sandbox_enemies(), 3, null, sandbox_extras()) 
-	var part3 = LevelTypes.Timed.new("Test Name 2", sandbox_allies2(), sandbox_enemies(), 3, null, sandbox_extras()) 
-	return LevelTypes.MultiLevel.new([part1, part2, part3])
 
 func tutorial1():
 	var allies = {2: Cavalier, 4:Berserker} 
 	var raw_enemies = load_level("tutorial1.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	
-	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire"]
+	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire", "hide_indirect_highlighting"]
 	var tutorial = load("res://Tutorials/tutorial1.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
 	var extras = {"free_deploy":false, "tutorial":tutorial_func, "flags":flags}
@@ -129,7 +125,7 @@ func tutorial2():
 	var raw_enemies = load_level("tutorial2.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	
-	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire"]
+	var flags = ["no_stars", "no_turns", "no_waves", "no_inspire", "hide_indirect_highlighting"]
 	var tutorial = load("res://Tutorials/tutorial2.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
 	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
@@ -174,6 +170,19 @@ func archer():
 	var extras = {"free_deploy":false, "reinforcements":reinforcements, "tutorial": tutorial_func, "flags":flags}
 	
 	return LevelTypes.Timed.new("Take a Bow", allies, enemies, 7, null, extras)
+	
+	
+func archer_sandbox():
+	var allies = {2: Berserker, 4: Archer}
+	var raw_enemies = load_level("archer_sandbox.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var reinforcements = {5: { Vector2(5, 7): Berserker}}
+	var flags = ["no_stars", "no_turns", "no_inspire", "no_waves"]
+	var tutorial = load("res://Tutorials/archer_sandbox.gd").new()
+	var tutorial_func = funcref(tutorial, "get")
+	var extras = {"free_deploy":false, "reinforcements":reinforcements, "tutorial": tutorial_func, "flags":flags}
+	
+	return LevelTypes.Timed.new("Take a Bow", allies, enemies, 7, null, extras)
 
 
 func rule_of_three():
@@ -209,7 +218,7 @@ func tick_tock():
 	var tutorial_func = funcref(tutorial, "get")
 	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
 	#var extras = {"free_deploy":false, "flags":flags}
-	return LevelTypes.Timed.new("Racial Diversity", allies, enemies, 7, null, extras)
+	return LevelTypes.Timed.new("Tick Tock", allies, enemies, 7, null, extras)
 
 
 func flying_solo():
@@ -259,9 +268,9 @@ func assassin():
 	var tutorial_func = funcref(tutorial, "get")
 	var flags = ["no_inspire"]
 	var extras = {"free_deploy":false, "flags":flags, "tutorial":tutorial_func}
-	var trial = LevelTypes.Timed.new("Assassin's Sandbox", allies, enemies, 1, null, extras)
+	var trial = LevelTypes.Timed.new("Assassin's Trial", allies, enemies, 1, null, extras)
 	
-	return LevelTypes.MultiLevel.new([lesson, sandbox, trial])
+	return LevelTypes.MultiLevel.new("Assassin's Trial", [lesson, sandbox, trial])
 
 
 func deploy():
@@ -289,7 +298,7 @@ func sludge_lord():
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_inspire", "no_fifth"]
 	var extras = {"flags":flags}
-	return LevelTypes.Timed.new("Jake Paul and Crew", allies, enemies, 2, null, extras)
+	return LevelTypes.Timed.new("Jake Paul and Crew", allies, enemies, 3, null, extras)
 	
 func inspire():
 	var allies = {1: Berserker, 5: Cavalier}

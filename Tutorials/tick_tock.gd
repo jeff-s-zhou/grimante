@@ -15,8 +15,6 @@ func get():
 	add_player_start_rule(tutorial, 1, text)
 	
 	var text = ["Special Enemies with abilities have appeared!", 
-	"Blue Enemies have abilities that affect other Enemies.",
-	"Yellow Enemies either have no abilities, or have abilities that affect themselves.",
 	"Press Tab over Enemies to read what their abilities do."]
 	add_enemy_end_rule(tutorial, 1, text)
 

@@ -105,12 +105,13 @@ func shield_bash(new_coords):
 	arguments = [shove_pos, 450, true, Tween.TRANS_SINE, Tween.EASE_IN]
 	add_animation(self, "animate_move_to_pos", true, arguments)
 	
-	target.receive_shove(distance)
-	
 	if target.side == "ENEMY":
+		print("freezing?")
 		var action = get_new_action()
 		action.add_call("set_frozen", [true], new_coords)
 		action.execute()
+	
+	target.receive_shove(distance)
 
 	add_animation(self, "animate_move_to_pos", true, [original_pos, 200, true])
 	

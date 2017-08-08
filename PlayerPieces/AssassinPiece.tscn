@@ -54,10 +54,6 @@ frames = ExtResource( 4 )
 
 texture = ExtResource( 5 )
 
-[node name="ArmorDisplay" parent="Physicals"]
-
-editor/display_folded = true
-
 [node name="SamplePlayer 2" parent="."]
 
 config/samples = SubResource( 1 )
@@ -69,4 +65,3 @@ transform/pos = Vector2( 0, -4 )
 texture = ExtResource( 10 )
 
 
-[editable path="Physicals/ArmorDisplay"]

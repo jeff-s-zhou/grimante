@@ -45,6 +45,7 @@ class BaseLevelType:
 	var king = null
 	var end_conditions = {}
 	var is_sub_level = false
+	var seamless = false
 	
 	func _init(name, allies, enemies, next_level=null, extras={}):
 		self.name = name
@@ -103,7 +104,10 @@ class Sandbox extends BaseLevelType:
 
 class MultiLevel:
 	var levels
-	func _init(levels):
+	var name = ""
+	func _init(name, levels):
+		self.name = name
+		
 		for i in range(0, levels.size() - 1):
 			levels[i].is_sub_level = true
 			levels[i].set_next_level(levels[i+1])
@@ -120,3 +124,29 @@ class MultiLevel:
 	func is_sub_level():
 		return true
 
+
+class Trial:
+	var levels
+	var name = ""
+	
+	func _init(name, levels):
+		self.name = name
+		
+		for i in range(0, levels.size()):
+			levels[i].seamless = true
+		
+		for i in range(0, levels.size() - 1):
+			levels[i].is_sub_level = true
+			levels[i].set_next_level(levels[i+1])
+		for i in range(1, levels.size()):
+			levels[i].previous_level = levels[i-1]
+		self.levels = levels
+		
+	func get_level():
+		return self.levels[0]
+		
+	func set_next_level(level):
+		self.levels[self.levels.size() - 1].set_next_level(level)
+	
+	func is_sub_level():
+		return true

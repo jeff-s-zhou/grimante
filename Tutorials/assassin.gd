@@ -12,6 +12,9 @@ func _ready():
 
 func get():
 	var tutorial = TutorialPrototype.instance()
+	
+	var text = ["The Assassin is now at your disposal."]
+	add_player_start_rule(tutorial, 1, text)
 
 	var text = ["The Assassin's Backstab teleports him 1 tile above the target and deals {1} damage."]
 	add_forced_action(tutorial, 1, Vector2(3, 7), Vector2(3, 5), text)

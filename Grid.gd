@@ -116,7 +116,10 @@ func predict(coords):
 				get_node("DottedLine").show()
 		self.selected.predict(coords)
 	
-
+func initialize(flags):
+	if flags.has("hide_indirect_highlighting"):
+		for location in self.locations.values():
+			location.hide_indirect_highlighting()
 		
 func initialize_shadow_tiles(shadow_tile_range):
 	self.shadow_tile_range = shadow_tile_range
@@ -238,7 +241,9 @@ func reset_deployable_indicators():
 		location.set_deployable_indicator(false)
 
 #acting is so we know when to properly unglow animations in PlayerPiece
+#if acting is true, then we don't unglow
 func deselect(acting=false):
+	#print("deselecting??")
 	self.selected.deselect(acting)
 	self.selected = null
 	self.clear_display_state(true)
@@ -269,6 +274,7 @@ func unfocus():
 #right click flag is so if we know to check immediately after if cursor is still in a piece's area
 #and apparently so we know to clear flyovers...lol
 func clear_display_state(right_click_flag=false):
+	#print("clearing display state")
 	get_node("DottedLine").hide()
 	for location in locations.values():
 		location.reset_highlight()
@@ -278,6 +284,7 @@ func clear_display_state(right_click_flag=false):
 
 #called when moved off of a tile while a player unit is selected
 func reset_prediction():
+	#print("reseting prediction")
 	get_node("DottedLine").hide()
 	if !self.deploying:
 		if self.selected != null:
