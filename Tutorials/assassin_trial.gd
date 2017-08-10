@@ -4,17 +4,34 @@ extends "res://Tutorials/tutorial.gd"
 # var a = 2
 # var b = "textvar"
 
-func _ready():
-	# Called every time the node is added to the scene.
-	# Initialization here
-	pass
 
-
-func get():
+func get_trial1_hints():
+	var tutorial = TutorialPrototype.instance()
+	
+	var text = ["The Assassin is now at your disposal.",
+	"The Assassin's Backstab teleports him 1 tile above the target and deals {1} damage."]
+	add_hint(tutorial, 1, text)
+	
+	text = ["After killing an Enemy, the Assassin can act again."]
+	add_hint(tutorial, 2, text)
+	
+	text = ["If an Enemy has no other Enemies adjacent to it, Backstab deals {3} damage."]
+	add_hint(tutorial, 3, text)
+	
+	return tutorial
+	
+func get_trial2_hints():
 	var tutorial = TutorialPrototype.instance()
 
-	var text = ["This is the Assassin's Trial. Clear the board in 1 turn."]
+	var text = ["If the Assassin is adjacent to an Enemy that is attacked and {not killed}, the Assassin automatically attacks it for {1} damage."]
+	add_hint(tutorial, 1, text)
+
+	return tutorial
 	
-	add_player_start_rule(tutorial, 1, text)
+func get_trial3_hints():
+	var tutorial = TutorialPrototype.instance()
+
+	var text = ["Remember that the Assassin can act again after killing an enemy in any way."]
+	add_hint(tutorial, 1, text)
 
 	return tutorial

@@ -2,32 +2,22 @@ extends Node2D
 
 const STATES = {"player_turn":0, "enemy_turn":1, "transitioning":3, "deploying":4, "instruction":5, "end":6}
 
-const Berserker = preload("res://PlayerPieces/BerserkerPiece.tscn")
-
 var state = STATES.deploying
 var enemy_waves = null
-
 var tutorial = null
-
 var enemy_reinforcements = {}
-
 var instructions = []
 var reinforcements = {}
 var turn_count = 0
-var level_schematic_func = null
 var level_schematic = null
-
 var state_manager = null
+var mid_forced_action = false
+var has_active_star = false
+
+var assassin = null
 
 onready var Constants = get_node("/root/constants")
 
-var next_wave #the wave that was used for reinforcement indication
-
-var tabbed_flag #to check if a current description is tabbed in
-
-var mid_forced_action = false
-
-var has_active_star = false
 
 signal wave_deployed
 signal next_pressed
@@ -37,8 +27,6 @@ signal done_initializing
 signal deployed
 
 signal animation_done
-
-var assassin = null
 
 func _ready():
 	get_node("/root/AnimationQueue").reset()
@@ -65,6 +53,9 @@ func _ready():
 			add_child(self.tutorial)
 
 	get_node("/root/DataLogger").log_start_attempt(self.level_schematic.name)
+	
+	
+	#is here the big divide?
 
 	self.enemy_waves = self.level_schematic.enemies
 
@@ -151,6 +142,43 @@ func _ready():
 	
 	start_player_phase()
 	
+	
+func soft_reset():
+	set_process(false)
+	set_process_input(false)
+	
+	self.state = STATES.deploying
+	self.enemy_waves = null
+	self.tutorial = null
+	self.enemy_reinforcements = {}
+	self.instructions = []
+	self.reinforcements = {}
+	self.mid_forced_action = false
+	self.has_active_star = false
+	self.turn_count = 0
+	#self.assassin = null
+	
+	#key is the coords, value is the piece
+	for key in self.level_schematic.allies.keys():
+		initialize_piece(self.level_schematic.allies[key], false, key)
+
+
+	self.state_manager.soft_reset(self.level_schematic)
+	
+	self.enemy_waves = self.level_schematic.enemies
+
+	self.reinforcements = self.level_schematic.reinforcements
+	
+	load_in_next_wave(true)
+	deploy_wave()
+	load_in_next_wave()
+	display_wave_preview()
+	
+	set_process(true)
+	set_process_input(true)
+	#start_player_phase()
+
+
 	
 func get_turn_count():
 	return self.turn_count
@@ -454,6 +482,7 @@ func _process(delta):
 		
 		
 func enemy_phase():
+	print("in enemy phase???")
 	if self.tutorial != null and self.tutorial.has_enemy_turn_start_rule(get_turn_count()):
 		self.tutorial.display_enemy_turn_start_rule(get_turn_count())
 		set_process_input(false)
@@ -619,42 +648,47 @@ func display_wave_preview():
 
 
 func player_win():
-	if self.level_schematic.seamless:
-		pass
+	self.state = STATES.end
+	set_process(false)
+	set_process_input(false)
+#	
+#	if self.level_schematic.seamless and self.level_schematic.next_level != null:
+#		#load_in_next_wave_relative(keystone_coords)
+#		get_node("Grid").clear_board()
+#		self.level_schematic = self.level_schematic.next_level
+#		soft_reset()
+#	else:
+		
+	get_node("/root/AnimationQueue").stop()
+	
+	get_node("/root/DataLogger").log_win(self.level_schematic.name, self.turn_count)
+	
+	#saves the progress made, right now just the units unlocked
+	get_node("/root/global").save_state()
+	if get_node("/root/AnimationQueue").is_animating():
+		yield(get_node("/root/AnimationQueue"), "animations_finished")
+	get_node("Timer2").set_wait_time(0.5)
+	get_node("Timer2").start()
+	yield(get_node("Timer2"), "timeout")
+	
+	if self.level_schematic.is_sub_level():
+		get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.next_level})
 	else:
-			
-		self.state = STATES.end
-		set_process(false)
-		set_process_input(false)
-		get_node("/root/AnimationQueue").stop()
-		
-		get_node("/root/DataLogger").log_win(self.level_schematic.name, self.turn_count)
-		
-		#saves the progress made, right now just the units unlocked
-		get_node("/root/global").save_state()
-		if get_node("/root/AnimationQueue").is_animating():
-			yield(get_node("/root/AnimationQueue"), "animations_finished")
-		get_node("Timer2").set_wait_time(0.5)
-		get_node("Timer2").start()
-		yield(get_node("Timer2"), "timeout")
-		
-		if self.level_schematic.is_sub_level():
-			get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.next_level})
-		else:
-			get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.level_schematic.next_level})
+		get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.level_schematic.next_level})
 	
 
 func enemy_win():
+	self.state = STATES.end
+	set_process(false)
+	set_process_input(false)
 	if self.level_schematic.seamless:
+		#get_node("Grid").clear_board()
+		#soft_reset()
 		#clear enemies
 		#readd the first wave
 		#self.turn_count = 0
-		pass
+		restart()
 	else:
-		
-		self.state = STATES.end
-		set_process(false)
-		set_process_input(false)
 		get_node("/root/AnimationQueue").stop()
 		get_node("/root/DataLogger").log_lose(self.level_schematic.name, self.turn_count)
 		

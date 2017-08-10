@@ -14,7 +14,11 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	pass
-
+	
+func reset():
+	self.kill_count = 0
+	get_node("/root/AnimationQueue").enqueue(self, "animate_add_kill_count", false, [self.kill_count])
+	
 func add_kill_count():
 	self.kill_count += 1
 	if self.kill_count == KILL_LIMIT:

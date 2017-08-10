@@ -10,6 +10,7 @@ func _ready():
 	pass
 	
 func flash_frost():
+	show()
 	print("flash frosting")
 	var left_mask = get_node("Light2D1")
 	var right_mask = get_node("Light2D")

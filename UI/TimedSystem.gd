@@ -15,6 +15,10 @@ func _ready():
 	
 func initialize(level_schematic, star_button_handle, flags):
 	
+	print("initializing in timed system")
+	
+	self.num_turns = 0
+	self.turns_til_wave = 0
 	self.flags = flags
 	
 	if flags.has("no_stars"):
@@ -33,6 +37,7 @@ func initialize(level_schematic, star_button_handle, flags):
 		get_node("TurnsHeader").hide()
 		get_node("TurnCountdown").hide()
 	else:
+		get_node("Label").hide()
 		get_node("TurnCountdown").set_text(str(1) + "/" + str(self.num_turns))
 		
 	if flags.has("no_waves"):
@@ -44,7 +49,17 @@ func initialize(level_schematic, star_button_handle, flags):
 		if self.turns_til_wave != null:
 			get_node("WaveCountdown").set_text(str(self.turns_til_wave - 1))
 
+
+func soft_reset(level_schematic):
+	self.num_turns = 0
+	self.turns_til_wave = 0
+	self.flags = flags
+	get_node("StarSubsystem").reset()
+	self.enemies = level_schematic.enemies
+	update(0)
+
 func update(turn_count):
+	print("updating in timed system")
 	if !self.flags.has("no_turns"):
 		get_node("TurnCountdown").set_text(str(turn_count + 1) + "/" + str(self.num_turns))
 	

@@ -12,6 +12,18 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	pass
+#	
+#func add_hint(tutorial, turn, text_list):
+#	var hint = RulePrototype.instance()
+#	hint.initialize(text_list)
+#	tutorial.add_hint(hint, turn)
+
+
+func add_hint(tutorial, turn, text_list):
+	var player_start_rule = RulePrototype.instance()
+	player_start_rule.initialize(text_list)
+	tutorial.add_player_turn_start_rule(player_start_rule, turn, null)
+
 
 func add_player_start_rule(tutorial, turn, text_list, coords=null):
 	var player_start_rule = RulePrototype.instance()

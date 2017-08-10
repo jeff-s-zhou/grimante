@@ -302,6 +302,7 @@ func receive_shove(distance):
 		var success = get_parent().pieces[new_coords].smashed(self)
 			
 		if success: #if the piece wasn't shielded or this piece is poisonous
+			print("smashed an enemy!")
 			set_coords(new_coords)
 		else:
 			add_animation(self, "animate_move_and_hop", false, [self.coords, 300, false])
@@ -314,6 +315,7 @@ func receive_shove(distance):
 
 func smashed(attacker):
 	if !self.shielded or attacker.is_deadly():
+		print("smashed in smashed")
 		delete_self(true)
 		return true
 	else:

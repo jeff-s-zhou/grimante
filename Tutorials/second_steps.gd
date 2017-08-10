@@ -11,11 +11,6 @@ func _ready():
 
 func get():
 	var tutorial = TutorialPrototype.instance()
-	var text = ["You now have access to Stars.",
-	"Use a Star on a dead Hero's grave to resurrect him/her.",
-	"Use a Star on a Hero who has already acted to let them act again.",
-	"For every {7} enemies killed, you gain {1} Star.",
-	"For this tutorial, we've given you {1} Star to start. Clear this level this turn."]
+	var text = ["Clear the board within the {turn limit} displayed at the top of the screen, or else you lose!"]
 	add_player_start_rule(tutorial, 1, text)
-
 	return tutorial

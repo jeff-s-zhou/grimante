@@ -11,8 +11,6 @@ func _ready():
 
 func get():
 	var tutorial = TutorialPrototype.instance()
-	var text = ["Clear the board within the {turn limit} displayed at the top of the screen, or else you lose!"]
-	add_player_start_rule(tutorial, 1, text)
 	
 	var text = ["Special Enemies with abilities have appeared!", 
 	"Press Tab over Enemies to read what their abilities do."]

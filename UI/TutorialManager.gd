@@ -9,6 +9,8 @@ var enemy_turn_end_rules = {}
 var enemy_turn_start_rules = {}
 var forced_actions = {} #dict of lists
 
+var hints = {}
+
 signal rule_finished
 
 var current_rule = null
@@ -25,6 +27,10 @@ func decorate(string):
 	string = string.replace("{", "[color=#ff3333]")
 	string = string.replace("}", "[/color]")
 	return string
+	
+	
+func add_hint(rule, turn):
+	self.hints[turn] = rule
 
 
 func add_player_turn_start_rule(rule, turn, coords=null):

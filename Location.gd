@@ -6,14 +6,9 @@ extends Area2D
 
 var coords
 
+#STATE
 var raining = false
-
 var deployable = false
-
-var shadow_wall = false
-
-var shifting_direction = null
-
 var corpse = null
 
 var indirect_highlighting = true
@@ -29,6 +24,12 @@ func _ready():
 	get_node("Sprite").set_opacity(0.4)
 	connect("mouse_enter", self, "_mouse_entered")
 	connect("mouse_exit", self, "_mouse_exited")
+	
+func soft_reset():
+	set_rain(false)
+	self.corpse = null
+	set_deployable_indicator(false)
+	animate_hide_corpse()
 	
 func debug():
 	get_node("Label").set_text(str(coords.x) + "," + str(coords.y))
@@ -94,19 +95,10 @@ func set_shadow_wall(flag):
 
 
 func set_shifting_sands(direction, mask_index):
-	#not sure if we can exceed 12 bits for the mask
-	if mask_index < 12:
-		self.shifting_direction = direction
-		get_node("ShiftingSands").set_shifting_direction(direction)
-		get_node("ShiftingSands").set_mask_index(mask_index)
-		get_node("ShiftingSands").show()
-		get_node("Sprite").hide()
+	pass
 	
 func rotate_shifting():
-	if self.shifting_direction != null:
-		self.shifting_direction = (self.shifting_direction + 1) % 6
-		get_node("/root/AnimationQueue").enqueue(get_node("ShiftingSands"), "animate_rotate", true)
-		
+	pass
 		
 func animate_lightning():
 	get_node("StormEffect").animate_lightning()
@@ -128,27 +120,18 @@ func indirect_highlight():
 func reset_highlight():
 	get_node("HighlightSprite").hide()
 	get_node("HighlightSprite").play("default")
-	if shifting_direction != null:
-		get_node("ShiftingSands").reset_highlight()
-	else:
-		get_node("Sprite").set_opacity(0.4)
+	get_node("Sprite").set_opacity(0.4)
 	
 func _mouse_entered():
 	get_node("SamplePlayer").play("tile_hover")
-	if shifting_direction != null:
-		get_node("ShiftingSands").highlight()
-	else:
-		get_node("Sprite").set_opacity(1.0)
+	get_node("Sprite").set_opacity(1.0)
 	get_node("Timer").set_wait_time(0.01)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
 	get_parent().predict(self.coords)
 
 func _mouse_exited():
-	if shifting_direction != null:
-		get_node("ShiftingSands").reset_highlight()
-	else:
-		get_node("Sprite").set_opacity(0.4)
+	get_node("Sprite").set_opacity(0.4)
 	get_parent().reset_prediction()
 	
 func star_input_event(event):

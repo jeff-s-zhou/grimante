@@ -468,7 +468,6 @@ func select_action_target(target):
 		deploy_select_action_target(target)
 	else:
 		act(target.coords)
-		handle_shifting_sands()
 
 
 func start_deploy_phase():

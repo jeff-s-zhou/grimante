@@ -161,7 +161,8 @@ func hovered():
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
 
-
+	print("hovering over an enemy?")
+	print(self.action_highlighted)
 	if self.action_highlighted:
 		get_node("Physicals/EnemyOverlays/White").show()
 		self.grid.predict(self.coords)
@@ -696,8 +697,6 @@ func turn_attack_update():
 	
 	if self.stunned:
 		set_stunned(false)
-
-	handle_shifting_sands()
 	
 	var adjacent_players_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
 	if adjacent_players_range != [] and self.predator:

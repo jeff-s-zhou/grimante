@@ -87,6 +87,13 @@ func _ready():
 #				selector.triangulate_set_pos()
 #				self.pyromancer_selectors[tri_coords] = selector
 
+func clear_board():
+	for piece in self.pieces.values():
+		piece.queue_free()
+	self.pieces = {}
+	for location in self.locations.values():
+		location.soft_reset()
+
 func set_deploying(deploying_flag, flags={}):
 	self.deploying = deploying_flag
 	if deploying:
