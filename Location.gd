@@ -11,6 +11,8 @@ var raining = false
 var deployable = false
 var corpse = null
 
+var deploying_flag = false
+
 var indirect_highlighting = true
 
 signal animation_done
@@ -108,7 +110,14 @@ func animate_lightning():
 
 #when another unit is able to move to this location, it calls this function
 func movement_highlight():
-	get_node("HighlightSprite").show()
+	if !self.deploying_flag:
+		get_node("HighlightSprite").show()
+		
+func start_deploy_phase():
+	self.deploying_flag = true
+	
+func deploy():
+	self.deploying_flag = false
 	
 func attack_highlight():
 	get_node("HighlightSprite").show()
@@ -125,9 +134,10 @@ func reset_highlight():
 func _mouse_entered():
 	get_node("SamplePlayer").play("tile_hover")
 	get_node("Sprite").set_opacity(1.0)
-	get_node("Timer").set_wait_time(0.01)
-	get_node("Timer").start()
-	yield(get_node("Timer"), "timeout")
+	#we needed this in case you exited from a tile and it reset AFTER another tile called predict lol
+#	get_node("Timer").set_wait_time(0.01)
+#	get_node("Timer").start()
+#	yield(get_node("Timer"), "timeout")
 	get_parent().predict(self.coords)
 
 func _mouse_exited():

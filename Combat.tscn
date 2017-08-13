@@ -160,25 +160,78 @@ visibility/visible = false
 transform/pos = Vector2( 97, 446 )
 z/z = 102
 
-[node name="ShadowOverlay" type="Sprite" parent="."]
+[node name="ShadowOverlay" type="Light2D" parent="."]
 
 visibility/opacity = 0.8
 transform/pos = Vector2( 336.268, 745.243 )
 z/z = 90
+enabled = true
+editor_only = false
 texture = ExtResource( 17 )
+offset = Vector2( 0, 0 )
+scale = 1.0
+color = Color( 1, 1, 1, 1 )
+energy = 1.0
+mode = 2
+range/height = 0.0
+range/z_min = -1024
+range/z_max = 90
+range/layer_min = 0
+range/layer_max = 0
+range/item_mask = 1
+shadow/enabled = false
+shadow/color = Color( 0, 0, 0, 0 )
+shadow/buffer_size = 2048
+shadow/esm_multiplier = 80.0
+shadow/item_mask = 1
 
-[node name="RadialShadowOverlay" type="Sprite" parent="."]
+[node name="RadialShadowOverlay" type="Light2D" parent="."]
 
 visibility/opacity = 0.8
 transform/pos = Vector2( 338.54, 540.756 )
 z/z = 91
+enabled = true
+editor_only = false
 texture = ExtResource( 18 )
+offset = Vector2( 0, 0 )
+scale = 1.0
+color = Color( 1, 1, 1, 1 )
+energy = 1.0
+mode = 2
+range/height = 0.0
+range/z_min = -1024
+range/z_max = 90
+range/layer_min = 0
+range/layer_max = 0
+range/item_mask = 1
+shadow/enabled = false
+shadow/color = Color( 0, 0, 0, 0 )
+shadow/buffer_size = 2048
+shadow/esm_multiplier = 80.0
+shadow/item_mask = 1
 
-[node name="LightOverlay" type="Sprite" parent="."]
+[node name="LightOverlay" type="Light2D" parent="."]
 
-visibility/opacity = 0.9
 transform/pos = Vector2( 329.452, 290.827 )
 z/z = 92
+enabled = true
+editor_only = false
 texture = ExtResource( 19 )
+offset = Vector2( 0, 0 )
+scale = 1.0
+color = Color( 1, 1, 1, 1 )
+energy = 1.0
+mode = 0
+range/height = 0.0
+range/z_min = -1024
+range/z_max = 91
+range/layer_min = 0
+range/layer_max = 0
+range/item_mask = 1
+shadow/enabled = false
+shadow/color = Color( 0, 0, 0, 0 )
+shadow/buffer_size = 2048
+shadow/esm_multiplier = 80.0
+shadow/item_mask = 1
 
 

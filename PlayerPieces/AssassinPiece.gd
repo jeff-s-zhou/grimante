@@ -99,14 +99,11 @@ func animate_directly_below_backstab(attack_coords):
 	subtract_anim_count()
 
 
-#parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
-	#print("displaying action rangein assassin")
 	var action_range = get_attack_range() + get_movement_range()
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
-	.display_action_range()
-	
+
 
 func _is_within_attack_range(new_coords):
 	var attack_range = get_attack_range()

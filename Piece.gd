@@ -28,6 +28,8 @@ var unit_name = "" setget , get_unit_name
 
 var shielded = false
 
+var deploying_flag = false
+
 var coords #enemies move automatically each turn a certain number of spaces forward
 
 onready var grid = get_parent()

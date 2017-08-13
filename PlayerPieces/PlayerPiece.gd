@@ -16,8 +16,6 @@ onready var ASSIST_TYPES = AssistSystem.ASSIST_TYPES
 
 var assist_type = null
 
-var deploying_flag = false
-
 var direct_attack_description = []
 var indirect_attack_description = []
 var passive_description = []

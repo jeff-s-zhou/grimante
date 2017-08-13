@@ -72,9 +72,9 @@ func display_action_range():
 	var action_range = get_attack_range() + movement_range
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
-	.display_action_range()
 	highlight_indirect_range(movement_range)
-		
+
+
 func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
 

@@ -103,8 +103,11 @@ func _ready():
 		get_node("ControlBar/DeployButton").show()
 		get_node("Grid").set_deploying(true, self.level_schematic.flags)
 		
-		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
-			player_piece.start_deploy_phase()
+		for piece in get_node("Grid").pieces.values():
+			piece.start_deploy_phase()
+			
+		for location in get_node("Grid").locations.values():
+			location.start_deploy_phase()
 		
 		#handle turn 0 tutorial popups before even deploying
 		if self.tutorial != null and self.tutorial.has_player_turn_start_rule(get_turn_count()):
@@ -126,8 +129,10 @@ func _ready():
 	get_node("ControlBar/EndTurnButton").show()
 	get_node("Grid").set_deploying(false)
 	
-	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
-		player_piece.deploy()
+	for piece in get_node("Grid").pieces.values():
+		piece.deploy()
+	for location in get_node("Grid").locations.values():
+		location.deploy()
 	
 	
 	

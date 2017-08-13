@@ -85,11 +85,11 @@ func get_levels():
 	return list
 
 func sandbox_enemies():
-	var enemies = {0:{Vector2(3, 6): make(Grunt, 3), Vector2(4, 6):make(Grunt, 4)}}
+	var enemies = {0:{Vector2(3, 5): make(Grunt, 3)}}
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
 func sandbox_enemies2():
-	var enemies = load_level("archer_challenge2.level")
+	var enemies = load_level("first_steps.level")
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
 func sandbox():  
@@ -97,7 +97,7 @@ func sandbox():
 	var flags = ["no_inspire"]
 	var extras1 = {"free_deploy":false, "flags":flags}
 	
-	var allies1 = {2: FrostKnight}
+	var allies1 = {2: Cavalier, 3: Archer, 4: Berserker}
 
 	return LevelTypes.Timed.new("", allies1, sandbox_enemies(), 4, null, extras1) 
 

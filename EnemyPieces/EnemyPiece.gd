@@ -97,8 +97,14 @@ func initialize(unit_name, hover_description, movement_value, max_hp, modifiers,
 	initialize_hp(max_hp)
 	if modifiers != null:
 		initialize_modifiers(modifiers)
-	
 		
+func start_deploy_phase():
+	self.deploying_flag = true
+	
+#called once the hero positions are finalized in the deployment phase
+func deploy():
+	self.deploying_flag = false
+	
 func added_to_grid():
 	add_to_group("enemy_pieces")
 	add_animation(self, "animate_summon", false)
@@ -176,8 +182,9 @@ func unhovered():
 
 #when another unit is able to move to this location, it calls this function
 func movement_highlight():
-	self.action_highlighted = true
-	get_node("Physicals/EnemyOverlays/Red").show()
+	if !self.deploying_flag:
+		self.action_highlighted = true
+		get_node("Physicals/EnemyOverlays/Red").show()
 
 #called from self.grid to reset highlighting over the whole board
 func clear_display_state():
