@@ -641,17 +641,23 @@ func animate_delete_self():
 	add_child(explosion)
 	explosion.set_emit_timeout(0.3)
 	explosion.set_emitting(true)
-	get_node("Timer").set_wait_time(0.5)
-	get_node("Timer").start()
-	yield(get_node("Timer"), "timeout")
+	
+	var timer = Timer.new()
+	add_child(timer)
+	timer.set_wait_time(0.5)
+	timer.start()
+	yield(timer, "timeout")
+	
 	emit_signal("animation_done")
 	subtract_anim_count()
-	#let it resolve any other animations
-	get_node("Timer").set_wait_time(3)
-	get_node("Timer").start()
-	yield(get_node("Timer"), "timeout")
+	
+	#let it resolve any lingering animations
+	timer.set_wait_time(3)
+	timer.start()
+	yield(timer, "timeout")
 	print("enemy deleting self")
 	print(self.debug_anim_counter)
+	timer.queue_free()
 	queue_free()
 
 
