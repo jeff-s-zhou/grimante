@@ -31,10 +31,8 @@ signal animation_done
 func _ready():
 	get_node("/root/AnimationQueue").reset()
 	get_node("/root/global").load_state()
-	get_node("Timer").set_active(false)
 	get_node("Grid").set_pos(Vector2(73, 270))
 	#get_node("Grid").set_pos(Vector2(400, 250))
-	#debug_mode()
 	#debug_full_roster()
 	
 	get_node("RestartBar").connect("bar_filled", self, "restart")
@@ -96,8 +94,7 @@ func _ready():
 	load_in_next_wave()
 	display_wave_preview()
 	
-	set_process(true)
-	set_process_input(true)	
+	unpause()
 		
 	if self.level_schematic.free_deploy:
 		get_node("ControlBar/DeployButton").show()
@@ -111,12 +108,10 @@ func _ready():
 		
 		#handle turn 0 tutorial popups before even deploying
 		if self.tutorial != null and self.tutorial.has_player_turn_start_rule(get_turn_count()):
-			set_process_input(false)
-			set_process(false)
+			pause()
 			self.tutorial.display_player_turn_start_rule(get_turn_count())
 			yield(self.tutorial, "rule_finished")
-			set_process_input(true)
-			set_process(true)
+			unpause()
 		
 		yield(self, "deployed")
 	
@@ -149,8 +144,7 @@ func _ready():
 	
 	
 func soft_reset():
-	set_process(false)
-	set_process_input(false)
+	pause()
 	
 	self.state = STATES.deploying
 	self.enemy_waves = null
@@ -179,8 +173,7 @@ func soft_reset():
 	load_in_next_wave()
 	display_wave_preview()
 	
-	set_process(true)
-	set_process_input(true)
+	unpause()
 	#start_player_phase()
 
 
@@ -208,6 +201,25 @@ func debug_full_roster():
 	var Corsair = load("res://PlayerPieces/CorsairPiece.tscn")
 	var roster = {Berserker: true, Cavalier: true, Archer: true, Assassin: true, Corsair: true}
 	get_node("/root/global").available_unit_roster = roster
+	
+func pause():
+	set_process_input(false)
+	set_process(false)
+	get_node("ControlBar").set_disabled(true)
+	
+
+func unpause():
+	set_process_input(true)
+	set_process(true)
+	#needed otherwise the control bar can still process the exact same inputs that unpaused lol
+	get_node("Timer").set_wait_time(0.1) 
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
+	get_node("ControlBar").set_disabled(false)
+	
+func set_forced_action(flag):
+	self.mid_forced_action = flag
+	get_node("ControlBar").set_disabled(flag)
 
 func debug_mode():
 	get_node("Grid").debug()
@@ -267,28 +279,24 @@ func handle_piece_placed():
 		print("handling piece placed?")
 		if self.tutorial.has_forced_action_result(self.turn_count):
 			print("handling forced action result")
-			set_process_input(false)
-			set_process(false)
+			pause()
 			if get_node("/root/AnimationQueue").is_animating():
 				yield(get_node("/root/AnimationQueue"), "animations_finished")
 			self.tutorial.handle_forced_action_result(self.turn_count)
 			yield(self.tutorial, "rule_finished")
-			self.mid_forced_action = false
-			set_process_input(true)
-			set_process(true)
+			set_forced_action(false)
+			unpause()
 		
 		if self.tutorial.has_forced_action(self.turn_count):
-			self.mid_forced_action = true
-			set_process_input(false)
-			set_process(false)
+			pause()
 			if get_node("/root/AnimationQueue").is_animating():
 				yield(get_node("/root/AnimationQueue"), "animations_finished")
 			self.tutorial.display_forced_action(self.turn_count)
-			set_process_input(true)
-			set_process(true)
+			unpause()
+			set_forced_action(true)
 			
 		else:
-			self.mid_forced_action = false
+			set_forced_action(false)
 
 
 	#shouldn't interfere with any other forced actions, since it'll only end when all pieces are placed
@@ -354,8 +362,7 @@ func holding_end_turn():
 
 
 func restart():
-	set_process_input(false)
-	set_process(false)
+	pause()
 	get_node("/root/AnimationQueue").stop()
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
@@ -428,17 +435,14 @@ func computer_input(event):
 			else: #elif hovered_piece.side == "PLAYER"
 				get_node("InfoOverlay").display_player_info(hovered_piece)
 			
-			set_process_input(false)
-			set_process(false)
+			pause()
 			yield(get_node("InfoOverlay"), "description_finished")
-			set_process_input(true)
-			set_process(true)
+			unpause()
 
 
 	elif event.is_action("debug_level_skip") and event.is_pressed():
 		if(self.level_schematic.next_level != null):
-			set_process(false)
-			set_process_input(false)
+			pause()
 			if get_node("/root/AnimationQueue").is_animating():
 				yield(get_node("/root/AnimationQueue"), "animations_finished")
 			get_node("/root/AnimationQueue").stop()
@@ -490,11 +494,9 @@ func enemy_phase():
 	print("in enemy phase???")
 	if self.tutorial != null and self.tutorial.has_enemy_turn_start_rule(get_turn_count()):
 		self.tutorial.display_enemy_turn_start_rule(get_turn_count())
-		set_process_input(false)
-		set_process(false)
+		pause()
 		yield(self.tutorial, "rule_finished")
-		set_process_input(true)
-		set_process(true)
+		unpause()
 	
 	var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
 	
@@ -539,11 +541,9 @@ func enemy_phase():
 	
 	if self.tutorial != null and self.tutorial.has_enemy_turn_end_rule(get_turn_count()):
 		self.tutorial.display_enemy_turn_end_rule(get_turn_count())
-		set_process_input(false)
-		set_process(false)
+		pause()
 		yield(self.tutorial, "rule_finished")
-		set_process_input(true)
-		set_process(true)
+		unpause()
 	
 	if self.state != STATES.end:
 		get_node("PhaseShifter").player_phase_animation()
@@ -567,16 +567,13 @@ func start_player_phase():
 		
 	if self.tutorial != null and self.tutorial.has_player_turn_start_rule(get_turn_count()):
 		self.tutorial.display_player_turn_start_rule(get_turn_count())
-		set_process_input(false)
-		set_process(false)
-
+		pause()
 		yield(self.tutorial, "rule_finished")
-		set_process(true)
-		set_process_input(true)
+		unpause()
 	
 	
 	if self.tutorial != null and self.tutorial.has_forced_action(self.turn_count):
-		self.mid_forced_action = true
+		set_forced_action(true)
 		self.tutorial.display_forced_action(get_turn_count())
 
 	self.state = STATES.player_turn
@@ -654,8 +651,7 @@ func display_wave_preview():
 
 func player_win():
 	self.state = STATES.end
-	set_process(false)
-	set_process_input(false)
+	pause()
 #	
 #	if self.level_schematic.seamless and self.level_schematic.next_level != null:
 #		#load_in_next_wave_relative(keystone_coords)
@@ -684,8 +680,7 @@ func player_win():
 
 func enemy_win():
 	self.state = STATES.end
-	set_process(false)
-	set_process_input(false)
+	pause()
 	if self.level_schematic.seamless:
 		#get_node("Grid").clear_board()
 		#soft_reset()

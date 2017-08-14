@@ -16,7 +16,11 @@ func _ready():
 func disable():
 	self.hide()
 	self.enabled = false
-	
+
+#used to temporarily disable during pause screens and stuff
+func set_disabled(flag):
+	self.enabled = !flag
+
 func has_star():
 	return self.star_count > 0
 

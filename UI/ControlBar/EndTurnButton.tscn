@@ -28,6 +28,8 @@ textures/normal = ExtResource( 2 )
 textures/pressed = ExtResource( 3 )
 textures/hover = ExtResource( 4 )
 textures/disabled = ExtResource( 5 )
+params/resize_mode = 0
+params/stretch_mode = 0
 
 [node name="Tween" type="Tween" parent="."]
 

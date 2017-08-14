@@ -85,7 +85,7 @@ func get_levels():
 	return list
 
 func sandbox_enemies():
-	var enemies = {0:{Vector2(3, 5): make(Grunt, 3)}}
+	var enemies = {0:{Vector2(3, 5): make(Fortifier, 2), Vector2(2, 5): make(Grunt, 6)}}
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
 func sandbox_enemies2():

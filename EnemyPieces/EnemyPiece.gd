@@ -561,9 +561,8 @@ func modify_hp(amount, delay=0):
 #		enqueue_animation_sequence()
 
 
-func delete_self(isolated_call=false):
-	if isolated_call:
-		add_animation(self, "animate_delete_self", false)
+func delete_self():
+	add_animation(self, "animate_delete_self", false)
 	get_node("CollisionArea").set_pickable(false)
 	self.grid.remove_piece(self.coords)
 	remove_from_group("enemy_pieces")
@@ -582,9 +581,6 @@ func animate_set_hp(hp, value, delay=0, flicker_flag=true):
 		timer.start()
 		yield(timer, "timeout")
 		timer.queue_free()
-	
-	if hp == 0:
-		animate_delete_self()
 
 	get_node("Physicals/HealthDisplay").set_health(hp)
 	

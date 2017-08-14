@@ -26,3 +26,7 @@ func initialize(flags, combat_scene):
 		get_node("ForwardButton").show()
 		get_node("BackButton").connect("pressed", combat_scene, "previous_level")
 		get_node("ForwardButton").connect("pressed", combat_scene, "next_level")
+		
+func set_disabled(flag):
+	get_node("StarBar").set_disabled(flag)
+	get_node("EndTurnButton").set_disabled(flag)
