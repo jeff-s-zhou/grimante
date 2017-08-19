@@ -142,7 +142,8 @@ func _mouse_entered():
 
 func _mouse_exited():
 	get_node("Sprite").set_opacity(0.4)
-	get_parent().reset_prediction()
+	if get_parent().selected != null:
+		get_parent().reset_prediction()
 	
 func star_input_event(event):
 	if self.corpse != null and !get_parent().pieces.has(coords):

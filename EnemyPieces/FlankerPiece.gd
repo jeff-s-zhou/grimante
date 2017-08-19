@@ -22,8 +22,8 @@ func move_attack(distance):
 			
 		#isn't blocked
 		elif !get_parent().pieces.has(new_coords):
-			add_animation(self, "animate_move_and_hop", false, [new_coords, 300, false])
+			add_animation(self, "animate_move_and_hop", false, [new_coords, 450, false])
 			set_coords(new_coords)
 			break #end the loop
 
-		new_coords = self.coords - Vector2(0, 1)
+		new_coords = new_coords - Vector2(0, 1)

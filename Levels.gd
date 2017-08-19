@@ -11,6 +11,7 @@ const Melee = preload("res://EnemyPieces/MeleePiece.tscn")
 const Ranged = preload("res://EnemyPieces/RangedPiece.tscn")
 const Slime = preload("res://EnemyPieces/SlimePiece.tscn")
 const Spectre = preload("res://EnemyPieces/SpectrePiece.tscn")
+const Flanker = preload("res://EnemyPieces/FlankerPiece.tscn")
 
 const Berserker = preload("res://PlayerPieces/BerserkerPiece.tscn")
 const Cavalier = preload("res://PlayerPieces/CavalierPiece.tscn")
@@ -68,24 +69,53 @@ func load_level(file_name):
 func make(prototype, hp, modifiers=null):
 	return {"prototype": prototype, "hp": hp, "modifiers":modifiers}
 	
-var list = [tutorial1(), tutorial2(), tutorial3(), first_steps(), second_steps(), archer(), 
-rule_of_three(), tutorial4(), tick_tock(), flying_solo(), star_power(), assassin(),
-deploy(), speed_run(), sludge_lord(), grower(), grower2(), frost_knight(), swamp()]
+class LevelSet:
+	var name = ""
+	var levels = []
+	var completed = false
+	
+	func _init(name, levels):
+		self.name = name
+		self.levels = levels
+		
+	func get_levels():
+		for i in range(0, self.levels.size() - 1):
+			#change this call to set_next_level
+			self.levels[i].set_next_level(self.levels[i+1])
+		return self.levels
+		
+	func complete():
+		self.completed = true
+		
+var set = LevelSet.new("First", 
+[tutorial1(), tutorial2(), tutorial3(), first_steps(), second_steps()])
+
+var set2 = LevelSet.new("Second", 
+[archer(), rule_of_three(), tutorial4(), tick_tock(), flying_solo()])
+
+var set3 = LevelSet.new("Third",
+[assassin(), sludge(), star_power(), seraph(), sludge_lord()])
+
+var set4 = LevelSet.new("Fourth",
+[frost_knight(), swamp()])
+
+var level_sets = [set, set2, set3]
+
+#free levels that I think are still good
+
+#defuse_the_domb(), double_time(), spoopy_ghosts(), minesweeper()
 
 #var list = [berserker_part1(), berserker_part2(), cavalier(), dead_or_alive(), reinforcements(),
 #archer(), offsides(), tick_tock(), flying_solo(), assassin(), deploy(), mutation(),
 #rising_tides(), inspire(), swamp(), stormdancer(), double_time(), defuse_the_bomb(),
 #spoopy_ghosts(), pyromancer(), minesweeper(), star_power(), corsair(), frost_knight(),
-#howl(), howl2(), saint(), corrosion(), shifting_sands(), shifting_sands2()]
-
-func get_levels():
-	for i in range(0, list.size() - 1):
-		#change this call to set_next_level
-		list[i].set_next_level(list[i+1])
-	return list
+#howl(), howl2(), saint(), corrosion()]
+	
+func get_level_sets():
+	return level_sets
 
 func sandbox_enemies():
-	var enemies = {0:{Vector2(3, 5): make(Fortifier, 2), Vector2(2, 5): make(Grunt, 6)}}
+	var enemies = {0:{Vector2(3, 4): make(Grunt, 5, [shield])}}
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
 func sandbox_enemies2():
@@ -93,11 +123,9 @@ func sandbox_enemies2():
 	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
 func sandbox():  
-	
 	var flags = ["no_inspire"]
 	var extras1 = {"free_deploy":false, "flags":flags}
-	
-	var allies1 = {2: Cavalier, 3: Archer, 4: Berserker}
+	var allies1 = {Vector2(0, 3): Archer, 3: Berserker}
 
 	return LevelTypes.Timed.new("", allies1, sandbox_enemies(), 4, null, extras1) 
 
@@ -274,53 +302,33 @@ func assassin():
 	return LevelTypes.Trial.new("Assassin Trials", [challenge1, challenge2, challenge3])
 
 
-func deploy():
+func sludge():
 	var allies = {1: Cavalier, 2:Archer, 4:Assassin, 5: Berserker}
-	var raw_enemies = load_level("deploy.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var tutorial = load("res://Tutorials/deploy.gd").new()
-	var tutorial_func = funcref(tutorial, "get")
-	var flags = ["no_inspire", "no_fifth"]
-	var extras = {"flags":flags, "tutorial":tutorial_func}
-	return LevelTypes.Timed.new("Deploy", allies, enemies, 5, null, extras)
-
-
-func speed_run():
-	var allies = {1: Cavalier, 2:Archer, 4:Assassin, 5: Berserker}
-	var raw_enemies = load_level("speed_run.level")
+	var raw_enemies = load_level("sludge.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_inspire", "no_fifth"]
-	var extras = {"flags":flags}
-	return LevelTypes.Timed.new("Speed Run", allies, enemies, 2, null, extras)
+	var extras = {"flags":flags, "free_deploy":false}
+	return LevelTypes.Timed.new("A Sticky Situation", allies, enemies, 5, null, extras)
+
+
+func seraph():
+	var allies = {1: Assassin, 2:Cavalier, 4:Berserker, 5: Archer}
+	var raw_enemies = load_level("seraph.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_inspire", "no_fifth"]
+	var extras = {"flags":flags, "free_deploy":false}
+	return LevelTypes.Timed.new("Seraph", allies, enemies, 6, null, extras)
 
 
 func sludge_lord():
-	var allies = {1: Cavalier, 2:Archer, 4:Assassin, 5: Berserker}
+	var allies = {2:Archer, 3: Cavalier, Vector2(3, 6): Berserker, 4: Assassin}
 	var raw_enemies = load_level("sludge_lord.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_inspire", "no_fifth"]
-	var extras = {"flags":flags}
+	var extras = {"flags":flags, "free_deploy":false}
 	return LevelTypes.Timed.new("Jake Paul and Crew", allies, enemies, 3, null, extras)
-	
-	
-func grower():
-	var allies = {1: Cavalier, 2:Archer, 4:Assassin, 5: Berserker}
-	var raw_enemies = load_level("grower.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var flags = ["no_inspire", "no_fifth"]
-	var extras = {"flags":flags}
-	return LevelTypes.Timed.new("", allies, enemies, 3, null, extras)
-	
-	
-func grower2():
-	var allies = {1: Cavalier, 2:Archer, 4:Assassin, 5: Berserker}
-	var raw_enemies = load_level("grower2.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var flags = ["no_inspire", "no_fifth"]
-	var extras = {"flags":flags}
-	return LevelTypes.Timed.new("", allies, enemies, 5, null, extras)
-	
-	
+
+
 func frost_knight():
 	var tutorial = load("res://Tutorials/frost_knight_trial.gd").new()
 	var trial1_hints = funcref(tutorial, "get_trial1_hints")

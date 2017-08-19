@@ -13,6 +13,8 @@ const Ranged = preload("res://EnemyPieces/RangedPiece.tscn")
 const Slime = preload("res://EnemyPieces/SlimePiece.tscn")
 const Spectre = preload("res://EnemyPieces/SpectrePiece.tscn")
 const Dummy = preload("res://EnemyPieces/DummyPiece.tscn")
+const Flanker = preload("res://EnemyPieces/FlankerPiece.tscn")
+const BossGrunt = preload("res://EnemyPieces/BossGruntPiece.tscn")
 
 
 var end_conditions = {"Defend":0, "Escort":1, "Timed":2, "Sandbox":3}
@@ -21,7 +23,8 @@ var end_conditions = {"Defend":0, "Escort":1, "Timed":2, "Sandbox":3}
 var enemy_modifiers = {"Poisonous":"Poisonous", "Shield":"Shield", "Cloaked":"Cloaked", "Corrosive":"Corrosive", "Predator":"Predator"}
 
 #used in the level editor
-var enemy_roster = {"dummy":Dummy, "grunt":Grunt, "fortifier":Fortifier, "grower":Grower, "drummer":Drummer, "melee":Melee, "ranged":Ranged, "slime":Slime, "spectre":Spectre}
+var enemy_roster = {"dummy":Dummy, "grunt":Grunt, "fortifier":Fortifier, "grower":Grower, "drummer":Drummer, 
+"melee":Melee, "ranged":Ranged, "slime":Slime, "spectre":Spectre, "flanker":Flanker, "boss_grunt":BossGrunt}
 
 const y_coords_offsets = [0, 0, 1, 1, 2, 2, 3]
 
@@ -74,7 +77,9 @@ var FULL_UNIT_ROSTER = {
 5: Ranged,
 6: Slime,
 7: Spectre,
-8: Dummy
+8: Dummy,
+9: Flanker,
+10: BossGrunt
 }
 
 #used in the generator

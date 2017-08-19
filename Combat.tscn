@@ -162,8 +162,8 @@ z/z = 102
 
 [node name="ShadowOverlay" type="Light2D" parent="."]
 
-visibility/opacity = 0.8
-transform/pos = Vector2( 336.268, 745.243 )
+visibility/opacity = 0.6
+transform/pos = Vector2( 336.268, 967.378 )
 z/z = 90
 enabled = true
 editor_only = false
@@ -187,7 +187,7 @@ shadow/item_mask = 1
 
 [node name="RadialShadowOverlay" type="Light2D" parent="."]
 
-visibility/opacity = 0.8
+visibility/opacity = 0.6
 transform/pos = Vector2( 338.54, 540.756 )
 z/z = 91
 enabled = true

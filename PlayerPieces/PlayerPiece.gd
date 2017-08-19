@@ -357,6 +357,9 @@ func animate_stepped_move(old_coords, new_coords, pathed_range, speed=250, block
 func attack_highlight():
 	pass
 	
+func movement_highlight():
+	get_node("Physicals/OverlayLayers/Green").show()
+	
 func assist_highlight():
 	get_node("Physicals/OverlayLayers/Green").show()
 

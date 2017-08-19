@@ -8,7 +8,8 @@ extends "res://Piece.gd"
 const YELLOW_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/YellowExplosionParticles.tscn")
 const GREEN_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/GreenExplosionParticles.tscn")
 const RED_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/RedExplosionParticles.tscn")
-const TYPES = {"assist":"assist", "attack":"attack", "selfish":"selfish"}
+const BLACK_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/BlackExplosionParticles.tscn")
+const TYPES = {"assist":"assist", "attack":"attack", "selfish":"selfish", "boss":"boss"}
 var type
 
 var explosion_prototype = self.YELLOW_EXPLOSION_SCENE
@@ -33,6 +34,8 @@ var burning = false
 var frozen = false
 var silenced = false
 var stunned = false
+
+var boss_flag = false
 
 var temp_display_hp #what we reset to when resetting prediction, in case original hp is already changed
 
@@ -67,6 +70,15 @@ func get_unit_name():
 		return "?"
 	else:
 		return unit_name
+		
+
+func set_boss(flag):
+	self.boss_flag = flag
+	if flag:
+		get_node("Physicals/SpecialGlow").show()
+	else:
+		get_node("Physicals/SpecialGlow").hide()
+	
 
 
 func _ready():
@@ -88,11 +100,14 @@ func initialize(unit_name, hover_description, movement_value, max_hp, modifiers,
 	self.prototype = prototype
 	self.type = type
 	if self.type == TYPES.assist:
-		self.explosion_prototype = GREEN_EXPLOSION_SCENE
+		self.explosion_prototype = YELLOW_EXPLOSION_SCENE
 	elif self.type == TYPES.attack:
 		self.explosion_prototype = RED_EXPLOSION_SCENE
 	elif self.type == TYPES.selfish:
-		self.explosion_prototype = YELLOW_EXPLOSION_SCENE
+		self.explosion_prototype = GREEN_EXPLOSION_SCENE
+	elif self.type == TYPES.boss:
+		self.explosion_prototype = BLACK_EXPLOSION_SCENE
+		
 	
 	initialize_hp(max_hp)
 	if modifiers != null:
@@ -176,7 +191,7 @@ func hovered():
 	
 func unhovered():
 	get_node("Physicals/EnemyOverlays/White").hide()
-	if self.action_highlighted:
+	if self.action_highlighted and self.grid.selected != null:
 		print("unhovering in enemy")
 		self.grid.reset_prediction()
 
@@ -210,10 +225,17 @@ func attack_highlight():
 	get_node("Physicals/EnemyOverlays/Red").show()
 	
 func get_actual_damage(damage):
+	if self.boss_flag:
+		if damage > 1:
+			damage = 1
+		else:
+			damage = 0
+	#bonus only applies to non boss enemies
+	elif get_parent().locations[self.coords].raining:
+		damage += 2
+
 	if self.shielded:
 		return 0
-	elif get_parent().locations[self.coords].raining:
-		return damage + 2
 	else:
 		return damage
 	
@@ -527,12 +549,13 @@ func heal(amount, delay=0.0):
 
 
 func attacked(amount, delay=0.0):
+	var damage = get_actual_damage(amount)
 	set_cloaked(false)
 	
 	if self.shielded:
 		set_shield(false)
-	else:
-		modify_hp(amount * -1, delay)
+	
+	modify_hp(damage * -1, delay)
 
 
 #called by the assassin's passive

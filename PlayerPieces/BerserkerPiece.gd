@@ -157,6 +157,7 @@ func smash_move(new_coords):
 	add_animation(self, "jump_to", true, [new_coords, true])
 	
 	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
+	#add_animation(self, "animate_smash", false, [new_coords])
 	smash(smash_range)
 	set_coords(new_coords)
 	placed()
@@ -168,7 +169,36 @@ func smash(smash_range):
 	#the false flag is so it doesn't interrupt the stun it just set lol
 	action.add_call("attacked", [self.aoe_damage], smash_range)
 	action.execute()
-
+	
+	
+func animate_smash(coords):
+	var smash_range = self.grid.get_range(coords)
+	var smash_pieces = []
+	var smash_tiles = []
+	
+	for coords in smash_range:
+		if self.grid.pieces.has(coords):
+			self.smash_pieces.append(self.grid.pieces[coords])
+		smash_tiles.append(self.grid.locations[coords])
+	
+	var smash_targets = smash_pieces + smash_tiles
+	
+	for target in smash_targets:
+		sub_animate_smash(target)
+		
+func sub_animate_smash(target):
+	var height = Vector2(0, -60)
+	var tween = Tween.new()
+	add_child(tween)
+	tween.interpolate_property(target, "transform/pos", \
+		target.get_pos(), target.get_pos() + height, 0.05, Tween.TRANS_LINEAR, Tween.EASE_OUT)
+	tween.start()
+	yield(tween, "tween_complete")
+	tween.interpolate_property(target, "transform/pos", \
+		target.get_pos(), target.get_pos() - height, 0.1, Tween.TRANS_LINEAR, Tween.EASE_OUT, 0.3)
+	tween.start()
+	yield(tween, "tween_complete")
+	tween.queue_free()
 
 func predict(new_coords):
 	if _is_within_attack_range(new_coords):

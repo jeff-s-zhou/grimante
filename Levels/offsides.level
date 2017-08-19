@@ -1,9 +1,0 @@
-{"hp":"3", "turn":0, "pos_x":1, "name":"grunt", "modifiers":{}, "pos_y":0}
-{"hp":"2", "turn":0, "pos_x":3, "name":"grunt", "modifiers":{}, "pos_y":2}
-{"hp":"5", "turn":0, "pos_x":3, "name":"grunt", "modifiers":{}, "pos_y":3}
-{"hp":"2", "turn":0, "pos_x":3, "name":"grunt", "modifiers":{}, "pos_y":4}
-{"hp":"5", "turn":0, "pos_x":3, "name":"grunt", "modifiers":{}, "pos_y":5}
-{"hp":"2", "turn":2, "pos_x":1, "name":"grunt", "modifiers":{}, "pos_y":1}
-{"hp":"2", "turn":2, "pos_x":2, "name":"grunt", "modifiers":{}, "pos_y":1}
-{"hp":"9", "turn":2, "pos_x":2, "name":"grunt", "modifiers":{}, "pos_y":6}
-{"hp":"9", "turn":2, "pos_x":4, "name":"grunt", "modifiers":{}, "pos_y":7}

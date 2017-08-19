@@ -1,66 +1,78 @@
-[gd_scene load_steps=16 format=1]
+[gd_scene load_steps=18 format=1]
 
 [ext_resource path="res://LevelEditor/EditorPiece.gd" type="Script" id=1]
 [ext_resource path="res://EnemyPieces/Components/EnemyCollisionArea.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Assets/Enemies/grunt_piece.png" type="Texture" id=3]
-[ext_resource path="res://Assets/Enemies/gross_piece.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Enemies/slime_piece.png" type="Texture" id=5]
-[ext_resource path="res://Assets/Enemies/griffon_piece.png" type="Texture" id=6]
-[ext_resource path="res://Assets/Enemies/spectre_piece.png" type="Texture" id=7]
-[ext_resource path="res://Assets/Enemies/harpy_piece.png" type="Texture" id=8]
-[ext_resource path="res://Assets/Enemies/dragon_piece.png" type="Texture" id=9]
-[ext_resource path="res://Assets/Enemies/werewolf_piece.png" type="Texture" id=10]
-[ext_resource path="res://Assets/Enemies/barrel_piece.png" type="Texture" id=11]
-[ext_resource path="res://EnemyPieces/Components/EnemyEffects.tscn" type="PackedScene" id=12]
-[ext_resource path="res://EnemyPieces/Components/EnemyOverlayLayers.tscn" type="PackedScene" id=13]
-[ext_resource path="res://EnemyPieces/Components/HealthDisplay.tscn" type="PackedScene" id=14]
+[ext_resource path="res://Assets/Enemies/gross_piece.png" type="Texture" id=3]
+[ext_resource path="res://Assets/Enemies/slime_piece.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Enemies/barrel_piece.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Enemies/flanker_piece.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Enemies/dragon_piece.png" type="Texture" id=7]
+[ext_resource path="res://Assets/Enemies/griffon_piece.png" type="Texture" id=8]
+[ext_resource path="res://Assets/Enemies/grunt_piece.png" type="Texture" id=9]
+[ext_resource path="res://Assets/Enemies/harpy_piece.png" type="Texture" id=10]
+[ext_resource path="res://Assets/Enemies/werewolf_piece.png" type="Texture" id=11]
+[ext_resource path="res://Assets/Enemies/spectre_piece.png" type="Texture" id=12]
+[ext_resource path="res://Assets/Enemies/boss_grunt_piece.png" type="Texture" id=13]
+[ext_resource path="res://EnemyPieces/Components/EnemyEffects.tscn" type="PackedScene" id=14]
+[ext_resource path="res://EnemyPieces/Components/EnemyOverlayLayers.tscn" type="PackedScene" id=15]
+[ext_resource path="res://EnemyPieces/Components/HealthDisplay.tscn" type="PackedScene" id=16]
 
 [sub_resource type="SpriteFrames" id=1]
 
 animations = [ {
 "frames": [ ExtResource( 3 ) ],
 "loop": true,
-"name": "grunt",
+"name": "grower",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 4 ) ],
 "loop": true,
-"name": "grower",
+"name": "slime",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 5 ) ],
 "loop": true,
-"name": "slime",
+"name": "dummy",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 6 ) ],
 "loop": true,
-"name": "drummer",
+"name": "flanker",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 7 ) ],
 "loop": true,
-"name": "spectre",
+"name": "ranged",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 8 ) ],
 "loop": true,
-"name": "fortifier",
+"name": "drummer",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 9 ) ],
 "loop": true,
-"name": "ranged",
+"name": "grunt",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 10 ) ],
 "loop": true,
-"name": "melee",
+"name": "fortifier",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 11 ) ],
 "loop": true,
-"name": "dummy",
+"name": "melee",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 12 ) ],
+"loop": true,
+"name": "spectre",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 13 ) ],
+"loop": true,
+"name": "boss_grunt",
 "speed": 5.0
 } ]
 
@@ -80,32 +92,12 @@ transform/pos = Vector2( 0, -5 )
 frames = SubResource( 1 )
 animation = "grunt"
 
-[node name="EnemyEffects" parent="." instance=ExtResource( 12 )]
+[node name="EnemyEffects" parent="." instance=ExtResource( 14 )]
 
 editor/display_folded = true
 transform/pos = Vector2( 0, -5 )
 
-[node name="DeathTouch" parent="EnemyEffects"]
-
-config/process_mode = 1
-
-[node name="FrozenParticles" parent="EnemyEffects"]
-
-config/process_mode = 1
-
-[node name="FireEffect" parent="EnemyEffects"]
-
-config/process_mode = 1
-
-[node name="CorrosiveParticles" parent="EnemyEffects"]
-
-config/process_mode = 1
-
-[node name="RabidParticles" parent="EnemyEffects"]
-
-config/process_mode = 1
-
-[node name="EnemyOverlays" parent="." instance=ExtResource( 13 )]
+[node name="EnemyOverlays" parent="." instance=ExtResource( 15 )]
 
 transform/pos = Vector2( 0, -5 )
 
@@ -113,7 +105,7 @@ transform/pos = Vector2( 0, -5 )
 
 visibility/opacity = 0.5
 
-[node name="HealthDisplay" parent="." instance=ExtResource( 14 )]
+[node name="HealthDisplay" parent="." instance=ExtResource( 16 )]
 
 
 [editable path="EnemyEffects"]

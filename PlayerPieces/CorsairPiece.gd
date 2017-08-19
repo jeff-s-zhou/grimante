@@ -26,16 +26,18 @@ func get_shoot_damage():
 
 func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
+
+func get_pull_range():
+	return get_parent().get_range(self.coords, [2, 8], "ANY", true)
 	
-func get_attack_range():
-	return get_parent().get_range(self.coords, [1, 2], "ENEMY")
-	
-func get_hook_range():
-	return get_parent().get_range(self.coords, [2, 8], "ENEMY", true)
-	
-func get_assist_hook_range():
-	return get_parent().get_range(self.coords, [2, 8], "PLAYER", true)
-	
+func get_hookshot_range():
+	var target_range = get_parent().get_range(self.coords, [3, 8], "ANY", true)
+	#get the coords of the tile right before
+	var tile_range = []
+	for coords in target_range:
+		var unit_distance = get_parent().hex_normalize(coords - self.coords)
+		tile_range.append(coords - unit_distance)
+	return tile_range
 
 func finisher_reactivate():
 	self.moves_remaining = 2
@@ -75,27 +77,22 @@ func highlight_indirect_range(movement_range):
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
 	var movement_range = get_movement_range()
-	var action_range = get_attack_range() + movement_range + get_hook_range()
+	var action_range = movement_range + get_hookshot_range() + get_pull_range()
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
 	.display_action_range()
 	highlight_indirect_range(movement_range)
-
-func _is_within_attack_range(new_coords):
-	var attack_range = get_attack_range()
-	return new_coords in attack_range
 	
-func _is_within_hook_range(new_coords):
-	var hook_range = get_hook_range()
-	return new_coords in hook_range
-	
-func _is_within_assist_hook_range(new_coords):
-	var hook_range = get_assist_hook_range()
-	return new_coords in hook_range
 	
 func _is_within_movement_range(new_coords):
 	var movement_range = get_movement_range()
 	return new_coords in movement_range
+	
+func _is_within_hookshot_range(new_coords):
+	return new_coords in get_hookshot_range()
+	
+func _is_within_pull_range(new_coords):
+	return new_coords in get_pull_range()
 
 
 func act(new_coords):
@@ -104,14 +101,14 @@ func act(new_coords):
 		move_shoot(new_coords)
 		set_coords(new_coords)
 		placed()
-	elif _is_within_hook_range(new_coords):
+	elif _is_within_hookshot_range(new_coords):
 		handle_pre_assisted()
-		hook(new_coords)
+		hookshot(new_coords)
 		placed()
-#	elif _is_within_assist_hook_range(new_coords):
-#		handle_pre_assisted()
-#		hook(new_coords)
-#		placed()
+	elif _is_within_pull_range(new_coords):
+		handle_pre_assisted()
+		pull(new_coords)
+		placed()
 	else:
 		invalid_move()
 
@@ -133,9 +130,11 @@ func move_shoot(move_coords):
 	else: #if just moving, block other shit from happening
 		var args = [move_coords, 500, true]
 		add_animation(self, "animate_move_and_hop", true, args)
+		
 
-func animate_shoot(attack_coords):
+func animate_shoot(attack_coords, delay=0.0):
 	var bullet = BULLET_PROTOTYPE.instance()
+	bullet.set_pos(get_pos())
 	get_parent().add_child(bullet)
 	var final_pos = get_parent().locations[attack_coords].get_pos()
 	var distance = (final_pos - get_pos()).length()
@@ -144,8 +143,9 @@ func animate_shoot(attack_coords):
 	var angle = get_pos().angle_to_point(final_pos)
 	bullet.set_rot(angle)
 	
-	get_node("Tween 2").interpolate_property(bullet, "transform/pos", get_pos(), final_pos, distance/speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").interpolate_property(bullet, "transform/pos", get_pos(), final_pos, distance/speed, Tween.TRANS_LINEAR, Tween.EASE_IN, delay)
 	get_node("Tween 2").start()
+	
 	yield(get_node("Tween 2"), "tween_complete")
 	emit_signal("animation_done")
 	bullet.queue_free()
@@ -173,25 +173,35 @@ func animate_retract_hook():
 	emit_signal("animation_done")
 	subtract_anim_count()
 	
-func hook(new_coords):
+func pull(new_coords):
 	add_animation(self, "animate_extend_hook", true, [self.coords, new_coords])
-	
-	var armor_or_hp
-	var target = get_parent().pieces[new_coords]
-	if target.side == "PLAYER":
-		armor_or_hp = target.armor
-	elif target.side == "ENEMY":
-		armor_or_hp = target.hp
-		
-	if armor_or_hp > 3:
-		var adjacent_coords = new_coords - get_parent().hex_normalize(new_coords - self.coords)
-		hooked(adjacent_coords)
-		add_animation(self, "animate_retract_hook", true)
-	else:
-		var adjacent_coords = self.coords + get_parent().hex_normalize(new_coords - self.coords)
-		get_parent().pieces[new_coords].hooked(adjacent_coords)
-		add_animation(self, "animate_retract_hook", true)
+	var adjacent_coords = self.coords + get_parent().hex_normalize(new_coords - self.coords)
+	get_parent().pieces[new_coords].hooked(adjacent_coords)
+	add_animation(self, "animate_retract_hook", true)
 
+
+func hookshot(new_coords):
+	var increment = get_parent().hex_normalize(new_coords - self.coords)
+	add_animation(self, "animate_extend_hook", true, [self.coords, new_coords + increment])
+	
+	#need to call this before hooked, because hooked calls set_coords
+	var attack_coords = get_shoot_coords(new_coords)
+	
+	hooked(new_coords)
+	add_animation(self, "animate_retract_hook", true)
+
+	if attack_coords != null:
+		var action = get_new_action()
+		
+		#okay. the bullet HAS to be blocking so the damage is handled at the right time
+		add_animation(self, "animate_shoot", true, [attack_coords])
+		action.add_call("attacked", [self.shoot_damage], attack_coords)
+		action.execute()
+		
+	
+	
+	
+	
 
 func predict(new_coords):
 	if _is_within_movement_range(new_coords):

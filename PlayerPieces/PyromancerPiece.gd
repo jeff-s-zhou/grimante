@@ -44,11 +44,15 @@ func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
 	
 func get_bomb_coords(new_coords):
-	var line_range = self.grid.get_line_range(self.coords, new_coords - self.coords, "ENEMY")
-	if line_range != []:
-		return line_range[0]
-	else:
-		return null
+	var bomb_coords = new_coords + Vector2(0, -2)
+	if get_parent().locations.has(bomb_coords):
+		return bomb_coords
+	return null
+#	var line_range = self.grid.get_line_range(self.coords, new_coords - self.coords, "ENEMY")
+#	if line_range != []:
+#		return line_range[0]
+#	else:
+#		return null
 
 
 func act(new_coords):
@@ -125,16 +129,11 @@ func bomb(new_coords, count=0):
 	action.add_call("attacked", [self.wildfire_damage], new_coords)
 	action.execute()
 	
-	if count < 2:
-		var nearby_enemy_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
-		var nearby_enemy_range_filtered = []
-		for coords in nearby_enemy_range:
-			if !get_parent().pieces[coords].currently_burning:
-				nearby_enemy_range_filtered.append(coords)
-		if nearby_enemy_range_filtered.size() > 0:
-			var random_index = randi() % nearby_enemy_range_filtered.size()
-			var spread_coords = nearby_enemy_range_filtered[random_index]
-			bomb(spread_coords, count + 1)
+	var surrounding_enemy_coords = get_parent().get_range(new_coords, [1, 2], "ENEMY")
+	action = get_new_action()
+	action.add_call("set_burning", [true], surrounding_enemy_coords)
+	action.execute()
+
 		
 func reset_currently_burning():
 	var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")

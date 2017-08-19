@@ -255,9 +255,10 @@ func animate_walk_off(coords_distance):
 	add_anim_count()
 	var speed = 300
 	var distance = get_parent().get_real_distance(coords_distance)
-	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), get_pos() + distance, distance.length()/speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	var time = distance.length()/speed
+	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), get_pos() + distance, time, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
-	get_node("Tween 2").interpolate_property(self, "visibility/opacity", 1, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").interpolate_property(self, "visibility/opacity", 1, 0, time, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween 2").start()
 	animate_short_hop_to_pos(speed, distance.length())
 	yield(get_node("Tween"), "tween_complete")

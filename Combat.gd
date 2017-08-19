@@ -652,13 +652,6 @@ func display_wave_preview():
 func player_win():
 	self.state = STATES.end
 	pause()
-#	
-#	if self.level_schematic.seamless and self.level_schematic.next_level != null:
-#		#load_in_next_wave_relative(keystone_coords)
-#		get_node("Grid").clear_board()
-#		self.level_schematic = self.level_schematic.next_level
-#		soft_reset()
-#	else:
 		
 	get_node("/root/AnimationQueue").stop()
 	
@@ -675,7 +668,7 @@ func player_win():
 	if self.level_schematic.is_sub_level():
 		get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.next_level})
 	else:
-		get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level":self.level_schematic.next_level})
+		get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level": self.level_schematic.next_level})
 	
 
 func enemy_win():
