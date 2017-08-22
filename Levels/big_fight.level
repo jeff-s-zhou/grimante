@@ -1,0 +1,29 @@
+{"hp":"4", "turn":0, "pos_x":4, "name":"grunt", "modifiers":{}, "pos_y":3}
+{"hp":"4", "turn":0, "pos_x":2, "name":"grunt", "modifiers":{}, "pos_y":2}
+{"hp":"2", "turn":0, "pos_x":4, "name":"fortifier", "modifiers":{}, "pos_y":4}
+{"hp":"2", "turn":0, "pos_x":2, "name":"fortifier", "modifiers":{}, "pos_y":3}
+{"hp":"7", "turn":0, "pos_x":3, "name":"flanker", "modifiers":{}, "pos_y":1}
+{"hp":"2", "turn":0, "pos_x":5, "name":"ranged", "modifiers":{}, "pos_y":2}
+{"hp":"2", "turn":0, "pos_x":1, "name":"ranged", "modifiers":{}, "pos_y":0}
+{"hp":"3", "turn":0, "pos_x":5, "name":"slime", "modifiers":{"Shield":"Shield"}, "pos_y":5}
+{"hp":"3", "turn":0, "pos_x":1, "name":"slime", "modifiers":{"Shield":"Shield"}, "pos_y":3}
+{"hp":"3", "turn":0, "pos_x":3, "name":"slime", "modifiers":{"Shield":"Shield"}, "pos_y":4}
+{"turn":0, "pos_x":5, "name":"assassin", "pos_y":8}
+{"turn":0, "pos_x":4, "name":"frost_knight", "pos_y":7}
+{"turn":0, "pos_x":3, "name":"cavalier", "pos_y":7}
+{"turn":0, "pos_x":1, "name":"archer", "pos_y":6}
+{"turn":0, "pos_x":2, "name":"berserker", "pos_y":6}
+{"hp":"4", "turn":1, "pos_x":3, "name":"ranged", "modifiers":{}, "pos_y":3}
+{"hp":"2", "turn":1, "pos_x":6, "name":"ranged", "modifiers":{}, "pos_y":4}
+{"hp":"1", "turn":1, "pos_x":6, "name":"grunt", "modifiers":{}, "pos_y":5}
+{"hp":"1", "turn":1, "pos_x":0, "name":"grunt", "modifiers":{}, "pos_y":2}
+{"hp":"2", "turn":1, "pos_x":0, "name":"ranged", "modifiers":{}, "pos_y":1}
+{"hp":"1", "turn":3, "pos_x":3, "name":"flanker", "modifiers":{}, "pos_y":2}
+{"hp":"1", "turn":3, "pos_x":5, "name":"ranged", "modifiers":{}, "pos_y":4}
+{"hp":"1", "turn":3, "pos_x":1, "name":"ranged", "modifiers":{}, "pos_y":2}
+{"hp":"3", "turn":3, "pos_x":2, "name":"ranged", "modifiers":{"Shield":"Shield"}, "pos_y":4}
+{"hp":"3", "turn":3, "pos_x":4, "name":"ranged", "modifiers":{"Shield":"Shield"}, "pos_y":5}
+{"hp":"1", "turn":5, "pos_x":1, "name":"slime", "modifiers":{}, "pos_y":3}
+{"hp":"1", "turn":5, "pos_x":2, "name":"slime", "modifiers":{}, "pos_y":5}
+{"hp":"1", "turn":5, "pos_x":5, "name":"slime", "modifiers":{}, "pos_y":6}
+{"hp":"1", "turn":5, "pos_x":4, "name":"slime", "modifiers":{"Shield":"Shield"}, "pos_y":4}

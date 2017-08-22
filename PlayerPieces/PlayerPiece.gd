@@ -95,6 +95,7 @@ func subtract_anim_count():
 func set_shield(flag):
 	if self.shielded != flag:
 		self.shielded = flag
+		print("calling the set shield animation here?")
 		add_animation(self, "animate_set_shield", false, [flag])
 
 
@@ -115,6 +116,7 @@ func get_assist_bonus_attack():
 func handle_pre_assisted():
 	self.AssistSystem.assist(self)
 	if self.AssistSystem.get_bonus_invulnerable():
+		print("setting shield in pre-assisted")
 		set_shield(true)
 
 	
@@ -184,6 +186,7 @@ func block_summon():
 	if !self.shielded:
 		delete_self()
 	else:
+		print("setting shield in block summon")
 		set_shield(false)
 
 	

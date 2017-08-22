@@ -1,0 +1,4 @@
+{"turn":0, "pos_x":0, "name":"corsair", "pos_y":4}
+{"hp":"4", "turn":0, "pos_x":2, "name":"grunt", "modifiers":{}, "pos_y":2}
+{"turn":0, "pos_x":5, "name":"archer", "pos_y":7}
+{"hp":"3", "turn":0, "pos_x":5, "name":"grunt", "modifiers":{}, "pos_y":4}

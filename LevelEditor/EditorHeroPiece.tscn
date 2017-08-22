@@ -1,0 +1,80 @@
+[gd_scene load_steps=13 format=1]
+
+[ext_resource path="res://LevelEditor/EditorHeroPiece.gd" type="Script" id=1]
+[ext_resource path="res://Assets/Allies/cavalier_piece.png" type="Texture" id=2]
+[ext_resource path="res://Assets/Allies/berserker_piece.png" type="Texture" id=3]
+[ext_resource path="res://Assets/Allies/archer_piece.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Allies/stormdancer_piece.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Allies/pyromancer_piece.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Allies/saint_piece.png" type="Texture" id=7]
+[ext_resource path="res://Assets/Allies/corsair_piece.png" type="Texture" id=8]
+[ext_resource path="res://Assets/Allies/frost_knight_piece.png" type="Texture" id=9]
+[ext_resource path="res://Assets/Allies/assassin_piece.png" type="Texture" id=10]
+[ext_resource path="res://PlayerPieces/Components/PlayerCollisionArea.tscn" type="PackedScene" id=11]
+
+[sub_resource type="SpriteFrames" id=1]
+
+animations = [ {
+"frames": [ ExtResource( 2 ) ],
+"loop": true,
+"name": "cavalier",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 3 ) ],
+"loop": true,
+"name": "berserker",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "archer",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 5 ) ],
+"loop": true,
+"name": "stormdancer",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 6 ) ],
+"loop": true,
+"name": "pyromancer",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 7 ) ],
+"loop": true,
+"name": "saint",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 8 ) ],
+"loop": true,
+"name": "corsair",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 9 ) ],
+"loop": true,
+"name": "frost_knight",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 10 ) ],
+"loop": true,
+"name": "assassin",
+"speed": 5.0
+} ]
+
+[node name="EditorHeroPiece" type="KinematicBody2D"]
+
+input/pickable = false
+collision/layers = 1
+collision/mask = 1
+collision/margin = 0.08
+script/script = ExtResource( 1 )
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+
+transform/pos = Vector2( 0, -5 )
+frames = SubResource( 1 )
+animation = "berserker"
+
+[node name="CollisionArea" parent="." instance=ExtResource( 11 )]
+
+

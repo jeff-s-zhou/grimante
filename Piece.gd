@@ -302,13 +302,13 @@ func receive_shove(distance):
 	#will land on something
 	elif get_parent().pieces.has(new_coords):
 		add_animation(self, "animate_move_and_hop", true, [new_coords, 300])
-		var success = get_parent().pieces[new_coords].smashed(self)
-			
-		if success: #if the piece wasn't shielded or this piece is poisonous
-			print("smashed an enemy!")
-			set_coords(new_coords)
-		else:
+		var action = get_new_action()
+		action.add_call("smashed", [self], [new_coords])
+		action.execute()
+		if get_parent().pieces.has(new_coords): #leap backwards if something's still there
 			add_animation(self, "animate_move_and_hop", false, [self.coords, 300, false])
+		else: #means this piece can move to the tile
+			set_coords(new_coords)
 
 	#otherwise just move forward
 	else:
@@ -318,10 +318,10 @@ func receive_shove(distance):
 
 func smashed(attacker):
 	if !self.shielded or attacker.is_deadly():
-		print("smashed in smashed")
-		delete_self(true)
+		delete_self()
 		return true
 	else:
+		print("setting shield in smashed")
 		set_shield(false)
 		return false
 

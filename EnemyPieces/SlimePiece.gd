@@ -5,7 +5,7 @@ extends "EnemyPiece.gd"
 # var b="textvar"
 
 var max_hp = 5
-var DESCRIPTION = "The Slime reduces the movement of all adjacent Heroes to 1."
+var DESCRIPTION = "While alive, reduces adjacent Heroes movement to 1."
 
 func initialize(max_hp, modifiers, prototype):
 	.initialize("Slime", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, TYPES.attack)

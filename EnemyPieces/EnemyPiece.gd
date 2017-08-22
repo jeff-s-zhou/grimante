@@ -29,8 +29,7 @@ var cloaked = false
 var predator = false
 var corrosive = false
 
-var currently_burning = false
-var burning = false
+var bleeding = false
 var frozen = false
 var silenced = false
 var stunned = false
@@ -181,9 +180,6 @@ func hovered():
 	get_node("Timer").set_wait_time(0.01)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
-
-	print("hovering over an enemy?")
-	print(self.action_highlighted)
 	if self.action_highlighted:
 		get_node("Physicals/EnemyOverlays/White").show()
 		self.grid.predict(self.coords)
@@ -192,7 +188,6 @@ func hovered():
 func unhovered():
 	get_node("Physicals/EnemyOverlays/White").hide()
 	if self.action_highlighted and self.grid.selected != null:
-		print("unhovering in enemy")
 		self.grid.reset_prediction()
 
 #when another unit is able to move to this location, it calls this function
@@ -455,15 +450,23 @@ func animate_set_predator(flag):
 	get_node("Physicals/EnemyEffects/RabidParticles").set_emitting(flag)
 
 
-func set_burning(flag):
+func set_bleeding(flag):
 	if flag and !self.shielded:
-		self.burning = true
-		self.currently_burning = true
-		set_frozen(false)
-		add_animation(self,"animate_fire", true)
+		self.bleeding = true
+		add_animation(self,"animate_bleeding", false)
 	else:
-		self.burning = false
-		add_animation(self,"animate_burning_hide", false)
+		self.bleeding = false
+		add_animation(self,"animate_bleeding_hide", false)
+		
+func animate_bleeding():
+	add_anim_count()
+	get_node("Physicals/EnemyEffects/BurningEffect").show()
+	subtract_anim_count()
+	
+func animate_bleeding_hide():
+	add_anim_count()
+	get_node("Physicals/EnemyEffects/BurningEffect").hide()
+	subtract_anim_count()
 		
 func animate_fire():
 	add_anim_count()
@@ -472,7 +475,7 @@ func animate_fire():
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
 	get_node("Physicals/EnemyEffects/FireEffect").set_emitting(false)
-	get_node("Physicals/EnemyEffects/BurningEffect").show()
+	
 	emit_signal("animation_done")
 	subtract_anim_count()
 	
@@ -480,7 +483,6 @@ func animate_fire():
 func set_frozen(flag):
 	if flag and !self.shielded:
 		self.frozen = true
-		set_burning(false)
 		set_stunned(true)
 		add_animation(self,"animate_freeze", false)
 		
@@ -711,10 +713,6 @@ func turn_start():
 #called at the start of enemy turn, after checking for aura effects
 func turn_update():
 	set_z(0)
-	if self.burning:
-		var action = get_new_action()
-		action.add_call("attacked", [1], self.coords)
-		action.execute()
 	turn_update_helper()
 	reset_auras()
 	
@@ -724,16 +722,16 @@ func turn_update():
 
 #called after all pieces finish moving
 func turn_attack_update():
+	if self.bleeding:
+		var action = get_new_action()
+		action.add_call("attacked", [1], self.coords)
+		action.execute()
+	
 	if self.frozen:
 		set_frozen(false)
 	
 	if self.stunned:
 		set_stunned(false)
-	
-	var adjacent_players_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
-	if adjacent_players_range != [] and self.predator:
-		heal(2)
-		set_predator(false)
 
 
 #this is written so we can easily add more stuff to the end of the turn_update before executing the animation_sequence
@@ -780,9 +778,9 @@ func summon_buff(health, modifiers):
 func deathrattle():
 	if self.frozen and self.hp == 0:
 		var neighbor_coords_range = get_parent().get_range(self.coords, [1,2], "ENEMY")
-		for coords in neighbor_coords_range:
-			var neighbor = get_parent().pieces[coords]
-			neighbor.attacked(2)
+		var action = get_new_action()
+		action.add_call("attacked", [2], neighbor_coords_range)
+		action.execute()
 			
 func queue_free():
 	if is_in_group("enemy_pieces"):

@@ -29,6 +29,7 @@ signal deployed
 signal animation_done
 
 func _ready():
+	print("entering combat")
 	get_node("/root/AnimationQueue").reset()
 	get_node("/root/global").load_state()
 	get_node("Grid").set_pos(Vector2(73, 270))
@@ -276,9 +277,7 @@ func initialize_piece(piece, on_bar=false, key=null):
 
 func handle_piece_placed():
 	if self.tutorial != null:
-		print("handling piece placed?")
 		if self.tutorial.has_forced_action_result(self.turn_count):
-			print("handling forced action result")
 			pause()
 			if get_node("/root/AnimationQueue").is_animating():
 				yield(get_node("/root/AnimationQueue"), "animations_finished")
@@ -324,7 +323,6 @@ func initialize_enemy_piece(coords, prototype, health, modifiers, animation_sequ
 			
 
 func end_turn():
-	print("ending turn")
 	self.state = STATES.transitioning
 	get_node("ControlBar/EndTurnButton").set_disabled(true)
 	
@@ -446,6 +444,7 @@ func computer_input(event):
 			if get_node("/root/AnimationQueue").is_animating():
 				yield(get_node("/root/AnimationQueue"), "animations_finished")
 			get_node("/root/AnimationQueue").stop()
+			print("debug level skip")
 			get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.next_level})
 			
 			
@@ -481,7 +480,8 @@ func computer_input(event):
 func _process(delta):
 	get_node('FpsLabel').set_text(str(OS.get_frames_per_second()))
 	
-	if self.state_manager.check_player_win(): 
+	#only actively check during play phase, we manually check at end of enemy phase
+	if self.state == STATES.player_turn and self.state_manager.check_player_win(): 
 		player_win()
 	elif self.state == STATES.enemy_turn:
 		enemy_phase()
@@ -491,7 +491,6 @@ func _process(delta):
 		
 		
 func enemy_phase():
-	print("in enemy phase???")
 	if self.tutorial != null and self.tutorial.has_enemy_turn_start_rule(get_turn_count()):
 		self.tutorial.display_enemy_turn_start_rule(get_turn_count())
 		pause()
@@ -535,9 +534,13 @@ func enemy_phase():
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
 	
-	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
-	if self.state_manager.check_enemy_win(self.turn_count): #logic would change based on game type
+	if self.state_manager.check_player_win(): 
+		player_win()
+		return
+
+	elif self.state_manager.check_enemy_win(self.turn_count): #logic would change based on game type
 		enemy_win()
+		return
 	
 	if self.tutorial != null and self.tutorial.has_enemy_turn_end_rule(get_turn_count()):
 		self.tutorial.display_enemy_turn_end_rule(get_turn_count())
@@ -675,11 +678,6 @@ func enemy_win():
 	self.state = STATES.end
 	pause()
 	if self.level_schematic.seamless:
-		#get_node("Grid").clear_board()
-		#soft_reset()
-		#clear enemies
-		#readd the first wave
-		#self.turn_count = 0
 		restart()
 	else:
 		get_node("/root/AnimationQueue").stop()
@@ -692,21 +690,10 @@ func enemy_win():
 		get_node("Timer2").set_wait_time(0.5)
 		get_node("Timer2").start()
 		yield(get_node("Timer2"), "timeout")
-		
 		get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level": self.level_schematic})
 	
 
-func next_level():
-	get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.next_level})
-
-func previous_level():
-	print("in previous level")
-	print (self.level_schematic.previous_level)
-	get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.previous_level})
-
-
 func damage_defenses():
-	print("caught damage defenses")
 	enemy_win()
 		
 func display_overlay(unit_name):

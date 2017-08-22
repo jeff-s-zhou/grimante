@@ -28,7 +28,11 @@ func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
 
 func get_pull_range():
-	return get_parent().get_range(self.coords, [2, 8], "ANY", true)
+	var full_range = get_parent().get_range(self.coords, [1, 8], "ANY", true)
+	#janky ass way to have the full collision check, but only return [2,8]
+	if full_range != [] and full_range[0] in get_parent().get_location_range(self.coords, [1, 2]):
+		full_range.pop_front()
+	return full_range
 	
 func get_hookshot_range():
 	var target_range = get_parent().get_range(self.coords, [3, 8], "ANY", true)
@@ -39,9 +43,9 @@ func get_hookshot_range():
 		tile_range.append(coords - unit_distance)
 	return tile_range
 
-func finisher_reactivate():
+func star_reactivate():
 	self.moves_remaining = 2
-	.finisher_reactivate()
+	.star_reactivate()
 
 func turn_update():
 	self.moves_remaining = 2
@@ -101,13 +105,13 @@ func act(new_coords):
 		move_shoot(new_coords)
 		set_coords(new_coords)
 		placed()
-	elif _is_within_hookshot_range(new_coords):
-		handle_pre_assisted()
-		hookshot(new_coords)
-		placed()
 	elif _is_within_pull_range(new_coords):
 		handle_pre_assisted()
 		pull(new_coords)
+		placed()
+	elif _is_within_hookshot_range(new_coords):
+		handle_pre_assisted()
+		hookshot(new_coords)
 		placed()
 	else:
 		invalid_move()
@@ -125,6 +129,7 @@ func move_shoot(move_coords):
 		var args = [move_coords, 500, false]
 		add_animation(self, "animate_move_and_hop", false, args)
 		add_animation(self, "animate_shoot", true, [attack_coords])
+		action.add_call("set_bleeding", [true], attack_coords)
 		action.add_call("attacked", [self.shoot_damage], attack_coords)
 		action.execute()
 	else: #if just moving, block other shit from happening
@@ -195,6 +200,7 @@ func hookshot(new_coords):
 		
 		#okay. the bullet HAS to be blocking so the damage is handled at the right time
 		add_animation(self, "animate_shoot", true, [attack_coords])
+		action.add_call("set_bleeding", [true], attack_coords)
 		action.add_call("attacked", [self.shoot_damage], attack_coords)
 		action.execute()
 		

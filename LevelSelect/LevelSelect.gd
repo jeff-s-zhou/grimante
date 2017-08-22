@@ -1,4 +1,4 @@
-extends ScrollContainer
+extends Node2D
 
 # class member variables go here, for example:
 # var a = 2
@@ -17,6 +17,8 @@ func _ready():
 	
 	self.levels = get_node("/root/global").get_param("level_set")
 	
+	get_node("BackButton").connect("pressed", self, "back")
+	
 	for level in self.levels.get_levels():
 		create_new_level_button(level, y_position)
 		y_position += 100
@@ -28,9 +30,12 @@ func create_new_level_button(level, y_position):
 	level_button.initialize(level)
 	level_button.set_pos(Vector2(60, y_position))
 	level_button.connect("pressed", self, "goto_level")
-	get_node("Container").add_child(level_button)
+	add_child(level_button)
 
 	
 func goto_level(level):
 	print("going to level")
 	get_node("/root/global").goto_scene("res://Combat.tscn", {"level":level})
+	
+func back():
+	get_node("/root/global").goto_scene("res://LevelSelect/LevelSetSelect.tscn")

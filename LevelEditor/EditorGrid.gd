@@ -65,6 +65,11 @@ func add_piece(name, turn, coords, piece, hp, modifiers=null):
 	pieces[coords] = piece
 	locations[coords].set_pickable(false)
 	
+func add_hero_piece(name, turn, coords, piece):
+	add_child(piece)
+	piece.initialize(name, turn, coords)
+	pieces[coords] = piece
+	locations[coords].set_pickable(false)
 	
 func remove_piece(coords):
 	self.pieces.erase(coords)

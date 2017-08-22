@@ -12,8 +12,10 @@ func _ready():
 
 func get():
 	var tutorial = TutorialPrototype.instance()
-	var text = ["This is the Deployment Phase.", 
-	"Choose which Heroes to use and rearrange your Heroes on the highlighted tiles before the level starts.",
+	var text = ["This level is the first Battle Grande.",
+	"In Battle Grandes, you control {5} pieces.",
+	"In addition, you get access to the {Deploy Phase}.",
+	"Rearrange your Heroes on the highlighted tiles before the level starts.",
 	"Press DEPLOY when finished."]
 	add_player_start_rule(tutorial, 0, text)
 	return tutorial

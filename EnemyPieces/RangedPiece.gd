@@ -6,16 +6,16 @@ extends "EnemyPiece.gd"
 # var b="textvar"
 
 var max_hp = 5
-var DESCRIPTION = "Before moving, shoots a Blue Fireball forward. The Blue Fireball ignores Enemies and hits the first Hero in the column, reducing its Armor by 1."
+var DESCRIPTION = "Before moving, shoots a Fireball downwards if not blocked by other Enemies. The Fireball functions the same as a regular Enemy Attack."
 
 const fireball_prototype = preload("res://EnemyPieces/Components/DragonFireball.tscn")
 
 func initialize(max_hp, modifiers, prototype):
-	.initialize("Dragon", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, TYPES.attack)
+	.initialize("Fire Drake", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, TYPES.attack)
 
 func turn_start():
 	if !self.silenced:
-		var fireball_range = get_parent().get_range(self.coords, [1, 9], "PLAYER", false, [3, 4])
+		var fireball_range = get_parent().get_range(self.coords, [1, 9], "PLAYER", true, [3, 4])
 		if fireball_range != []:
 			fireball(fireball_range[0])
 

@@ -16,6 +16,15 @@ const Dummy = preload("res://EnemyPieces/DummyPiece.tscn")
 const Flanker = preload("res://EnemyPieces/FlankerPiece.tscn")
 const BossGrunt = preload("res://EnemyPieces/BossGruntPiece.tscn")
 
+const Berserker = preload("res://PlayerPieces/BerserkerPiece.tscn")
+const Archer = preload("res://PlayerPieces/ArcherPiece.tscn")
+const Cavalier = preload("res://PlayerPieces/CavalierPiece.tscn")
+const Assassin = preload("res://PlayerPieces/AssassinPiece.tscn")
+const FrostKnight = preload("res://PlayerPieces/FrostKnightPiece.tscn")
+const Corsair = preload("res://PlayerPieces/CorsairPiece.tscn")
+const Stormdancer = preload("res://PlayerPieces/StormdancerPiece.tscn")
+const Pyromancer = preload("res://PlayerPieces/PyromancerPiece.tscn")
+const Saint = preload("res://PlayerPieces/SaintPiece.tscn")
 
 var end_conditions = {"Defend":0, "Escort":1, "Timed":2, "Sandbox":3}
 
@@ -25,6 +34,9 @@ var enemy_modifiers = {"Poisonous":"Poisonous", "Shield":"Shield", "Cloaked":"Cl
 #used in the level editor
 var enemy_roster = {"dummy":Dummy, "grunt":Grunt, "fortifier":Fortifier, "grower":Grower, "drummer":Drummer, 
 "melee":Melee, "ranged":Ranged, "slime":Slime, "spectre":Spectre, "flanker":Flanker, "boss_grunt":BossGrunt}
+
+var hero_roster = {"berserker":Berserker, "cavalier":Cavalier, "archer":Archer, "assassin":Assassin, "frost_knight":FrostKnight,
+"corsair":Corsair, "stormdancer":Stormdancer, "pyromancer":Pyromancer, "saint":Saint}
 
 const y_coords_offsets = [0, 0, 1, 1, 2, 2, 3]
 

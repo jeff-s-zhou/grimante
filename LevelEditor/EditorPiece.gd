@@ -15,6 +15,8 @@ var coords
 
 var turn
 
+var is_hero = false
+
 var STATES = {"bar":0, "instanced":1}
 
 var state = null
@@ -38,6 +40,10 @@ func initialize_on_bar(prototype_name):
 	
 func is_targetable():
 	return true
+	
+	
+func set_targetable(flag):
+	get_node("CollisionArea").set_monitorable(flag)
 	
 		
 func initialize(name, turn, coords, hp, modifiers=null):

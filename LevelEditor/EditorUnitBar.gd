@@ -6,6 +6,8 @@ extends Node2D
 
 var editor_piece_prototype = preload("res://LevelEditor/EditorPiece.tscn")
 
+var enemies = []
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
@@ -15,7 +17,19 @@ func _ready():
 	for prototype_name in roster.keys():
 		var editor_piece = editor_piece_prototype.instance()
 		add_child(editor_piece)
+		enemies.append(editor_piece)
 		editor_piece.initialize_on_bar(prototype_name)
 		editor_piece.set_pos(Vector2(x_pos, 34))
 		x_pos += 110
+		
+		
+func hide():
+	for enemy in enemies:
+		enemy.set_targetable(false)
+	.hide()
+
+func show():
+	for enemy in enemies:
+		enemy.set_targetable(true)
+	.show()
 		

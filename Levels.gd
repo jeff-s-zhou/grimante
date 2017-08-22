@@ -25,9 +25,12 @@ const Corsair = preload("res://PlayerPieces/CorsairPiece.tscn")
 
 const Crusader = preload("res://PlayerPieces/CrusaderPiece.tscn")
 
-var enemy_roster = load("res://constants.gd").new().enemy_roster
+var constants = load("res://constants.gd").new()
+var enemy_roster = constants.enemy_roster
+
+var hero_roster =constants.hero_roster
 #
-var enemy_modifiers = load("res://constants.gd").new().enemy_modifiers
+var enemy_modifiers = constants.enemy_modifiers
 var shield = enemy_modifiers["Shield"]
 var poisonous = enemy_modifiers["Poisonous"]
 var cloaked = enemy_modifiers["Cloaked"]
@@ -38,6 +41,7 @@ var corrosive = enemy_modifiers["Corrosive"]
 
 func load_level(file_name):
 	var enemy_waves = {}
+	var heroes = {}
 	for i in range(0, 9): #TODO: don't hardcode this in, so you can have varied game lengths
 		#initialize a subdict for each wave
 		enemy_waves[i] = {}
@@ -47,24 +51,33 @@ func load_level(file_name):
 		return #Error!  We don't have a save to load
 
 	# Load the file line by line and process that dictionary to restore the object it represents
-	var current_line = {} # dict.parse_json() requires a declared dict.
 	save.open("res://Levels/" + file_name, File.READ)
 	while (!save.eof_reached()):
+		var current_line = {} # dict.parse_json() requires a declared dict.
 		current_line.parse_json(save.get_line())
+		if current_line.has("hp"): #is an enemy
 		# First we need to create the object and add it to the tree and set its position.
-		var name = current_line["name"]
-		var coords = Vector2(int(current_line["pos_x"]), int(current_line["pos_y"]))
-		var hp = int(current_line["hp"])
-		var modifiers = current_line["modifiers"]
-		var turn = int(current_line["turn"])
-		
-		var prototype = self.enemy_roster[name]
-		
-		var enemy_wave = enemy_waves[turn]
-		enemy_wave[coords] = make(prototype, hp, modifiers)
+			var name = current_line["name"]
+			var coords = Vector2(int(current_line["pos_x"]), int(current_line["pos_y"]))
+			var hp = int(current_line["hp"])
+			var modifiers = current_line["modifiers"]
+			var turn = int(current_line["turn"])
+			
+			var prototype = self.enemy_roster[name]
+			
+			var enemy_wave = enemy_waves[turn]
+			enemy_wave[coords] = make(prototype, hp, modifiers)
+		else:
+			var name = current_line["name"]
+			var coords = Vector2(int(current_line["pos_x"]), int(current_line["pos_y"]))
+			var prototype = self.hero_roster[name]
+			heroes[coords] = prototype
 	save.close()
 	
-	return enemy_waves
+	if heroes.empty():
+		return enemy_waves # backwards compatibility with the old levels format
+	else:
+		return [enemy_waves, heroes]
 
 func make(prototype, hp, modifiers=null):
 	return {"prototype": prototype, "hp": hp, "modifiers":modifiers}
@@ -97,38 +110,28 @@ var set3 = LevelSet.new("Third",
 [assassin(), sludge(), star_power(), seraph(), sludge_lord()])
 
 var set4 = LevelSet.new("Fourth",
-[frost_knight(), swamp()])
+[frost_knight(), frost_knight_drive(), wyvern(), wyvern2(), shield(), big_fight()])
 
-var level_sets = [set, set2, set3]
+var set5 = LevelSet.new("Fifth",
+[corsair_trials(), corsair_drive()])
+
+var level_sets = [set, set2, set3, set4, set5]
 
 #free levels that I think are still good
 
 #defuse_the_domb(), double_time(), spoopy_ghosts(), minesweeper()
 
-#var list = [berserker_part1(), berserker_part2(), cavalier(), dead_or_alive(), reinforcements(),
-#archer(), offsides(), tick_tock(), flying_solo(), assassin(), deploy(), mutation(),
-#rising_tides(), inspire(), swamp(), stormdancer(), double_time(), defuse_the_bomb(),
-#spoopy_ghosts(), pyromancer(), minesweeper(), star_power(), corsair(), frost_knight(),
-#howl(), howl2(), saint(), corrosion()]
-	
 func get_level_sets():
 	return level_sets
-
-func sandbox_enemies():
-	var enemies = {0:{Vector2(3, 4): make(Grunt, 5, [shield])}}
-	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
 	
-func sandbox_enemies2():
-	var enemies = load_level("first_steps.level")
-	return EnemyWrappers.FiniteCuratedWrapper.new(enemies)
-	
-func sandbox():  
-	var flags = ["no_inspire"]
+func sandbox(): 
+	var flags = ["no_inspire", "bonus_star"]
 	var extras1 = {"free_deploy":false, "flags":flags}
-	var allies1 = {Vector2(0, 3): Archer, 3: Berserker}
-
-	return LevelTypes.Timed.new("", allies1, sandbox_enemies(), 4, null, extras1) 
-
+	var raw_enemies = {0:{Vector2(3, 4): make(Grunt, 4)}}
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var heroes = {3: Corsair} 
+#
+	return LevelTypes.Timed.new("", heroes, enemies, 4, null, extras1) 
 
 func tutorial1():
 	var allies = {2: Cavalier, 4:Berserker} 
@@ -306,7 +309,7 @@ func sludge():
 	var allies = {1: Cavalier, 2:Archer, 4:Assassin, 5: Berserker}
 	var raw_enemies = load_level("sludge.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var flags = ["no_inspire", "no_fifth"]
+	var flags = ["no_inspire", "no_fifth", "no_stars"]
 	var extras = {"flags":flags, "free_deploy":false}
 	return LevelTypes.Timed.new("A Sticky Situation", allies, enemies, 5, null, extras)
 
@@ -367,7 +370,88 @@ func frost_knight():
 	var challenge6 = LevelTypes.Timed.new("", allies6, enemies6, 1, null, extras6)
 	return LevelTypes.Trial.new("Frost Knight Trials", [challenge1, challenge2, challenge3, challenge4, challenge5, challenge6])
 	
+
+func frost_knight_drive():
+	var pieces = load_level("frost_knight_drive.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_fifth", "no_inspire"]
+	var extras = {"flags":flags, "free_deploy":false}
+	return LevelTypes.Timed.new("Frost Knight Drive", allies, enemies, 5, null, extras)
 	
+func wyvern():
+	var pieces = load_level("wyvern.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_fifth", "no_inspire"]
+	var extras = {"flags":flags, "free_deploy":false}
+	return LevelTypes.Timed.new("Wyverns", allies, enemies, 5, null, extras)
+	
+func wyvern2():
+	var pieces = load_level("wyvern2.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_fifth", "no_inspire"]
+	var extras = {"flags":flags, "free_deploy":false}
+	return LevelTypes.Timed.new("Castles", allies, enemies, 3, null, extras)
+	
+	
+func shield():
+	var pieces = load_level("shield.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_fifth", "no_inspire"]
+	var extras = {"flags":flags, "free_deploy":false}
+	return LevelTypes.Timed.new("Shield", allies, enemies, 6, null, extras)
+	
+func big_fight():
+	var pieces = load_level("big_fight.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_fifth", "no_inspire"]
+	var tutorial = load("res://Tutorials/big_fight.gd").new()
+	var tutorial_func = funcref(tutorial, "get")
+	var extras = {"flags":flags, "tutorial":tutorial_func}
+	return LevelTypes.Timed.new("Big Fight", allies, enemies, 7, null, extras)
+	
+func corsair_trials():
+	var tutorial = load("res://Tutorials/corsair_trial.gd").new()
+	var flags = ["no_stars", "no_inspire", "hints"]
+	var challenges = []
+	for i in range(6, 7):
+		var trial_hint = funcref(tutorial, "get_trial" + str(i) + "_hints")
+		var extras = {"free_deploy":false, "tutorial":trial_hint, "flags":flags}
+		var pieces = load_level("corsair_trial" + str(i) +".level")
+		var enemies = EnemyWrappers.FiniteCuratedWrapper.new(pieces[0])
+		var heroes = pieces[1]
+		var challenge = LevelTypes.Timed.new("", heroes, enemies, 1, null, extras) 
+		challenges.append(challenge)
+	return LevelTypes.Trial.new("Corsair Trials", challenges)
+	
+func football():
+	var pieces = load_level("football.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_fifth", "no_inspire"]
+	var extras = {"flags":flags, "free_deploy":false}
+	return LevelTypes.Timed.new("Football", allies, enemies, 3, null, extras)
+	
+	
+func corsair_drive():
+	var pieces = load_level("corsair_drive.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_fifth", "no_inspire"]
+	var extras = {"flags":flags, "free_deploy":false}
+	return LevelTypes.Timed.new("Corsair Drive", allies, enemies, 3, null, extras)
+
 func swamp():
 	var allies = {1:Archer, 2: FrostKnight, 3:Berserker, 4:Cavalier, 5: Assassin}
 	var raw_enemies = load_level("swamp.level")
@@ -447,19 +531,6 @@ func minesweeper():
 	return LevelTypes.Timed.new("Minesweeper", allies, enemies, 7, null, extras)
 
 
-
-func corsair():
-	var allies = {3: Corsair}
-	var raw_enemies = load_level("corsair.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var tutorial = load("res://Tutorials/corsair.gd").new()
-	var tutorial_func = funcref(tutorial, "get")
-	var flags = ["no_stars"]
-	var reinforcements = {4: {Vector2(3, 5): Berserker, Vector2(2, 6): Archer}}
-	var extras = {"free_deploy":false, "reinforcements":reinforcements, "tutorial": tutorial_func, "flags":flags}
-	return LevelTypes.Timed.new("Corsair", allies, enemies, 4, null, extras)
-
-
 func howl():
 	var allies = {1: Archer, 2: Corsair, 4: Berserker, 5: FrostKnight}
 	var raw_enemies = load_level("howl.level")
@@ -472,39 +543,3 @@ func howl():
 #	var raw_enemies = load_level("howl2.level")
 #	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 #	return LevelTypes.Timed.new("Howl 2", allies, enemies, 6, null)
-
-
-func saint():
-	var allies = {Vector2(2, 4): Cavalier, Vector2(3, 4): Saint}
-	var raw_enemies = load_level("saint.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var tutorial = load("res://Tutorials/saint.gd").new()
-	var tutorial_func = funcref(tutorial, "get")
-	var reinforcements = {4: {2: Berserker, 1: Archer, 3: Assassin}}
-	var flags = ["no_stars"]
-	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags, "reinforcements":reinforcements}
-	return LevelTypes.Timed.new("Saint", allies, enemies, 4, null, extras)
-
-
-func corrosion():
-	var allies = {1: Berserker, 2: Archer, 4: Cavalier, 5: Saint}
-	var raw_enemies = load_level("corrosion.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	return LevelTypes.Timed.new("Corrosion", allies, enemies, 7, null)
-
-
-func shifting_sands():
-	var allies = {3: Berserker}
-	var raw_enemies = load_level("shifting_sands.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var tutorial = load("res://Tutorials/shifting_sands.gd").new()
-	var tutorial_func = funcref(tutorial, "get")
-	var extras = {"tutorial": tutorial_func, "free_deploy": false, "shifting_sands":{Vector2(3, 5): 4}}
-	return LevelTypes.Timed.new("Shifting Sands", allies, enemies, 7, null, extras)
-
-func shifting_sands2():
-	var allies = {1: FrostKnight, 2: Corsair, 4: Cavalier, 5: Saint}
-	var raw_enemies = load_level("shifting_sands2.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var extras = {"shifting_sands":{Vector2(3, 5): 1, Vector2(5, 5): 3}}#, Vector2(1, 3): 4}}
-	return LevelTypes.Timed.new("We're In Deep Shift!", allies, enemies, 7, null, extras)

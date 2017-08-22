@@ -12,13 +12,13 @@ func initialize(max_hp, modifiers, prototype):
 	.initialize("Dart Bat", DESCRIPTION, Vector2(0, 3), max_hp, modifiers, prototype, TYPES.selfish)
 
 func move_attack(distance):
-	#leap the respective distance. If it kills, move to the tile. If it doesn't, leap back.
 	
 	var new_coords = self.coords + distance
 	for i in range(0, 3):
 		#successfully walked off
 		if !get_parent().locations.has(new_coords):
 			walk_off(distance)
+			break
 			
 		#isn't blocked
 		elif !get_parent().pieces.has(new_coords):

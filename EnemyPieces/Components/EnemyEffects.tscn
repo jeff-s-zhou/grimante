@@ -1,8 +1,8 @@
 [gd_scene load_steps=12 format=1]
 
 [ext_resource path="res://EnemyPieces/Components/EnemyEffects.gd" type="Script" id=1]
-[ext_resource path="res://Assets/effects/burn.png" type="Texture" id=2]
-[ext_resource path="res://Assets/effects/frozen.png" type="Texture" id=3]
+[ext_resource path="res://Assets/effects/frozen.png" type="Texture" id=2]
+[ext_resource path="res://Assets/effects/burn.png" type="Texture" id=3]
 [ext_resource path="res://EnemyPieces/Components/DeathTouch.tscn" type="PackedScene" id=4]
 [ext_resource path="res://EnemyPieces/Components/FrozenParticles.tscn" type="PackedScene" id=5]
 [ext_resource path="res://EnemyPieces/Components/FireEffect.tscn" type="PackedScene" id=6]
@@ -54,17 +54,17 @@ playback/speed = 1.0
 blend_times = [  ]
 autoplay = "autorun"
 
-[node name="BurningEffect" type="Sprite" parent="."]
-
-visibility/visible = false
-visibility/opacity = 0.3
-transform/pos = Vector2( 0, -2 )
-texture = ExtResource( 2 )
-
 [node name="FrozenEffect" type="Sprite" parent="."]
 
 visibility/visible = false
 visibility/opacity = 0.6
+transform/pos = Vector2( 0, -2 )
+texture = ExtResource( 2 )
+
+[node name="BurningEffect" type="Sprite" parent="."]
+
+visibility/visible = false
+visibility/opacity = 0.3
 transform/pos = Vector2( 0, -2 )
 texture = ExtResource( 3 )
 

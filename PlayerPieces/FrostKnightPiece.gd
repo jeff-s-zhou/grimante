@@ -10,6 +10,7 @@ var freeze_damage = DEFAULT_FREEZE_DAMAGE setget , get_freeze_damage
 var shield_bash_damage = DEFAULT_SHIELD_BASH_DAMAGE setget , get_shield_bash_damage
 
 func _ready():
+	print("in the ready call?")
 	set_shield(DEFAULT_SHIELD)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
@@ -111,7 +112,7 @@ func shield_bash(new_coords):
 	
 	if target.side == "ENEMY":
 		print("freezing?")
-		var action = get_new_action()
+		var action = get_new_action(false)
 		action.add_call("set_frozen", [true], new_coords)
 		action.execute()
 	
@@ -121,7 +122,7 @@ func shield_bash(new_coords):
 	
 	#if we moved, freeze shit
 	if self.coords != new_coords - unit_distance:
-		frostbringer(new_coords)
+		frostbringer(new_coords - unit_distance)
 		set_coords(new_coords - unit_distance)
 	
 	
@@ -129,7 +130,7 @@ func frostbringer(new_coords):
 	#get enemies to the left and right
 	add_animation(self, "animate_frostbringer", false, [new_coords])
 	var horizontal_range = get_horizontal_range(new_coords)
-	var action = get_new_action()
+	var action = get_new_action(false)
 	action.add_call("set_frozen", [true], horizontal_range)
 	action.execute()
 	

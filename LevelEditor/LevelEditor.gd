@@ -6,6 +6,8 @@ extends Node2D
 
 var editor_piece_prototype = preload("res://LevelEditor/EditorPiece.tscn")
 
+var editor_hero_piece_prototype = preload("res://LevelEditor/EditorHeroPiece.tscn")
+
 var editor_grid_prototype = preload("res://LevelEditor/EditorGrid.tscn")
 
 var current_editor_grid
@@ -52,8 +54,12 @@ func input_event(event):
 	elif get_node("InputHandler").is_unpress(event):
 		self.original_mouse_pos = null
 	if self.original_mouse_pos != null:
-		get_node("EditorUnitBar").translate(Vector2(event.pos.x - self.original_mouse_pos.x, 0))
+		if get_node("EditorUnitBar").is_visible():
+			get_node("EditorUnitBar").translate(Vector2(event.pos.x - self.original_mouse_pos.x, 0))
+		else:
+			get_node("EditorHeroBar").translate(Vector2(event.pos.x - self.original_mouse_pos.x, 0))
 		self.original_mouse_pos = event.pos
+			
 	
 func _input(event):
 	if get_node("InputHandler").is_select(event):
@@ -76,6 +82,13 @@ func _input(event):
 	elif event.is_action("test_action3") and event.is_pressed():
 		reset_grids()
 		
+	elif event.is_action("toggle") and event.is_pressed():
+		if get_node("EditorUnitBar").is_visible():
+			get_node("EditorUnitBar").hide()
+			get_node("EditorHeroBar").show()
+		else:
+			get_node("EditorUnitBar").show()
+			get_node("EditorHeroBar").hide()
 
 func set_target(target):
 	self.target = target
@@ -84,15 +97,20 @@ func set_target(target):
 			self.selected.move(target.coords)
 			self.selected = null
 		else:
-			get_node("PieceForm").show()
-			self.in_menu = true
-			var values = (yield(get_node("PieceForm"), "finished"))
-			if values != null: #if not cancelled
-				var hp = values[0]
-				var modifiers = values[1]
+			if self.selected.is_hero:
 				var name = self.selected.name
 				var instanced = self.selected.duplicate()
-				self.current_editor_grid.add_piece(name, self.current_turn, target.coords, instanced, hp, modifiers)
+				self.current_editor_grid.add_hero_piece(name, self.current_turn, target.coords, instanced)
+			else:
+				get_node("PieceForm").show()
+				self.in_menu = true
+				var values = (yield(get_node("PieceForm"), "finished"))
+				if values != null: #if not cancelled
+					var hp = values[0]
+					var modifiers = values[1]
+					var name = self.selected.name
+					var instanced = self.selected.duplicate()
+					self.current_editor_grid.add_piece(name, self.current_turn, target.coords, instanced, hp, modifiers)
 			
 			self.in_menu = false
 			self.selected = null
@@ -169,18 +187,25 @@ func load_level():
 		return #Error!  We don't have a save to load
 
 	# Load the file line by line and process that dictionary to restore the object it represents
-	var current_line = {} # dict.parse_json() requires a declared dict.
+	
 	save.open("res://Levels/" + file_name, File.READ)
 	while (!save.eof_reached()):
+		var current_line = {} # dict.parse_json() requires a declared dict.
 		current_line.parse_json(save.get_line())
-		# First we need to create the object and add it to the tree and set its position.
-		var new_piece = editor_piece_prototype.instance()
-		var name = current_line["name"]
-		var coords = Vector2(current_line["pos_x"],current_line["pos_y"])
-		var hp = current_line["hp"]
-		var modifiers = current_line["modifiers"]
-		var turn = current_line["turn"]
-		self.editor_grids[turn].add_piece(name, turn, coords, new_piece, hp, modifiers)
+		if current_line.has("hp"): #EnemyPiece
+			var new_piece = editor_piece_prototype.instance()
+			var name = current_line["name"]
+			var coords = Vector2(current_line["pos_x"],current_line["pos_y"])
+			var hp = current_line["hp"]
+			var modifiers = current_line["modifiers"]
+			var turn = current_line["turn"]
+			self.editor_grids[turn].add_piece(name, turn, coords, new_piece, hp, modifiers)
+		else:
+			var new_piece = editor_hero_piece_prototype.instance()
+			var name = current_line["name"]
+			var coords = Vector2(current_line["pos_x"],current_line["pos_y"])
+			var turn = current_line["turn"]
+			self.editor_grids[turn].add_hero_piece(name, turn, coords, new_piece)
 
 
 	save.close()
