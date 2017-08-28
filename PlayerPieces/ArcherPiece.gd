@@ -127,6 +127,7 @@ func piercing_arrow(new_coords):
 
 func animate_ranged_attack(new_coords):
 	add_anim_count()
+	
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var start_pos = get_parent().locations[self.coords].get_pos()
@@ -137,7 +138,7 @@ func animate_ranged_attack(new_coords):
 	var distance = get_pos().distance_to(new_position)
 	var speed = 2200
 	var time = distance/speed
-	
+	darken(0.3, 0.4)
 	get_node("Tween 2").interpolate_property(arrow, "visibility/opacity", 0, 1, 0.3, Tween.TRANS_SINE, Tween.EASE_IN)
 	
 	var offset = Vector2(0, -10)
@@ -160,6 +161,7 @@ func animate_ranged_attack(new_coords):
 	get_node("SamplePlayer 2").play("bow_hit")
 	arrow.set_opacity(0)
 	arrow.set_pos(offset)
+	lighten(0.1)
 	
 	emit_signal("animation_done")
 	subtract_anim_count()

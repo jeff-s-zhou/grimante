@@ -4,6 +4,8 @@
 
 [node name="Bullet" type="Sprite"]
 
+z/z = 46
+z/relative = false
 texture = ExtResource( 1 )
 
 

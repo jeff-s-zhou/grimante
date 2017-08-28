@@ -129,7 +129,7 @@ func sandbox():
 	var extras1 = {"free_deploy":false, "flags":flags}
 	var raw_enemies = {0:{Vector2(3, 4): make(Grunt, 4)}}
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var heroes = {3: Corsair} 
+	var heroes = {3: Stormdancer, 2: Assassin} 
 #
 	return LevelTypes.Timed.new("", heroes, enemies, 4, null, extras1) 
 

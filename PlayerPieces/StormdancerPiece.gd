@@ -114,6 +114,7 @@ func shuriken_storm(new_coords):
 func animate_spin():
 	get_node("Physicals/SpinningForm").show()
 	get_node("Physicals/AnimatedSprite").hide()
+	darken(0.3)
 	animate_jump()
 	var max_i = 18
 	for i in range(0, max_i):
@@ -125,10 +126,11 @@ func animate_spin():
 			speed = 0.15/multiplier
 		animate_spin_helper(speed)
 		yield(get_node("Tween 2"), "tween_complete")
-	
+	lighten(0.2)
 	get_node("Physicals/AnimatedSprite").show()
 	get_node("Physicals/SpinningForm").hide()
 	animate_placed()
+	
 
 	
 func animate_jump():
@@ -180,7 +182,10 @@ func throw_shurikens(attack_range, attack_range_dict):
 			add_animation(tile, "animate_lightning", false)
 			damage = self.shuriken_damage + LIGHTNING_BONUS_DAMAGE
 		add_animation(self, "animate_shuriken_helper", true, [coords, delay])
-		get_parent().pieces[coords].attacked(damage)
+		var action = get_new_action()
+		action.add_call("attacked", [damage], coords)
+		action.execute()
+		#get_parent().pieces[coords].attacked(damage)
 		delay -= (delay/1.5)
 
 func animate_shuriken_helper(attack_coords, delay):

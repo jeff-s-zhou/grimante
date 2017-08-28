@@ -40,7 +40,6 @@ func _ready():
 	
 	get_node("/root/AnimationQueue").connect("animation_count_update", self, "update_animation_count_display")
 	
-	get_node("TutorialPopup").set_pos(Vector2((get_viewport_rect().size.width)/2, -100))
 	get_node("AssistSystem").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 100))
 #
 
@@ -333,7 +332,6 @@ func end_turn():
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
 
-	get_node("TutorialTooltip").reset()
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 		player_piece.placed(true)
 		player_piece.clear_assist()
@@ -382,6 +380,7 @@ func _input(event):
 func computer_input(event):
 	#select a unit
 	if get_node("InputHandler").is_select(event):
+		instant_lighten()
 		var has_selected = get_node("Grid").selected != null
 		var hovered = get_node("CursorArea").get_piece_or_location_hovered()
 		if hovered and hovered.is_targetable():
@@ -704,6 +703,9 @@ func darken(time=0.4, amount=0.3):
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	emit_signal("animation_done")
+	
+func instant_lighten():
+	get_node("DarkenLayer").set_opacity(0)
 
 func lighten(time=0.4):
 	var amount = get_node("DarkenLayer").get_opacity()

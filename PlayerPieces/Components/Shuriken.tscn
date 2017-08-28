@@ -23,7 +23,7 @@ tracks/0/keys = {
 [node name="Shuriken" type="Node2D"]
 
 visibility/visible = false
-z/z = 50
+z/z = 46
 z/relative = false
 script/script = ExtResource( 1 )
 

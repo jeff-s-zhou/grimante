@@ -4,7 +4,8 @@
 
 [node name="ArcherArrow" type="Node2D"]
 
-z/z = 4
+z/z = 46
+z/relative = false
 
 [node name="Sprite" type="Sprite" parent="."]
 

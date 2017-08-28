@@ -72,4 +72,3 @@ transform/pos = Vector2( 0, -10 )
 
 
 [editable path="CollisionArea"]
-[editable path="Physicals/ArmorDisplay"]

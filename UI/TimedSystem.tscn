@@ -21,6 +21,7 @@ draw_bg = true
 
 [node name="TimedSystem" type="Node2D"]
 
+visibility/visible = false
 z/z = 95
 script/script = ExtResource( 1 )
 

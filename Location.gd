@@ -11,6 +11,10 @@ var raining = false
 var deployable = false
 var corpse = null
 
+var default_opacity = 0.15
+
+var highlight_opacity = 0.7
+
 var deploying_flag = false
 
 var indirect_highlighting = true
@@ -23,7 +27,7 @@ signal is_targeted(location)
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	get_node("Sprite").set_opacity(0.4)
+	get_node("Sprite").set_opacity(self.default_opacity)
 	connect("mouse_enter", self, "_mouse_entered")
 	connect("mouse_exit", self, "_mouse_exited")
 	
@@ -44,10 +48,10 @@ func set_coords(coords):
 	
 func set_targetable(flag):
 	if flag:
-		set_opacity(1)
+		set_opacity(self.highlight_opacity)
 		set_pickable(true)
 	else:
-		set_opacity(0.5)
+		set_opacity(self.default_opacity)
 		set_pickable(false)
 
 func is_targetable():
@@ -129,11 +133,11 @@ func indirect_highlight():
 func reset_highlight():
 	get_node("HighlightSprite").hide()
 	get_node("HighlightSprite").play("default")
-	get_node("Sprite").set_opacity(0.4)
+	get_node("Sprite").set_opacity(self.default_opacity)
 	
 func _mouse_entered():
 	get_node("SamplePlayer").play("tile_hover")
-	get_node("Sprite").set_opacity(1.0)
+	get_node("Sprite").set_opacity(self.highlight_opacity)
 	#we needed this in case you exited from a tile and it reset AFTER another tile called predict lol
 #	get_node("Timer").set_wait_time(0.01)
 #	get_node("Timer").start()
@@ -141,7 +145,7 @@ func _mouse_entered():
 	get_parent().predict(self.coords)
 
 func _mouse_exited():
-	get_node("Sprite").set_opacity(0.4)
+	get_node("Sprite").set_opacity(self.default_opacity)
 	if get_parent().selected != null:
 		get_parent().reset_prediction()
 	
@@ -157,7 +161,7 @@ func star_input_event(event):
 func input_event(event, has_selected):
 	get_parent().set_target(self)
 
-func external_set_opacity(value=1.0):
+func external_set_opacity(value=self.highlight_opacity):
 	get_node("Sprite").set_opacity(value)
 	
 func get_size():

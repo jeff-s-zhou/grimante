@@ -1,7 +1,7 @@
-[gd_scene load_steps=21 format=1]
+[gd_scene load_steps=19 format=1]
 
 [ext_resource path="res://Combat.gd" type="Script" id=1]
-[ext_resource path="res://Assets/Backgrounds/new_style_background.png" type="Texture" id=2]
+[ext_resource path="res://Assets/Backgrounds/new_style_background2.png" type="Texture" id=2]
 [ext_resource path="res://Grid.tscn" type="PackedScene" id=3]
 [ext_resource path="res://CursorArea.tscn" type="PackedScene" id=4]
 [ext_resource path="res://UI/PhaseShifter.tscn" type="PackedScene" id=5]
@@ -9,16 +9,14 @@
 [ext_resource path="res://UI/InvalidMoveIndicator.tscn" type="PackedScene" id=7]
 [ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=8]
 [ext_resource path="res://Assets/effects/darken_layer.png" type="Texture" id=9]
-[ext_resource path="res://UI/TutorialPopup.tscn" type="PackedScene" id=10]
-[ext_resource path="res://UI/TutorialTooltip.tscn" type="PackedScene" id=11]
-[ext_resource path="res://AssistSystem.tscn" type="PackedScene" id=12]
-[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=13]
-[ext_resource path="res://UI/ControlBar/ControlBar.tscn" type="PackedScene" id=14]
-[ext_resource path="res://UI/InfoOverlay.tscn" type="PackedScene" id=15]
-[ext_resource path="res://UI/RestartBar.tscn" type="PackedScene" id=16]
-[ext_resource path="res://Assets/Backgrounds/shadow_overlay.png" type="Texture" id=17]
-[ext_resource path="res://Assets/Backgrounds/radial_shadow_overlay.png" type="Texture" id=18]
-[ext_resource path="res://Assets/Backgrounds/light_overlay.png" type="Texture" id=19]
+[ext_resource path="res://AssistSystem.tscn" type="PackedScene" id=10]
+[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=11]
+[ext_resource path="res://UI/ControlBar/ControlBar.tscn" type="PackedScene" id=12]
+[ext_resource path="res://UI/InfoOverlay.tscn" type="PackedScene" id=13]
+[ext_resource path="res://UI/RestartBar.tscn" type="PackedScene" id=14]
+[ext_resource path="res://Assets/Backgrounds/shadow_overlay.png" type="Texture" id=15]
+[ext_resource path="res://Assets/Backgrounds/radial_shadow_overlay.png" type="Texture" id=16]
+[ext_resource path="res://Assets/Backgrounds/light_overlay.png" type="Texture" id=17]
 
 [sub_resource type="SampleLibrary" id=1]
 
@@ -35,7 +33,7 @@ script/script = ExtResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
 
-transform/pos = Vector2( 334.252, 536.085 )
+transform/pos = Vector2( 335.922, 544.935 )
 z/z = -10
 texture = ExtResource( 2 )
 
@@ -85,18 +83,10 @@ default/chorus_send = 0.0
 [node name="DarkenLayer" type="Sprite" parent="."]
 
 visibility/opacity = 0.0
-transform/pos = Vector2( 792, 540 )
-z/z = 101
+transform/pos = Vector2( 333.701, 531.649 )
+z/z = 45
+z/relative = false
 texture = ExtResource( 9 )
-
-[node name="TutorialPopup" parent="." instance=ExtResource( 10 )]
-
-visibility/opacity = 0.0
-transform/pos = Vector2( 585.636, 530.84 )
-
-[node name="TutorialTooltip" parent="." instance=ExtResource( 11 )]
-
-visibility/visible = false
 
 [node name="Timer" type="Timer" parent="."]
 
@@ -126,11 +116,11 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="AssistSystem" parent="." instance=ExtResource( 12 )]
+[node name="AssistSystem" parent="." instance=ExtResource( 10 )]
 
 transform/pos = Vector2( 42.6436, 30.4737 )
 
-[node name="InputHandler" parent="." instance=ExtResource( 13 )]
+[node name="InputHandler" parent="." instance=ExtResource( 11 )]
 
 [node name="AnimationCountLabel" type="Label" parent="."]
 
@@ -146,28 +136,30 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="ControlBar" parent="." instance=ExtResource( 14 )]
+[node name="ControlBar" parent="." instance=ExtResource( 12 )]
 
+visibility/visible = false
 transform/pos = Vector2( 0, 953 )
 z/z = 95
 
-[node name="InfoOverlay" parent="." instance=ExtResource( 15 )]
+[node name="InfoOverlay" parent="." instance=ExtResource( 13 )]
 
 visibility/visible = false
 
-[node name="RestartBar" parent="." instance=ExtResource( 16 )]
+[node name="RestartBar" parent="." instance=ExtResource( 14 )]
 
 transform/pos = Vector2( 97, 446 )
 z/z = 102
 
 [node name="ShadowOverlay" type="Light2D" parent="."]
 
+visibility/visible = false
 visibility/opacity = 0.6
 transform/pos = Vector2( 336.268, 967.378 )
 z/z = 90
 enabled = true
 editor_only = false
-texture = ExtResource( 17 )
+texture = ExtResource( 15 )
 offset = Vector2( 0, 0 )
 scale = 1.0
 color = Color( 1, 1, 1, 1 )
@@ -187,12 +179,13 @@ shadow/item_mask = 1
 
 [node name="RadialShadowOverlay" type="Light2D" parent="."]
 
+visibility/visible = false
 visibility/opacity = 0.6
 transform/pos = Vector2( 338.54, 540.756 )
 z/z = 91
 enabled = true
 editor_only = false
-texture = ExtResource( 18 )
+texture = ExtResource( 16 )
 offset = Vector2( 0, 0 )
 scale = 1.0
 color = Color( 1, 1, 1, 1 )
@@ -212,11 +205,12 @@ shadow/item_mask = 1
 
 [node name="LightOverlay" type="Light2D" parent="."]
 
+visibility/visible = false
 transform/pos = Vector2( 329.452, 290.827 )
 z/z = 92
 enabled = true
 editor_only = false
-texture = ExtResource( 19 )
+texture = ExtResource( 17 )
 offset = Vector2( 0, 0 )
 scale = 1.0
 color = Color( 1, 1, 1, 1 )

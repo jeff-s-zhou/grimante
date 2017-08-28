@@ -47,8 +47,7 @@ func _ready():
 	# Initialization here
 	get_node("CollisionArea").connect("mouse_enter", self, "hovered")
 	get_node("CollisionArea").connect("mouse_exit", self, "unhovered")
-	
-	set_process_input(true)
+
 	self.side = "PLAYER"
 	
 
@@ -91,6 +90,13 @@ func subtract_anim_count():
 	if self.debug_anim_counter == 0:
 		get_node("CollisionArea").set_pickable(true)
 	self.mid_animation = false
+	
+func darken(time, amount=0.3):
+	get_node("/root/Combat").darken(time, amount)
+	
+func lighten(time):
+	get_node("/root/Combat").lighten(time)
+	
 	
 func set_shield(flag):
 	if self.shielded != flag:
@@ -392,23 +398,25 @@ func hover_highlight():
 
 #called on mouse exiting the CollisionArea
 func unhovered():
-	get_node("Physicals/OverlayLayers/White").hide()
-	if get_parent().selected == null:
-		#print(get_name() + " is calling clearing display state in unhovered" )
-		get_parent().clear_display_state()
+	if self.state != States.DEAD:
+		get_node("Physicals/OverlayLayers/White").hide()
+		if get_parent().selected == null:
+			#print(get_name() + " is calling clearing display state in unhovered" )
+			get_parent().clear_display_state()
 
 
 
 #called when hovered over during player turn		
 func hovered():
-	get_node("Timer").set_wait_time(0.01)
-	get_node("Timer").start()
-	yield(get_node("Timer"), "timeout")
-	if !self.mid_animation:
-		hover_highlight()
-	
-	if get_parent().selected == null and self.state != States.PLACED:
-		display_action_range()
+	if self.state != States.DEAD:
+		get_node("Timer").set_wait_time(0.01)
+		get_node("Timer").start()
+		yield(get_node("Timer"), "timeout")
+		if !self.mid_animation:
+			hover_highlight()
+		
+		if get_parent().selected == null and self.state != States.PLACED:
+			display_action_range()
 
 func star_input_event(event):
 	if self.state == States.PLACED:
