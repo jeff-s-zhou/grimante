@@ -1,7 +1,9 @@
 extends "PlayerPiece.gd"
 
-const DEFAULT_SHOOT_DAMAGE = 3
-const DEFAULT_MOVEMENT_VALUE = 1
+const DEFAULT_SHOOT_DAMAGE = 1
+const DEFAULT_SLASH_DAMAGE = 2
+const UNMARKED_DAMAGE = 2
+const DEFAULT_MOVEMENT_VALUE = 2
 const DEFAULT_SHIELD = true
 const UNIT_TYPE = "Corsair"
 
@@ -10,6 +12,7 @@ var moves_remaining = 2
 var pathed_range
 
 var shoot_damage = DEFAULT_SHOOT_DAMAGE setget , get_shoot_damage
+var slash_damage = DEFAULT_SLASH_DAMAGE setget , get_slash_damage
 
 const BULLET_PROTOTYPE = preload("res://PlayerPieces/Components/Bullet.tscn")
 
@@ -23,9 +26,15 @@ func _ready():
 
 func get_shoot_damage():
 	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_SHOOT_DAMAGE
+	
+func get_slash_damage():
+	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_SLASH_DAMAGE
 
 func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
+	
+func get_melee_range():
+	return get_parent().get_radial_range(self.coords, [1, 1], "ENEMY")
 
 func get_pull_range():
 	var full_range = get_parent().get_range(self.coords, [1, 8], "ANY", true)
@@ -65,23 +74,33 @@ func emit_animated_placed():
 	emit_signal("animated_placed")
 	
 
-func get_shoot_coords(move_coords):
-	#reverse the subtraction because we're getting the range in the opposite direction
-	var line_range = self.grid.get_line_range(self.coords, self.coords - move_coords, "ENEMY")
-	if line_range != []:
-		return line_range[0]
+#have to do this manually because for prediction, we need to specifically ignore the corsair's piece
+func get_shoot_coords(new_coords, old_coords):
+	var increment = self.grid.hex_normalize(old_coords - new_coords) #going in the opposite direction
+	var current_coords = new_coords
+	#return first unit in this direction that is an enemy, ignoring the corsair
+	for i in range(0, 8):
+		current_coords += increment
+		if self.grid.locations.has(current_coords):
+			if self.grid.pieces.has(current_coords):
+				var piece = self.grid.pieces[current_coords]
+				if piece.side == "ENEMY":
+					return piece.coords
+				elif piece != self:
+					break
+	return null
 
 
 func highlight_indirect_range(movement_range):
-	for coords in movement_range:
-		if get_shoot_coords(coords) != null:
-			get_parent().locations[coords].indirect_highlight()
+	for move_coords in movement_range:
+		if get_shoot_coords(move_coords, self.coords) != null:
+			get_parent().locations[move_coords].indirect_highlight()
 	
 
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
 	var movement_range = get_movement_range()
-	var action_range = movement_range + get_hookshot_range() + get_pull_range()
+	var action_range = movement_range + get_melee_range() # get_hookshot_range() + get_pull_range()
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
 	.display_action_range()
@@ -97,31 +116,62 @@ func _is_within_hookshot_range(new_coords):
 	
 func _is_within_pull_range(new_coords):
 	return new_coords in get_pull_range()
+	
+func _is_within_melee_range(new_coords):
+	return new_coords in get_melee_range()
 
 
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
 		move_shoot(new_coords)
-		set_coords(new_coords)
 		placed()
-	elif _is_within_pull_range(new_coords):
-		handle_pre_assisted()
-		pull(new_coords)
+	elif _is_within_melee_range(new_coords):
+		slash(new_coords)
 		placed()
-	elif _is_within_hookshot_range(new_coords):
-		handle_pre_assisted()
-		hookshot(new_coords)
-		placed()
+#	elif _is_within_pull_range(new_coords):
+#		handle_pre_assisted()
+#		pull(new_coords)
+#		placed()
+#	elif _is_within_hookshot_range(new_coords):
+#		handle_pre_assisted()
+#		hookshot(new_coords)
+#		placed()
 	else:
 		invalid_move()
+		
+func slash(new_coords):
+	get_node("/root/AnimationQueue").enqueue(self, "animate_slash", true, [new_coords])
+	var action = get_new_action()
+	var damage = get_marked_damage(self.slash_damage, new_coords)
+	action.add_call("corsair_attacked", [damage], new_coords)
+	action.execute()
+	get_node("/root/AnimationQueue").enqueue(self, "animate_slash_end", true, [self.coords])
 
+func animate_slash(attack_coords):
+	var location = get_parent().locations[attack_coords]
+	var difference = 4 * (location.get_pos() - get_pos())/5
+	var new_position = location.get_pos() - difference
+	animate_move_to_pos(new_position, 450, true, Tween.TRANS_SINE, Tween.EASE_IN)
+
+func animate_slash_end(original_coords):
+	var location = get_parent().locations[original_coords]
+	var new_position = location.get_pos()
+	animate_move_to_pos(new_position, 300, true)
+
+
+func get_marked_damage(base_damage, attack_coords):
+	var damage = base_damage
+	if !self.grid.pieces[attack_coords].is_corsair_marked(): #do +2 damage to non-marked enemies
+		damage += UNMARKED_DAMAGE
+	return damage
 
 func move_shoot(move_coords):
-	var damage = self.shoot_damage
-	
 	#reverse the subtraction because we're getting the range in the opposite direction
-	var attack_coords = get_shoot_coords(move_coords)
+	var old_coords = self.coords
+	set_coords(move_coords)
+	var attack_coords = get_shoot_coords(self.coords, old_coords)
+	
 	if attack_coords != null:
 		var action = get_new_action()
 		
@@ -129,11 +179,14 @@ func move_shoot(move_coords):
 		var args = [move_coords, 500, false]
 		add_animation(self, "animate_move_and_hop", false, args)
 		add_animation(self, "animate_shoot", true, [attack_coords])
-		action.add_call("set_bleeding", [true], attack_coords)
-		action.add_call("attacked", [self.shoot_damage], attack_coords)
+		
+		
+		var damage = get_marked_damage(self.shoot_damage, attack_coords)
+		action.add_call("corsair_attacked", [damage], attack_coords)
 		action.execute()
 	else: #if just moving, block other shit from happening
 		var args = [move_coords, 500, true]
+		
 		add_animation(self, "animate_move_and_hop", true, args)
 		
 
@@ -190,7 +243,7 @@ func hookshot(new_coords):
 	add_animation(self, "animate_extend_hook", true, [self.coords, new_coords + increment])
 	
 	#need to call this before hooked, because hooked calls set_coords
-	var attack_coords = get_shoot_coords(new_coords)
+	var attack_coords = get_shoot_coords(new_coords, self.coords)
 	
 	hooked(new_coords)
 	add_animation(self, "animate_retract_hook", true)
@@ -203,23 +256,27 @@ func hookshot(new_coords):
 		action.add_call("set_bleeding", [true], attack_coords)
 		action.add_call("attacked", [self.shoot_damage], attack_coords)
 		action.execute()
-		
-	
-	
-	
-	
+
 
 func predict(new_coords):
 	if _is_within_movement_range(new_coords):
 		predict_shoot(new_coords)
+		
+	elif _is_within_melee_range(new_coords):
+		predict_melee(new_coords)
+		
+func predict_melee(attack_coords):
+	var damage = get_marked_damage(self.slash_damage, attack_coords)
+	get_parent().pieces[attack_coords].predict(damage)
 
 		
 func predict_shoot(move_coords):
 	var damage = self.shoot_damage
-	var attack_coords = get_shoot_coords(move_coords)
+	var attack_coords = get_shoot_coords(move_coords, self.coords)
 	if attack_coords != null:
 		var action = get_new_action()
-		get_parent().pieces[attack_coords].predict(self.shoot_damage, true)
+		var damage = get_marked_damage(self.shoot_damage, attack_coords)
+		get_parent().pieces[attack_coords].predict(damage, true)
 
 func cast_ultimate():
 	pass

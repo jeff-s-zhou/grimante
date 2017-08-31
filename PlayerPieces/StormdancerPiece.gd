@@ -107,7 +107,7 @@ func shuriken_storm(new_coords):
 		else:
 			attack_range_dict[coords] = false
 	if attack_range.size() > 0:
-		add_animation(self, "animate_spin", false)
+		add_animation(self, "animate_spin", true)
 		throw_shurikens(attack_range, attack_range_dict)
 	
 	
@@ -118,6 +118,8 @@ func animate_spin():
 	animate_jump()
 	var max_i = 18
 	for i in range(0, max_i):
+		if i == 7: #halfway point ish
+			emit_signal("animation_done")
 		var speed = 0
 		var multiplier = quadratic(i, max_i)
 		if multiplier == 0:
@@ -173,29 +175,27 @@ func quadratic(i, max_range):
 	
 func throw_shurikens(attack_range, attack_range_dict):
 	#attack_range.invert()
-	var delay = 0.25
-	for coords in attack_range:
-		var damage = self.shuriken_damage
-		#if true, that means enemy is on a lightning tile
-		if attack_range_dict[coords]:
-			var tile = get_parent().locations[coords]
-			add_animation(tile, "animate_lightning", false)
-			damage = self.shuriken_damage + LIGHTNING_BONUS_DAMAGE
-		add_animation(self, "animate_shuriken_helper", true, [coords, delay])
-		var action = get_new_action()
-		action.add_call("attacked", [damage], coords)
-		action.execute()
-		#get_parent().pieces[coords].attacked(damage)
-		delay -= (delay/1.5)
+	add_animation(self, "animate_throw_shurikens", true, [attack_range])
+	var action = get_new_action()
+	action.add_call("attacked", [self.shuriken_damage], attack_range)
+	action.execute()
 
-func animate_shuriken_helper(attack_coords, delay):
+#throw them all at the same time, block for one
+func animate_throw_shurikens(attack_range):
 	var shuriken = self.shuriken_prototype.instance()
 	add_child(shuriken)
-	var global_position = get_parent().locations[attack_coords].get_global_pos()
-	shuriken.animate_attack(global_position, 900, delay)
+	var first = true
+	for attack_coords in attack_range:
+		if first:
+			first = false
+		else:
+			shuriken = self.shuriken_prototype.instance()
+			add_child(shuriken)
+		var global_position = get_parent().locations[attack_coords].get_global_pos()
+		shuriken.animate_attack(global_position, 900)
 	yield(shuriken, "animation_done")
 	emit_signal("animation_done")
-
+	
 func tango(new_coords):
 	add_animation(self, "animate_shunpo", true, [new_coords])
 	var target = self.grid.pieces[new_coords]

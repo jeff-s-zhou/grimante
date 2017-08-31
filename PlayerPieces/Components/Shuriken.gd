@@ -11,11 +11,11 @@ func _ready():
 	# Initialization here
 	pass
 
-func animate_attack(global_target_pos, speed, delay):
-	delay = max(delay, 0)
-	get_node("Timer").set_wait_time(delay)
-	get_node("Timer").start()
-	yield(get_node("Timer"), "timeout")
+func animate_attack(global_target_pos, speed):
+#	delay = max(delay, 0)
+#	get_node("Timer").set_wait_time(delay)
+#	get_node("Timer").start()
+#	yield(get_node("Timer"), "timeout")
 	show()
 	
 	var global_start_pos = get_global_pos()

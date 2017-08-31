@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=1]
+[gd_scene load_steps=13 format=1]
 
 [ext_resource path="res://EnemyPieces/Components/EnemyEffects.gd" type="Script" id=1]
 [ext_resource path="res://Assets/effects/frozen.png" type="Texture" id=2]
@@ -10,6 +10,7 @@
 [ext_resource path="res://EnemyPieces/Components/RabidParticles.tscn" type="PackedScene" id=8]
 [ext_resource path="res://Assets/effects/bubble_small.png" type="Texture" id=9]
 [ext_resource path="res://Effects/StunSpiral.tscn" type="PackedScene" id=10]
+[ext_resource path="res://EnemyPieces/Components/EnemyShieldExplosionParticles.tscn" type="PackedScene" id=11]
 
 [sub_resource type="Animation" id=1]
 
@@ -103,5 +104,7 @@ texture = ExtResource( 9 )
 visibility/visible = false
 transform/pos = Vector2( 0, -30 )
 z/z = 3
+
+[node name="EnemyShieldExplosionParticles" parent="." instance=ExtResource( 11 )]
 
 

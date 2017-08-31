@@ -10,7 +10,6 @@ var freeze_damage = DEFAULT_FREEZE_DAMAGE setget , get_freeze_damage
 var shield_bash_damage = DEFAULT_SHIELD_BASH_DAMAGE setget , get_shield_bash_damage
 
 func _ready():
-	print("in the ready call?")
 	set_shield(DEFAULT_SHIELD)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE

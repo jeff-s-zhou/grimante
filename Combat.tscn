@@ -1,4 +1,4 @@
-[gd_scene load_steps=19 format=1]
+[gd_scene load_steps=17 format=1]
 
 [ext_resource path="res://Combat.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Backgrounds/new_style_background2.png" type="Texture" id=2]
@@ -14,9 +14,7 @@
 [ext_resource path="res://UI/ControlBar/ControlBar.tscn" type="PackedScene" id=12]
 [ext_resource path="res://UI/InfoOverlay.tscn" type="PackedScene" id=13]
 [ext_resource path="res://UI/RestartBar.tscn" type="PackedScene" id=14]
-[ext_resource path="res://Assets/Backgrounds/shadow_overlay.png" type="Texture" id=15]
-[ext_resource path="res://Assets/Backgrounds/radial_shadow_overlay.png" type="Texture" id=16]
-[ext_resource path="res://Assets/Backgrounds/light_overlay.png" type="Texture" id=17]
+[ext_resource path="res://Effects/Fireflies.tscn" type="PackedScene" id=15]
 
 [sub_resource type="SampleLibrary" id=1]
 
@@ -138,7 +136,6 @@ max_lines_visible = -1
 
 [node name="ControlBar" parent="." instance=ExtResource( 12 )]
 
-visibility/visible = false
 transform/pos = Vector2( 0, 953 )
 z/z = 95
 
@@ -151,81 +148,8 @@ visibility/visible = false
 transform/pos = Vector2( 97, 446 )
 z/z = 102
 
-[node name="ShadowOverlay" type="Light2D" parent="."]
+[node name="Fireflies" parent="." instance=ExtResource( 15 )]
 
-visibility/visible = false
-visibility/opacity = 0.6
-transform/pos = Vector2( 336.268, 967.378 )
-z/z = 90
-enabled = true
-editor_only = false
-texture = ExtResource( 15 )
-offset = Vector2( 0, 0 )
-scale = 1.0
-color = Color( 1, 1, 1, 1 )
-energy = 1.0
-mode = 2
-range/height = 0.0
-range/z_min = -1024
-range/z_max = 90
-range/layer_min = 0
-range/layer_max = 0
-range/item_mask = 1
-shadow/enabled = false
-shadow/color = Color( 0, 0, 0, 0 )
-shadow/buffer_size = 2048
-shadow/esm_multiplier = 80.0
-shadow/item_mask = 1
-
-[node name="RadialShadowOverlay" type="Light2D" parent="."]
-
-visibility/visible = false
-visibility/opacity = 0.6
-transform/pos = Vector2( 338.54, 540.756 )
-z/z = 91
-enabled = true
-editor_only = false
-texture = ExtResource( 16 )
-offset = Vector2( 0, 0 )
-scale = 1.0
-color = Color( 1, 1, 1, 1 )
-energy = 1.0
-mode = 2
-range/height = 0.0
-range/z_min = -1024
-range/z_max = 90
-range/layer_min = 0
-range/layer_max = 0
-range/item_mask = 1
-shadow/enabled = false
-shadow/color = Color( 0, 0, 0, 0 )
-shadow/buffer_size = 2048
-shadow/esm_multiplier = 80.0
-shadow/item_mask = 1
-
-[node name="LightOverlay" type="Light2D" parent="."]
-
-visibility/visible = false
-transform/pos = Vector2( 329.452, 290.827 )
-z/z = 92
-enabled = true
-editor_only = false
-texture = ExtResource( 17 )
-offset = Vector2( 0, 0 )
-scale = 1.0
-color = Color( 1, 1, 1, 1 )
-energy = 1.0
-mode = 0
-range/height = 0.0
-range/z_min = -1024
-range/z_max = 91
-range/layer_min = 0
-range/layer_max = 0
-range/item_mask = 1
-shadow/enabled = false
-shadow/color = Color( 0, 0, 0, 0 )
-shadow/buffer_size = 2048
-shadow/esm_multiplier = 80.0
-shadow/item_mask = 1
+transform/pos = Vector2( 318.307, 509.312 )
 
 

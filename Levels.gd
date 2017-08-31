@@ -127,9 +127,9 @@ func get_level_sets():
 func sandbox(): 
 	var flags = ["no_inspire", "bonus_star"]
 	var extras1 = {"free_deploy":false, "flags":flags}
-	var raw_enemies = {0:{Vector2(3, 4): make(Grunt, 4)}}
+	var raw_enemies = {0:{Vector2(2, 5): make(Grunt, 4, [shield]), Vector2(4, 6): make(Grunt, 3)}}
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var heroes = {3: Stormdancer, 2: Assassin} 
+	var heroes = {3: Corsair, 1: Assassin} 
 #
 	return LevelTypes.Timed.new("", heroes, enemies, 4, null, extras1) 
 
@@ -450,7 +450,25 @@ func corsair_drive():
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth", "no_inspire"]
 	var extras = {"flags":flags, "free_deploy":false}
-	return LevelTypes.Timed.new("Corsair Drive", allies, enemies, 3, null, extras)
+	return LevelTypes.Timed.new("Corsair Drive", allies, enemies, 4, null, extras)
+	
+func ghostbusters():
+	var pieces = load_level("ghostbusters.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_fifth", "no_inspire"]
+	var extras = {"flags":flags, "free_deploy":false}
+	return LevelTypes.Timed.new("Ghostbusters", allies, enemies, 3, null, extras)
+	
+func ghostbusters2():
+	var pieces = load_level("ghostbusters2.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_inspire"]
+	var extras = {"flags":flags, "free_deploy":true}
+	return LevelTypes.Timed.new("Ghostbusters", allies, enemies, 3, null, extras)
 
 func swamp():
 	var allies = {1:Archer, 2: FrostKnight, 3:Berserker, 4:Cavalier, 5: Assassin}
@@ -503,13 +521,6 @@ func defuse_the_bomb():
 	return LevelTypes.Timed.new("Defuse the Bomb", allies, enemies, 3, null, extras)
 
 
-func spoopy_ghosts():
-	var allies = {1: Stormdancer, 2: Cavalier, 3:Berserker, 4:Assassin, 5: Archer}
-	var raw_enemies = load_level("spoopy_ghosts.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	return LevelTypes.Timed.new("Spoopy Ghosts", allies, enemies, 7, null)
-
-
 func pyromancer():
 	var allies = {3: Pyromancer}
 	var raw_enemies = load_level("pyromancer.level")
@@ -536,10 +547,3 @@ func howl():
 	var raw_enemies = load_level("howl.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	return LevelTypes.Timed.new("Howl", allies, enemies, 6, null)
-
-
-#func howl2():
-#	var allies = {1: Assassin, 2: Archer, 4: Corsair, 5: FrostKnight}
-#	var raw_enemies = load_level("howl2.level")
-#	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-#	return LevelTypes.Timed.new("Howl 2", allies, enemies, 6, null)

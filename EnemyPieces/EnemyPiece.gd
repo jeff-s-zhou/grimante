@@ -33,6 +33,7 @@ var bleeding = false
 var frozen = false
 var silenced = false
 var stunned = false
+var corsair_marked = false
 
 var boss_flag = false
 
@@ -225,9 +226,6 @@ func get_actual_damage(damage):
 			damage = 1
 		else:
 			damage = 0
-	#bonus only applies to non boss enemies
-	elif get_parent().locations[self.coords].raining:
-		damage += 2
 
 	if self.shielded:
 		return 0
@@ -414,20 +412,20 @@ func animate_deadly_hide():
 
 
 func set_shield(flag):
-	self.shielded = flag
-	var name = get_node("/root/constants").enemy_modifiers["Shield"]
-	update_description(flag, name)
+	if self.shielded != flag:
+		self.shielded = flag
+		var name = get_node("/root/constants").enemy_modifiers["Shield"]
+		update_description(flag, name)
+		add_animation(self, "animate_set_shield", false, [flag])
+
+func animate_set_shield(flag):
 	if flag:
-		add_animation(self, "animate_bubble_show", false)
+		get_node("Physicals/EnemyEffects/Bubble").show()
 	else:
-		add_animation(self, "animate_bubble_hide", false)
-		
-func animate_bubble_show():
-	get_node("Physicals/EnemyEffects/Bubble").show()
+		get_node("SamplePlayer").play("window glass break smash 2")
+		get_node("Physicals/EnemyEffects").animate_shield_explode()
 
 
-func animate_bubble_hide():
-	get_node("Physicals/EnemyEffects/Bubble").hide()
 	
 
 func set_corrosive(flag):
@@ -458,6 +456,18 @@ func set_bleeding(flag):
 		self.bleeding = false
 		add_animation(self,"animate_bleeding_hide", false)
 		
+
+func is_corsair_marked():
+	return self.corsair_marked
+		
+func set_corsair_marked(flag):
+	if flag:
+		self.corsair_marked = true
+		add_animation(self,"animate_bleeding", false)
+	else:
+		self.corsair_marked = false
+		add_animation(self,"animate_bleeding_hide", false)
+
 func animate_bleeding():
 	add_anim_count()
 	get_node("Physicals/EnemyEffects/BurningEffect").show()
@@ -558,7 +568,27 @@ func attacked(amount, delay=0.0):
 		set_shield(false)
 	
 	modify_hp(damage * -1, delay)
+	
+	var tile = get_parent().locations[coords]
+	
+	#TODO put this through an action call
+	if tile.raining:
+		var action = get_new_action()
+		action.add_call("lightning_attacked", [], self.coords)
+		action.execute()
+	
 
+func corsair_attacked(damage):
+	if !self.shielded:
+		set_corsair_marked(true)
+	attacked(damage)
+	
+	
+		
+func lightning_attacked():
+	var tile = get_parent().locations[coords]
+	add_animation(tile, "animate_lightning", false)
+	modify_hp(-2)
 
 #called by the assassin's passive
 #func opportunity_attacked(amount):
@@ -712,6 +742,7 @@ func turn_start():
 
 #called at the start of enemy turn, after checking for aura effects
 func turn_update():
+	set_corsair_marked(false)
 	set_z(0)
 	turn_update_helper()
 	reset_auras()

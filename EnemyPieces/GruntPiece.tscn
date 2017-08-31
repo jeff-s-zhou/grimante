@@ -1,10 +1,10 @@
-[gd_scene load_steps=26 format=1]
+[gd_scene load_steps=27 format=1]
 
 [ext_resource path="res://EnemyPieces/GruntPiece.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Allies/piece_shadow.png" type="Texture" id=2]
 [ext_resource path="res://Assets/Enemies/boss_grunt_red_glow.png" type="Texture" id=3]
-[ext_resource path="res://Assets/Enemies/grunt_piece.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Enemies/grunt_piece_red.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Enemies/grunt_piece_red.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Enemies/grunt_piece.png" type="Texture" id=5]
 [ext_resource path="res://EnemyPieces/Components/Cracks.tscn" type="PackedScene" id=6]
 [ext_resource path="res://EnemyPieces/Components/EnemyOverlayLayers.tscn" type="PackedScene" id=7]
 [ext_resource path="res://EnemyPieces/Components/HealthDisplay.tscn" type="PackedScene" id=8]
@@ -22,6 +22,7 @@
 [ext_resource path="res://Assets/processed_sounds/rocket glass explosion 4.smp" type="Sample" id=20]
 [ext_resource path="res://Assets/processed_sounds/rocket glass explosion 5.smp" type="Sample" id=21]
 [ext_resource path="res://Assets/processed_sounds/rocket glass explosion thud 2.smp" type="Sample" id=22]
+[ext_resource path="res://Assets/processed_sounds/window glass break smash 2.smp" type="Sample" id=23]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -37,17 +38,17 @@ animations = [ {
 animations = [ {
 "frames": [ ExtResource( 4 ) ],
 "loop": true,
-"name": "default",
+"name": "attack_range",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
+"frames": [ ExtResource( 5 ), ExtResource( 4 ) ],
 "loop": true,
 "name": "damaged",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 5 ) ],
 "loop": true,
-"name": "attack_range",
+"name": "default",
 "speed": 5.0
 } ]
 
@@ -82,6 +83,12 @@ samples/monster_death = {
 "pitch": 1.0,
 "priority": 0,
 "sample": ExtResource( 22 )
+}
+"samples/window glass break smash 2" = {
+"db": 0.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 23 )
 }
 
 [node name="GruntPiece" type="KinematicBody2D"]

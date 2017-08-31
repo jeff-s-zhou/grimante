@@ -16,3 +16,8 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	pass
+
+func animate_shield_explode():
+	get_node("Bubble").hide()
+	get_node("EnemyShieldExplosionParticles").set_emit_timeout(0.3)
+	get_node("EnemyShieldExplosionParticles").set_emitting(true)
