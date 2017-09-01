@@ -19,7 +19,7 @@ var pieces = []
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	var ArcherPiece = load("res://PlayerPieces/CavalierPiece.tscn").instance()
+	pass
 
 #the control flow is that it's passed to grid through initialize_piece in combat
 #and then passed here?
@@ -44,18 +44,15 @@ func select(piece):
 		self.currently_selected.set_pos(Vector2(-999, -999))
 		get_parent().remove_piece(self.currently_selected)
 	self.currently_selected = piece
-	get_parent().add_piece(coords, self.currently_selected, true)
+	get_parent().add_piece(coords, self.currently_selected)
 	self.hide()
 	emit_signal("final_hero_selected")
 
 func queue_free():
-	print("reached this queue_free?")
-	print(self.pieces)
-	print(self.currently_selected)
 	for piece in self.pieces:
 		if piece != self.currently_selected:
-			piece.remove_from_group("player_pieces")
-			piece.queue_free()
+			piece.manual_free_cleanup()
+			piece.free()
 	.queue_free()
 			
 	

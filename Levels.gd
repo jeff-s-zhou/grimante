@@ -127,9 +127,9 @@ func get_level_sets():
 func sandbox(): 
 	var flags = ["no_inspire", "bonus_star"]
 	var extras1 = {"free_deploy":false, "flags":flags}
-	var raw_enemies = {0:{Vector2(2, 5): make(Grunt, 4, [shield]), Vector2(4, 6): make(Grunt, 3)}}
+	var raw_enemies = {0:{Vector2(2, 5): make(Grunt, 4)}}
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var heroes = {3: Corsair, 1: Assassin} 
+	var heroes = {1: Assassin} 
 #
 	return LevelTypes.Timed.new("", heroes, enemies, 4, null, extras1) 
 

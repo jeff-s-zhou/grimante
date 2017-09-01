@@ -14,8 +14,6 @@ var state_manager = null
 var mid_forced_action = false
 var has_active_star = false
 
-var assassin = null
-
 onready var Constants = get_node("/root/constants")
 
 
@@ -155,7 +153,6 @@ func soft_reset():
 	self.mid_forced_action = false
 	self.has_active_star = false
 	self.turn_count = 0
-	#self.assassin = null
 	
 	#key is the coords, value is the piece
 	for key in self.level_schematic.allies.keys():
@@ -232,16 +229,6 @@ func soft_copy_array(source, target):
 	for item in source:
 		target.push_back(item)
 
-#called on its own to initialize Crusader alter ego
-func initialize_crusader(new_piece):
-	new_piece.set_opacity(0)
-	new_piece.connect("invalid_move", self, "handle_invalid_move")
-	new_piece.connect("shake", self, "screen_shake")
-	new_piece.connect("small_shake", self, "small_screen_shake")
-	new_piece.connect("animated_placed", self, "handle_piece_placed")
-	get_node("Grid").add_child(new_piece)
-	new_piece.initialize(get_node("CursorArea"), self.level_schematic.flags) #placed afterwards because we might need the piece to be on the grid	
-
 func initialize_piece(piece, on_bar=false, key=null):
 	if !get_node("/root/global").available_unit_roster.has(piece):
 		get_node("/root/global").available_unit_roster[piece] = true
@@ -253,9 +240,6 @@ func initialize_piece(piece, on_bar=false, key=null):
 	new_piece.connect("small_shake", self, "small_screen_shake")
 	new_piece.connect("animated_placed", self, "handle_piece_placed")	
 	
-	if new_piece.UNIT_TYPE == "Assassin":
-		self.assassin = new_piece
-	
 	if on_bar:
 		get_node("Grid").add_piece_on_bar(new_piece)
 	else:
@@ -264,12 +248,12 @@ func initialize_piece(piece, on_bar=false, key=null):
 			position = get_node("Grid").get_bottom_of_column(key)
 		else:
 			position = key #that way when we need to we can specify by coordinates
+		print("adding piece here??")
 		get_node("Grid").add_piece(position, new_piece)
 
 	#these require the piece to have been added as a child
 	new_piece.initialize(get_node("CursorArea"), self.level_schematic.flags) #placed afterwards because we might need the piece to be on the grid
 	
-	new_piece.animate_summon()
 	yield(new_piece.get_node("Tween"), "tween_complete")
 	emit_signal("done_initializing")
 	
@@ -717,8 +701,4 @@ func lighten(time=0.4):
 func handle_invalid_move():
 	get_node("SamplePlayer").play("error")
 	get_node("InvalidMoveIndicator/AnimationPlayer").play("flash")
-		
-func handle_assassin_passive(attack_range, caller):
-	if self.assassin != null and caller != self.assassin:
-		self.assassin.trigger_passive(attack_range)
 	

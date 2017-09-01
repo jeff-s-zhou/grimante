@@ -73,7 +73,7 @@ func execute():
 			if piece.hp != 0:
 				assassin_passive_range.append(piece.coords)
 
-		get_node("/root/Combat").handle_assassin_passive(assassin_passive_range, self.caller)
+		get_node("/root/Combat/Grid").handle_assassin_passive(assassin_passive_range, self.caller)
 	
 	#the assassin's passive can't trigger Inspire
 	if death_flag and self.caller.has_method("trigger_assist_flag") and trigger_assassin_passive:

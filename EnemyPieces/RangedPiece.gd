@@ -14,7 +14,7 @@ func initialize(max_hp, modifiers, prototype):
 	.initialize("Fire Drake", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, TYPES.attack)
 
 func turn_start():
-	if !self.silenced and !self.stunned:
+	if self.hp != 0 and !self.silenced and !self.stunned:
 		var fireball_range = get_parent().get_range(self.coords, [1, 9], "PLAYER", true, [3, 4])
 		if fireball_range != []:
 			fireball(fireball_range[0])

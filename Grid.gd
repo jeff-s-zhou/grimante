@@ -8,6 +8,8 @@ extends Node2D
 var locations = {}
 var pieces = {}
 
+var assassin = null
+
 var shadow_tile_range = []
 var shifting_sands = []
 
@@ -159,12 +161,13 @@ func set_target(target):
 
 
 func add_piece_on_bar(piece):
-	add_child(piece)
+	#add_child(piece)
 	get_node("FinalHeroScreen").initialize(piece)
 
 #child_free is when the saint and crusader swap locations
 #and for adding from the FinalHeroScreen
 func add_piece(coords, piece, child_free=false):
+	
 	self.pieces[coords] = piece
 	self.locations[coords].set_pickable(false)
 	piece.coords = coords
@@ -172,9 +175,18 @@ func add_piece(coords, piece, child_free=false):
 	
 	if !child_free:
 		add_child(piece)
+
+	if piece.unit_name == "Assassin":
+		self.assassin = piece
+	
 	piece.set_global_pos(location.get_global_pos())
 	piece.added_to_grid()
+	piece.animate_summon()
 	
+		
+func handle_assassin_passive(attack_range, caller):
+	if self.assassin != null and caller != self.assassin:
+		self.assassin.trigger_passive(attack_range)
 
 
 func remove_piece(coords):
