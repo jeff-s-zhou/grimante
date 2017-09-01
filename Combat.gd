@@ -67,7 +67,7 @@ func _ready():
 		self.state_manager= load("res://UI/ClearRoomSystem.tscn").instance()
 
 	add_child(self.state_manager)
-	self.state_manager.initialize(self.level_schematic, get_node("ControlBar/StarBar"), self.level_schematic.flags)
+	self.state_manager.initialize(self.level_schematic, get_node("ControlBar/Combat/StarBar"), self.level_schematic.flags)
 	
 	get_node("ControlBar").initialize(self.level_schematic.flags, self)
 	
@@ -95,7 +95,7 @@ func _ready():
 	unpause()
 		
 	if self.level_schematic.free_deploy:
-		get_node("ControlBar/DeployButton").show()
+		get_node("ControlBar").set_deploying(true)
 		get_node("Grid").set_deploying(true, self.level_schematic.flags)
 		
 		for piece in get_node("Grid").pieces.values():
@@ -117,10 +117,8 @@ func _ready():
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 	
-	
-	get_node("ControlBar/DeployButton").hide()
-	get_node("ControlBar/EndTurnButton").show()
 	get_node("Grid").set_deploying(false)
+	get_node("ControlBar").set_deploying(false)
 	
 	for piece in get_node("Grid").pieces.values():
 		piece.deploy()
@@ -136,7 +134,7 @@ func _ready():
 	get_node("PhaseShifter").player_phase_animation()
 	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
 	
-	get_node("ControlBar/EndTurnButton").set_disabled(false)
+	get_node("ControlBar/Combat/EndTurnButton").set_disabled(false)
 	
 	start_player_phase()
 	
@@ -241,7 +239,7 @@ func initialize_piece(piece, on_bar=false, key=null):
 	new_piece.connect("animated_placed", self, "handle_piece_placed")	
 	
 	if on_bar:
-		get_node("Grid").add_piece_on_bar(new_piece)
+		get_node("ControlBar").add_piece_on_bar(new_piece)
 	else:
 		var position
 		if typeof(key) == TYPE_INT:
@@ -282,7 +280,7 @@ func handle_piece_placed():
 
 
 	#shouldn't interfere with any other forced actions, since it'll only end when all pieces are placed
-	if !get_node("ControlBar/StarBar").has_star():
+	if !get_node("ControlBar/Combat/StarBar").has_star():
 		#check if we can automatically end turn
 		var player_pieces = get_tree().get_nodes_in_group("player_pieces")
 		for player_piece in player_pieces:
@@ -307,7 +305,7 @@ func initialize_enemy_piece(coords, prototype, health, modifiers, animation_sequ
 
 func end_turn():
 	self.state = STATES.transitioning
-	get_node("ControlBar/EndTurnButton").set_disabled(true)
+	get_node("ControlBar/Combat/EndTurnButton").set_disabled(true)
 	
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
@@ -374,7 +372,7 @@ func computer_input(event):
 				self.has_active_star = false
 				var successful = hovered.star_input_event(event)
 				if !successful:
-					get_node("ControlBar/StarBar").refund()
+					get_node("ControlBar/Combat/StarBar").refund()
 			else:
 				#if during a tutorial level, make sure move is as intended
 				if self.tutorial != null:
@@ -541,7 +539,7 @@ func enemy_phase():
 
 func start_player_phase():
 	self.turn_count += 1
-	get_node("ControlBar/EndTurnButton").set_disabled(false)
+	get_node("ControlBar/Combat/EndTurnButton").set_disabled(false)
 	
 	get_node("AssistSystem").reset_combo()
 	if self.reinforcements.has(get_turn_count()):

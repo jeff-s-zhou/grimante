@@ -136,7 +136,7 @@ max_lines_visible = -1
 
 [node name="ControlBar" parent="." instance=ExtResource( 12 )]
 
-transform/pos = Vector2( 0, 953 )
+transform/pos = Vector2( 0, 945 )
 z/z = 95
 
 [node name="InfoOverlay" parent="." instance=ExtResource( 13 )]

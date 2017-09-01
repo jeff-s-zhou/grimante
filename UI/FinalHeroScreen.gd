@@ -4,7 +4,7 @@ extends Node2D
 # var a = 2
 # var b = "textvar"
 
-var grid = get_parent()
+onready var grid = get_node("/root/Combat/Grid")
 
 var currently_selected
 
@@ -42,11 +42,12 @@ func select(piece):
 	else:
 		coords = self.currently_selected.coords
 		self.currently_selected.set_pos(Vector2(-999, -999))
-		get_parent().remove_piece(self.currently_selected)
+		self.grid.remove_piece(self.currently_selected)
 	self.currently_selected = piece
-	get_parent().add_piece(coords, self.currently_selected)
+	self.grid.add_piece(coords, self.currently_selected)
 	self.hide()
 	emit_signal("final_hero_selected")
+
 
 func queue_free():
 	for piece in self.pieces:

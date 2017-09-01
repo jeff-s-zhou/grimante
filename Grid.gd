@@ -15,14 +15,13 @@ var shifting_sands = []
 
 var deploying = false
 
-var deploy_tiles
-
 const DEPLOY_TILES_5 = [Vector2(1, 6), Vector2(2, 6),
 Vector2(3, 7), Vector2(4, 7), Vector2(5, 8)
 ]
 
 const DEPLOY_TILES_4 = [Vector2(1, 6), Vector2(2, 6), Vector2(4, 7), Vector2(5, 8)]
 
+var deploy_tiles = DEPLOY_TILES_5
 
 #starts at 1, 2, 2, 3, 3, 4, 4, 5, 5,
 #ends at 8, 8, 9, 9, 10, 10, 11, 11, 12
@@ -99,17 +98,10 @@ func clear_board():
 func set_deploying(deploying_flag, flags={}):
 	self.deploying = deploying_flag
 	if deploying:
-		if flags.has("no_fifth"):
-			self.deploy_tiles = DEPLOY_TILES_5 #liable to change
-		else:
-			get_node("FinalHeroScreen").show()
-			self.deploy_tiles = DEPLOY_TILES_5
-			
 		for deploy_tile_coords in self.deploy_tiles:
 			if self.locations.has(deploy_tile_coords):
 				self.locations[deploy_tile_coords].set_deployable_indicator(true)
 	else:
-		get_node("FinalHeroScreen").queue_free()
 		reset_deployable_indicators()
 		
 	
@@ -160,12 +152,7 @@ func set_target(target):
 		self.selected.select_action_target(target)
 
 
-func add_piece_on_bar(piece):
-	#add_child(piece)
-	get_node("FinalHeroScreen").initialize(piece)
-
 #child_free is when the saint and crusader swap locations
-#and for adding from the FinalHeroScreen
 func add_piece(coords, piece, child_free=false):
 	
 	self.pieces[coords] = piece

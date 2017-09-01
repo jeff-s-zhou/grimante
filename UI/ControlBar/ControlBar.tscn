@@ -1,15 +1,16 @@
-[gd_scene load_steps=11 format=1]
+[gd_scene load_steps=12 format=1]
 
 [ext_resource path="res://UI/ControlBar/ControlBar.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Backgrounds/combat_ui_bottom_bar.png" type="Texture" id=2]
-[ext_resource path="res://UI/ControlBar/StarBar.tscn" type="PackedScene" id=3]
-[ext_resource path="res://UI/ControlBar/EndTurnButton.tscn" type="PackedScene" id=4]
-[ext_resource path="res://Assets/UI/new_deploy_button.png" type="Texture" id=5]
-[ext_resource path="res://Assets/UI/new_deploy_button_pressed.png" type="Texture" id=6]
-[ext_resource path="res://Assets/UI/new_deploy_button_light.png" type="Texture" id=7]
-[ext_resource path="res://Assets/UI/new_deploy_button_grey.png" type="Texture" id=8]
-[ext_resource path="res://Assets/UI/back_arrow.png" type="Texture" id=9]
-[ext_resource path="res://Assets/UI/right_arrow.png" type="Texture" id=10]
+[ext_resource path="res://UI/FinalHeroScreen.tscn" type="PackedScene" id=3]
+[ext_resource path="res://UI/ControlBar/StarBar.tscn" type="PackedScene" id=4]
+[ext_resource path="res://UI/ControlBar/EndTurnButton.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Assets/UI/new_deploy_button.png" type="Texture" id=6]
+[ext_resource path="res://Assets/UI/new_deploy_button_pressed.png" type="Texture" id=7]
+[ext_resource path="res://Assets/UI/new_deploy_button_light.png" type="Texture" id=8]
+[ext_resource path="res://Assets/UI/new_deploy_button_grey.png" type="Texture" id=9]
+[ext_resource path="res://Assets/UI/back_arrow.png" type="Texture" id=10]
+[ext_resource path="res://Assets/UI/right_arrow.png" type="Texture" id=11]
 
 [node name="ControlBar" type="Node2D"]
 
@@ -20,17 +21,24 @@ script/script = ExtResource( 1 )
 transform/pos = Vector2( 334, 80 )
 texture = ExtResource( 2 )
 
-[node name="StarBar" parent="." instance=ExtResource( 3 )]
+[node name="FinalHeroScreen" parent="." instance=ExtResource( 3 )]
+
+visibility/visible = true
+transform/pos = Vector2( 30, -64 )
+
+[node name="Combat" type="Node2D" parent="."]
+
+[node name="StarBar" parent="Combat" instance=ExtResource( 4 )]
 
 transform/pos = Vector2( 10.9793, 21 )
 
-[node name="EndTurnButton" parent="." instance=ExtResource( 4 )]
+[node name="EndTurnButton" parent="Combat" instance=ExtResource( 5 )]
 
 visibility/visible = false
 visibility/opacity = 0.0
 transform/pos = Vector2( 248, 21 )
 
-[node name="DeployButton" type="TextureButton" parent="."]
+[node name="DeployButton" type="TextureButton" parent="Combat"]
 
 visibility/visible = false
 focus/ignore_mouse = false
@@ -44,14 +52,14 @@ margin/bottom = 107.0
 toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
-textures/normal = ExtResource( 5 )
-textures/pressed = ExtResource( 6 )
-textures/hover = ExtResource( 7 )
-textures/disabled = ExtResource( 8 )
+textures/normal = ExtResource( 6 )
+textures/pressed = ExtResource( 7 )
+textures/hover = ExtResource( 8 )
+textures/disabled = ExtResource( 9 )
 params/resize_mode = 0
 params/stretch_mode = 0
 
-[node name="BackButton" type="TextureButton" parent="."]
+[node name="BackButton" type="TextureButton" parent="Combat"]
 
 visibility/visible = false
 focus/ignore_mouse = false
@@ -65,11 +73,11 @@ margin/bottom = -7.0
 toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
-textures/normal = ExtResource( 9 )
+textures/normal = ExtResource( 10 )
 params/resize_mode = 0
 params/stretch_mode = 0
 
-[node name="ForwardButton" type="TextureButton" parent="."]
+[node name="ForwardButton" type="TextureButton" parent="Combat"]
 
 visibility/visible = false
 focus/ignore_mouse = false
@@ -83,7 +91,7 @@ margin/bottom = -7.0
 toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
-textures/normal = ExtResource( 10 )
+textures/normal = ExtResource( 11 )
 params/resize_mode = 0
 params/stretch_mode = 0
 
