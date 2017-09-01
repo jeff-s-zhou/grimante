@@ -1,4 +1,4 @@
-extends "ClearRoomSystem.gd"
+extends Node2D
 
 # class member variables go here, for example:
 # var a = 2
@@ -6,8 +6,9 @@ extends "ClearRoomSystem.gd"
 
 var num_turns
 var flags
-
-
+var enemies = null
+var turns_til_wave = 0
+	
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
@@ -76,3 +77,7 @@ func check_enemy_win(turn_count): #only checks part of the condition. other is i
 		return get_tree().get_nodes_in_group("player_pieces").size() == 0
 	else:
 		return get_tree().get_nodes_in_group("player_pieces").size() == 0 or self.num_turns - turn_count == 0
+		
+
+func check_player_win():
+	return get_tree().get_nodes_in_group("enemy_pieces").size() == 0
