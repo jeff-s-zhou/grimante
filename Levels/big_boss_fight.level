@@ -1,0 +1,23 @@
+{"hp":"1", "turn":0, "pos_x":5, "name":"fortifier", "modifiers":{}, "pos_y":4}
+{"hp":"1", "turn":0, "pos_x":1, "name":"fortifier", "modifiers":{}, "pos_y":2}
+{"hp":"2", "turn":0, "pos_x":6, "name":"spectre", "modifiers":{}, "pos_y":5}
+{"hp":"2", "turn":0, "pos_x":0, "name":"spectre", "modifiers":{}, "pos_y":2}
+{"hp":"2", "turn":0, "pos_x":5, "name":"spectre", "modifiers":{}, "pos_y":5}
+{"hp":"2", "turn":0, "pos_x":1, "name":"spectre", "modifiers":{}, "pos_y":3}
+{"hp":"5", "turn":0, "pos_x":3, "name":"slime", "modifiers":{"Shield":"Shield"}, "pos_y":4}
+{"hp":"2", "turn":0, "pos_x":4, "name":"ranged", "modifiers":{}, "pos_y":4}
+{"hp":"2", "turn":0, "pos_x":2, "name":"ranged", "modifiers":{}, "pos_y":3}
+{"hp":"5", "turn":0, "pos_x":3, "name":"boss_grunt", "modifiers":{}, "pos_y":3}
+{"hp":"2", "turn":0, "pos_x":4, "name":"fortifier", "modifiers":{}, "pos_y":3}
+{"hp":"2", "turn":0, "pos_x":2, "name":"fortifier", "modifiers":{}, "pos_y":2}
+{"turn":0, "pos_x":1, "name":"archer", "pos_y":6}
+{"turn":0, "pos_x":4, "name":"frost_knight", "pos_y":7}
+{"turn":0, "pos_x":2, "name":"corsair", "pos_y":6}
+{"turn":0, "pos_x":5, "name":"cavalier", "pos_y":8}
+{"hp":"3", "turn":2, "pos_x":5, "name":"ranged", "modifiers":{}, "pos_y":4}
+{"hp":"3", "turn":2, "pos_x":1, "name":"ranged", "modifiers":{}, "pos_y":2}
+{"hp":"2", "turn":2, "pos_x":6, "name":"grunt", "modifiers":{}, "pos_y":6}
+{"hp":"2", "turn":2, "pos_x":0, "name":"grunt", "modifiers":{}, "pos_y":3}
+{"hp":"3", "turn":2, "pos_x":4, "name":"slime", "modifiers":{}, "pos_y":5}
+{"hp":"3", "turn":2, "pos_x":2, "name":"slime", "modifiers":{}, "pos_y":4}
+{"hp":"1", "turn":2, "pos_x":3, "name":"fortifier", "modifiers":{"Shield":"Shield"}, "pos_y":4}

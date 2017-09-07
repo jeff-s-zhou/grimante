@@ -11,7 +11,7 @@ var raining = false
 var deployable = false
 var corpse = null
 
-var default_opacity = 0.15
+var default_opacity = 0.2
 
 var highlight_opacity = 0.7
 

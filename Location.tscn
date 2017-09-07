@@ -11,13 +11,13 @@
 [ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=9]
 [ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=10]
 [ext_resource path="res://UI/ReinforcementIndicator.tscn" type="PackedScene" id=11]
-[ext_resource path="res://Assets/Allies/assassin_corpse.png" type="Texture" id=12]
-[ext_resource path="res://Assets/Allies/saint_corpse.png" type="Texture" id=13]
-[ext_resource path="res://Assets/Allies/cavalier_corpse.png" type="Texture" id=14]
-[ext_resource path="res://Assets/Allies/stormdancer_corpse.png" type="Texture" id=15]
+[ext_resource path="res://Assets/Allies/cavalier_corpse.png" type="Texture" id=12]
+[ext_resource path="res://Assets/Allies/berserker_corpse.png" type="Texture" id=13]
+[ext_resource path="res://Assets/Allies/stormdancer_corpse.png" type="Texture" id=14]
+[ext_resource path="res://Assets/Allies/pyromancer_corpse.png" type="Texture" id=15]
 [ext_resource path="res://Assets/Allies/archer_corpse.png" type="Texture" id=16]
-[ext_resource path="res://Assets/Allies/pyromancer_corpse.png" type="Texture" id=17]
-[ext_resource path="res://Assets/Allies/berserker_corpse.png" type="Texture" id=18]
+[ext_resource path="res://Assets/Allies/assassin_corpse.png" type="Texture" id=17]
+[ext_resource path="res://Assets/Allies/saint_corpse.png" type="Texture" id=18]
 [ext_resource path="res://Assets/Allies/corsair_corpse.png" type="Texture" id=19]
 [ext_resource path="res://Assets/Allies/crusader_corpse.png" type="Texture" id=20]
 [ext_resource path="res://InputHandler.tscn" type="PackedScene" id=21]
@@ -89,22 +89,22 @@ samples/tile_hover = {
 animations = [ {
 "frames": [ ExtResource( 12 ) ],
 "loop": true,
-"name": "assassin",
+"name": "cavalier",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 13 ) ],
 "loop": true,
-"name": "saint",
+"name": "berserker",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 14 ) ],
 "loop": true,
-"name": "cavalier",
+"name": "stormdancer",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 15 ) ],
 "loop": true,
-"name": "stormdancer",
+"name": "pyromancer",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 16 ) ],
@@ -114,12 +114,12 @@ animations = [ {
 }, {
 "frames": [ ExtResource( 17 ) ],
 "loop": true,
-"name": "pyromancer",
+"name": "assassin",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 18 ) ],
 "loop": true,
-"name": "berserker",
+"name": "saint",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 19 ) ],

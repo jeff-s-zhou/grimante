@@ -12,6 +12,7 @@ const Ranged = preload("res://EnemyPieces/RangedPiece.tscn")
 const Slime = preload("res://EnemyPieces/SlimePiece.tscn")
 const Spectre = preload("res://EnemyPieces/SpectrePiece.tscn")
 const Flanker = preload("res://EnemyPieces/FlankerPiece.tscn")
+const BossGrunt = preload("res://EnemyPieces/BossGruntPiece.tscn")
 
 const Berserker = preload("res://PlayerPieces/BerserkerPiece.tscn")
 const Cavalier = preload("res://PlayerPieces/CavalierPiece.tscn")
@@ -127,11 +128,11 @@ func get_level_sets():
 func sandbox(): 
 	var flags = ["no_inspire", "bonus_star"]
 	var extras1 = {"free_deploy":false, "flags":flags}
-	var raw_enemies = {0:{Vector2(2, 5): make(Grunt, 4)}}
+	var raw_enemies = {0:{Vector2(2, 5): make(BossGrunt, 3), Vector2(3, 3): make(Grunt, 4)}}
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var heroes = {1: Assassin} 
+	var heroes = {2: Archer, 1: Assassin} 
 #
-	return LevelTypes.Timed.new("", heroes, enemies, 4, null, extras1) 
+	return LevelTypes.Timed.new("", heroes, enemies, 1, null, extras1) 
 
 func tutorial1():
 	var allies = {2: Cavalier, 4:Berserker} 
@@ -468,7 +469,27 @@ func ghostbusters2():
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_inspire"]
 	var extras = {"flags":flags, "free_deploy":true}
-	return LevelTypes.Timed.new("Ghostbusters", allies, enemies, 3, null, extras)
+	return LevelTypes.Timed.new("Ghostbusters 2", allies, enemies, 3, null, extras)
+	
+func boss_fight():
+	var pieces = load_level("boss_fight.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_fifth", "no_inspire"]
+	var extras = {"flags":flags, "free_deploy":false}
+	var tutorial = load("res://Tutorials/boss_fight.gd").new()
+	var tutorial_func = funcref(tutorial, "get")
+	return LevelTypes.Timed.new("Boss Fight", allies, enemies, 3, null, extras)
+	
+func big_boss_fight():
+	var pieces = load_level("big_boss_fight.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_inspire"]
+	var extras = {"flags":flags, "free_deploy":true}
+	return LevelTypes.Timed.new("Big Boss Fight", allies, enemies, 3, null, extras)
 
 func swamp():
 	var allies = {1:Archer, 2: FrostKnight, 3:Berserker, 4:Cavalier, 5: Assassin}

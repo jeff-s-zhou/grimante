@@ -123,9 +123,6 @@ func deploy():
 func added_to_grid():
 	add_to_group("enemy_pieces")
 	add_animation(self, "animate_summon", false)
-	var adjacent_players_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
-	if adjacent_players_range != []:
-		set_cloaked(false)
 	
 func set_hp(hp):
 	self.hp = hp
@@ -513,7 +510,6 @@ func set_silenced(flag):
 	if flag:
 		set_shield(false)
 		set_deadly(false)
-		set_cloaked(false)
 		set_predator(false)
 		set_corrosive(false)
 		add_animation(self, "animate_silenced", false)
@@ -562,7 +558,6 @@ func heal(amount, delay=0.0):
 
 func attacked(amount, delay=0.0):
 	var damage = get_actual_damage(amount)
-	set_cloaked(false)
 	
 	if self.shielded:
 		set_shield(false)
@@ -746,10 +741,6 @@ func turn_update():
 	set_z(0)
 	turn_update_helper()
 	reset_auras()
-	
-	var adjacent_players_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
-	if adjacent_players_range != []:
-		set_cloaked(false)
 
 #called after all pieces finish moving
 func turn_attack_update():

@@ -72,12 +72,11 @@ func update(turn_count):
 			get_node("WaveCountdown").set_text("-")
 
 		
-func check_enemy_win(turn_count): #only checks part of the condition. other is in the game loop	
+func check_timeout(turn_count): #only checks part of the condition. other is in the game loop	
 	if self.flags.has("no_turns"):
-		return get_tree().get_nodes_in_group("player_pieces").size() == 0
+		return false
 	else:
-		return get_tree().get_nodes_in_group("player_pieces").size() == 0 or self.num_turns - turn_count == 0
+		return self.num_turns - turn_count == 0
 		
-
-func check_player_win():
-	return get_tree().get_nodes_in_group("enemy_pieces").size() == 0
+func handle_enemy_death():
+	get_node("StarSubsystem").add_kill_count()

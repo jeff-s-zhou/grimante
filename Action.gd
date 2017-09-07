@@ -62,8 +62,7 @@ func execute():
 		if piece.has_method("deathrattle"):
 			piece.deathrattle()
 		
-		#TODO: target of action might be player pieces one day
-		if piece.hp == 0:
+		if piece.side == "ENEMY" and piece.hp == 0:
 			death_flag = true
 	
 	if trigger_assassin_passive:

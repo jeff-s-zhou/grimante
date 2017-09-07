@@ -183,10 +183,6 @@ func star_reactivate():
 func deploy():
 	self.deploying_flag = false
 	self.state = States.PLACED
-	var seen_range = get_parent().get_range(self.coords, [1, 2], "ENEMY")
-	for coords in seen_range:
-		if get_parent().pieces[coords].cloaked:
-			get_parent().pieces[coords].set_cloaked(false)
 	
 func block_summon():
 	if !self.shielded:
@@ -326,12 +322,6 @@ func set_coords(new_coords):
 		set_opacity(0.5)
 	else:
 		set_opacity(1.0)
-	
-	if !self.deploying_flag:
-		var seen_range = get_parent().get_range(self.coords, [1, 2], "ENEMY")
-		for coords in seen_range:
-			if get_parent().pieces[coords].cloaked:
-				get_parent().pieces[coords].set_cloaked(false)
 
 #ANIMATION FUNCTIONS
 

@@ -8,6 +8,8 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	get_node("FinalHeroScreen").connect("final_hero_selected", self, "final_hero_selected")
+	get_node("Runes").set_green(1)
+	#get_node("Runes1").set_green(0)
 	
 func initialize(flags, combat_scene):
 	get_node("Combat/DeployButton").connect("pressed", combat_scene, "handle_deploy")

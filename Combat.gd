@@ -59,12 +59,7 @@ func _ready():
 		
 	#we store the initial wave count as the first value in the array
 
-	if self.level_schematic.end_conditions.has(constants.end_conditions.Timed):
-		self.state_manager = load("res://UI/TimedSystem.tscn").instance()
-	elif self.level_schematic.end_conditions.has(constants.end_conditions.Sandbox):
-		self.state_manager = load("res://UI/TimedSystem.tscn").instance()
-	else:
-		self.state_manager= load("res://UI/ClearRoomSystem.tscn").instance()
+	self.state_manager = load("res://UI/TimedSystem.tscn").instance()
 
 	add_child(self.state_manager)
 	self.state_manager.initialize(self.level_schematic, get_node("ControlBar/Combat/StarBar"), self.level_schematic.flags)
@@ -137,40 +132,6 @@ func _ready():
 	get_node("ControlBar/Combat/EndTurnButton").set_disabled(false)
 	
 	start_player_phase()
-	
-	
-func soft_reset():
-	pause()
-	
-	self.state = STATES.deploying
-	self.enemy_waves = null
-	self.tutorial = null
-	self.enemy_reinforcements = {}
-	self.instructions = []
-	self.reinforcements = {}
-	self.mid_forced_action = false
-	self.has_active_star = false
-	self.turn_count = 0
-	
-	#key is the coords, value is the piece
-	for key in self.level_schematic.allies.keys():
-		initialize_piece(self.level_schematic.allies[key], false, key)
-
-
-	self.state_manager.soft_reset(self.level_schematic)
-	
-	self.enemy_waves = self.level_schematic.enemies
-
-	self.reinforcements = self.level_schematic.reinforcements
-	
-	load_in_next_wave(true)
-	deploy_wave()
-	load_in_next_wave()
-	display_wave_preview()
-	
-	unpause()
-	#start_player_phase()
-
 
 	
 func get_turn_count():
@@ -298,7 +259,7 @@ func initialize_enemy_piece(coords, prototype, health, modifiers, animation_sequ
 	enemy_piece.connect("broke_defenses", self, "damage_defenses")
 	enemy_piece.connect("shake", self, "screen_shake")
 	enemy_piece.connect("small_shake", self, "small_screen_shake")
-	enemy_piece.connect("enemy_death", self.state_manager.get_node("StarSubsystem"), "add_kill_count")
+	enemy_piece.connect("enemy_death", self, "handle_enemy_death")
 	enemy_piece.check_global_seen()
 	return enemy_piece
 			
@@ -460,11 +421,8 @@ func computer_input(event):
 
 func _process(delta):
 	get_node('FpsLabel').set_text(str(OS.get_frames_per_second()))
-	
-	#only actively check during play phase, we manually check at end of enemy phase
-	if self.state == STATES.player_turn and self.state_manager.check_player_win(): 
-		player_win()
-	elif self.state == STATES.enemy_turn:
+
+	if self.state == STATES.enemy_turn:
 		enemy_phase()
 		self.state = STATES.transitioning
 	elif self.state == STATES.transitioning:
@@ -515,11 +473,11 @@ func enemy_phase():
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
 	
-	if self.state_manager.check_player_win(): 
+	if get_tree().get_nodes_in_group("enemy_pieces").size() == 0: 
 		player_win()
 		return
 
-	elif self.state_manager.check_enemy_win(self.turn_count): #logic would change based on game type
+	elif get_tree().get_nodes_in_group("player_pieces").size() == 0 or self.state_manager.check_timeout(self.turn_count):
 		enemy_win()
 		return
 	
@@ -631,9 +589,23 @@ func display_wave_preview():
 	for coords in self.enemy_reinforcements.keys():
 		var type = self.enemy_reinforcements[coords].type
 		get_node("Grid").locations[coords].set_reinforcement_indicator(type)
+		
+#called IN ADDITION to handle_enemy_death on a boss dying
+func handle_boss_death():
+	if get_tree().get_nodes_in_group("boss_pieces").size() == 0:
+		player_win()
+
+
+func handle_enemy_death():
+	self.state_manager.handle_enemy_death()
+	if get_tree().get_nodes_in_group("enemy_pieces").size() == 0:
+		player_win()
 
 
 func player_win():
+	if self.state == STATES.end:
+		return
+	
 	self.state = STATES.end
 	pause()
 		
@@ -656,6 +628,9 @@ func player_win():
 	
 
 func enemy_win():
+	if self.state == STATES.end:
+		return
+		
 	self.state = STATES.end
 	pause()
 	if self.level_schematic.seamless:
