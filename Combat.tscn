@@ -1,7 +1,7 @@
 [gd_scene load_steps=17 format=1]
 
 [ext_resource path="res://Combat.gd" type="Script" id=1]
-[ext_resource path="res://Assets/Backgrounds/new_style_background2.png" type="Texture" id=2]
+[ext_resource path="res://Assets/Backgrounds/new_style_background3.png" type="Texture" id=2]
 [ext_resource path="res://Grid.tscn" type="PackedScene" id=3]
 [ext_resource path="res://CursorArea.tscn" type="PackedScene" id=4]
 [ext_resource path="res://UI/PhaseShifter.tscn" type="PackedScene" id=5]

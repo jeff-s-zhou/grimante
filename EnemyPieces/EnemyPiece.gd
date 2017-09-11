@@ -278,7 +278,7 @@ func animate_predict_hp(hp, value, color):
 		else:
 			text.set_text(value_text)
 			
-		var destination = text.get_pos() - Vector2(0, 65)
+		var destination = text.get_pos() - Vector2(0, 60)
 		var tween = Tween.new()
 		add_child(tween)
 		

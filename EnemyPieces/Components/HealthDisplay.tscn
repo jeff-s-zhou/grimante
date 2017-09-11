@@ -4,24 +4,89 @@
 [ext_resource path="res://Assets/Enemies/health_shadow_backdrop.png" type="Texture" id=2]
 [ext_resource path="res://Assets/UI/HealthFont/5.png" type="Texture" id=3]
 [ext_resource path="res://Assets/UI/HealthFont/0.png" type="Texture" id=4]
-[ext_resource path="res://Assets/UI/HealthFont/6.png" type="Texture" id=5]
-[ext_resource path="res://Assets/UI/HealthFont/9.png" type="Texture" id=6]
-[ext_resource path="res://Assets/UI/HealthFont/3.png" type="Texture" id=7]
-[ext_resource path="res://Assets/UI/HealthFont/8.png" type="Texture" id=8]
-[ext_resource path="res://Assets/UI/HealthFont/2.png" type="Texture" id=9]
-[ext_resource path="res://Assets/UI/HealthFont/7.png" type="Texture" id=10]
-[ext_resource path="res://Assets/UI/HealthFont/4.png" type="Texture" id=11]
-[ext_resource path="res://Assets/UI/HealthFont/1.png" type="Texture" id=12]
+[ext_resource path="res://Assets/UI/HealthFont/9.png" type="Texture" id=5]
+[ext_resource path="res://Assets/UI/HealthFont/7.png" type="Texture" id=6]
+[ext_resource path="res://Assets/UI/HealthFont/1.png" type="Texture" id=7]
+[ext_resource path="res://Assets/UI/HealthFont/4.png" type="Texture" id=8]
+[ext_resource path="res://Assets/UI/HealthFont/6.png" type="Texture" id=9]
+[ext_resource path="res://Assets/UI/HealthFont/3.png" type="Texture" id=10]
+[ext_resource path="res://Assets/UI/HealthFont/2.png" type="Texture" id=11]
+[ext_resource path="res://Assets/UI/HealthFont/8.png" type="Texture" id=12]
 [ext_resource path="res://Assets/Enemies/health_piece_new2.png" type="Texture" id=13]
-[ext_resource path="res://Assets/processed_fonts/mobile_enemy_health.fnt" type="BitmapFont" id=14]
+[ext_resource path="res://Assets/processed_fonts/enemy_health.fnt" type="BitmapFont" id=14]
 
 [sub_resource type="SpriteFrames" id=1]
 
-animations = [ { "frames":[ ExtResource( 3 ) ], "loop":true, "name":"5", "speed":5.0 }, { "frames":[ ExtResource( 4 ) ], "loop":true, "name":"0", "speed":5.0 }, { "frames":[ ExtResource( 5 ) ], "loop":true, "name":"6", "speed":5.0 }, { "frames":[ ExtResource( 6 ) ], "loop":true, "name":"9", "speed":5.0 }, { "frames":[ ExtResource( 7 ) ], "loop":true, "name":"3", "speed":5.0 }, { "frames":[ ExtResource( 8 ) ], "loop":true, "name":"8", "speed":5.0 }, { "frames":[ ExtResource( 9 ) ], "loop":true, "name":"2", "speed":5.0 }, { "frames":[ ExtResource( 10 ) ], "loop":true, "name":"7", "speed":5.0 }, { "frames":[ ExtResource( 11 ) ], "loop":true, "name":"4", "speed":5.0 }, { "frames":[ ExtResource( 12 ) ], "loop":true, "name":"1", "speed":5.0 } ]
+animations = [ {
+"frames": [ ExtResource( 3 ) ],
+"loop": true,
+"name": "5",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "0",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 5 ) ],
+"loop": true,
+"name": "9",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 6 ) ],
+"loop": true,
+"name": "7",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 7 ) ],
+"loop": true,
+"name": "1",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 8 ) ],
+"loop": true,
+"name": "4",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 9 ) ],
+"loop": true,
+"name": "6",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 10 ) ],
+"loop": true,
+"name": "3",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 11 ) ],
+"loop": true,
+"name": "2",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 12 ) ],
+"loop": true,
+"name": "8",
+"speed": 5.0
+} ]
 
 [sub_resource type="SpriteFrames" id=2]
 
-animations = [ { "frames":[ ExtResource( 13 ) ], "loop":true, "name":"default", "speed":5.0 }, { "frames":[ ExtResource( 13 ) ], "loop":true, "name":"attack_range", "speed":5.0 }, { "frames":[ ExtResource( 13 ) ], "loop":true, "name":"damaged", "speed":5.0 } ]
+animations = [ {
+"frames": [ ExtResource( 13 ) ],
+"loop": true,
+"name": "default",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 13 ) ],
+"loop": true,
+"name": "damaged",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 13 ) ],
+"loop": true,
+"name": "attack_range",
+"speed": 5.0
+} ]
 
 [sub_resource type="Animation" id=3]
 
@@ -29,10 +94,15 @@ length = 0.45
 loop = false
 step = 0.05
 tracks/0/type = "value"
-tracks/0/path = NodePath("AnimatedSprite:visibility/visible")
+tracks/0/path = NodePath("Label:visibility/visible")
 tracks/0/interp = 1
 tracks/0/imported = false
-tracks/0/keys = { "times":FloatArray( 0, 0.15, 0.3, 0.45 ), "transitions":FloatArray( 1, 1, 1, 1 ), "update":1, "values":[ false, true, false, true ] }
+tracks/0/keys = {
+"times": FloatArray( 0, 0.15, 0.3, 0.45 ),
+"transitions": FloatArray( 1, 1, 1, 1 ),
+"update": 1,
+"values": [ false, true, false, true ]
+}
 
 [node name="HealthDisplay" type="Node2D"]
 
@@ -49,6 +119,7 @@ texture = ExtResource( 2 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="."]
 
+visibility/visible = false
 transform/pos = Vector2( 0, 20 )
 frames = SubResource( 1 )
 animation = "0"
@@ -62,22 +133,21 @@ animation = "default"
 
 [node name="Label" type="Label" parent="."]
 
-visibility/visible = false
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
-margin/left = -13.0
-margin/top = 0.0
-margin/right = 27.0
-margin/bottom = 47.0
+margin/left = -14.0
+margin/top = -3.0
+margin/right = 26.0
+margin/bottom = 63.0
 custom_fonts/font = ExtResource( 14 )
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 custom_constants/shadow_offset_x = 2
-custom_constants/shadow_offset_y = 2
+custom_constants/shadow_offset_y = 4
 custom_constants/shadow_as_outline = 0
-text = "4"
+text = "0"
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1

@@ -11,5 +11,7 @@ func _ready():
 
 func set_health(amount):
 	var str_amount = str(amount)
-	get_node("AnimatedSprite").set_animation(str_amount)
-	get_node("AnimatedSprite").show()
+	get_node("Label").set_text(str_amount)
+	get_node("Label").show()
+#	get_node("AnimatedSprite").set_animation(str_amount)
+#	get_node("AnimatedSprite").show()
