@@ -102,6 +102,7 @@ autostart = false
 
 [node name="FpsLabel" type="Label" parent="."]
 
+visibility/visible = false
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
@@ -122,6 +123,7 @@ transform/pos = Vector2( 42.6436, 30.4737 )
 
 [node name="AnimationCountLabel" type="Label" parent="."]
 
+visibility/visible = false
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
@@ -150,6 +152,7 @@ z/z = 102
 
 [node name="Fireflies" parent="." instance=ExtResource( 15 )]
 
+visibility/visible = false
 transform/pos = Vector2( 318.307, 509.312 )
 
 

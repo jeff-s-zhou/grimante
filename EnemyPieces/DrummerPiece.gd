@@ -7,6 +7,7 @@ extends "EnemyPiece.gd"
 var DESCRIPTION = "Causes all enemy pieces in the column (including itself) to move +1 tiles each turn."
 
 func initialize(max_hp, modifiers, prototype):
+	self.double_time = true
 	.initialize("Griffon", DESCRIPTION, Vector2(0, 2), max_hp, modifiers, prototype, TYPES.assist)
 
 func added_to_grid():
@@ -19,12 +20,12 @@ func added_to_grid():
 
 func turn_start():
 	if !self.silenced:
-		var column_range = get_parent().get_range(self.coords, [1, 9], "ENEMY", false, [3, 4])
-		column_range += get_parent().get_range(self.coords, [1, 9], "ENEMY", false, [0, 1])
+		var column_range = get_parent().get_range(self.coords, [1, 8], "ENEMY", false, [3, 4])
+		column_range += get_parent().get_range(self.coords, [1, 8], "ENEMY", false, [0, 1])
 		for coords in column_range:
-			get_parent().pieces[coords].movement_value = Vector2(0, 2)
+			get_parent().pieces[coords].double_time = true
 	else:
-		self.movement_value = Vector2(0, 1)
+		self.double_time = false
 		
 func animate_wind():
 	get_parent().get_node("FieldEffects").emit_wind(self.coords)

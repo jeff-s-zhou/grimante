@@ -4,7 +4,7 @@ extends "PlayerPiece.gd"
 const DEFAULT_BACKSTAB_DAMAGE = 1
 const ISOLATION_BONUS = 2
 const DEFAULT_PASSIVE_DAMAGE = 1
-const DEFAULT_MOVEMENT_VALUE = 2
+const DEFAULT_MOVEMENT_VALUE = 3
 const DEFAULT_SHIELD = false
 const UNIT_TYPE = "Assassin"
 

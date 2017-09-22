@@ -29,6 +29,8 @@ var cloaked = false
 var predator = false
 var corrosive = false
 
+var double_time = false
+
 var bleeding = false
 var frozen = false
 var silenced = false
@@ -74,11 +76,11 @@ func get_unit_name():
 
 func set_boss(flag):
 	self.boss_flag = flag
-	if flag:
-		get_node("Physicals/SpecialGlow").show()
-	else:
-		get_node("Physicals/SpecialGlow").hide()
-	
+#	if flag:
+#		get_node("Physicals/SpecialGlow").show()
+#	else:
+#		get_node("Physicals/SpecialGlow").hide()
+#	
 
 
 func _ready():
@@ -192,7 +194,7 @@ func unhovered():
 func movement_highlight():
 	if !self.deploying_flag:
 		self.action_highlighted = true
-		get_node("Physicals/EnemyOverlays/Red").show()
+		show_red()
 
 #called from self.grid to reset highlighting over the whole board
 func clear_display_state():
@@ -209,13 +211,14 @@ func reset_prediction_highlight():
 	if self.action_highlighted:
 		#if you hover a red piece with a indirect attack, it hides the red and shows orange
 		#so we need to reshow the red afterwards
-		get_node("Physicals/EnemyOverlays/Red").show() 
+		show_red()
 	
-
+func show_red():
+	get_node("Physicals/EnemyOverlays/Red").show() 
 
 func attack_highlight():
 	self.action_highlighted = true
-	get_node("Physicals/EnemyOverlays/Red").show()
+	show_red()
 	
 func get_actual_damage(damage):
 	if self.boss_flag:
@@ -722,7 +725,7 @@ func get_movement_value():
 	return self.movement_value
 	
 func reset_auras():
-	self.movement_value = self.default_movement_value
+	self.double_time = false
 
 
 func add_modifier_sets(set1, set2):

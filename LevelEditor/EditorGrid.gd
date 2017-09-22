@@ -10,7 +10,7 @@ var pieces = {}
 var shadow_wall_tile_range = []
 var shifting_sands_tiles = []
 
-
+var total_hp = 0
 
 #starts at 1, 2, 2, 3, 3, 4, 4, 5, 5,
 #ends at 8, 8, 9, 9, 10, 10, 11, 11, 12
@@ -57,6 +57,10 @@ func _ready():
 			var location_y_coord = _LOCATION_Y_OFFSETS[i] + j
 			self.locations[Vector2(i, location_y_coord)] = location1
 			location1.set_coords(Vector2(i, location_y_coord))
+			
+			
+func update_total_hp():
+	get_node("Label").set_text("Wave HP: " + str(self.total_hp))
 	
 			
 func add_piece(name, turn, coords, piece, hp, modifiers=null):
@@ -64,6 +68,8 @@ func add_piece(name, turn, coords, piece, hp, modifiers=null):
 	piece.initialize(name, turn, coords, hp, modifiers)
 	pieces[coords] = piece
 	locations[coords].set_pickable(false)
+	self.total_hp += int(hp)
+	update_total_hp()
 	
 func add_hero_piece(name, turn, coords, piece):
 	add_child(piece)
@@ -72,6 +78,9 @@ func add_hero_piece(name, turn, coords, piece):
 	locations[coords].set_pickable(false)
 	
 func remove_piece(coords):
+	if !self.pieces[coords].is_hero:
+		self.total_hp -= int(self.pieces[coords].hp)
+		update_total_hp()
 	self.pieces.erase(coords)
 	locations[coords].set_pickable(true)
 

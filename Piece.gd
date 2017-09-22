@@ -162,8 +162,10 @@ func animate_move_to_pos(position, speed, blocking=false, trans_type=Tween.TRANS
 	add_anim_count()
 	var tween = Tween.new()
 	add_child(tween)
+	
 	var distance = get_pos().distance_to(position)
-	tween.interpolate_property(self, "transform/pos", get_pos(), position, float(distance)/speed, trans_type, ease_type, delay)
+	var dim_distance = dim_multi_distance(distance)
+	tween.interpolate_property(self, "transform/pos", get_pos(), position, float(dim_distance)/speed, trans_type, ease_type, delay)
 	tween.start()
 	if blocking:
 		yield(tween, "tween_complete")
@@ -182,7 +184,9 @@ func animate_move(new_coords, speed=250, blocking=true, trans_type=Tween.TRANS_L
 	var position = location.get_pos()
 	
 	var distance = get_pos().distance_to(position)
-	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
+	var dim_distance = dim_multi_distance(distance)
+	var time = dim_distance/speed
+	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, time, trans_type, ease_type)
 	get_node("Tween").start()
 	if blocking:
 		yield(get_node("Tween"), "tween_complete")
@@ -197,7 +201,9 @@ func animate_move_and_hop(new_coords, speed=250, blocking=true, trans_type=Tween
 	var position = location.get_pos()
 	
 	var distance = get_pos().distance_to(position)
-	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, distance/speed, trans_type, ease_type)
+	var dim_distance = dim_multi_distance(distance)
+	var time = dim_distance/speed
+	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, time, trans_type, ease_type)
 	get_node("Tween").start()
 	animate_short_hop(speed, new_coords)
 	if blocking:
@@ -220,9 +226,16 @@ func animate_short_hop(speed, new_coords):
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
 	animate_short_hop_to_pos(speed, distance)
-	
+
+func dim_multi_distance(distance):
+	var x = distance/400 #400 is how far the biggest jump is
+	var y = ((-1 * pow(3, -1 * x)) + 1)/x
+	print(y * distance)
+	return y * distance
+
 func animate_short_hop_to_pos(speed, distance):
-	var time = distance/speed
+	var dim_distance = dim_multi_distance(distance)
+	var time = dim_distance/speed
 	time = max(0.30, time) #if short hop looks weird, switch this back to 0.35
 
 	var old_height = Vector2(0, -5)

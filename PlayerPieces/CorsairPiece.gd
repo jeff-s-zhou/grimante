@@ -176,7 +176,7 @@ func move_shoot(move_coords):
 		var action = get_new_action()
 		
 		#okay. the bullet HAS to be blocking so the damage is handled at the right time
-		var args = [move_coords, 500, false]
+		var args = [move_coords, 450, false]
 		add_animation(self, "animate_move_and_hop", false, args)
 		add_animation(self, "animate_shoot", true, [attack_coords])
 		
@@ -185,7 +185,7 @@ func move_shoot(move_coords):
 		action.add_call("corsair_attacked", [damage], attack_coords)
 		action.execute()
 	else: #if just moving, block other shit from happening
-		var args = [move_coords, 500, true]
+		var args = [move_coords, 450, true]
 		
 		add_animation(self, "animate_move_and_hop", true, args)
 		
