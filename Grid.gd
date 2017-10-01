@@ -37,6 +37,9 @@ const TILE_X_OFFSET = -5
 #const TILE_Y_OFFSET = 8
 const TILE_Y_OFFSET = 20
 
+const INITIAL_X = 50
+const INITIAL_Y = 100
+
 
 const _LOCATION_Y_OFFSETS = [0, 0, 1, 1, 2, 2, 3]
 
@@ -59,7 +62,7 @@ func _ready():
 			var location1 = location.instance()
 			var tile_x_spacing = location1.get_size().width + TILE_X_OFFSET
 			var tile_y_spacing = location1.get_size().height + TILE_Y_OFFSET
-			location1.set_pos(Vector2(tile_x_spacing * i, offset + (tile_y_spacing * j)))
+			location1.set_pos(Vector2(INITIAL_X + tile_x_spacing * i, INITIAL_Y + offset + (tile_y_spacing * j)))
 			add_child(location1)
 			
 			var location_y_coord = _LOCATION_Y_OFFSETS[i] + j

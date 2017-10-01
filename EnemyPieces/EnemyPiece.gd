@@ -45,7 +45,7 @@ var prototype = null
 
 var prediction_flyover = null
 
-const flyover_prototype = preload("res://EnemyPieces/Components/Flyover.tscn")
+var flyover_prototype = preload("res://EnemyPieces/Components/Flyover.tscn")
 
 signal broke_defenses
 
@@ -109,11 +109,16 @@ func initialize(unit_name, hover_description, movement_value, max_hp, modifiers,
 		self.explosion_prototype = GREEN_EXPLOSION_SCENE
 	elif self.type == TYPES.boss:
 		self.explosion_prototype = BLACK_EXPLOSION_SCENE
-		
 	
 	initialize_hp(max_hp)
 	if modifiers != null:
 		initialize_modifiers(modifiers)
+		
+		
+func toggle_desktop(flag):
+	if flag:
+		self.flyover_prototype = preload("res://EnemyPieces/Components/DesktopFlyover.tscn")
+		
 		
 func start_deploy_phase():
 	self.deploying_flag = true
@@ -221,11 +226,18 @@ func attack_highlight():
 	show_red()
 	
 func get_actual_damage(damage):
+	var tile = get_parent().locations[coords]
+	
+	#TODO put this through an action call
+	
+	
 	if self.boss_flag:
 		if damage > 1:
 			damage = 1
 		else:
 			damage = 0
+	elif tile.raining:
+		damage += 2
 
 	if self.shielded:
 		return 0
@@ -571,10 +583,11 @@ func attacked(amount, delay=0.0):
 	
 	#TODO put this through an action call
 	if tile.raining:
-		var action = get_new_action()
-		action.add_call("lightning_attacked", [], self.coords)
-		action.execute()
-	
+		add_animation(tile, "animate_lightning", false)
+#		var action = get_new_action()
+#		action.add_call("lightning_attacked", [], self.coords)
+#		action.execute()
+#	
 
 func corsair_attacked(damage):
 	if !self.shielded:
@@ -586,7 +599,7 @@ func corsair_attacked(damage):
 func lightning_attacked():
 	var tile = get_parent().locations[coords]
 	add_animation(tile, "animate_lightning", false)
-	modify_hp(-2)
+	#modify_hp(-2)
 
 #called by the assassin's passive
 #func opportunity_attacked(amount):

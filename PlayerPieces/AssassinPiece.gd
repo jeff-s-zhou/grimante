@@ -4,7 +4,7 @@ extends "PlayerPiece.gd"
 const DEFAULT_BACKSTAB_DAMAGE = 1
 const ISOLATION_BONUS = 2
 const DEFAULT_PASSIVE_DAMAGE = 1
-const DEFAULT_MOVEMENT_VALUE = 3
+const DEFAULT_MOVEMENT_VALUE = 2
 const DEFAULT_SHIELD = false
 const UNIT_TYPE = "Assassin"
 
@@ -26,15 +26,15 @@ func _ready():
 	self.assist_type = ASSIST_TYPES.attack
 
 func delete_self():
-	get_node("/root/Combat").assassin = null
+	get_parent().assassin = null
 	.delete_self()
 
 func queue_free():
-	get_node("/root/Combat").assassin = null
+	get_parent().assassin = null
 	.queue_free()
 
 func resurrect():
-	get_node("/root/Combat").assassin = self
+	get_parent().assassin = self
 	.resurrect()
 
 

@@ -2,6 +2,8 @@ extends Node2D
 
 const STATES = {"player_turn":0, "enemy_turn":1, "transitioning":3, "deploying":4, "instruction":5, "end":6}
 
+onready var PLATFORMS = get_node("/root/global").PLATFORMS
+
 var state = STATES.deploying
 var enemy_waves = null
 var tutorial = null
@@ -13,9 +15,11 @@ var level_schematic = null
 var state_manager = null
 var mid_forced_action = false
 var has_active_star = false
+var desktop_flag = false
+
+var combat_resource = "res://Combat.tscn"
 
 onready var Constants = get_node("/root/constants")
-
 
 signal wave_deployed
 signal next_pressed
@@ -27,14 +31,17 @@ signal deployed
 signal animation_done
 
 func _ready():
+	if get_node("/root/global").platform == PLATFORMS.PC:
+		self.combat_resource = "res://DesktopCombat.tscn"
+		self.desktop_flag = true
+	
 	print("entering combat")
 	get_node("/root/AnimationQueue").reset()
 	get_node("/root/global").load_state()
-	get_node("Grid").set_pos(Vector2(73, 270))
+	var screen_size = get_viewport().get_rect().size
+	get_node("Grid").set_pos(Vector2(screen_size.x/2 - 310, screen_size.y/2- 350))
 	#get_node("Grid").set_pos(Vector2(400, 250))
 	#debug_full_roster()
-	
-	get_node("RestartBar").connect("bar_filled", self, "restart")
 	
 	get_node("/root/AnimationQueue").connect("animation_count_update", self, "update_animation_count_display")
 	
@@ -59,10 +66,7 @@ func _ready():
 		
 	#we store the initial wave count as the first value in the array
 
-	self.state_manager = load("res://UI/TimedSystem.tscn").instance()
-
-	add_child(self.state_manager)
-	self.state_manager.initialize(self.level_schematic, get_node("ControlBar/Combat/StarBar"), self.level_schematic.flags)
+	get_node("InfoBar").initialize(self.level_schematic, get_node("ControlBar/Combat/StarBar"), self.level_schematic.flags)
 	
 	get_node("ControlBar").initialize(self.level_schematic.flags, self)
 	
@@ -256,6 +260,7 @@ func initialize_enemy_piece(coords, prototype, health, modifiers, animation_sequ
 	get_node("Grid").add_child(enemy_piece)
 	#get_node("Grid").add_piece(coords, enemy_piece)
 	enemy_piece.initialize(health, modifiers, prototype)
+	#enemy_piece.toggle_desktop(self.desktop_flag)
 	enemy_piece.connect("broke_defenses", self, "damage_defenses")
 	enemy_piece.connect("shake", self, "screen_shake")
 	enemy_piece.connect("small_shake", self, "small_screen_shake")
@@ -288,17 +293,11 @@ func handle_deploy():
 		emit_signal("deployed")
 	
 func handle_end_turn_released():
-	if get_node("RestartBar").animating_flag:
-		lighten(0.2)
-		get_node("RestartBar").stop()
-	else:
-		end_turn()
+	end_turn()
 		
 		
 func holding_end_turn():
-	darken(0.1, 0.8)
-	get_node("RestartBar").start()
-
+	pass
 
 func restart():
 	pause()
@@ -306,7 +305,7 @@ func restart():
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 	get_node("/root/DataLogger").log_restart(self.level_schematic.name, self.turn_count)
-	get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic})
+	get_node("/root/global").goto_scene(self.combat_resource, {"level": self.level_schematic})
 
 
 #called to check if a mouse is currently inside the area of a piece
@@ -387,7 +386,7 @@ func computer_input(event):
 				yield(get_node("/root/AnimationQueue"), "animations_finished")
 			get_node("/root/AnimationQueue").stop()
 			print("debug level skip")
-			get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.next_level})
+			get_node("/root/global").goto_scene(self.combat_resource, {"level": self.level_schematic.next_level})
 			
 			
 	elif event.is_action("restart") and event.is_pressed():
@@ -477,7 +476,7 @@ func enemy_phase():
 		player_win()
 		return
 
-	elif get_tree().get_nodes_in_group("player_pieces").size() == 0 or self.state_manager.check_timeout(self.turn_count):
+	elif get_tree().get_nodes_in_group("player_pieces").size() == 0 or get_node("InfoBar").check_timeout(self.turn_count):
 		enemy_win()
 		return
 	
@@ -490,7 +489,7 @@ func enemy_phase():
 	if self.state != STATES.end:
 		get_node("PhaseShifter").player_phase_animation()
 		yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
-		self.state_manager.update(self.turn_count)
+		get_node("InfoBar").update(self.turn_count)
 		start_player_phase()
 
 
@@ -531,9 +530,11 @@ func reinforce():
 
 
 func screen_shake():
+	print("shaking here")
 	get_node("ShakeCamera").shake(0.6, 30, 12)
 	
 func small_screen_shake():
+	print("or shaking here")
 	get_node("ShakeCamera").shake(0.4, 24, 5)
 
 func _sort_by_y_axis(enemy_piece1, enemy_piece2):
@@ -597,7 +598,11 @@ func handle_boss_death():
 
 
 func handle_enemy_death():
-	self.state_manager.handle_enemy_death()
+	if get_node("/root/global").platform == PLATFORMS.PC:
+		get_node("ControlBar/Combat/StarBar").handle_enemy_death()
+	else:
+		get_node("InfoBar").handle_enemy_death()
+
 	if get_tree().get_nodes_in_group("enemy_pieces").size() == 0:
 		player_win()
 
@@ -622,7 +627,7 @@ func player_win():
 	yield(get_node("Timer2"), "timeout")
 	
 	if self.level_schematic.is_sub_level():
-		get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level_schematic.next_level})
+		get_node("/root/global").goto_scene(self.combat_resource, {"level": self.level_schematic.next_level})
 	else:
 		get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level": self.level_schematic.next_level})
 	
