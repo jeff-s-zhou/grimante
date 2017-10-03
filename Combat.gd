@@ -678,5 +678,5 @@ func lighten(time=0.4):
 
 func handle_invalid_move():
 	get_node("SamplePlayer").play("error")
-	get_node("InvalidMoveIndicator/AnimationPlayer").play("flash")
+	#get_node("InvalidMoveIndicator/AnimationPlayer").play("flash")
 	
