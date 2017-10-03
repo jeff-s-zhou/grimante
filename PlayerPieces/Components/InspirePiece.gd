@@ -12,4 +12,10 @@ func _ready():
 	pass
 
 func initialize(assist_type):
-	get_node("Sprite").play("default")
+	get_node("AnimatedSprite").show()
+	if assist_type == ASSIST_TYPES.attack:
+		get_node("AnimatedSprite").play("red")
+	elif assist_type == ASSIST_TYPES.defense:
+		get_node("AnimatedSprite").play("blue")
+	elif assist_type == ASSIST_TYPES.movement:
+		get_node("AnimatedSprite").play("yellow")

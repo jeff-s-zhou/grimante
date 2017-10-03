@@ -283,7 +283,7 @@ func initialize(cursor_area, flags):
 	if flags.has("no_inspire"):
 		pass
 	else:
-		get_node("SelectedGlow").initialize(self.assist_type)
+		get_node("Physicals/InspirePiece").initialize(self.assist_type)
 		
 func added_to_grid():
 	pass

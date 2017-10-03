@@ -9,7 +9,7 @@ colors = ColorArray( 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0 )
 
 [node name="Fireflies" type="Particles2D"]
 
-config/amount = 10
+config/amount = 14
 config/lifetime = 3.5
 config/process_mode = 1
 config/half_extents = Vector2( 325, 475 )

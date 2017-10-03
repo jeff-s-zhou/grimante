@@ -2,8 +2,8 @@
 
 [ext_resource path="res://Location.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/location.png" type="Texture" id=2]
-[ext_resource path="res://Assets/UI/location_red.png" type="Texture" id=3]
-[ext_resource path="res://Assets/UI/location_blue.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/location_blue.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/location_red.png" type="Texture" id=4]
 [ext_resource path="res://Objects/ShiftingSands.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Assets/UI/location_orange.png" type="Texture" id=6]
 [ext_resource path="res://Effects/StormEffect.tscn" type="PackedScene" id=7]
@@ -11,15 +11,15 @@
 [ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=9]
 [ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=10]
 [ext_resource path="res://UI/ReinforcementIndicator.tscn" type="PackedScene" id=11]
-[ext_resource path="res://Assets/Allies/assassin_corpse.png" type="Texture" id=12]
-[ext_resource path="res://Assets/Allies/cavalier_corpse.png" type="Texture" id=13]
-[ext_resource path="res://Assets/Allies/archer_corpse.png" type="Texture" id=14]
-[ext_resource path="res://Assets/Allies/pyromancer_corpse.png" type="Texture" id=15]
-[ext_resource path="res://Assets/Allies/saint_corpse.png" type="Texture" id=16]
-[ext_resource path="res://Assets/Allies/berserker_corpse.png" type="Texture" id=17]
+[ext_resource path="res://Assets/Allies/crusader_corpse.png" type="Texture" id=12]
+[ext_resource path="res://Assets/Allies/berserker_corpse.png" type="Texture" id=13]
+[ext_resource path="res://Assets/Allies/assassin_corpse.png" type="Texture" id=14]
+[ext_resource path="res://Assets/Allies/saint_corpse.png" type="Texture" id=15]
+[ext_resource path="res://Assets/Allies/archer_corpse.png" type="Texture" id=16]
+[ext_resource path="res://Assets/Allies/corsair_corpse.png" type="Texture" id=17]
 [ext_resource path="res://Assets/Allies/stormdancer_corpse.png" type="Texture" id=18]
-[ext_resource path="res://Assets/Allies/corsair_corpse.png" type="Texture" id=19]
-[ext_resource path="res://Assets/Allies/crusader_corpse.png" type="Texture" id=20]
+[ext_resource path="res://Assets/Allies/pyromancer_corpse.png" type="Texture" id=19]
+[ext_resource path="res://Assets/Allies/cavalier_corpse.png" type="Texture" id=20]
 [ext_resource path="res://InputHandler.tscn" type="PackedScene" id=21]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
@@ -37,19 +37,19 @@ animations = [ {
 }, {
 "frames": [ ExtResource( 3 ) ],
 "loop": true,
-"name": "attack_hover",
+"name": "movement_hover",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 4 ) ],
 "loop": true,
-"name": "movement_hover",
+"name": "attack_hover",
 "speed": 5.0
 } ]
 
 [sub_resource type="SpriteFrames" id=3]
 
 animations = [ {
-"frames": [ ExtResource( 4 ) ],
+"frames": [ ExtResource( 3 ) ],
 "loop": true,
 "name": "default",
 "speed": 5.0
@@ -89,32 +89,32 @@ samples/tile_hover = {
 animations = [ {
 "frames": [ ExtResource( 12 ) ],
 "loop": true,
-"name": "assassin",
+"name": "crusader",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 13 ) ],
 "loop": true,
-"name": "cavalier",
+"name": "berserker",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 14 ) ],
 "loop": true,
-"name": "archer",
+"name": "assassin",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 15 ) ],
 "loop": true,
-"name": "pyromancer",
+"name": "saint",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 16 ) ],
 "loop": true,
-"name": "saint",
+"name": "archer",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 17 ) ],
 "loop": true,
-"name": "berserker",
+"name": "corsair",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 18 ) ],
@@ -124,12 +124,12 @@ animations = [ {
 }, {
 "frames": [ ExtResource( 19 ) ],
 "loop": true,
-"name": "corsair",
+"name": "pyromancer",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 20 ) ],
 "loop": true,
-"name": "crusader",
+"name": "cavalier",
 "speed": 5.0
 } ]
 
