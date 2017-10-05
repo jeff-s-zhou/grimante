@@ -8,7 +8,7 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	pass
-	#get_node("FinalHeroScreen").connect("final_hero_selected", self, "final_hero_selected")
+	get_node("FinalHeroScreen").connect("final_hero_selected", self, "final_hero_selected")
 	
 func initialize(flags, combat_scene):
 	#get_node("Combat/DeployButton").connect("pressed", combat_scene, "handle_deploy")
@@ -26,10 +26,10 @@ func initialize(flags, combat_scene):
 func set_deploying(flag):
 	if flag:
 		#get_node("Combat/DeployButton").show()
-		#get_node("FinalHeroScreen").show()
+		get_node("FinalHeroScreen").show()
 		get_node("Combat").hide()
 	else:
-		#get_node("FinalHeroScreen").queue_free()
+		get_node("FinalHeroScreen").queue_free()
 		#get_node("Combat/DeployButton").hide()
 		get_node("Combat/EndTurnButton").show()
 		
@@ -39,8 +39,7 @@ func final_hero_selected():
 
 func add_piece_on_bar(piece):
 	#add_child(piece)
-	pass
-	#get_node("FinalHeroScreen").initialize(piece)
+	get_node("FinalHeroScreen").initialize(piece)
 
 
 		

@@ -1,13 +1,15 @@
-{"hp":"2", "turn":0, "pos_x":5, "name":"spectre", "modifiers":{}, "pos_y":6}
-{"hp":"4", "turn":0, "pos_x":3, "name":"spectre", "modifiers":{}, "pos_y":2}
-{"hp":"2", "turn":0, "pos_x":1, "name":"spectre", "modifiers":{}, "pos_y":3}
-{"hp":"4", "turn":0, "pos_x":2, "name":"spectre", "modifiers":{}, "pos_y":5}
-{"hp":"2", "turn":0, "pos_x":4, "name":"spectre", "modifiers":{}, "pos_y":6}
-{"hp":"2", "turn":0, "pos_x":5, "name":"spectre", "modifiers":{}, "pos_y":4}
-{"turn":0, "pos_x":4, "name":"corsair", "pos_y":7}
-{"turn":0, "pos_x":5, "name":"archer", "pos_y":8}
-{"hp":"6", "turn":0, "pos_x":3, "name":"spectre", "modifiers":{}, "pos_y":4}
-{"turn":0, "pos_x":1, "name":"berserker", "pos_y":6}
+{"hp":"2", "turn":0, "pos_x":1, "name":"spectre", "modifiers":{}, "pos_y":2}
+{"hp":"2", "turn":0, "pos_x":0, "name":"spectre", "modifiers":{}, "pos_y":3}
+{"hp":"2", "turn":0, "pos_x":6, "name":"spectre", "modifiers":{}, "pos_y":6}
 {"turn":0, "pos_x":2, "name":"cavalier", "pos_y":6}
-{"hp":"3", "turn":1, "pos_x":2, "name":"spectre", "modifiers":{}, "pos_y":4}
+{"turn":0, "pos_x":1, "name":"berserker", "pos_y":6}
+{"hp":"6", "turn":0, "pos_x":3, "name":"spectre", "modifiers":{}, "pos_y":4}
+{"turn":0, "pos_x":5, "name":"archer", "pos_y":8}
+{"turn":0, "pos_x":4, "name":"corsair", "pos_y":7}
+{"hp":"3", "turn":0, "pos_x":5, "name":"spectre", "modifiers":{}, "pos_y":4}
+{"hp":"2", "turn":0, "pos_x":4, "name":"spectre", "modifiers":{}, "pos_y":6}
+{"hp":"3", "turn":0, "pos_x":2, "name":"spectre", "modifiers":{}, "pos_y":5}
+{"hp":"4", "turn":0, "pos_x":3, "name":"spectre", "modifiers":{}, "pos_y":2}
+{"hp":"2", "turn":1, "pos_x":3, "name":"spectre", "modifiers":{}, "pos_y":3}
 {"hp":"2", "turn":1, "pos_x":4, "name":"spectre", "modifiers":{}, "pos_y":5}
+{"hp":"3", "turn":1, "pos_x":2, "name":"spectre", "modifiers":{}, "pos_y":4}

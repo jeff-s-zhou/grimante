@@ -26,8 +26,9 @@ func get():
 	"Whenever the Cavalier kills an enemy, the next Hero gains  {+1 range to its movement}."]
 	add_forced_action(tutorial, 2, Vector2(5, 3), Vector2(0, 3), text)
 	
-	text = ["The Assassin inspires Attack, and the Archer inspires Movement.",
-	"Press Tab over a Hero to see what it Inspires."]
+	text = ["Red Hearts inspire Attack. Yellow Hearts inspire Movement.",
+	"The Inspire Type is also displayed on the Hero Information Screen.",
+	"Note: Heroes cannot Inspire themselves if they act twice in a row.",]
 	
 	add_player_start_rule(tutorial, 3, text)
 

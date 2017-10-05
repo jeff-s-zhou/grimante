@@ -41,10 +41,11 @@ func activate_assist(assist_type, assister):
 		
 
 func assist(piece):
-	
 	if self.assister != null:
 		print(str(self.assister.unit_name) + " is assisting " + str(piece.unit_name))
-		self.assister.assist(piece, self.assist_type)
+		if self.assister != piece:
+			print("reached the assist")
+			self.assister.assist(piece, self.assist_type)
 		
 
 func clear_assist():

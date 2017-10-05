@@ -21,12 +21,19 @@ var PLATFORMS = {"Android":1, "iOS":2, "PC":3}
 
 var platform = PLATFORMS.PC
 
+var combat_resource
+
 
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	var root = get_tree().get_root()
 	current_scene = root.get_child( root.get_child_count() -1 )
+	
+	if self.platform == PLATFORMS.PC:
+		combat_resource = "res://DesktopCombat.tscn"
+	else:
+		combat_resource = "res://Combat.tscn"
 	
 func goto_scene(path, params=null):
 	call_deferred("_deferred_goto_scene", path, params)

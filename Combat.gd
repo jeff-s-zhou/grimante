@@ -31,8 +31,8 @@ signal deployed
 signal animation_done
 
 func _ready():
+	self.combat_resource = get_node("/root/global").combat_resource
 	if get_node("/root/global").platform == PLATFORMS.PC:
-		self.combat_resource = "res://DesktopCombat.tscn"
 		self.desktop_flag = true
 	
 	print("entering combat")
@@ -54,6 +54,7 @@ func _ready():
 		self.tutorial = tutorial_func.call_func()
 		if self.tutorial != null:
 			add_child(self.tutorial)
+			print("adding tutorial")
 
 	get_node("/root/DataLogger").log_start_attempt(self.level_schematic.name)
 	

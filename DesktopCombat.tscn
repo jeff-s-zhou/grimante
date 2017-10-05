@@ -137,7 +137,7 @@ config/half_extents = Vector2( 512, 384 )
 
 [node name="ControlBar" parent="." instance=ExtResource( 13 )]
 
-transform/pos = Vector2( -4.69884, 679.782 )
+transform/pos = Vector2( 0, 680 )
 
 [node name="InfoBar" parent="." instance=ExtResource( 14 )]
 

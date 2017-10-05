@@ -125,7 +125,7 @@ func handle_pre_assisted():
 		print("setting shield in pre-assisted")
 		set_shield(true)
 
-	
+#called from Actions
 func trigger_assist_flag():
 	self.assist_flag = true
 
@@ -133,7 +133,7 @@ func trigger_assist_flag():
 func handle_assist():
 	if self.assist_flag:
 		self.assist_flag = false
-		#we specifically redirect it through the AssistSystem to call the function below in case it's an ultimate
+		#we specifically redirect it through the AssistSystem to check if it's disabled
 		self.AssistSystem.activate_assist(self.assist_type, self)
 	else:
 		self.AssistSystem.clear_assist()
