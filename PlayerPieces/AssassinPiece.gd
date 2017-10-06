@@ -17,12 +17,9 @@ var pathed_range
 
 func _ready():
 	set_shield(DEFAULT_SHIELD)
-	print("I'm calling the assassins ready")
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	load_description(self.unit_name)
-	print(self.unit_name)
-	print("finished calling assassin's ready")
 	self.assist_type = ASSIST_TYPES.attack
 
 func delete_self():

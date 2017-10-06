@@ -8,11 +8,11 @@
 [ext_resource path="res://PlayerPieces/Components/ComboSparkleManager.tscn" type="PackedScene" id=6]
 [ext_resource path="res://PlayerPieces/Components/HeroShield.tscn" type="PackedScene" id=7]
 [ext_resource path="res://PlayerPieces/Components/InspirePiece.tscn" type="PackedScene" id=8]
-[ext_resource path="res://PlayerPieces/Components/UltimateBar.tscn" type="PackedScene" id=9]
-[ext_resource path="res://PlayerPieces/Components/PlayerCollisionArea.tscn" type="PackedScene" id=10]
-[ext_resource path="res://PlayerPieces/Components/PieceSampleLibrary.tres" type="SampleLibrary" id=11]
-[ext_resource path="res://Assets/processed_fonts/enemy_health.fnt" type="BitmapFont" id=12]
-[ext_resource path="res://PlayerPieces/Components/InspireIndicator.tscn" type="PackedScene" id=13]
+[ext_resource path="res://PlayerPieces/Components/InspireIndicator.tscn" type="PackedScene" id=9]
+[ext_resource path="res://PlayerPieces/Components/UltimateBar.tscn" type="PackedScene" id=10]
+[ext_resource path="res://PlayerPieces/Components/PlayerCollisionArea.tscn" type="PackedScene" id=11]
+[ext_resource path="res://PlayerPieces/Components/PieceSampleLibrary.tres" type="SampleLibrary" id=12]
+[ext_resource path="res://Assets/processed_fonts/enemy_health.fnt" type="BitmapFont" id=13]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -117,9 +117,13 @@ transform/pos = Vector2( 0, 40 )
 
 transform/pos = Vector2( 0, 45.0514 )
 
-[node name="UltimateBar" parent="." instance=ExtResource( 9 )]
+[node name="InspireIndicator" parent="Physicals" instance=ExtResource( 9 )]
 
-[node name="CollisionArea" parent="." instance=ExtResource( 10 )]
+z/z = 6
+
+[node name="UltimateBar" parent="." instance=ExtResource( 10 )]
+
+[node name="CollisionArea" parent="." instance=ExtResource( 11 )]
 
 [node name="Timer" type="Timer" parent="."]
 
@@ -138,7 +142,7 @@ playback/speed = 1.0
 [node name="SamplePlayer" type="SamplePlayer" parent="."]
 
 config/polyphony = 1
-config/samples = ExtResource( 11 )
+config/samples = ExtResource( 12 )
 default/volume_db = 0.0
 default/pitch_scale = 1.0
 default/pan = 0.0
@@ -169,7 +173,7 @@ margin/left = -29.0
 margin/top = -21.0
 margin/right = 11.0
 margin/bottom = 5.0
-custom_fonts/font = ExtResource( 12 )
+custom_fonts/font = ExtResource( 13 )
 custom_colors/font_color = Color( 0.804688, 0, 1, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 percent_visible = 1.0
@@ -192,11 +196,6 @@ default/filter/gain = 1.0
 default/reverb_room = 2
 default/reverb_send = 0.0
 default/chorus_send = 0.0
-
-[node name="InspireIndicator" parent="." instance=ExtResource( 13 )]
-
-transform/pos = Vector2( 0, -5 )
-z/z = 6
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 

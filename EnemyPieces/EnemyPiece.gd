@@ -750,13 +750,15 @@ func add_modifier_sets(set1, set2):
 	
 func turn_start():
 	pass
+	
+func turn_end():
+	reset_auras()
 
 #called at the start of enemy turn, after checking for aura effects
 func turn_update():
 	set_corsair_marked(false)
 	set_z(0)
 	turn_update_helper()
-	reset_auras()
 
 #called after all pieces finish moving
 func turn_attack_update():
@@ -770,6 +772,7 @@ func turn_attack_update():
 	
 	if self.stunned:
 		set_stunned(false)
+
 
 
 #this is written so we can easily add more stuff to the end of the turn_update before executing the animation_sequence

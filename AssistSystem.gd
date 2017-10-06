@@ -42,10 +42,10 @@ func activate_assist(assist_type, assister):
 
 func assist(piece):
 	if self.assister != null:
-		print(str(self.assister.unit_name) + " is assisting " + str(piece.unit_name))
 		if self.assister != piece:
-			print("reached the assist")
 			self.assister.assist(piece, self.assist_type)
+		else:
+			self.assister.clear_assist()
 		
 
 func clear_assist():
@@ -53,17 +53,17 @@ func clear_assist():
 	self.assist_type = null
 
 
-func get_bonus_attack():
-	if self.assist_type == ASSIST_TYPES.attack:
+func get_bonus_attack(assisted):
+	if self.assist_type == ASSIST_TYPES.attack and self.assister != assisted:
 		return 1
 	else:
 		return 0
 	
-func get_bonus_movement():
-	if self.assist_type == ASSIST_TYPES.movement:
+func get_bonus_movement(assisted):
+	if self.assist_type == ASSIST_TYPES.movement and self.assister != assisted:
 		return 1
 	else:
 		return 0
 	
-func get_bonus_invulnerable():
-	return self.assist_type == ASSIST_TYPES.defense
+func get_bonus_invulnerable(assisted):
+	return self.assist_type == ASSIST_TYPES.defense and self.assister != assisted

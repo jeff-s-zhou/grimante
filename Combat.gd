@@ -26,6 +26,8 @@ signal next_pressed
 signal reinforced
 signal done_initializing
 
+signal enemy_turn_done
+
 signal deployed
 
 signal animation_done
@@ -423,8 +425,10 @@ func _process(delta):
 	get_node('FpsLabel').set_text(str(OS.get_frames_per_second()))
 
 	if self.state == STATES.enemy_turn:
-		enemy_phase()
 		self.state = STATES.transitioning
+		print("state still equals STATES.enemy_turn")
+		print(self.state)
+		enemy_phase()
 	elif self.state == STATES.transitioning:
 		pass
 		
@@ -436,30 +440,15 @@ func enemy_phase():
 		yield(self.tutorial, "rule_finished")
 		unpause()
 	
-	var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
+	enemy_phase_helper(false)
+	yield(self, "enemy_turn_done")
 	
-	enemy_pieces.sort_custom(self, "_sort_by_y_axis") #ensures the pieces in front move first
-	for enemy_piece in enemy_pieces:
-		enemy_piece.turn_start()
+	enemy_phase_helper(true)
+	yield(self, "enemy_turn_done")
 	
-	if(get_node("/root/AnimationQueue").is_animating()):
-		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	
-	for enemy_piece in enemy_pieces:
-		enemy_piece.turn_update()
-		
-	if(get_node("/root/AnimationQueue").is_animating()):
-		yield(get_node("/root/AnimationQueue"), "animations_finished")
-		
-	enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
-	for enemy_piece in enemy_pieces:
-		enemy_piece.turn_attack_update()
-
-	
-	#if there are enemy pieces, wait for them to finish
-	if(get_node("/root/AnimationQueue").is_animating()):
-		yield(get_node("/root/AnimationQueue"), "animations_finished")
-
+	var enemy_pieces = get_enemies(false)
+	for enemy in enemy_pieces:
+		enemy.turn_end()
 	
 	deploy_wave()
 	load_in_next_wave()
@@ -493,6 +482,56 @@ func enemy_phase():
 		get_node("InfoBar").update(self.turn_count)
 		start_player_phase()
 
+
+func enemy_phase_helper(double_time_turn):
+	print("calling enemy_phase_helper")
+	var enemy_pieces = get_enemies(double_time_turn)
+	if enemy_pieces != []:
+		print("reached here before breaking")
+		for enemy_piece in enemy_pieces:
+			enemy_piece.turn_start()
+		
+		if(get_node("/root/AnimationQueue").is_animating()):
+			yield(get_node("/root/AnimationQueue"), "animations_finished")
+			
+		print("reached here before breaking2")
+		
+		for enemy_piece in enemy_pieces:
+			enemy_piece.turn_update()
+			
+		if(get_node("/root/AnimationQueue").is_animating()):
+			yield(get_node("/root/AnimationQueue"), "animations_finished")
+		
+	enemy_pieces = get_enemies(double_time_turn)
+	if enemy_pieces != []:
+		for enemy_piece in enemy_pieces:
+			enemy_piece.turn_attack_update()
+	
+		#if there are enemy pieces, wait for them to finish
+		if(get_node("/root/AnimationQueue").is_animating()):
+			yield(get_node("/root/AnimationQueue"), "animations_finished")
+	
+	#needed so the signal isn't sent out too early wtfffff
+	get_node("Timer2").set_wait_time(0.05)
+	get_node("Timer2").start()
+	yield(get_node("Timer2"), "timeout")
+	emit_signal("enemy_turn_done")
+
+
+func get_enemies(double_time_turn):
+	var enemy_pieces = get_tree().get_nodes_in_group("enemy_pieces")
+	if double_time_turn:
+		var double_time_enemies = []
+		for enemy_piece in enemy_pieces:
+			if enemy_piece.double_time:
+				double_time_enemies.append(enemy_piece)
+		double_time_enemies.sort_custom(self, "_sort_by_y_axis")
+		print("printing double_time_enemies")
+		print(double_time_enemies)
+		return double_time_enemies
+	else:
+		enemy_pieces.sort_custom(self, "_sort_by_y_axis")
+		return enemy_pieces
 
 
 func start_player_phase():
@@ -531,11 +570,9 @@ func reinforce():
 
 
 func screen_shake():
-	print("shaking here")
 	get_node("ShakeCamera").shake(0.6, 30, 12)
 	
 func small_screen_shake():
-	print("or shaking here")
 	get_node("ShakeCamera").shake(0.4, 24, 5)
 
 func _sort_by_y_axis(enemy_piece1, enemy_piece2):

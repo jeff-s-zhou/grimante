@@ -114,12 +114,12 @@ var set4 = LevelSet.new("Fourth",
 [frost_knight(), frost_knight_drive(), wyvern(), wyvern2(), shield(), big_fight()])
 
 var set5 = LevelSet.new("Fifth",
-[corsair_trials(), corsair_drive(), ghostbusters(), ghostbusters2(), boss_fight(), big_boss_fight()])
+[corsair_trials(), corsair_drive(), ghostbusters(), ghostbusters2(), boss_fight(), fray(), big_boss_fight()])
 
 var set6 = LevelSet.new("Sixth",
-[inspire()])
+[inspire(), shield_inspire(), corrosion(), griffon(), defuse_the_bomb(), ghost_boss()])
 
-var level_sets = [set, set2, set3, set4, set5]
+var level_sets = [set, set2, set3, set4, set5, set6]
 
 #free levels that I think are still good
 
@@ -131,9 +131,9 @@ func get_level_sets():
 func sandbox(): 
 	var flags = ["bonus_star"]
 	var extras1 = {"free_deploy":false, "flags":flags}
-	var raw_enemies = {0:{ Vector2(3, 6): make(Grunt, 3), Vector2(1, 5): make(Grunt, 5)}}
+	var raw_enemies = {0:{ Vector2(1, 1): make(Grunt, 3), Vector2(2, 2): make(Grunt, 3), Vector2(3, 5): make(Grunt, 3)}}
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var heroes = {3: Archer, 4: Assassin} 
+	var heroes = {2: Cavalier, 3: Assassin} 
 #
 	return LevelTypes.Timed.new("", heroes, enemies, 3, null, extras1) 
 	
@@ -496,6 +496,16 @@ func boss_fight():
 
 	return LevelTypes.Timed.new("Boss Fight", allies, enemies, 3, null, extras)
 	
+func fray():
+	var pieces = load_level("fray.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_fifth", "no_inspire"]
+	var extras = {"flags":flags, "free_deploy":false}
+
+	return LevelTypes.Timed.new("Fray", allies, enemies, 4, null, extras)
+	
 func big_boss_fight():
 	var pieces = load_level("big_boss_fight.level")
 	var raw_enemies = pieces[0]
@@ -504,7 +514,6 @@ func big_boss_fight():
 	var flags = ["no_inspire"]
 	var extras = {"flags":flags, "free_deploy":true}
 	return LevelTypes.Timed.new("Big Boss Fight", allies, enemies, 3, null, extras)
-
 
 	
 func inspire():
@@ -519,6 +528,54 @@ func inspire():
 	return LevelTypes.Timed.new("Power of Friendship", allies, enemies, 4, null, extras)
 	
 
+func shield_inspire():
+	var pieces = load_level("shield_inspire.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var tutorial = load("res://Tutorials/inspire.gd").new()
+	var tutorial_func = funcref(tutorial, "get")
+	var flags = ["no_fifth"]
+	var extras = {"free_deploy":false, "flags":flags}
+	return LevelTypes.Timed.new("Power of Friendship 2", allies, enemies, 3, null, extras)
+	
+func corrosion():
+	var pieces = load_level("corrosion.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_fifth"]
+	var extras = {"free_deploy":false, "flags":flags}
+	return LevelTypes.Timed.new("Corrosion", allies, enemies, 5, null, extras)
+	
+	
+func griffon():
+	var pieces = load_level("griffon.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_fifth"]
+	var extras = {"free_deploy":false, "flags":flags}
+	return LevelTypes.Timed.new("Corrosion", allies, enemies, 4, null, extras)
+	
+
+func defuse_the_bomb():
+	var pieces = load_level("defuse_the_bomb.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_fifth"]
+	var extras = {"free_deploy":false, "flags":flags}
+	return LevelTypes.Timed.new("Defuse the Bomb", allies, enemies, 3, null, extras)
+	
+func ghost_boss():
+	var pieces = load_level("defuse_the_bomb.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var extras = {"free_deploy":true, "flags":[]}
+	return LevelTypes.Timed.new("Defuse the Bomb", allies, enemies, 6, null, extras)
+
 func swamp():
 	var allies = {1:Archer, 2: FrostKnight, 3:Berserker, 4:Cavalier, 5: Assassin}
 	var raw_enemies = load_level("swamp.level")
@@ -526,7 +583,6 @@ func swamp():
 	var flags = ["no_fifth", "no_inspire"]
 	var extras = {"flags":flags}
 	return LevelTypes.Timed.new("Dagobah", allies, enemies, 6, null, extras)
-
 
 	
 func stormdancer():
@@ -548,15 +604,6 @@ func double_time():
 	var flags = ["no_inspire", "no_fifth"]
 	var extras = {"flags":flags}
 	return LevelTypes.Timed.new("Double Time", allies, enemies, 7, null, extras)
-	
-
-func defuse_the_bomb():
-	var allies = {1: Stormdancer, 2: Cavalier, 3:Berserker, 4:Assassin, 5: Archer}
-	var raw_enemies = load_level("defuse_the_bomb.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var flags = ["no_stars"]
-	var extras = {"flags":flags}
-	return LevelTypes.Timed.new("Defuse the Bomb", allies, enemies, 3, null, extras)
 
 
 func pyromancer():
@@ -568,16 +615,6 @@ func pyromancer():
 	var flags = ["no_stars"]
 	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
 	return LevelTypes.Timed.new("Pyromancer", allies, enemies, 4, null, extras)
-
-
-func minesweeper():
-	var allies = {1: Pyromancer, 2: Cavalier, 4: Stormdancer, 5: Assassin}
-	var raw_enemies = load_level("minesweeper.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var tutorial = load("res://Tutorials/minesweeper.gd").new()
-	var tutorial_func = funcref(tutorial, "get")
-	var extras = {"tutorial": tutorial_func}
-	return LevelTypes.Timed.new("Minesweeper", allies, enemies, 7, null, extras)
 
 
 func howl():

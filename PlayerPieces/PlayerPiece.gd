@@ -115,14 +115,13 @@ func animate_set_shield(flag):
 
 
 func get_assist_bonus_attack():
-	return self.AssistSystem.get_bonus_attack()
+	return self.AssistSystem.get_bonus_attack(self)
 
 
 #call this function right before being assisted
 func handle_pre_assisted():
 	self.AssistSystem.assist(self)
-	if self.AssistSystem.get_bonus_invulnerable():
-		print("setting shield in pre-assisted")
+	if self.AssistSystem.get_bonus_invulnerable(self):
 		set_shield(true)
 
 #called from Actions
@@ -136,18 +135,19 @@ func handle_assist():
 		#we specifically redirect it through the AssistSystem to check if it's disabled
 		self.AssistSystem.activate_assist(self.assist_type, self)
 	else:
+		print("clearing assist here")
 		self.AssistSystem.clear_assist()
 
 
 #start emitting the particles
 func activate_assist(assist_type):
 	add_animation(get_node("Physicals/ComboSparkleManager"), "animate_activate_assist", false, [assist_type])
-	add_animation(get_node("InspireIndicator"), "animate_inspire_ready", true, [assist_type])
+	add_animation(get_node("Physicals/InspireIndicator"), "animate_inspire_ready", true, [assist_type])
 	
 func assist(piece, assist_type):
-	add_animation(get_node("InspireIndicator"), "animate_give_inspire", true, [assist_type])
+	add_animation(get_node("Physicals/InspireIndicator"), "animate_give_inspire", true, [assist_type])
 	add_animation(self, "animate_assist", false, [piece, assist_type])
-	add_animation(piece.get_node("InspireIndicator"), "animate_receive_inspire", true, [assist_type])
+	add_animation(piece.get_node("Physicals/InspireIndicator"), "animate_receive_inspire", true, [assist_type])
 
 
 #direct the particles to a certain coords
@@ -159,17 +159,17 @@ func animate_assist(piece, assist_type):
 	
 func clear_assist():
 	add_animation(get_node("Physicals/ComboSparkleManager"), "animate_clear_assist", false, [self.assist_type])
-	add_animation(get_node("InspireIndicator"), "animate_clear_inspire", false)
+	add_animation(get_node("Physicals/InspireIndicator"), "animate_clear_inspire", false)
 
 
 func get_movement_value():
 	var adjacent_range = get_parent().get_range(self.coords, [1, 2], "ENEMY")
 	for coords in adjacent_range:
 		if get_parent().pieces[coords].is_slime():
-			return self.AssistSystem.get_bonus_movement() + 1
-	return self.AssistSystem.get_bonus_movement() + movement_value
-	
-	
+			return self.AssistSystem.get_bonus_movement(self) + 1
+	return self.AssistSystem.get_bonus_movement(self) + movement_value
+
+
 func star_reactivate():
 	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
 	self.state = States.DEFAULT
@@ -528,11 +528,9 @@ func placed(ending_turn=false):
 	self.attack_bonus = 0
 	self.movement_value = self.DEFAULT_MOVEMENT_VALUE
 	get_parent().selected = null
-	
+
 
 func animate_placed(ending_turn=false):
-	#get_node("Physicals/OverlayLayers/UltimateWhite").hide()
-	#get_node("Physicals/AnimatedSprite").play("cooldown")
 	animate_unglow()
 	get_node("Physicals/CooldownSprite").show()
 	var sprite = get_node("Physicals/AnimatedSprite")

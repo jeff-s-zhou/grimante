@@ -8,7 +8,7 @@ var DESCRIPTION = "Causes all enemy pieces in the column (including itself) to m
 
 func initialize(max_hp, modifiers, prototype):
 	self.double_time = true
-	.initialize("Griffon", DESCRIPTION, Vector2(0, 2), max_hp, modifiers, prototype, TYPES.assist)
+	.initialize("Griffon", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, TYPES.assist)
 
 func added_to_grid():
 	animate_wind()
@@ -21,7 +21,6 @@ func added_to_grid():
 func turn_start():
 	if !self.silenced:
 		var column_range = get_parent().get_range(self.coords, [1, 8], "ENEMY", false, [3, 4])
-		column_range += get_parent().get_range(self.coords, [1, 8], "ENEMY", false, [0, 1])
 		for coords in column_range:
 			get_parent().pieces[coords].double_time = true
 	else:
