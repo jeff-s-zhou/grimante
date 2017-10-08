@@ -19,7 +19,7 @@ func _ready():
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	load_description(self.unit_name)
-	self.assist_type = ASSIST_TYPES.defense
+	self.assist_type = ASSIST_TYPES.movement
 
 
 	
@@ -44,6 +44,15 @@ func get_ally_swap_range():
 func get_enemy_swap_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value], "ENEMY")
 
+func get_shuriken_damage_range(damage_coords):
+	return get_parent().get_diagonal_range(damage_coords, [1, 6], "ENEMY", true)
+
+func highlight_indirect_range(movement_range):
+	for coords in movement_range:
+		var damage_range = get_shuriken_damage_range(coords)
+		if damage_range != []:
+			get_parent().locations[coords].indirect_highlight()
+
 
 #parameters to use for get_node("get_parent()").get_neighbors
 func display_action_range():
@@ -52,6 +61,8 @@ func display_action_range():
 		get_parent().get_at_location(coords).movement_highlight()
 	for coords in get_ally_swap_range():
 		get_parent().get_at_location(coords).assist_highlight()
+	
+	highlight_indirect_range(action_range)
 
 
 
@@ -177,7 +188,7 @@ func throw_shurikens(attack_range, attack_range_dict):
 	#attack_range.invert()
 	add_animation(self, "animate_throw_shurikens", true, [attack_range])
 	var action = get_new_action()
-	action.add_call("attacked", [self.shuriken_damage], attack_range)
+	action.add_call("shuriken_attacked", [self.shuriken_damage], attack_range)
 	action.execute()
 
 #throw them all at the same time, block for one
@@ -217,4 +228,16 @@ func animate_shunpo(new_coords):
 
 
 func predict(new_coords):
-	pass
+	#will swap
+#	if get_parent().pieces.has_enemy(new_coords):
+#		var shuriken_range = get_parent().get_diagonal_range(new_coords, [1, 2], "ENEMY", true)
+#		if self.coords in shuriken_range:
+#			get_parent().pieces[coords].predict(shuriken_damage + LIGHTNING_BONUS_DAMAGE)
+#	#no swapping
+#	else:
+	var attack_range = get_shuriken_damage_range(new_coords)
+	for coords in attack_range:
+		if get_parent().locations[coords].raining:
+			get_parent().pieces[coords].predict(self.shuriken_damage + LIGHTNING_BONUS_DAMAGE, true)
+		else:
+			get_parent().pieces[coords].predict(self.shuriken_damage, true)

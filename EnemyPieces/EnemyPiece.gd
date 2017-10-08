@@ -230,14 +230,11 @@ func get_actual_damage(damage):
 	
 	#TODO put this through an action call
 	
-	
 	if self.boss_flag:
 		if damage > 1:
 			damage = 1
 		else:
 			damage = 0
-	elif tile.raining:
-		damage += 2
 
 	if self.shielded:
 		return 0
@@ -594,6 +591,11 @@ func corsair_attacked(damage):
 		set_corsair_marked(true)
 	attacked(damage)
 	
+	
+func shuriken_attacked(damage):
+	if get_parent().locations[coords].raining:
+		damage += 2
+	attacked(damage)
 	
 		
 func lightning_attacked():

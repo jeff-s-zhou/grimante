@@ -1,7 +1,7 @@
 extends "PlayerPiece.gd"
 
 const DEFAULT_FREEZE_DAMAGE = 2
-const DEFAULT_SHIELD_BASH_DAMAGE = 2
+const DEFAULT_SHIELD_BASH_DAMAGE = 4
 const DEFAULT_MOVEMENT_VALUE = 2
 const DEFAULT_SHIELD = true
 const UNIT_TYPE = "Frost Knight"
@@ -115,7 +115,7 @@ func shield_bash(new_coords):
 		action.add_call("set_frozen", [true], new_coords)
 		action.execute()
 	
-	target.receive_shove(unit_distance)
+	target.receive_shove(unit_distance, self.shield_bash_damage)
 
 	add_animation(self, "animate_move_to_pos", true, [original_pos, 200, true])
 	

@@ -7,7 +7,7 @@ extends Node2D
 signal animation_done
 signal count_animation_done
 
-onready var ASSIST_TYPES = get_node("/root/Combat/AssistSystem").ASSIST_TYPES
+onready var ASSIST_TYPES = get_node("/root/AssistSystem").ASSIST_TYPES
 
 
 func _ready():

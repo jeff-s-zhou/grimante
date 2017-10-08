@@ -36,6 +36,7 @@ func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
 	
 func highlight_indirect_range(movement_range):
+	print("highlighting indirect range berserker")
 	var indirect_range = []
 	var enemies = get_tree().get_nodes_in_group("enemy_pieces")
 	for enemy in enemies:

@@ -1,19 +1,18 @@
-[gd_scene load_steps=16 format=1]
+[gd_scene load_steps=15 format=1]
 
 [ext_resource path="res://Combat.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Backgrounds/new_style_background_desktop.png" type="Texture" id=2]
 [ext_resource path="res://Grid.tscn" type="PackedScene" id=3]
 [ext_resource path="res://CursorArea.tscn" type="PackedScene" id=4]
-[ext_resource path="res://UI/PhaseShifter.tscn" type="PackedScene" id=5]
-[ext_resource path="res://UI/ShakeCamera.tscn" type="PackedScene" id=6]
-[ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=7]
-[ext_resource path="res://Assets/UI/darken_layer_desktop.png" type="Texture" id=8]
-[ext_resource path="res://AssistSystem.tscn" type="PackedScene" id=9]
-[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=10]
-[ext_resource path="res://UI/InfoOverlay.tscn" type="PackedScene" id=11]
-[ext_resource path="res://Effects/Fireflies.tscn" type="PackedScene" id=12]
-[ext_resource path="res://UI/Desktop/ControlBar.tscn" type="PackedScene" id=13]
-[ext_resource path="res://UI/Desktop/InfoBar.tscn" type="PackedScene" id=14]
+[ext_resource path="res://UI/ShakeCamera.tscn" type="PackedScene" id=5]
+[ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=6]
+[ext_resource path="res://Assets/UI/darken_layer_desktop.png" type="Texture" id=7]
+[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=8]
+[ext_resource path="res://UI/InfoOverlay.tscn" type="PackedScene" id=9]
+[ext_resource path="res://Effects/Fireflies.tscn" type="PackedScene" id=10]
+[ext_resource path="res://UI/Desktop/ControlBar.tscn" type="PackedScene" id=11]
+[ext_resource path="res://UI/Desktop/InfoBar.tscn" type="PackedScene" id=12]
+[ext_resource path="res://UI/TurnUpdate.tscn" type="PackedScene" id=13]
 
 [sub_resource type="SampleLibrary" id=1]
 
@@ -21,7 +20,7 @@ samples/error = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 7 )
+"sample": ExtResource( 6 )
 }
 
 [node name="Combat" type="Node2D"]
@@ -45,9 +44,7 @@ playback/active = false
 playback/repeat = false
 playback/speed = 1.0
 
-[node name="PhaseShifter" parent="." instance=ExtResource( 5 )]
-
-[node name="ShakeCamera" parent="." instance=ExtResource( 6 )]
+[node name="ShakeCamera" parent="." instance=ExtResource( 5 )]
 
 transform/pos = Vector2( 514, 384 )
 current = true
@@ -75,7 +72,7 @@ visibility/opacity = 0.0
 transform/pos = Vector2( 509.407, 385.813 )
 z/z = 45
 z/relative = false
-texture = ExtResource( 8 )
+texture = ExtResource( 7 )
 
 [node name="Timer" type="Timer" parent="."]
 
@@ -83,10 +80,6 @@ process_mode = 1
 wait_time = 1.0
 one_shot = false
 autostart = false
-
-[node name="AssistSystem" parent="." instance=ExtResource( 9 )]
-
-transform/pos = Vector2( 23, 10 )
 
 [node name="FpsLabel" type="Label" parent="."]
 
@@ -123,24 +116,28 @@ wait_time = 1.0
 one_shot = false
 autostart = false
 
-[node name="InputHandler" parent="." instance=ExtResource( 10 )]
+[node name="InputHandler" parent="." instance=ExtResource( 8 )]
 
-[node name="InfoOverlay" parent="." instance=ExtResource( 11 )]
+[node name="InfoOverlay" parent="." instance=ExtResource( 9 )]
 
 visibility/visible = false
 transform/pos = Vector2( 25, 30 )
 
-[node name="Fireflies" parent="." instance=ExtResource( 12 )]
+[node name="Fireflies" parent="." instance=ExtResource( 10 )]
 
 transform/pos = Vector2( 512, 384 )
 config/half_extents = Vector2( 512, 384 )
 
-[node name="ControlBar" parent="." instance=ExtResource( 13 )]
+[node name="ControlBar" parent="." instance=ExtResource( 11 )]
 
 transform/pos = Vector2( 0, 680 )
 
-[node name="InfoBar" parent="." instance=ExtResource( 14 )]
+[node name="InfoBar" parent="." instance=ExtResource( 12 )]
 
 transform/pos = Vector2( 833.097, 15 )
+
+[node name="PhaseShifter" parent="." instance=ExtResource( 13 )]
+
+transform/pos = Vector2( 511, 390 )
 
 

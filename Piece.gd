@@ -301,7 +301,7 @@ func hooked(new_coords):
 	set_coords(new_coords)
 
 
-func receive_shove(distance):
+func receive_shove(distance, damage):
 	var new_coords = self.coords + distance
 	
 	var unit_distance = get_parent().hex_normalize(distance)
@@ -316,7 +316,10 @@ func receive_shove(distance):
 	elif get_parent().pieces.has(new_coords):
 		add_animation(self, "animate_move_and_hop", true, [new_coords, 300])
 		var action = get_new_action()
-		action.add_call("smashed", [self], [new_coords])
+		if get_parent().pieces[new_coords].side == "ENEMY":
+			action.add_call("attacked", [damage], [new_coords])
+		else:
+			action.add_call("smashed", [self], [new_coords])
 		action.execute()
 		if get_parent().pieces.has(new_coords): #leap backwards if something's still there
 			add_animation(self, "animate_move_and_hop", false, [self.coords, 300, false])
@@ -334,7 +337,6 @@ func smashed(attacker):
 		delete_self()
 		return true
 	else:
-		print("setting shield in smashed")
 		set_shield(false)
 		return false
 

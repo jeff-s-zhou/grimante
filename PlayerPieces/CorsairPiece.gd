@@ -21,7 +21,7 @@ func _ready():
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	load_description(self.unit_name)
-	self.assist_type = ASSIST_TYPES.movement
+	self.assist_type = ASSIST_TYPES.defense
 
 
 func get_shoot_damage():

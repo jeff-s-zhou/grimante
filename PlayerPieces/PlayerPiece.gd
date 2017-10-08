@@ -6,7 +6,7 @@ extends "res://Piece.gd"
 
 var States = {"LOCKED":0, "DEFAULT":1, "CLICKED": 2, "PLACED":3, "SELECTED":4, "DEAD":5}
 
-onready var AssistSystem = get_node("/root/Combat/AssistSystem")
+onready var AssistSystem = get_node("/root/AssistSystem")
 
 const flyover_prototype = preload("res://EnemyPieces/Components/Flyover.tscn")
 

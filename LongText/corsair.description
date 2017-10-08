@@ -1,5 +1,7 @@
-Direct/Slash/Deal 3 damage to an adjacent enemy. 
+Direct/Slash/Deal 2 damage to an adjacent enemy. 
 
-Direct/Captain's Hook/Target an Enemy in the 6 hexagonal directions within movement range. Pull it adjacent to you, then Slash it.
+Indirect/Derringer Dashback/After moving in any hex or hex diagonal direction, shoot a bullet in the opposite direction that deals 1 damage to the first Enemy it hits.
+
+Passive/Unpredictable/+2 damage to enemies you have not yet damaged this turn.
 
 Passive/Double Time/The Corsair can act twice in a single turn.

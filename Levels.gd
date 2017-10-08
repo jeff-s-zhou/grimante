@@ -569,12 +569,21 @@ func defuse_the_bomb():
 	return LevelTypes.Timed.new("Defuse the Bomb", allies, enemies, 3, null, extras)
 	
 func ghost_boss():
-	var pieces = load_level("defuse_the_bomb.level")
+	var pieces = load_level("ghost_boss.level")
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var extras = {"free_deploy":true, "flags":[]}
 	return LevelTypes.Timed.new("Defuse the Bomb", allies, enemies, 6, null, extras)
+	
+func stormdancer_practice():
+	var pieces = load_level("stormdancer_practice.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var extras = {"free_deploy":false, "flags":[]}
+	return LevelTypes.Timed.new("Stormdancer Practice", allies, enemies, 4, null, extras)
+
 
 func swamp():
 	var allies = {1:Archer, 2: FrostKnight, 3:Berserker, 4:Cavalier, 5: Assassin}

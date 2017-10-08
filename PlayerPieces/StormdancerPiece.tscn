@@ -48,6 +48,10 @@ frames = SubResource( 1 )
 
 texture = ExtResource( 7 )
 
+[node name="InspirePiece" parent="Physicals"]
+
+z/z = 3
+
 [node name="SpinningForm" parent="Physicals" instance=ExtResource( 8 )]
 
 visibility/visible = false

@@ -3,8 +3,8 @@
 [ext_resource path="res://UI/PhaseShifter.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/screen.png" type="Texture" id=2]
 [ext_resource path="res://UI/PhaseSlider.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Assets/UI/player_phase.png" type="Texture" id=4]
-[ext_resource path="res://Assets/UI/enemy_phase.png" type="Texture" id=5]
+[ext_resource path="res://Assets/UI/enemy_phase.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/player_phase.png" type="Texture" id=5]
 
 [sub_resource type="CanvasItemShader" id=1]
 
@@ -107,12 +107,12 @@ tracks/0/keys = {
 animations = [ {
 "frames": [ ExtResource( 4 ) ],
 "loop": true,
-"name": "player_phase",
+"name": "enemy_phase",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 5 ) ],
 "loop": true,
-"name": "enemy_phase",
+"name": "player_phase",
 "speed": 5.0
 } ]
 

@@ -1,0 +1,202 @@
+[gd_scene load_steps=17 format=1]
+
+[ext_resource path="res://UI/TurnUpdate.gd" type="Script" id=1]
+[ext_resource path="res://UI/BlurDarkenLayer.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Assets/UI/TurnUpdate/hexagon_red.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/TurnUpdate/hexagon.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/TurnUpdate/inner_circle_red.png" type="Texture" id=5]
+[ext_resource path="res://Assets/UI/TurnUpdate/inner_circle.png" type="Texture" id=6]
+[ext_resource path="res://Assets/UI/TurnUpdate/outer_circle_red.png" type="Texture" id=7]
+[ext_resource path="res://Assets/UI/TurnUpdate/outer_circle.png" type="Texture" id=8]
+[ext_resource path="res://Assets/UI/TurnUpdate/flash.png" type="Texture" id=9]
+[ext_resource path="res://Assets/processed_fonts/turn_update_small_header.fnt" type="BitmapFont" id=10]
+[ext_resource path="res://Assets/processed_fonts/turn_update.fnt" type="BitmapFont" id=11]
+[ext_resource path="res://Assets/processed_fonts/turn_update_phase_header.fnt" type="BitmapFont" id=12]
+
+[sub_resource type="SpriteFrames" id=2]
+
+animations = [ {
+"frames": [ ExtResource( 3 ) ],
+"loop": true,
+"name": "enemy_phase",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "player_phase",
+"speed": 5.0
+} ]
+
+[sub_resource type="SpriteFrames" id=1]
+
+animations = [ {
+"frames": [ ExtResource( 5 ) ],
+"loop": true,
+"name": "enemy_phase",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 6 ) ],
+"loop": true,
+"name": "player_phase",
+"speed": 5.0
+} ]
+
+[sub_resource type="SpriteFrames" id=3]
+
+animations = [ {
+"frames": [ ExtResource( 7 ) ],
+"loop": true,
+"name": "enemy_phase",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 8 ) ],
+"loop": true,
+"name": "player_phase",
+"speed": 5.0
+} ]
+
+[sub_resource type="Animation" id=4]
+
+resource/name = "Spin"
+length = 60.0
+loop = true
+step = 1.0
+tracks/0/type = "value"
+tracks/0/path = NodePath("InnerCircle:transform/rot")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = {
+"times": FloatArray( 0, 60 ),
+"transitions": FloatArray( 1, 1 ),
+"update": 0,
+"values": [ 0.0, 720.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("OuterCircle:transform/rot")
+tracks/1/interp = 1
+tracks/1/imported = false
+tracks/1/keys = {
+"times": FloatArray( 0, 60 ),
+"transitions": FloatArray( 1, 1 ),
+"update": 0,
+"values": [ 0.0, -720.0 ]
+}
+
+[node name="TurnUpdate" type="Node2D"]
+
+z/z = 100
+z/relative = false
+script/script = ExtResource( 1 )
+
+[node name="BlurDarkenLayer" parent="." instance=ExtResource( 2 )]
+
+transform/pos = Vector2( -541.343, -420.361 )
+
+[node name="Hexagon" type="AnimatedSprite" parent="."]
+
+frames = SubResource( 2 )
+animation = "player_phase"
+
+[node name="InnerCircle" type="AnimatedSprite" parent="."]
+
+transform/rot = 198.549
+frames = SubResource( 1 )
+animation = "player_phase"
+
+[node name="OuterCircle" type="AnimatedSprite" parent="."]
+
+transform/rot = -198.549
+frames = SubResource( 3 )
+animation = "player_phase"
+
+[node name="Flash" type="Sprite" parent="."]
+
+visibility/opacity = 0.0
+texture = ExtResource( 9 )
+
+[node name="TurnHeader" type="Label" parent="."]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = -36.0
+margin/top = -55.0
+margin/right = 45.0
+margin/bottom = -21.0
+custom_fonts/font = ExtResource( 10 )
+text = "TURN"
+align = 1
+valign = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="Turn" type="Label" parent="."]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = -54.0
+margin/top = -14.0
+margin/right = 60.0
+margin/bottom = 54.0
+custom_fonts/font = ExtResource( 11 )
+align = 1
+valign = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+playback/process_mode = 1
+playback/default_blend_time = 0.0
+root/root = NodePath("..")
+anims/Spin = SubResource( 4 )
+playback/active = true
+playback/speed = 1.0
+blend_times = [  ]
+autoplay = "Spin"
+
+[node name="PhaseHeader" type="Label" parent="."]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = -153.0
+margin/top = -260.0
+margin/right = 158.0
+margin/bottom = -210.0
+custom_fonts/font = ExtResource( 12 )
+text = "PLAYER PHASE"
+align = 1
+valign = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="Tween" type="Tween" parent="."]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
+
+[node name="Tween 2" type="Tween" parent="."]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
+
+[node name="Timer" type="Timer" parent="."]
+
+process_mode = 1
+wait_time = 1.0
+one_shot = false
+autostart = false
+
+

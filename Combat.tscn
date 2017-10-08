@@ -1,20 +1,19 @@
-[gd_scene load_steps=17 format=1]
+[gd_scene load_steps=16 format=1]
 
 [ext_resource path="res://Combat.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Backgrounds/new_style_background3.png" type="Texture" id=2]
 [ext_resource path="res://Grid.tscn" type="PackedScene" id=3]
 [ext_resource path="res://CursorArea.tscn" type="PackedScene" id=4]
-[ext_resource path="res://UI/PhaseShifter.tscn" type="PackedScene" id=5]
-[ext_resource path="res://UI/ShakeCamera.tscn" type="PackedScene" id=6]
-[ext_resource path="res://UI/InvalidMoveIndicator.tscn" type="PackedScene" id=7]
-[ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=8]
-[ext_resource path="res://Assets/effects/darken_layer.png" type="Texture" id=9]
-[ext_resource path="res://AssistSystem.tscn" type="PackedScene" id=10]
-[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=11]
-[ext_resource path="res://UI/ControlBar/ControlBar.tscn" type="PackedScene" id=12]
-[ext_resource path="res://UI/InfoOverlay.tscn" type="PackedScene" id=13]
-[ext_resource path="res://Effects/Fireflies.tscn" type="PackedScene" id=14]
-[ext_resource path="res://UI/TimedSystem.tscn" type="PackedScene" id=15]
+[ext_resource path="res://UI/ShakeCamera.tscn" type="PackedScene" id=5]
+[ext_resource path="res://UI/InvalidMoveIndicator.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=7]
+[ext_resource path="res://Assets/effects/darken_layer.png" type="Texture" id=8]
+[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=9]
+[ext_resource path="res://UI/ControlBar/ControlBar.tscn" type="PackedScene" id=10]
+[ext_resource path="res://UI/InfoOverlay.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Effects/Fireflies.tscn" type="PackedScene" id=12]
+[ext_resource path="res://UI/TimedSystem.tscn" type="PackedScene" id=13]
+[ext_resource path="res://UI/TurnUpdate.tscn" type="PackedScene" id=14]
 
 [sub_resource type="SampleLibrary" id=1]
 
@@ -22,7 +21,7 @@ samples/error = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 8 )
+"sample": ExtResource( 7 )
 }
 
 [node name="Combat" type="Node2D"]
@@ -50,14 +49,12 @@ playback/active = false
 playback/repeat = false
 playback/speed = 1.0
 
-[node name="PhaseShifter" parent="." instance=ExtResource( 5 )]
-
-[node name="ShakeCamera" parent="." instance=ExtResource( 6 )]
+[node name="ShakeCamera" parent="." instance=ExtResource( 5 )]
 
 transform/pos = Vector2( 335, 540 )
 current = true
 
-[node name="InvalidMoveIndicator" parent="." instance=ExtResource( 7 )]
+[node name="InvalidMoveIndicator" parent="." instance=ExtResource( 6 )]
 
 transform/pos = Vector2( 1270.14, 835.128 )
 
@@ -84,7 +81,7 @@ visibility/opacity = 0.0
 transform/pos = Vector2( 333.701, 531.649 )
 z/z = 45
 z/relative = false
-texture = ExtResource( 9 )
+texture = ExtResource( 8 )
 
 [node name="Timer" type="Timer" parent="."]
 
@@ -115,11 +112,7 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="AssistSystem" parent="." instance=ExtResource( 10 )]
-
-transform/pos = Vector2( 42.6436, 30.4737 )
-
-[node name="InputHandler" parent="." instance=ExtResource( 11 )]
+[node name="InputHandler" parent="." instance=ExtResource( 9 )]
 
 [node name="AnimationCountLabel" type="Label" parent="."]
 
@@ -136,20 +129,24 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="ControlBar" parent="." instance=ExtResource( 12 )]
+[node name="ControlBar" parent="." instance=ExtResource( 10 )]
 
 transform/pos = Vector2( 0, 945 )
 z/z = 95
 
-[node name="InfoOverlay" parent="." instance=ExtResource( 13 )]
+[node name="InfoOverlay" parent="." instance=ExtResource( 11 )]
 
 visibility/visible = false
 
-[node name="Fireflies" parent="." instance=ExtResource( 14 )]
+[node name="Fireflies" parent="." instance=ExtResource( 12 )]
 
 visibility/visible = false
 transform/pos = Vector2( 318.307, 509.312 )
 
-[node name="InfoBar" parent="." instance=ExtResource( 15 )]
+[node name="InfoBar" parent="." instance=ExtResource( 13 )]
+
+[node name="PhaseShifter" parent="." instance=ExtResource( 14 )]
+
+transform/pos = Vector2( 334.832, 563.929 )
 
 

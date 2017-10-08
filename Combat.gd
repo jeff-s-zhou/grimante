@@ -37,7 +37,6 @@ func _ready():
 	if get_node("/root/global").platform == PLATFORMS.PC:
 		self.desktop_flag = true
 	
-	print("entering combat")
 	get_node("/root/AnimationQueue").reset()
 	get_node("/root/global").load_state()
 	var screen_size = get_viewport().get_rect().size
@@ -47,7 +46,6 @@ func _ready():
 	
 	get_node("/root/AnimationQueue").connect("animation_count_update", self, "update_animation_count_display")
 	
-	get_node("AssistSystem").set_pos(Vector2(get_viewport_rect().size.width/2, get_viewport_rect().size.height - 100))
 #
 
 	self.level_schematic = get_node("/root/global").get_param("level").get_level()
@@ -68,12 +66,14 @@ func _ready():
 	self.reinforcements = self.level_schematic.reinforcements
 		
 	#we store the initial wave count as the first value in the array
-
+	
+	get_node("PhaseShifter").initialize(self.level_schematic.num_turns)
+	
 	get_node("InfoBar").initialize(self.level_schematic, get_node("ControlBar/Combat/StarBar"), self.level_schematic.flags)
 	
 	get_node("ControlBar").initialize(self.level_schematic.flags, self)
 	
-	get_node("AssistSystem").initialize(self.level_schematic.flags)
+	get_node("/root/AssistSystem").initialize(self.level_schematic.flags)
 	
 	get_node("Grid").initialize(self.level_schematic.flags)
 
@@ -133,8 +133,8 @@ func _ready():
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
 	
-	get_node("PhaseShifter").player_phase_animation()
-	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
+	get_node("PhaseShifter").animate_player_phase(self.turn_count)
+	yield( get_node("PhaseShifter"), "animation_done" )
 	
 	get_node("ControlBar/Combat/EndTurnButton").set_disabled(false)
 	
@@ -286,9 +286,9 @@ func end_turn():
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 		player_piece.placed(true)
 		player_piece.clear_assist()
-	get_node("AssistSystem").clear_assist()
-	get_node("PhaseShifter").enemy_phase_animation()
-	yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
+	get_node("/root/AssistSystem").clear_assist()
+	get_node("PhaseShifter").animate_enemy_phase(self.turn_count)
+	yield(get_node("PhaseShifter"), "animation_done")
 	self.state = STATES.enemy_turn
 	
 func handle_deploy():
@@ -477,8 +477,8 @@ func enemy_phase():
 		unpause()
 	
 	if self.state != STATES.end:
-		get_node("PhaseShifter").player_phase_animation()
-		yield( get_node("PhaseShifter/AnimationPlayer"), "finished" )
+		get_node("PhaseShifter").animate_player_phase(self.turn_count)
+		yield( get_node("PhaseShifter"), "animation_done")
 		get_node("InfoBar").update(self.turn_count)
 		start_player_phase()
 
@@ -538,7 +538,7 @@ func start_player_phase():
 	self.turn_count += 1
 	get_node("ControlBar/Combat/EndTurnButton").set_disabled(false)
 	
-	get_node("AssistSystem").reset_combo()
+	get_node("/root/AssistSystem").reset_combo()
 	if self.reinforcements.has(get_turn_count()):
 		reinforce()
 		yield(self, "reinforced")

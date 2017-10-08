@@ -38,7 +38,7 @@ func final_hero_selected():
 	get_node("Combat").show()
 
 func add_piece_on_bar(piece):
-	#add_child(piece)
+	get_node("/root/Combat/Grid").add_child(piece)
 	get_node("FinalHeroScreen").initialize(piece)
 
 

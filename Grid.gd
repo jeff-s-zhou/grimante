@@ -206,6 +206,12 @@ func get_location(coords):
 
 func has_piece(coords):
 	return self.pieces.has(coords)
+	
+func has_enemy(coords):
+	return self.pieces.has(coords) and self.pieces[coords].side == "ENEMY"
+	
+func has_ally(coords):
+	return self.pieces.has(coords) and self.pieces[coords].side == "PLAYER"
 
 func set_piece(coords, piece):
 	self.pieces[coords] = piece

@@ -1,4 +1,6 @@
 
-Direct/Tango/Swap positions with any unit.
+Direct/Tango/Swap positions with any Piece within movement range.
 
-Indirect/Rain Dance/Leave behind a Storm when moving from a tile. Storm tiles deal 2 damage to any Enemy that moves to that tile.
+Passive/Rain Dance/Leave behind a Storm Tile when moving from a tile. 
+
+Indirect/Shuriken Storm/Throw a Shuriken in each of the 6 hex diagonal directions, dealing 1 damage to the first enemy hit. If the enemy is on a Storm tile, +2 to damage dealt.

@@ -44,7 +44,7 @@ func select(piece):
 		self.currently_selected.set_pos(Vector2(-999, -999))
 		self.grid.remove_piece(self.currently_selected)
 	self.currently_selected = piece
-	self.grid.add_piece(coords, self.currently_selected)
+	self.grid.add_piece(coords, self.currently_selected, true)
 	piece.start_deploy_phase()
 	self.hide()
 	emit_signal("final_hero_selected")

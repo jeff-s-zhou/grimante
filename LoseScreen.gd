@@ -14,7 +14,8 @@ func _ready():
 	get_node("LevelSelectButton").connect("pressed", self, "level_select")
 	
 func next_level():
-	get_node("/root/global").goto_scene("res://Combat.tscn", {"level": self.level})
+	var combat_resource = get_node("/root/global").combat_resource
+	get_node("/root/global").goto_scene(combat_resource, {"level": self.level})
 	
 func level_select():
 	get_node("/root/global").goto_scene("res://LevelSelect/LevelSelect.tscn")
