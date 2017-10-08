@@ -20,15 +20,16 @@ func _ready():
 	get_node("TextureButton").connect("pressed", self, "is_pressed")
 	
 func handle_enemy_death():
-	if self.inactive_star != null:
-		self.inactive_star.increase()
-		#became active
-		if self.inactive_star.active:
-			self.inactive_star = null
-			self.star_count += 1
-			get_node("TextureButton").set_disabled(false)
-	else:
-		add_inactive_star()
+	if enabled:
+		if self.inactive_star != null:
+			self.inactive_star.increase()
+			#became active
+			if self.inactive_star.active:
+				self.inactive_star = null
+				self.star_count += 1
+				get_node("TextureButton").set_disabled(false)
+		else:
+			add_inactive_star()
 
 func add_inactive_star():
 	if self.enabled and self.star_count < 3:
@@ -78,7 +79,7 @@ func has_star():
 	return self.star_count > 0
 		
 func refund():
-	pass
+	add_star()
 
 
 func is_pressed():

@@ -20,7 +20,10 @@ var continue_text = "Click anywhere to continue [%s/%s]"
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	pass
+	var screen_size = get_viewport().get_rect().size
+	var halfway = screen_size/2
+	get_node("Label").set_global_pos(halfway - (get_node("Label").get_size()/2) + Vector2(0, -100))
+	get_node("TapLabel").set_global_pos(halfway - (get_node("TapLabel").get_size()/2) + Vector2(0, 100))
 	
 
 func decorate(string):
@@ -182,15 +185,8 @@ func update_rule(next=false):
 				get_node("Timer").set_wait_time(0.5)
 				get_node("Timer").start()
 				yield(get_node("Timer"), "timeout")
-			
-			get_node("Label").set_pos(Vector2(24, 200))
-			if line.length() < 35:
-				get_node("Label").set_bbcode("[center]" + line + "[/center]")
-				get_node("TapLabel").set_align(HALIGN_CENTER)
-			else:
-				get_node("Label").set_bbcode(line)
-				get_node("TapLabel").set_align(HALIGN_LEFT)
-			
+
+			get_node("Label").set_bbcode(line)
 			get_node("Label").show()
 			
 			var filled_cont_text = continue_text % [rule.get_index(), rule.get_size()]

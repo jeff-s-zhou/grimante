@@ -31,23 +31,15 @@ func emit_wind(coords):
 	
 	var current_pos = get_parent().locations[coords].get_pos()
 	
-	var column_range = get_parent().get_location_range(coords, [1, 9], [0, 1])
-	var start_pos
-	if column_range == []:
-		start_pos = current_pos + Vector2(0, -80)
-	else:
-		var top_of_column = column_range[column_range.size() - 1]
-		start_pos = get_parent().locations[top_of_column].get_pos() + Vector2(0, -80)
-	
-	column_range = get_parent().get_location_range(coords, [1, 9], [3, 4])
+	var column_range = get_parent().get_location_range(coords, [1, 9], [3, 4])
 	var end_pos
 	if column_range == []:
 		end_pos = current_pos + Vector2(0, 80)
 	else:
 		var bottom_of_column = column_range[column_range.size() - 1]
-		end_pos = get_parent().locations[bottom_of_column].get_pos() + Vector2(0, 80)
+		end_pos = get_parent().locations[bottom_of_column].get_pos() + Vector2(0, 40)
 	
-	tween.interpolate_property(wind, "transform/pos", start_pos, end_pos, 5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.interpolate_property(wind, "transform/pos", current_pos, end_pos, 5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	wind.get_node("Particles2D").set_emitting(true)
 	tween.start()
 	yield(tween, "tween_complete")

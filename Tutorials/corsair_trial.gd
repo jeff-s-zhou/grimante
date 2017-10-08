@@ -13,7 +13,12 @@ func _ready():
 func get_trial1_hints():
 	var tutorial = TutorialPrototype.instance()
 	
-	var hint = ["Whenever the Corsair moves, it shoots a bullet in the opposite direction for {3} damage."]
+	var hint = ["After the Corsair moves, it shoots a bullet in the opposite direction for {3} damage."]
+	
+	"The Corsair attacks adjacent Enemies for 4 damage."
+	"Whenever the Corsair moves, it shoots a bullet in the opposite direction for {3} damage."
+	"The Corsair can act twice a turn."
+	"If the Corsair has already damaged an enemy this turn, it deals 2 less damage to it."
 	
 	add_hint(tutorial, 1, hint)
 	

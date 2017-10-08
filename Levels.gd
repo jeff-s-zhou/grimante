@@ -437,7 +437,7 @@ func corsair_trials():
 	var tutorial = load("res://Tutorials/corsair_trial.gd").new()
 	var flags = ["no_stars", "no_inspire", "hints"]
 	var challenges = []
-	for i in range(6, 7):
+	for i in range(1, 7):
 		var trial_hint = funcref(tutorial, "get_trial" + str(i) + "_hints")
 		var extras = {"free_deploy":false, "tutorial":trial_hint, "flags":flags}
 		var pieces = load_level("corsair_trial" + str(i) +".level")

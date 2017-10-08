@@ -1,6 +1,0 @@
-{"turn":0, "pos_x":4, "name":"frost_knight", "pos_y":7}
-{"turn":0, "pos_x":2, "name":"archer", "pos_y":6}
-{"hp":"3", "turn":0, "pos_x":3, "name":"grunt", "modifiers":{}, "pos_y":4}
-{"hp":"2", "turn":0, "pos_x":2, "name":"grunt", "modifiers":{}, "pos_y":3}
-{"turn":0, "pos_x":4, "name":"corsair", "pos_y":4}
-{"hp":"6", "turn":0, "pos_x":3, "name":"grunt", "modifiers":{}, "pos_y":3}
