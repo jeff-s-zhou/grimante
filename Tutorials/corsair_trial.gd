@@ -13,12 +13,7 @@ func _ready():
 func get_trial1_hints():
 	var tutorial = TutorialPrototype.instance()
 	
-	var hint = ["After the Corsair moves, it shoots a bullet in the opposite direction for {3} damage."]
-	
-	"The Corsair attacks adjacent Enemies for 4 damage."
-	"Whenever the Corsair moves, it shoots a bullet in the opposite direction for {3} damage."
-	"The Corsair can act twice a turn."
-	"If the Corsair has already damaged an enemy this turn, it deals 2 less damage to it."
+	var hint = ["The Corsair attacks adjacent Enemies for 4 damage."]
 	
 	add_hint(tutorial, 1, hint)
 	
@@ -27,7 +22,7 @@ func get_trial1_hints():
 func get_trial2_hints():
 	var tutorial = TutorialPrototype.instance()
 	
-	var hint = ["The Corsair can act twice each turn."]
+	var hint = ["Whenever the Corsair moves, it shoots a bullet in the opposite direction for {3} damage."]
 	
 	add_hint(tutorial, 1, hint)
 	
@@ -37,7 +32,7 @@ func get_trial2_hints():
 func get_trial3_hints():
 	var tutorial = TutorialPrototype.instance()
 	
-	var hint = ["The Corsair's bullets cause Enemies to {Bleed} and take 1 damage after they move."]
+	var hint = ["The Corsair can act twice a turn."]
 	
 	add_hint(tutorial, 1, hint)
 	
@@ -47,7 +42,7 @@ func get_trial3_hints():
 func get_trial4_hints():
 	var tutorial = TutorialPrototype.instance()
 	
-	var hint = ["The Corsair can pull Enemies towards itself with its hook."]
+	var hint = ["If the Corsair has already damaged an enemy this turn, it deals 2 less damage to it."]
 	
 	add_hint(tutorial, 1, hint)
 	
@@ -56,16 +51,7 @@ func get_trial4_hints():
 func get_trial5_hints():
 	var tutorial = TutorialPrototype.instance()
 	
-	var hint = ["The Corsair can also use its hook to pull itself towards Enemies."]
-	
-	add_hint(tutorial, 1, hint)
-	
-	return tutorial
-	
-func get_trial6_hints():
-	var tutorial = TutorialPrototype.instance()
-	
-	var hint = ["The Corsair's hook can target Heroes."]
+	var hint = ["Hint: Remember that the Corsair shoots after moving."]
 	
 	add_hint(tutorial, 1, hint)
 	

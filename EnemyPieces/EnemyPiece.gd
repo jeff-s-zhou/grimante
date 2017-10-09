@@ -631,10 +631,53 @@ func modify_hp(amount, delay=0):
 
 func delete_self():
 	add_animation(self, "animate_delete_self", false)
+	delete_self_helper()
+	emit_signal("enemy_death")
+
+
+func walk_off(coords_distance, exits_bottom=true):
+	add_animation(self, "animate_walk_off", true, [coords_distance])
+	delete_self_helper()
+	if exits_bottom:
+		emit_signal("broke_defenses")
+	else:
+		emit_signal("enemy_death")
+
+
+func delete_self_helper():
 	get_node("CollisionArea").set_pickable(false)
 	self.grid.remove_piece(self.coords)
 	remove_from_group("enemy_pieces")
-	emit_signal("enemy_death")
+
+
+#actually physically deletes it
+func animate_delete_self():
+	add_anim_count()
+	get_node("SamplePlayer").play("rocket glass explosion 5")
+	get_node("Physicals").set_opacity(0)
+	emit_signal("shake")
+	var explosion = self.explosion_prototype.instance()
+	add_child(explosion)
+	explosion.set_emit_timeout(0.3)
+	explosion.set_emitting(true)
+	
+	var timer = Timer.new()
+	add_child(timer)
+	timer.set_wait_time(0.5)
+	timer.start()
+	yield(timer, "timeout")
+	
+	emit_signal("animation_done")
+	subtract_anim_count()
+	
+	#let it resolve any lingering animations
+	timer.set_wait_time(3)
+	timer.start()
+	yield(timer, "timeout")
+	print("enemy deleting self")
+	print(self.debug_anim_counter)
+	timer.queue_free()
+	queue_free()
 
 
 func animate_set_hp(hp, value, delay=0, flicker_flag=true):
@@ -690,43 +733,6 @@ func animate_set_hp(hp, value, delay=0, flicker_flag=true):
 	
 	self.mid_trailing_animation = false
 	subtract_anim_count()
-	
-func walk_off(coords_distance, exits_bottom=true):
-	add_animation(self, "animate_walk_off", true, [coords_distance])
-	self.grid.remove_piece(self.coords)
-	remove_from_group("enemy_pieces")
-	if exits_bottom:
-		emit_signal("broke_defenses")
-
-
-#actually physically deletes it
-func animate_delete_self():
-	add_anim_count()
-	get_node("SamplePlayer").play("rocket glass explosion 5")
-	get_node("Physicals").set_opacity(0)
-	emit_signal("shake")
-	var explosion = self.explosion_prototype.instance()
-	add_child(explosion)
-	explosion.set_emit_timeout(0.3)
-	explosion.set_emitting(true)
-	
-	var timer = Timer.new()
-	add_child(timer)
-	timer.set_wait_time(0.5)
-	timer.start()
-	yield(timer, "timeout")
-	
-	emit_signal("animation_done")
-	subtract_anim_count()
-	
-	#let it resolve any lingering animations
-	timer.set_wait_time(3)
-	timer.start()
-	yield(timer, "timeout")
-	print("enemy deleting self")
-	print(self.debug_anim_counter)
-	timer.queue_free()
-	queue_free()
 
 
 func set_coords(new_coords, sequence=null):

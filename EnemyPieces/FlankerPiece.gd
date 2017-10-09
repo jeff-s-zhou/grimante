@@ -6,7 +6,7 @@ extends "EnemyPiece.gd"
 # var b="textvar"
 
 var max_hp = 5
-var DESCRIPTION = "Cannot attack Heroes. Moves up to 3 tiles at a time to the furthest empty tile."
+var DESCRIPTION = "Cannot attack Heroes. Moves at most 3 tiles at a time to the furthest empty tile."
 
 func initialize(max_hp, modifiers, prototype):
 	.initialize("Dart Bat", DESCRIPTION, Vector2(0, 3), max_hp, modifiers, prototype, TYPES.selfish)

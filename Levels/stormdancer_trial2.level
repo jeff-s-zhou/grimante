@@ -1,0 +1,3 @@
+{"turn":0, "pos_x":3, "name":"berserker", "pos_y":6}
+{"hp":"4", "turn":0, "pos_x":3, "name":"grunt", "modifiers":{}, "pos_y":2}
+{"turn":0, "pos_x":3, "name":"stormdancer", "pos_y":4}

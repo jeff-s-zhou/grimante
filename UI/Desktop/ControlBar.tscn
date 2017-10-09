@@ -21,6 +21,7 @@ transform/pos = Vector2( 940, 15 )
 
 [node name="FinalHeroScreen" parent="." instance=ExtResource( 4 )]
 
+visibility/visible = false
 transform/pos = Vector2( 0, -550 )
 
 

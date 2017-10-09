@@ -23,6 +23,8 @@ func _ready():
 func initialize(flags):
 	if flags.has("no_inspire"):
 		self.assist_disabled = true
+	else:
+		self.assist_disabled = false
 	self.assist_type = null
 	self.assister = null
 

@@ -14,7 +14,6 @@ var turn_count = 0
 var level_schematic = null
 var state_manager = null
 var mid_forced_action = false
-var has_active_star = false
 var desktop_flag = false
 
 var combat_resource = "res://Combat.tscn"
@@ -143,11 +142,7 @@ func _ready():
 	
 func get_turn_count():
 	return self.turn_count
-	
-func set_active_star(flag):
-	self.has_active_star = flag
-#	
-#
+
 func update_animation_count_display(count):
 	get_node("AnimationCountLabel").set_text(str(count))
 
@@ -329,13 +324,11 @@ func computer_input(event):
 		var has_selected = get_node("Grid").selected != null
 		var hovered = get_node("CursorArea").get_piece_or_location_hovered()
 		if hovered and hovered.is_targetable():
-
+			
+			var star_bar = get_node("ControlBar/Combat/StarBar")
 			#if a star is active, handle it appropriately
-			if self.has_active_star:
-				self.has_active_star = false
-				var successful = hovered.star_input_event(event)
-				if !successful:
-					get_node("ControlBar/Combat/StarBar").refund()
+			if star_bar.handle_active_star(hovered, event): #returns true if successful
+				pass
 			else:
 				#if during a tutorial level, make sure move is as intended
 				if self.tutorial != null:

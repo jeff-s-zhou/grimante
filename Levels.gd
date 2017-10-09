@@ -119,7 +119,10 @@ var set5 = LevelSet.new("Fifth",
 var set6 = LevelSet.new("Sixth",
 [inspire(), shield_inspire(), corrosion(), griffon(), defuse_the_bomb(), ghost_boss()])
 
-var level_sets = [set, set2, set3, set4, set5, set6]
+var set7 = LevelSet.new("Seventh",
+[stormdancer_trials(), stormdancer_practice()])
+
+var level_sets = [set, set2, set3, set4, set5, set6, set7]
 
 #free levels that I think are still good
 
@@ -131,9 +134,9 @@ func get_level_sets():
 func sandbox(): 
 	var flags = ["bonus_star"]
 	var extras1 = {"free_deploy":false, "flags":flags}
-	var raw_enemies = {0:{ Vector2(1, 1): make(Grunt, 3), Vector2(2, 2): make(Grunt, 3), Vector2(3, 5): make(Grunt, 3)}}
+	var raw_enemies = {0:{ Vector2(1, 1): make(Grunt, 3), Vector2(2, 2): make(Grunt, 3), Vector2(6, 6): make(Grunt, 3)}}
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var heroes = {2: Cavalier, 3: Assassin} 
+	var heroes = {2: Cavalier, 5: FrostKnight} 
 #
 	return LevelTypes.Timed.new("", heroes, enemies, 3, null, extras1) 
 	
@@ -437,7 +440,7 @@ func corsair_trials():
 	var tutorial = load("res://Tutorials/corsair_trial.gd").new()
 	var flags = ["no_stars", "no_inspire", "hints"]
 	var challenges = []
-	for i in range(1, 7):
+	for i in range(1, 6):
 		var trial_hint = funcref(tutorial, "get_trial" + str(i) + "_hints")
 		var extras = {"free_deploy":false, "tutorial":trial_hint, "flags":flags}
 		var pieces = load_level("corsair_trial" + str(i) +".level")
@@ -574,7 +577,30 @@ func ghost_boss():
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var extras = {"free_deploy":true, "flags":[]}
-	return LevelTypes.Timed.new("Defuse the Bomb", allies, enemies, 6, null, extras)
+	return LevelTypes.Timed.new("Ghostbusters MAX", allies, enemies, 6, null, extras)
+	
+func stormdancer_trials():
+	var tutorial = load("res://Tutorials/stormdancer_trial.gd").new()
+	var flags = ["hints"]
+	var challenges = []
+	for i in range(1, 4):
+		var trial_hint = funcref(tutorial, "get_trial" + str(i) + "_hints")
+		var extras = {"free_deploy":false, "tutorial":trial_hint, "flags":flags}
+		var pieces = load_level("stormdancer_trial" + str(i) +".level")
+		var enemies = EnemyWrappers.FiniteCuratedWrapper.new(pieces[0])
+		var heroes = pieces[1]
+		var challenge = LevelTypes.Timed.new("", heroes, enemies, 1, null, extras) 
+		challenges.append(challenge)
+		
+	var extras = {"free_deploy":false, "flags":flags}
+	var pieces = load_level("stormdancer_trial4.level")
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(pieces[0])
+	var heroes = pieces[1]
+	var challenge = LevelTypes.Timed.new("", heroes, enemies, 1, null, extras) 
+	challenges.append(challenge)
+	
+	
+	return LevelTypes.Trial.new("Stormdancer Trials", challenges)
 	
 func stormdancer_practice():
 	var pieces = load_level("stormdancer_practice.level")
@@ -583,51 +609,3 @@ func stormdancer_practice():
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var extras = {"free_deploy":false, "flags":[]}
 	return LevelTypes.Timed.new("Stormdancer Practice", allies, enemies, 4, null, extras)
-
-
-func swamp():
-	var allies = {1:Archer, 2: FrostKnight, 3:Berserker, 4:Cavalier, 5: Assassin}
-	var raw_enemies = load_level("swamp.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var flags = ["no_fifth", "no_inspire"]
-	var extras = {"flags":flags}
-	return LevelTypes.Timed.new("Dagobah", allies, enemies, 6, null, extras)
-
-	
-func stormdancer():
-	var allies = {3: Stormdancer}
-	var raw_enemies = load_level("stormdancer.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var tutorial = load("res://Tutorials/stormdancer.gd").new()
-	var tutorial_func = funcref(tutorial, "get")
-	var flags = ["no_stars"]
-	var reinforcements = {3: {3: Cavalier}, 4: {Vector2(1, 2): Berserker}}
-	var extras = {"free_deploy":false, "tutorial": tutorial_func, "reinforcements":reinforcements, "flags":flags}
-	return LevelTypes.Timed.new("Stormdancer", allies, enemies, 4, null, extras)
-
-
-func double_time():
-	var allies = {1: FrostKnight, 2: Cavalier, 3:Berserker, 4:Assassin, 5: Archer}
-	var raw_enemies = load_level("double_time.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var flags = ["no_inspire", "no_fifth"]
-	var extras = {"flags":flags}
-	return LevelTypes.Timed.new("Double Time", allies, enemies, 7, null, extras)
-
-
-func pyromancer():
-	var allies = {3: Pyromancer}
-	var raw_enemies = load_level("pyromancer.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var tutorial = load("res://Tutorials/pyromancer.gd").new()
-	var tutorial_func = funcref(tutorial, "get")
-	var flags = ["no_stars"]
-	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
-	return LevelTypes.Timed.new("Pyromancer", allies, enemies, 4, null, extras)
-
-
-func howl():
-	var allies = {1: Archer, 2: Corsair, 4: Berserker, 5: FrostKnight}
-	var raw_enemies = load_level("howl.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	return LevelTypes.Timed.new("Howl", allies, enemies, 6, null)

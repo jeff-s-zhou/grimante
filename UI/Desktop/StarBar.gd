@@ -6,11 +6,15 @@ extends Node2D
 
 var star_count = 0
 var enabled = true
+
+const FRONT_POS = Vector2(38, 39)
 var star_add_pos = Vector2(38, 39)
 
 const STAR_SHIFT = Vector2(52, 0)
 
 var star_prototype = load("res://UI/Desktop/Star.tscn")
+
+var has_active_star #currently spent, about to be used
 
 var inactive_star
 
@@ -79,12 +83,38 @@ func has_star():
 	return self.star_count > 0
 		
 func refund():
-	add_star()
+	for star in self.stars:
+		star.set_pos(star.get_pos() + STAR_SHIFT)
+	self.star_add_pos += STAR_SHIFT
+	
+	self.star_count += 1
+	var star = self.star_prototype.instance()
+	star.set_pos(FRONT_POS)
+	add_child(star)
+	self.stars.push_front(star)
+
+	star.max_out() #increase to a full star
+	get_node("TextureButton").set_disabled(false)
+	
+	
+func set_active_star(flag):
+	get_node("/root/Combat/CursorArea").set_star_cursor(flag)
+	self.has_active_star = flag
+	
+
+func handle_active_star(hovered, event):
+	if self.has_active_star:
+		set_active_star(false)
+		var successful = hovered.star_input_event(event)
+		if !successful:
+			refund()
+		return true
+	return false
 
 
 func is_pressed():
 	if self.star_count > 0:
-		get_node("/root/Combat").set_active_star(true)
+		set_active_star(true)
 		self.star_count -= 1
 		get_node("/root/AnimationQueue").enqueue(self, "animate_remove_star", false, [self.star_count])
 		if self.star_count == 0:

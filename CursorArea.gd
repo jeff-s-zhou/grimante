@@ -16,6 +16,19 @@ func _ready():
 	self.PLATFORMS = get_node("/root/global").PLATFORMS
 	
 	
+func set_star_cursor(flag):
+	if flag:
+		get_node("Sprite").show()
+		get_node("Glow").show()
+		get_node("AnimationPlayer").play("star_glow")
+		get_node("Particles2D").set_emitting(true)
+	else:
+		get_node("Sprite").hide()
+		get_node("Glow").hide()
+		get_node("AnimationPlayer").stop_all()
+		get_node("Particles2D").set_emitting(false)
+	
+	
 func is_motion(ev):
 	if self.platform == self.PLATFORMS.Android:
 		return ev.type==InputEvent.SCREEN_TOUCH
