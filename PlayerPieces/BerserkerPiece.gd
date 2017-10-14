@@ -140,9 +140,11 @@ func smash_attack(new_coords):
 	add_animation(self, "jump_to", true, [new_coords])
 	var action = get_new_action()
 	
+	var lethal = get_parent().pieces[new_coords].will_die_to(damage)
+	
 	action.add_call("attacked", [self.damage], new_coords)
 	action.execute()
-	if !get_parent().pieces.has(new_coords):
+	if lethal:
 		set_coords(new_coords)
 		placed()
 	#else leap back

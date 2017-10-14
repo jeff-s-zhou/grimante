@@ -164,18 +164,27 @@ func animate_move_to_pos(position, speed, blocking=false, trans_type=Tween.TRANS
 	add_child(tween)
 	
 	var distance = get_pos().distance_to(position)
-	var dim_distance = dim_multi_distance(distance)
-	tween.interpolate_property(self, "transform/pos", get_pos(), position, float(dim_distance)/speed, trans_type, ease_type, delay)
-	tween.start()
-	if blocking:
-		yield(tween, "tween_complete")
-		tween.queue_free()
-		emit_signal("animation_done")
-		subtract_anim_count()
+	if distance == 0:
+		var timer = Timer.new()
+		add_child(timer)
+		timer.set_wait_time(0.01)
+		timer.start()
+		yield(timer, "timeout")
+		timer.queue_free()
+		if blocking:
+			emit_signal("animation_done")
 	else:
+		
+		var dim_distance = dim_multi_distance(distance)
+		print("got dim distance")
+		tween.interpolate_property(self, "transform/pos", get_pos(), position, float(dim_distance)/speed, trans_type, ease_type, delay)
+		tween.start()
 		yield(tween, "tween_complete")
 		tween.queue_free()
-		subtract_anim_count()
+		if blocking:
+			emit_signal("animation_done")
+			
+	subtract_anim_count()
 
 
 func animate_move(new_coords, speed=250, blocking=true, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
@@ -230,7 +239,6 @@ func animate_short_hop(speed, new_coords):
 func dim_multi_distance(distance):
 	var x = distance/400 #400 is how far the biggest jump is
 	var y = ((-1 * pow(3, -1 * x)) + 1)/x
-	print(y * distance)
 	return y * distance
 
 func animate_short_hop_to_pos(speed, distance):

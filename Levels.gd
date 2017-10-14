@@ -132,22 +132,22 @@ func get_level_sets():
 	return level_sets
 	
 func sandbox(): 
-	var flags = ["bonus_star"]
+	var flags = ["bonus_star", "no_inspire"]
 	var extras1 = {"free_deploy":false, "flags":flags}
-	var raw_enemies = {0:{ Vector2(1, 1): make(Grunt, 3), Vector2(2, 2): make(Grunt, 3), Vector2(6, 6): make(Grunt, 3)}}
+	var raw_enemies = {0:{ Vector2(3, 6): make(Grunt, 5), Vector2(3, 5): make(Grunt, 3), Vector2(2, 2): make(Grunt, 3)}}
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var heroes = {2: Cavalier, 5: FrostKnight} 
+	var heroes = {3: Assassin, 2: Berserker, 5: FrostKnight} 
 #
 	return LevelTypes.Timed.new("", heroes, enemies, 3, null, extras1) 
 	
 func background():
-	var pieces = load_level("gif_map.level")
+	var pieces = load_level("background.level")
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = []
 	var extras = {"flags":flags, "free_deploy":false}
-	return LevelTypes.Timed.new("Big Boss Fight", allies, enemies, 3, null, extras)
+	return LevelTypes.Timed.new("Big Boss Fight", allies, enemies, 5, null, extras)
 
 
 func tutorial1():

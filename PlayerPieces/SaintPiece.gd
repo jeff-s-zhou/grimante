@@ -22,12 +22,6 @@ func handle_assist():
 		self.assist_flag = false
 	self.AssistSystem.activate_assist(self.assist_type, self)
 	
-func initialize(cursor_area):
-	self.alter_ego = CrusaderPrototype.instance()
-	self.alter_ego.alter_ego = self
-	self.alter_ego.set_pos(Vector2(-999, -999))
-	get_node("/root/Combat").initialize_crusader(self.alter_ego)
-	.initialize(cursor_area)
 
 func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value])

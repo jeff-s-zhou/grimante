@@ -1,0 +1,11 @@
+[gd_scene load_steps=3 format=1]
+
+[ext_resource path="res://EnemyPieces/Components/YellowExplosionParticles.tscn" type="PackedScene" id=1]
+[ext_resource path="res://Assets/Enemies/explosion_spritesheet_frozen.png" type="Texture" id=2]
+
+[node name="FrozenExplosionParticles" instance=ExtResource( 1 )]
+
+config/emitting = true
+config/texture = ExtResource( 2 )
+
+

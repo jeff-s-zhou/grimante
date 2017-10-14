@@ -16,6 +16,7 @@ func _ready():
 func next_level():
 	var combat_resource = get_node("/root/global").combat_resource
 	get_node("/root/global").goto_scene(combat_resource, {"level": self.level})
-	
+
+#TODO make this reroute to the respective level set in LevelSet.tscn
 func level_select():
-	get_node("/root/global").goto_scene("res://LevelSelect/LevelSelect.tscn")
+	get_node("/root/global").goto_scene("res://LevelSelect/LevelSetSelect.tscn")

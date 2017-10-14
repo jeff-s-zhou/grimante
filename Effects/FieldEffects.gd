@@ -23,6 +23,7 @@ func emit_dust(position):
 #we have the drummer call it every x seconds on a repeating Tween, with its current coords
 #so there's no state to keep track of in here
 func emit_wind(coords):
+	return
 	var wind = WindParticlesPrototype.instance()
 	add_child(wind)
 	

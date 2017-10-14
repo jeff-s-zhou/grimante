@@ -9,6 +9,7 @@ const YELLOW_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/YellowExplo
 const GREEN_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/GreenExplosionParticles.tscn")
 const RED_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/RedExplosionParticles.tscn")
 const BLACK_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/BlackExplosionParticles.tscn")
+const FROZEN_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/FrozenExplosionParticles.tscn")
 const TYPES = {"assist":"assist", "attack":"attack", "selfish":"selfish", "boss":"boss"}
 var type
 
@@ -656,7 +657,11 @@ func animate_delete_self():
 	get_node("SamplePlayer").play("rocket glass explosion 5")
 	get_node("Physicals").set_opacity(0)
 	emit_signal("shake")
-	var explosion = self.explosion_prototype.instance()
+	var explosion
+	if self.frozen:
+		explosion = FROZEN_EXPLOSION_SCENE.instance()
+	else:
+		explosion = self.explosion_prototype.instance()
 	add_child(explosion)
 	explosion.set_emit_timeout(0.3)
 	explosion.set_emitting(true)
@@ -667,7 +672,7 @@ func animate_delete_self():
 	timer.start()
 	yield(timer, "timeout")
 	
-	emit_signal("animation_done")
+	#emit_signal("animation_done")
 	subtract_anim_count()
 	
 	#let it resolve any lingering animations
@@ -725,9 +730,9 @@ func animate_set_hp(hp, value, delay=0, flicker_flag=true):
 	tween.start()
 	
 	yield(tween, "tween_complete")
-	#if we don't flicker, we won't have it blocking either
-	if flicker_flag:
-		emit_signal("animation_done")
+#	#if we don't flicker, we won't have it blocking either
+#	if flicker_flag:
+#		emit_signal("animation_done")
 	flyover.queue_free()
 	tween.queue_free()
 	
@@ -826,10 +831,20 @@ func summon_buff(health, modifiers):
 		
 func deathrattle():
 	if self.frozen and self.hp == 0:
+		add_animation(self, "animate_frozen_shatter", true)
 		var neighbor_coords_range = get_parent().get_range(self.coords, [1,2], "ENEMY")
 		var action = get_new_action()
 		action.add_call("attacked", [2], neighbor_coords_range)
 		action.execute()
+		
+func animate_frozen_shatter():
+	var timer = Timer.new()
+	add_child(timer)
+	timer.set_wait_time(0.5)
+	timer.start()
+	yield(timer, "timeout")
+	timer.queue_free()
+	emit_signal("animation_done")
 			
 func queue_free():
 	if is_in_group("enemy_pieces"):

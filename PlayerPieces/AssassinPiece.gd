@@ -170,8 +170,11 @@ func unplaced():
 
 
 func trigger_passive(attack_range):
+	print("attack range on trigger")
+	print(attack_range)
 	for attack_coords in attack_range:
 		if _is_within_passive_range(attack_coords):
+			print("adding passive")
 			add_animation(self, "animate_passive", true, [attack_coords])
 			var action = get_new_action(false)
 			action.add_call("attacked", [self.passive_damage], attack_coords)
@@ -180,16 +183,19 @@ func trigger_passive(attack_range):
 			if !get_parent().pieces.has(attack_coords) and self.state == States.PLACED:
 				activate_bloodlust()
 				unplaced()
+			print("adding passive end")
 			add_animation(self, "animate_passive_end", true, [self.coords])
 
 
 func animate_passive(attack_coords):
+	print("animating passive")
 	var location = get_parent().locations[attack_coords]
 	var difference = 2 * (location.get_pos() - get_pos())/3
 	var new_position = location.get_pos() - difference
 	animate_move_to_pos(new_position, 450, true, Tween.TRANS_SINE, Tween.EASE_IN, 0.5)
 
 func animate_passive_end(original_coords):
+	print("animating passive end")
 	var location = get_parent().locations[original_coords]
 	var new_position = location.get_pos()
 	animate_move_to_pos(new_position, 300, true)

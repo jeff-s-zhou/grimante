@@ -44,8 +44,6 @@ func _ready():
 	#debug_full_roster()
 	
 	get_node("/root/AnimationQueue").connect("animation_count_update", self, "update_animation_count_display")
-	
-#
 
 	self.level_schematic = get_node("/root/global").get_param("level").get_level()
 	if self.level_schematic.tutorial != null:

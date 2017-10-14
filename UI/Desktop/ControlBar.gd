@@ -17,10 +17,14 @@ func initialize(flags, combat_scene):
 	get_node("Combat/EndTurnButton").set_disabled(true)
 	
 	if flags.has("no_stars"):
+		print("disabling star bar?")
 		get_node("Combat/StarBar").disable()
 		
 	if flags.has("bonus_star"):
 		get_node("Combat/StarBar").add_star()
+		
+	if flags.has("no_fifth"):
+		get_node("FinalHeroScreen").set_opacity(0)
 
 
 func set_deploying(flag):
@@ -32,6 +36,7 @@ func set_deploying(flag):
 		get_node("FinalHeroScreen").queue_free()
 		#get_node("Combat/DeployButton").hide()
 		get_node("Combat/EndTurnButton").show()
+		get_node("Combat").show()
 		
 		
 func final_hero_selected():

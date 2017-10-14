@@ -65,6 +65,9 @@ func _ready():
 			location1.set_pos(Vector2(INITIAL_X + tile_x_spacing * i, INITIAL_Y + offset + (tile_y_spacing * j)))
 			add_child(location1)
 			
+			if j == column_count - 1:
+				location1.set_endzone()
+			
 			var location_y_coord = _LOCATION_Y_OFFSETS[i] + j
 			locations[Vector2(i, location_y_coord)] = location1
 			location1.set_coords(Vector2(i, location_y_coord))

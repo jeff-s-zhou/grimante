@@ -3,7 +3,7 @@
 [ext_resource path="res://UI/HeroInfoSubOverlay.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/armor_icon.png" type="Texture" id=2]
 [ext_resource path="res://Assets/UI/movement_icon_small.png" type="Texture" id=3]
-[ext_resource path="res://Assets/processed_fonts/info_overlay_body_rubik_26.fnt" type="BitmapFont" id=4]
+[ext_resource path="res://Assets/processed_fonts/info_overlay_text.fnt" type="BitmapFont" id=4]
 [ext_resource path="res://Assets/UI/inspire_arrow_small.png" type="Texture" id=5]
 
 [node name="HeroInfoSubOverlay" type="Node2D"]

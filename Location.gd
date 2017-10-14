@@ -46,6 +46,9 @@ func hide_indirect_highlighting():
 func set_coords(coords):
 	self.coords = coords
 	
+func set_endzone():
+	get_node("EndzoneHighlight").show()
+	
 func set_targetable(flag):
 	if flag:
 		set_opacity(self.highlight_opacity)
