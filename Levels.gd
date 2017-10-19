@@ -24,8 +24,6 @@ const FrostKnight = preload("res://PlayerPieces/FrostKnightPiece.tscn")
 const Saint = preload("res://PlayerPieces/SaintPiece.tscn")
 const Corsair = preload("res://PlayerPieces/CorsairPiece.tscn")
 
-const Crusader = preload("res://PlayerPieces/CrusaderPiece.tscn")
-
 var constants = load("res://constants.gd").new()
 var enemy_roster = constants.enemy_roster
 
@@ -84,13 +82,17 @@ func make(prototype, hp, modifiers=null):
 	return {"prototype": prototype, "hp": hp, "modifiers":modifiers}
 	
 class LevelSet:
+	var scores = get_node("/root/constants").scores
 	var name = ""
 	var levels = []
+	var hard_levels = []
 	var completed = false
+	var state_dict = null
 	
-	func _init(name, levels):
+	func _init(name, levels, hard_levels):
 		self.name = name
 		self.levels = levels
+		self.hard_levels = hard_levels
 		
 	func get_levels():
 		for i in range(0, self.levels.size() - 1):
@@ -98,35 +100,46 @@ class LevelSet:
 			self.levels[i].set_next_level(self.levels[i+1])
 		return self.levels
 		
+	func get_hard_levels():
+		for i in range(0, self.hard_levels.size() - 1):
+			#change this call to set_next_level
+			self.hard_levels[i].set_next_level(self.hard_levels[i+1])
+		return self.hard_levels
+		
 	func complete():
 		self.completed = true
 		
+	func save_level_progress(level_name, score):
+		self.state_dict[level_name] = score
+		
+	func get_state():
+		pass
+		
+	func fill_state(state_dict):
+		self.state_dict = state_dict
+		
 var set = LevelSet.new("First", 
-[tutorial1(), tutorial2(), tutorial3(), first_steps(), second_steps()])
+[tutorial1(), tutorial2(), tutorial3(), first_steps(), second_steps()], [])
 
 var set2 = LevelSet.new("Second", 
-[archer(), rule_of_three(), tutorial4(), tick_tock(), flying_solo()])
+[archer(), rule_of_three(), tutorial4(), tick_tock(), flying_solo()], [])
 
 var set3 = LevelSet.new("Third",
-[assassin(), sludge(), star_power(), seraph(), sludge_lord()])
+[assassin(), sludge(), star_power(), seraph(), sludge_lord()], [])
 
 var set4 = LevelSet.new("Fourth",
-[frost_knight(), frost_knight_drive(), wyvern(), wyvern2(), shield(), big_fight()])
+[frost_knight(), frost_knight_drive(), wyvern(), wyvern2(), shield(), big_fight()], [])
 
 var set5 = LevelSet.new("Fifth",
-[corsair_trials(), corsair_drive(), ghostbusters(), ghostbusters2(), boss_fight(), fray(), big_boss_fight()])
+[corsair_trials(), corsair_drive(), ghostbusters(), ghostbusters2(), boss_fight(), fray(), big_boss_fight()], [])
 
 var set6 = LevelSet.new("Sixth",
-[inspire(), shield_inspire(), corrosion(), griffon(), defuse_the_bomb(), ghost_boss()])
+[inspire(), shield_inspire(), corrosion(), griffon(), defuse_the_bomb(), ghost_boss()], [])
 
 var set7 = LevelSet.new("Seventh",
-[stormdancer_trials(), stormdancer_practice()])
+[stormdancer_trials(), stormdancer_practice()], [])
 
 var level_sets = [set, set2, set3, set4, set5, set6, set7]
-
-#free levels that I think are still good
-
-#defuse_the_domb(), double_time(), spoopy_ghosts(), minesweeper()
 
 func get_level_sets():
 	return level_sets
@@ -134,7 +147,7 @@ func get_level_sets():
 func sandbox(): 
 	var flags = ["bonus_star", "no_inspire"]
 	var extras1 = {"free_deploy":false, "flags":flags}
-	var raw_enemies = {0:{ Vector2(3, 6): make(Grunt, 5), Vector2(3, 5): make(Grunt, 3), Vector2(2, 2): make(Grunt, 3)}}
+	var raw_enemies = {0:{ Vector2(3, 6): make(Grunt, 3), Vector2(3, 3): make(Grunt, 2)}}
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var heroes = {3: Assassin, 2: Berserker, 5: FrostKnight} 
 #

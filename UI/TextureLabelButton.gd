@@ -12,7 +12,7 @@ signal button_up
 onready var normal_height = get_node("TextureButton").get_normal_texture().get_height()
 onready var pressed_height = get_node("TextureButton").get_pressed_texture().get_height()
 
-var y_difference = 0
+export var y_difference = 0
 
 func _ready():
 	# Called every time the node is added to the scene.
@@ -20,6 +20,9 @@ func _ready():
 	get_node("TextureButton").connect("pressed", self, "is_pressed")
 	get_node("TextureButton").connect("button_down", self, "is_button_down")
 	get_node("TextureButton").connect("button_up", self, "is_button_up")
+	
+	get_node("TextureButton").connect("mouse_enter", self, "hover")
+	get_node("TextureButton").connect("mouse_exit", self, "unhover")
 	
 	
 	#connect all the signals from the button inside this
@@ -37,3 +40,13 @@ func is_button_up():
 	emit_signal("button_up")
 	get_node("Toppings").translate(Vector2(0, -1 * self.y_difference))
 	
+func set_disabled(flag):
+	get_node("TextureButton").set_disabled(flag)
+	
+func hover():
+	if !get_node("TextureButton").is_disabled():
+		set_scale(Vector2(1.00, 1.00))
+	
+func unhover():
+	if !get_node("TextureButton").is_disabled():
+		set_scale(Vector2(0.94, 0.94))

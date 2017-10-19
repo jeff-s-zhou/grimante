@@ -59,6 +59,29 @@ func _is_within_attack_range(new_coords):
 	
 func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
+	
+func animate_move_and_hop(new_coords, speed=250, blocking=true, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
+	add_anim_count()
+	var location = self.grid.locations[new_coords]
+	var position = location.get_pos()
+	
+	var distance = get_pos().distance_to(position)
+	var dim_distance = dim_multi_distance(distance)
+	var time = dim_distance/speed
+	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, time, trans_type, ease_type)
+	get_node("Tween").start()
+	animate_short_hop(speed, new_coords)
+	if blocking:
+		yield(get_node("Tween"), "tween_complete")
+		#need this in because apparently Tween emits the signal slightly early
+		get_node("Timer").set_wait_time(0.02)
+		get_node("Timer").start()
+		yield(get_node("Timer"), "timeout")
+		emit_signal("animation_done")
+		subtract_anim_count()
+	else:
+		yield(get_node("Tween"), "tween_complete")
+		subtract_anim_count()
 
 func jump_to(new_coords, dust=false):
 	add_anim_count()

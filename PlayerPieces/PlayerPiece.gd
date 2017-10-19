@@ -249,9 +249,6 @@ func queue_free():
 		remove_from_group("player_pieces")
 	.queue_free()
 
-func manual_free_cleanup():
-	pass
-
 func resurrect():
 	print("resurrecting")
 	add_to_group("player_pieces")

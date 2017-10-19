@@ -18,6 +18,8 @@ var desktop_flag = false
 
 var combat_resource = "res://Combat.tscn"
 
+const outcome_screen_prototype = preload("res://UI/Desktop/OutcomeDisplay.tscn")
+
 onready var Constants = get_node("/root/constants")
 
 signal wave_deployed
@@ -398,6 +400,7 @@ func computer_input(event):
 			
 			
 	elif event.is_action("test_action") and event.is_pressed():
+		print(get_tree().get_nodes_in_group("player_pieces"))
 		get_node("/root/AnimationQueue").debug()
 		debug_mode()
 		for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
@@ -658,7 +661,16 @@ func player_win():
 	if self.level_schematic.is_sub_level():
 		get_node("/root/global").goto_scene(self.combat_resource, {"level": self.level_schematic.next_level})
 	else:
-		get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level": self.level_schematic.next_level})
+		var win_screen = self.outcome_screen_prototype.instance()
+		var screen_size = get_viewport().get_rect().size
+		win_screen.initialize_victory(self.level_schematic.next_level, self.level_schematic)
+		win_screen.set_pos(Vector2(screen_size.x/2, screen_size.y/2))
+		add_child(win_screen)
+		win_screen.fade_in()
+		
+		
+		
+		#get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level": self.level_schematic.next_level})
 	
 
 func enemy_win():
@@ -680,8 +692,14 @@ func enemy_win():
 		get_node("Timer2").set_wait_time(0.5)
 		get_node("Timer2").start()
 		yield(get_node("Timer2"), "timeout")
-		get_node("/root/global").goto_scene("res://LoseScreen.tscn", {"level": self.level_schematic})
-	
+#
+		var lose_screen = self.outcome_screen_prototype.instance()
+		var screen_size = get_viewport().get_rect().size
+		lose_screen.initialize_defeat(self.level_schematic.next_level, self.level_schematic)
+		lose_screen.set_pos(Vector2(screen_size.x/2, screen_size.y/2))
+		add_child(lose_screen)
+		lose_screen.fade_in()
+#	
 
 func damage_defenses():
 	enemy_win()

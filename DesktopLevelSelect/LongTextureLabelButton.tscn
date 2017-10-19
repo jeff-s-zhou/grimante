@@ -1,0 +1,46 @@
+[gd_scene load_steps=9 format=1]
+
+[ext_resource path="res://UI/TextureLabelButton.tscn" type="PackedScene" id=1]
+[ext_resource path="res://DesktopLevelSelect/LongTextureLabelButton.gd" type="Script" id=2]
+[ext_resource path="res://Assets/UI/VictoryScreen/glass_button.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/VictoryScreen/glass_button_pressed.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/VictoryScreen/glass_button_hover.png" type="Texture" id=5]
+[ext_resource path="res://Assets/UI/VictoryScreen/glass_button_grey.png" type="Texture" id=6]
+[ext_resource path="res://Assets/UI/VictoryScreen/glass_button_click_Mask.pbm" type="BitMap" id=7]
+[ext_resource path="res://Assets/processed_fonts/button_text.fnt" type="BitmapFont" id=8]
+
+[node name="LongTextureLabelButton" instance=ExtResource( 1 )]
+
+script/script = ExtResource( 2 )
+y_difference = 4
+
+[node name="TextureButton" parent="."]
+
+margin/left = -212.0
+margin/top = -60.0
+margin/right = 212.0
+margin/bottom = 60.0
+textures/normal = ExtResource( 3 )
+textures/pressed = ExtResource( 4 )
+textures/hover = ExtResource( 5 )
+textures/disabled = ExtResource( 6 )
+textures/click_mask = ExtResource( 7 )
+
+[node name="Label" type="Label" parent="Toppings"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = -250.0
+margin/top = -20.0
+margin/right = 250.0
+margin/bottom = 10.0
+custom_fonts/font = ExtResource( 8 )
+align = 1
+valign = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+

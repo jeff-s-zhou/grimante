@@ -2,42 +2,42 @@
 
 [ext_resource path="res://UI/TurnUpdate.gd" type="Script" id=1]
 [ext_resource path="res://UI/BlurDarkenLayer.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Assets/UI/TurnUpdate/hexagon_red.png" type="Texture" id=3]
-[ext_resource path="res://Assets/UI/TurnUpdate/hexagon.png" type="Texture" id=4]
-[ext_resource path="res://Assets/UI/TurnUpdate/inner_circle_red.png" type="Texture" id=5]
-[ext_resource path="res://Assets/UI/TurnUpdate/inner_circle.png" type="Texture" id=6]
-[ext_resource path="res://Assets/UI/TurnUpdate/outer_circle_red.png" type="Texture" id=7]
-[ext_resource path="res://Assets/UI/TurnUpdate/outer_circle.png" type="Texture" id=8]
+[ext_resource path="res://Assets/UI/TurnUpdate/hexagon.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/TurnUpdate/hexagon_red.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/TurnUpdate/inner_circle.png" type="Texture" id=5]
+[ext_resource path="res://Assets/UI/TurnUpdate/inner_circle_red.png" type="Texture" id=6]
+[ext_resource path="res://Assets/UI/TurnUpdate/outer_circle.png" type="Texture" id=7]
+[ext_resource path="res://Assets/UI/TurnUpdate/outer_circle_red.png" type="Texture" id=8]
 [ext_resource path="res://Assets/UI/TurnUpdate/flash.png" type="Texture" id=9]
 [ext_resource path="res://Assets/processed_fonts/turn_update_small_header.fnt" type="BitmapFont" id=10]
 [ext_resource path="res://Assets/processed_fonts/turn_update.fnt" type="BitmapFont" id=11]
 [ext_resource path="res://Assets/processed_fonts/turn_update_phase_header.fnt" type="BitmapFont" id=12]
 
-[sub_resource type="SpriteFrames" id=2]
+[sub_resource type="SpriteFrames" id=1]
 
 animations = [ {
 "frames": [ ExtResource( 3 ) ],
 "loop": true,
-"name": "enemy_phase",
+"name": "player_phase",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 4 ) ],
 "loop": true,
-"name": "player_phase",
+"name": "enemy_phase",
 "speed": 5.0
 } ]
 
-[sub_resource type="SpriteFrames" id=1]
+[sub_resource type="SpriteFrames" id=2]
 
 animations = [ {
 "frames": [ ExtResource( 5 ) ],
 "loop": true,
-"name": "enemy_phase",
+"name": "player_phase",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 6 ) ],
 "loop": true,
-"name": "player_phase",
+"name": "enemy_phase",
 "speed": 5.0
 } ]
 
@@ -46,12 +46,12 @@ animations = [ {
 animations = [ {
 "frames": [ ExtResource( 7 ) ],
 "loop": true,
-"name": "enemy_phase",
+"name": "player_phase",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 8 ) ],
 "loop": true,
-"name": "player_phase",
+"name": "enemy_phase",
 "speed": 5.0
 } ]
 
@@ -94,13 +94,13 @@ transform/pos = Vector2( -541.343, -420.361 )
 
 [node name="Hexagon" type="AnimatedSprite" parent="."]
 
-frames = SubResource( 2 )
+frames = SubResource( 1 )
 animation = "player_phase"
 
 [node name="InnerCircle" type="AnimatedSprite" parent="."]
 
 transform/rot = 198.549
-frames = SubResource( 1 )
+frames = SubResource( 2 )
 animation = "player_phase"
 
 [node name="OuterCircle" type="AnimatedSprite" parent="."]

@@ -1,0 +1,51 @@
+[gd_scene load_steps=5 format=1]
+
+[ext_resource path="res://UI/Desktop/OutcomeDisplay.gd" type="Script" id=1]
+[ext_resource path="res://UI/BlurDarkenLayer.tscn" type="PackedScene" id=2]
+[ext_resource path="res://UI/Desktop/SmallTextureLabelButton.tscn" type="PackedScene" id=3]
+[ext_resource path="res://UI/OutcomeScreens/OutcomeMessage.tscn" type="PackedScene" id=4]
+
+[node name="OutcomeDisplay" type="Node2D"]
+
+z/z = 100
+z/relative = false
+script/script = ExtResource( 1 )
+
+[node name="BlurDarkenLayer" parent="." instance=ExtResource( 2 )]
+
+transform/pos = Vector2( -524.554, -361.392 )
+
+[node name="NextLevelButton" parent="." instance=ExtResource( 3 )]
+
+transform/pos = Vector2( 0, 142 )
+
+[node name="Label" parent="NextLevelButton/Toppings"]
+
+text = "NEXT LEVEL"
+
+[node name="LevelSelectButton" parent="." instance=ExtResource( 3 )]
+
+transform/pos = Vector2( 0, 289 )
+
+[node name="Tween" type="Tween" parent="."]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
+
+[node name="OutcomeMessage" parent="." instance=ExtResource( 4 )]
+
+transform/pos = Vector2( 0, -90 )
+
+[node name="RetryButton" parent="." instance=ExtResource( 3 )]
+
+transform/pos = Vector2( 0, 215.611 )
+
+[node name="Label" parent="RetryButton/Toppings"]
+
+text = "RETRY"
+
+
+[editable path="NextLevelButton"]
+[editable path="RetryButton"]

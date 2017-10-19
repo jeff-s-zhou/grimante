@@ -16,5 +16,4 @@ func initialize(level):
 	get_node("Toppings/Name").set_text(self.level.name.to_upper())
 
 func is_pressed():
-	print("met here?")
 	emit_signal("pressed", self.level)

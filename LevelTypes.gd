@@ -5,20 +5,6 @@ extends Node
 # var b = "textvar"
 
 
-
-#const DEFAULT_DEPLOY_TILES = [
-#Vector2(0, 6), Vector2(1, 6), Vector2(1, 7), Vector2(2, 7), Vector2(3, 7), 
-#Vector2(3, 8), Vector2(4, 8), Vector2(5, 8), Vector2(5, 9), Vector2(6, 9)
-#]
-
-#const DEFAULT_DEPLOY_TILES = [
-#Vector2(0, 5), Vector2(1, 5), Vector2(1, 6), Vector2(2, 6), Vector2(3, 6), 
-#Vector2(3, 7), Vector2(4, 7), Vector2(5, 7), Vector2(5, 8), Vector2(6, 8),
-#Vector2(0, 99), Vector2(1, 99), Vector2(2, 99), Vector2(3, 99), Vector2(4, 99), #UnitSelectBar Tiles
-#Vector2(5, 99), Vector2(6, 99), Vector2(7, 99), Vector2(8, 99)
-#]
-
-
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
@@ -28,7 +14,10 @@ func _ready():
 #do we just want this as something that contains everything aobut a level...
 #Okay. so use this instead of the dict structure. So it contains everything, from player pieces, to enemy pieces, to structures
 
-class BaseLevelType:
+#NOTE: we keep these stateless for simplicity's sake. state is stored in game
+#permanent state is stored in the LevelSet objects
+
+class BaseLevelType:	
 	var name = ""
 	var allies = {}
 	var extra_units = null

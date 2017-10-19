@@ -24,7 +24,9 @@ func initialize(flags, combat_scene):
 		get_node("Combat/StarBar").add_star()
 		
 	if flags.has("no_fifth"):
+		get_node("FinalHeroScreen").set_pos(Vector2(-500, -500))
 		get_node("FinalHeroScreen").set_opacity(0)
+		
 
 
 func set_deploying(flag):

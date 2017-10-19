@@ -53,8 +53,7 @@ func select(piece):
 func queue_free():
 	for piece in self.pieces:
 		if piece != self.currently_selected:
-			piece.manual_free_cleanup()
-			piece.free()
+			piece.queue_free()
 	.queue_free()
 			
 	

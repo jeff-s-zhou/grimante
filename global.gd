@@ -8,6 +8,8 @@ extends Node
 var current_scene = null
 var _params = null
 
+var current_user = "Jeff"
+
 var seen_units = {"Pawn":true}
 
 var seen_effect = {}
@@ -54,11 +56,13 @@ func get_param(name):
 		return _params[name]
 	return null
 	
+func get_save_filename():
+	return "user://" + self.current_user + "state.save"
 
 func save_state():
 	var first_line = true
 	var save = File.new()
-	save.open("user://state.save", File.WRITE)
+	save.open(get_save_filename(), File.WRITE)
 	for unit_prototype in available_unit_roster.keys():
 		var unit = unit_prototype.instance()
 		var file_name = unit.get_filename()
@@ -76,11 +80,11 @@ func save_state():
 
 func load_state():
 	var save = File.new()
-	if !save.file_exists("user://state.save"):
+	if !save.file_exists(get_save_filename()):
 		return #Error!  We don't have a save to load
 
 	# Load the file line by line
-	save.open("user://state.save", File.READ)
+	save.open(get_save_filename(), File.READ)
 	while (!save.eof_reached()):
 		var file_name = save.get_line()
 		# First we need to create the object and add it to the tree and set its position.
