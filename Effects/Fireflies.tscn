@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=1]
 
-[ext_resource path="res://Assets/effects/firefly.png" type="Texture" id=1]
+[ext_resource path="res://Assets/effects/firefly2.png" type="Texture" id=1]
 
 [sub_resource type="ColorRamp" id=1]
 
@@ -11,8 +11,8 @@ colors = ColorArray( 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0 )
 
 z/z = 101
 z/relative = false
-config/amount = 14
-config/lifetime = 3.5
+config/amount = 10
+config/lifetime = 4.0
 config/process_mode = 1
 config/half_extents = Vector2( 325, 475 )
 config/texture = ExtResource( 1 )

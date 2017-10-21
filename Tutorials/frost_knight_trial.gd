@@ -6,7 +6,7 @@ extends "res://Tutorials/tutorial.gd"
 # var b = "textvar"
 func get_trial1_hints():
 	var tutorial = TutorialPrototype.instance()
-	var text = ["The Frost Knight can shove Heroes and Enemies 1 tile back."]
+	var text = ["The Frost Knight can shove Heroes and Enemies 1 tile back in the 6 hex directions."]
 	add_hint(tutorial, 1, text)
 	return tutorial
 	

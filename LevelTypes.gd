@@ -17,7 +17,8 @@ func _ready():
 #NOTE: we keep these stateless for simplicity's sake. state is stored in game
 #permanent state is stored in the LevelSet objects
 
-class BaseLevelType:	
+class BaseLevelType:
+	var id = null
 	var name = ""
 	var allies = {}
 	var extra_units = null
@@ -29,14 +30,14 @@ class BaseLevelType:
 	var reinforcements = {}
 	var flags = []
 	var free_deploy = true
-	var shadow_tiles = []
-	var shifting_sands = []
 	var king = null
 	var end_conditions = {}
 	var is_sub_level = false
 	var seamless = false
+	var score_guide = {}
 	
-	func _init(name, allies, enemies, next_level=null, extras={}):
+	func _init(id, name, allies, enemies, next_level=null, extras={}):
+		self.id = id
 		self.name = name
 		self.allies = allies
 		self.enemies = enemies
@@ -52,12 +53,8 @@ class BaseLevelType:
 			self.reinforcements = extras["reinforcements"]
 		if extras.has("flags"):
 			self.flags = extras["flags"]
-		if extras.has("shadow_tiles"):
-			self.shadow_tiles = extras["shadow_tiles"]
-		if extras.has("shifting_sands"):
-			self.shifting_sands = extras["shifting_sands"]
-		if extras.has("king"):
-			self.king = extras["king"]
+		if extras.has("score_guide"):
+			self.score_guide = extras["score_guide"]
 			
 	func set_end_conditions(conditions):
 		self.end_conditions[conditions] = true
@@ -70,14 +67,20 @@ class BaseLevelType:
 		
 	func is_sub_level():
 		return self.is_sub_level
+		
+	func get_score(turn_count):
+		if self.score_guide.has(turn_count):
+			return self.score_guide[turn_count]
+		else:
+			return "A"
 
 
 class Timed extends BaseLevelType:
 	var Constants = preload("constants.gd").new()
 	var num_turns
 	
-	func _init(name, allies, enemies, num_turns, \
-	next_level=null, extras={}).(name, allies, enemies, next_level, extras):
+	func _init(id, name, allies, enemies, num_turns, \
+	next_level=null, extras={}).(id, name, allies, enemies, next_level, extras):
 		self.num_turns = num_turns
 		set_end_conditions(Constants.end_conditions.Timed)
 
@@ -85,8 +88,8 @@ class Timed extends BaseLevelType:
 class Sandbox extends BaseLevelType:
 	var Constants = preload("constants.gd").new()
 	
-	func _init(name, allies, enemies, \
-	next_level=null, extras={}).(name, allies, enemies, next_level, extras):
+	func _init(id, name, allies, enemies, \
+	next_level=null, extras={}).(id, name, allies, enemies, next_level, extras):
 		self.flags += ["sandbox", "no_turns"]
 		set_end_conditions(Constants.end_conditions.Sandbox)
 
@@ -94,8 +97,10 @@ class Sandbox extends BaseLevelType:
 class MultiLevel:
 	var levels
 	var name = ""
-	func _init(name, levels):
+	var id
+	func _init(id, name, levels):
 		self.name = name
+		self.id = id
 		
 		for i in range(0, levels.size() - 1):
 			levels[i].is_sub_level = true
@@ -117,8 +122,10 @@ class MultiLevel:
 class Trial:
 	var levels
 	var name = ""
+	var id
 	
-	func _init(name, levels):
+	func _init(id, name, levels):
+		self.id = id
 		self.name = name
 		
 		for i in range(0, levels.size()):
@@ -139,3 +146,6 @@ class Trial:
 	
 	func is_sub_level():
 		return true
+		
+	func get_score(turn_count):
+		return "N/A"

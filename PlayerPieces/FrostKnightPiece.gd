@@ -23,7 +23,7 @@ func get_shield_bash_damage():
 	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_SHIELD_BASH_DAMAGE
 
 func get_movement_range():
-	return get_parent().get_range(self.coords, [1, self.movement_value + 1])
+	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
 	
 func get_attack_range():
 	return get_parent().get_range(self.coords, [1, self.movement_value + 1], "ENEMY", true)

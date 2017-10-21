@@ -4,29 +4,25 @@ extends Node2D
 # var a = 2
 # var b = "textvar"
 
-const level_set_button_prototype = preload("res://LevelSelect/LevelSetButton.tscn")
-
-
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	#add_child(levels)
 	
-	var y_position = 120
+	var cleared_level_set = get_node("/root/global").get_param("cleared_level_set")
+	#either null, false, or true
+	if cleared_level_set:
+		pass
+		#get the button associated with the current level set and play its cleared animation
+	else:
+		get_node("/root/State").current_level_set = null
 	
 	for level_set in get_node("/root/Levels").get_level_sets():
-		create_new_level_select(level_set, y_position)
-		y_position += 100
-
-
-func create_new_level_select(level_set, y_position):
-	var level_set_button = self.level_set_button_prototype.instance()
-	level_set_button.initialize(level_set)
-	level_set_button.set_pos(Vector2(60, y_position))
-	level_set_button.connect("pressed", self, "goto_level_set")
-	add_child(level_set_button)
+		var id_str = str(level_set.id)
+		get_node(id_str).connect("pressed", self, "goto_level_set")
+		get_node(id_str).initialize(level_set)
 
 
 func goto_level_set(level_set):
-	print("going to level set")
+	get_node("/root/State").current_level_set = level_set
 	get_node("/root/global").goto_scene("res://DesktopLevelSelect/LevelSelect.tscn", {"level_set":level_set})

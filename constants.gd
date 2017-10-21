@@ -41,7 +41,7 @@ var hero_roster = {"berserker":Berserker, "cavalier":Cavalier, "archer":Archer, 
 
 const y_coords_offsets = [0, 0, 1, 1, 2, 2, 3]
 
-var scores = {"S_plus":"S+", "S":"S", "A":"A", "B":"B", "C":"C", "F":"F"}
+var SCORES = {"S+":"S+", "S":"S", "A":"A", "B":"B", "C":"C", "F":"F"}
 
 const coords_vertical_prob_dist = {
 0: 1,

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=1]
+[gd_scene load_steps=12 format=1]
 
 [ext_resource path="res://UI/Desktop/Star.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/Desktop/star/star1.png" type="Texture" id=2]
@@ -10,6 +10,23 @@
 [ext_resource path="res://Assets/UI/Desktop/star/star7.png" type="Texture" id=8]
 [ext_resource path="res://Assets/UI/Desktop/star/star_new_90percent.png" type="Texture" id=9]
 [ext_resource path="res://Assets/UI/Desktop/star/star_new_90percent_shine.png" type="Texture" id=10]
+
+[sub_resource type="Animation" id=1]
+
+resource/name = "glow_flash"
+length = 2.0
+loop = true
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("Glow:visibility/opacity")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = {
+"times": FloatArray( 0, 1, 2 ),
+"transitions": FloatArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 1.0, 0.0 ]
+}
 
 [node name="Star" type="Node2D"]
 
@@ -51,7 +68,7 @@ texture = ExtResource( 9 )
 
 [node name="Glow" type="Sprite" parent="."]
 
-visibility/opacity = 0.0
+visibility/opacity = 0.109487
 texture = ExtResource( 10 )
 
 [node name="Tween" type="Tween" parent="."]
@@ -60,5 +77,16 @@ playback/process_mode = 1
 playback/active = false
 playback/repeat = false
 playback/speed = 1.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+playback/process_mode = 1
+playback/default_blend_time = 0.0
+root/root = NodePath("..")
+anims/glow_flash = SubResource( 1 )
+playback/active = true
+playback/speed = 1.0
+blend_times = [  ]
+autoplay = ""
 
 

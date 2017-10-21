@@ -262,10 +262,11 @@ func reset_deployable_indicators():
 #if acting is true, then we don't unglow
 func deselect(acting=false):
 	#print("deselecting??")
-	self.selected.deselect(acting)
-	self.selected = null
-	self.clear_display_state(true)
-	get_parent().check_hovered()
+	if self.selected != null:
+		self.selected.deselect(acting)
+		self.selected = null
+		self.clear_display_state(true)
+		get_parent().check_hovered()
 	
 
 func focus_coords(select_coords, target_coords):

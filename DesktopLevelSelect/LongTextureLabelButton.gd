@@ -6,7 +6,7 @@ extends "res://UI/TextureLabelButton.gd"
 
 var level = null
 
-func initialize(level):
+func initialize(level, score):
 	self.level = level
 	get_node("Toppings/Label").set_text(self.level.name.to_upper())
 

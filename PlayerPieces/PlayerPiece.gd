@@ -239,9 +239,6 @@ func animate_delete_self():
 	yield(get_node("Timer"), "timeout")
 	#emit_signal("animation_done")
 	subtract_anim_count()
-	get_node("Timer").set_wait_time(3)
-	get_node("Timer").start()
-	yield(get_node("Timer"), "timeout")
 
 
 func queue_free():
@@ -416,15 +413,16 @@ func star_input_event(event):
 
 #called when an event happens inside the click area hitput
 func input_event(event, has_selected):
-	if self.deploying_flag: #if in deploy phase
-		deploy_input_event(event, has_selected)
-		return
-
-	elif !has_selected and self.state != States.PLACED:
-		select()
-
-	else: #if not selected and not self, then some piece is trying to act on this one
-		get_parent().set_target(self)
+	if self.state != States.DEAD:
+		if self.deploying_flag: #if in deploy phase
+			deploy_input_event(event, has_selected)
+			return
+	
+		elif !has_selected and self.state != States.PLACED:
+			select()
+	
+		else: #if not selected and not self, then some piece is trying to act on this one
+			get_parent().set_target(self)
 
 
 func deploy_input_event(event, has_selected):

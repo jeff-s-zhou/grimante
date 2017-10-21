@@ -48,10 +48,10 @@ func _ready():
 	
 func set_targetable(flag):
 	if flag:
-		set_opacity(1)
+		#set_opacity(1)
 		get_node("CollisionArea").set_pickable(true)
 	else:
-		set_opacity(1)
+		#set_opacity(1)
 		get_node("CollisionArea").set_pickable(false)
 		
 func is_targetable():
@@ -122,7 +122,7 @@ func set_seen(flag):
 
 
 func check_global_seen():
-	if get_node("/root/global").seen_units.has(self.unit_name):
+	if get_node("/root/State").seen_units.has(self.unit_name):
 		get_node("SeenIcon").hide()
 	else:
 		get_node("SeenIcon").show()

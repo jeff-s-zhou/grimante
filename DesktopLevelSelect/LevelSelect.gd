@@ -6,7 +6,7 @@ extends Node2D
 
 const level_set_button_prototype = preload("res://DesktopLevelSelect/LongTextureLabelButton.tscn")
 
-var levels
+var level_set
 
 onready var screen_size = get_viewport().get_rect().size
 
@@ -18,21 +18,26 @@ func _ready():
 	var y_position = 200
 	var hard_y_position = 200
 	
-	self.levels = get_node("/root/global").get_param("level_set")
+	self.level_set = get_node("/root/global").get_param("level_set")
+	
+	get_node("Label").set_text(self.level_set.name.to_upper())
 	
 	get_node("BackButton").connect("pressed", self, "back")
 	
-	for level in self.levels.get_levels():
+	for level in self.level_set.get_levels():
 		create_new_level_button(level, y_position)
 		y_position += 76
 		
-	for level in self.levels.get_hard_levels():
+	for level in self.level_set.get_hard_levels():
 		create_new_level_button(level, hard_y_position)
 		hard_y_position += 76
 
 func create_new_level_button(level, y_position):
+	var score = null
+#	if self.level_set.score_dict.has(level.name):
+#		score = self.level_set.score_dict[level.name]
 	var level_button = self.level_set_button_prototype.instance()
-	level_button.initialize(level)
+	level_button.initialize(level, score)
 	level_button.set_pos(Vector2(screen_size.x/2, y_position))
 	level_button.connect("pressed", self, "goto_level")
 	add_child(level_button)

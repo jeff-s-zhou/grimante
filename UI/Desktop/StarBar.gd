@@ -119,3 +119,8 @@ func is_pressed():
 		get_node("/root/AnimationQueue").enqueue(self, "animate_remove_star", false, [self.star_count])
 		if self.star_count == 0:
 			get_node("TextureButton").set_disabled(true)
+			
+	
+func star_flash(flag):
+	for star in self.stars:
+		star.flash(flag)

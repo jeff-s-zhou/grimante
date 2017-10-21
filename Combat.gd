@@ -39,7 +39,6 @@ func _ready():
 		self.desktop_flag = true
 	
 	get_node("/root/AnimationQueue").reset()
-	get_node("/root/global").load_state()
 	var screen_size = get_viewport().get_rect().size
 	get_node("Grid").set_pos(Vector2(screen_size.x/2 - 310, screen_size.y/2- 350))
 	#get_node("Grid").set_pos(Vector2(400, 250))
@@ -80,10 +79,13 @@ func _ready():
 	for key in self.level_schematic.allies.keys():
 		initialize_piece(self.level_schematic.allies[key], false, key)
 	
-	#key is the unit, value is simply true
-	var available_roster = get_node("/root/global").available_unit_roster.keys()
+	#key is the unit's file, value is simply true
+	var available_roster = get_node("/root/State").get_roster()
+		
+	
 	if self.level_schematic.free_deploy:
-		for prototype in available_roster:
+		for file_name in available_roster:
+			var prototype = load(file_name)
 			#only add to the final hero select pieces that aren't already pre selected
 			if !prototype in self.level_schematic.allies.values():
 				initialize_piece(prototype, true)
@@ -157,8 +159,7 @@ func debug_full_roster():
 	var FrostKnight = load("res://PlayerPieces/FrostKnightPiece.tscn")
 	var Saint = load("res://PlayerPieces/SaintPiece.tscn")
 	var Corsair = load("res://PlayerPieces/CorsairPiece.tscn")
-	var roster = {Berserker: true, Cavalier: true, Archer: true, Assassin: true, Corsair: true}
-	get_node("/root/global").available_unit_roster = roster
+	pass
 	
 func pause():
 	set_process_input(false)
@@ -190,11 +191,9 @@ func soft_copy_array(source, target):
 	for item in source:
 		target.push_back(item)
 
-func initialize_piece(piece, on_bar=false, key=null):
-	if !get_node("/root/global").available_unit_roster.has(piece):
-		get_node("/root/global").available_unit_roster[piece] = true
-	
-	var new_piece = piece.instance()
+func initialize_piece(piece_prototype, on_bar=false, key=null):
+	var new_piece = piece_prototype.instance()
+	get_node("/root/State").add_to_roster(new_piece.get_filename())
 	new_piece.set_opacity(0)
 	new_piece.connect("invalid_move", self, "handle_invalid_move")
 	new_piece.connect("shake", self, "screen_shake")
@@ -250,6 +249,9 @@ func handle_piece_placed():
 			if !player_piece.is_placed():
 				return
 		end_turn()
+		
+	else:
+		get_node("ControlBar/Combat/StarBar").star_flash(true)
 
 #	
 #
@@ -270,6 +272,7 @@ func initialize_enemy_piece(coords, prototype, health, modifiers, animation_sequ
 func end_turn():
 	self.state = STATES.transitioning
 	get_node("ControlBar/Combat/EndTurnButton").set_disabled(true)
+	get_node("ControlBar/Combat/StarBar").star_flash(false)
 	
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
@@ -282,6 +285,7 @@ func end_turn():
 		player_piece.placed(true)
 		player_piece.clear_assist()
 	get_node("/root/AssistSystem").clear_assist()
+	get_node("Grid").deselect()
 	get_node("PhaseShifter").animate_enemy_phase(self.turn_count)
 	yield(get_node("PhaseShifter"), "animation_done")
 	self.state = STATES.enemy_turn
@@ -410,7 +414,7 @@ func computer_input(event):
 			player_piece.debug()
 			
 	elif event.is_action("test_action2") and event.is_pressed():
-		get_node("/root/global").save_state()
+		pass
 
 		#print(get_node("Grid").pieces)
 
@@ -649,9 +653,6 @@ func player_win():
 	get_node("/root/AnimationQueue").stop()
 	
 	get_node("/root/DataLogger").log_win(self.level_schematic.name, self.turn_count)
-	
-	#saves the progress made, right now just the units unlocked
-	get_node("/root/global").save_state()
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 	get_node("Timer2").set_wait_time(0.5)
@@ -662,16 +663,12 @@ func player_win():
 		get_node("/root/global").goto_scene(self.combat_resource, {"level": self.level_schematic.next_level})
 	else:
 		var win_screen = self.outcome_screen_prototype.instance()
-		var screen_size = get_viewport().get_rect().size
-		win_screen.initialize_victory(self.level_schematic.next_level, self.level_schematic)
-		win_screen.set_pos(Vector2(screen_size.x/2, screen_size.y/2))
 		add_child(win_screen)
+		var screen_size = get_viewport().get_rect().size
+		win_screen.initialize_victory(self.level_schematic.next_level, self.level_schematic, self.turn_count)
+		win_screen.set_pos(Vector2(screen_size.x/2, screen_size.y/2))
 		win_screen.fade_in()
-		
-		
-		
-		#get_node("/root/global").goto_scene("res://WinScreen.tscn", {"level": self.level_schematic.next_level})
-	
+
 
 func enemy_win():
 	if self.state == STATES.end:
