@@ -501,10 +501,13 @@ func animate_fire():
 	
 		
 func set_frozen(flag):
-	if flag and !self.shielded:
-		self.frozen = true
-		set_stunned(true)
-		add_animation(self,"animate_freeze", false)
+	if flag:
+		if self.shielded:
+			set_shield(false)
+		else:
+			self.frozen = true
+			set_stunned(true)
+			add_animation(self,"animate_freeze", false)
 		
 	else:
 		self.frozen = false

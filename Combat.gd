@@ -285,7 +285,7 @@ func end_turn():
 		player_piece.placed(true)
 		player_piece.clear_assist()
 	get_node("/root/AssistSystem").clear_assist()
-	get_node("Grid").deselect()
+	get_node("Grid").end_turn_clear_state()
 	get_node("PhaseShifter").animate_enemy_phase(self.turn_count)
 	yield(get_node("PhaseShifter"), "animation_done")
 	self.state = STATES.enemy_turn
@@ -342,19 +342,21 @@ func computer_input(event):
 						print("not valid??")
 				else:
 					hovered.input_event(event, has_selected)
-				
-		elif get_node("Grid").selected != null:
-			if self.tutorial != null and !self.tutorial.has_forced_action(get_turn_count()):
-				get_node("Grid").selected.invalid_move()
-				get_node("Grid").deselect()
+		
+		#we add this case so we don't trigger the invalid move during a forced action
+		elif self.tutorial != null and self.tutorial.has_forced_action(get_turn_count()):
+			pass
+		else:
+			handle_invalid_move()
+			get_node("Grid").deselect()
+			
 	
 	#don't handle any other input during forced actions
 	if self.mid_forced_action:
 		return
 		
 	if get_node("InputHandler").is_deselect(event): 
-		if get_node("Grid").selected:
-			get_node("Grid").deselect()
+		get_node("Grid").deselect()
 	
 	elif get_node("InputHandler").is_ui_accept(event):
 		if self.state == self.STATES.deploying:
@@ -409,6 +411,9 @@ func computer_input(event):
 		debug_mode()
 		for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
 			enemy_piece.debug()
+			
+		for location in get_node("Grid").locations.values():
+			location.debug()
 			
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			player_piece.debug()

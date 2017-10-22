@@ -39,6 +39,8 @@ func soft_reset():
 	
 func debug():
 	get_node("Label").set_text(str(coords.x) + "," + str(coords.y))
+	if self.corpse != null:
+		get_node("Label1").set_text(str(self.corpse.unit_name))
 	
 func hide_indirect_highlighting():
 	self.indirect_highlighting = false

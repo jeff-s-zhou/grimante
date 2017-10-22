@@ -66,7 +66,6 @@ func placed(ending_turn=false):
 		.placed(ending_turn)
 	else:
 		self.handle_assist()
-		get_parent().selected = null
 		add_animation(self, "emit_animated_placed", false)
 
 #neede for tutorials

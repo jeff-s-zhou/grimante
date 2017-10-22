@@ -26,7 +26,7 @@ func get_trial3_hints():
 	
 func get_trial4_hints():
 	var tutorial = TutorialPrototype.instance()
-	var text = ["If a shoved Enemy lands on a Piece, that Piece is dealt 4 damage."]
+	var text = ["If a shoved Enemy lands on a Piece, that Piece is dealt {4} damage."]
 	add_hint(tutorial, 1, text)
 	return tutorial
 	

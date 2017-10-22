@@ -267,7 +267,13 @@ func deselect(acting=false):
 		self.selected = null
 		self.clear_display_state(true)
 		get_parent().check_hovered()
-	
+
+#in this case we always need to make sure there's no highlighting, even when hovered
+func end_turn_clear_state():
+	if self.selected != null:
+		self.selected.deselect(false)
+		self.selected = null
+	self.clear_display_state(true)
 
 func focus_coords(select_coords, target_coords):
 	for location in locations.values():

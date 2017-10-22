@@ -23,6 +23,8 @@ func initialize(level_schematic, star_button_handle, flags):
 	self.flags = flags
 	
 	self.enemies = level_schematic.enemies
+	print("printing enemies in info bar")
+	print(self.enemies)
 	if !flags.has("no_turns"):
 		self.num_turns = level_schematic.num_turns
 	self.turns_til_wave = self.enemies.get_turns_til_next_wave(0)

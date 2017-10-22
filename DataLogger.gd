@@ -57,19 +57,27 @@ func save_state():
 	#have to do this instead of store_line because loading bugs out on the last linebreak
 	save.store_string(self.stats.to_json()) 
 	save.close()
+	#log_online(self.stats.to_json())
+	
+func log_online(json_data):
+	var HTTP = HTTPClient.new()
+	var url = "/IQMcZufUb8e4mArWuTsa"
+	var RESPONSE = HTTP.connect("http://www.putsreq.com",80)
+	assert(RESPONSE == OK)
+	
+	while(HTTP.get_status() == HTTPClient.STATUS_CONNECTING or HTTP.get_status() == HTTPClient.STATUS_RESOLVING):
+		HTTP.poll()
+		OS.delay_msec(300)
+	
+	assert(HTTP.get_status() == HTTPClient.STATUS_CONNECTED)
+	var QUERY = json_data
+	var HEADERS = ["User-Agent: Jeff", "Content-Type: application/json"]
+	RESPONSE = HTTP.request(HTTPClient.METHOD_POST, url, HEADERS, QUERY)
+	assert(RESPONSE == OK)
+	
+	while (HTTP.get_status() == HTTPClient.STATUS_REQUESTING):
+		HTTP.poll()
+		OS.delay_msec(300)
+	#    # Make sure request finished
+	assert(HTTP.get_status() == HTTPClient.STATUS_BODY or HTTP.get_status() == HTTPClient.STATUS_CONNECTED)
 
-
-#func load_state():
-#	var save = File.new()
-#	if !save.file_exists("user://stats.save"):
-#		return #Error!  We don't have a save to load
-#	
-#	# dict.parse_json() requires a declared dict.
-#	var current_line = {}
-#	# Load the file line by line
-#	save.open("user://stats.save", File.READ)
-#	
-#	while (!save.eof_reached()):
-#		current_line.parse_json(save.get_line())
-#		self.stats = current_line
-#	save.close()

@@ -82,11 +82,11 @@ func animate_hop(old_coords, new_coords, down=false):
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var distance = old_location.get_pos().distance_to(new_position)
-	var time = distance/300
+	var time = distance/350
 	var old_position = Vector2(0, -20)
 	if down:
 		old_position = Vector2(0, -5)
-	var new_position = Vector2(0, -60)
+	var new_position = Vector2(0, -50)
 	
 	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
 		get_node("Physicals").get_pos(), new_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_OUT)
@@ -186,7 +186,7 @@ func trample(new_coords):
 		current_coords = current_coords + increment
 		if get_parent().pieces.has(current_coords) and get_parent().pieces[current_coords].side == "ENEMY":
 			was_hopping = true
-			add_animation(self, "animate_move", false, [current_coords, 300, false])
+			add_animation(self, "animate_move", false, [current_coords, 350, false])
 			add_animation(self, "animate_hop", true, [current_coords - increment, current_coords])
 			var action = get_new_action()
 			action.add_call("attacked", [self.trample_damage], current_coords)
@@ -194,11 +194,11 @@ func trample(new_coords):
 		else:
 			if was_hopping:
 				#hop down
-				add_animation(self, "animate_move", false, [current_coords, 300, false])
+				add_animation(self, "animate_move", false, [current_coords, 350, false])
 				add_animation(self, "animate_hop", true, [current_coords - increment, current_coords, true])
 				was_hopping = false
 			else:
-				add_animation(self, "animate_move", false, [current_coords, 300, false])
+				add_animation(self, "animate_move", false, [current_coords, 350, false])
 				add_animation(self, "animate_hop", true, [current_coords - increment, current_coords, true])
 	
 	set_coords(new_coords)

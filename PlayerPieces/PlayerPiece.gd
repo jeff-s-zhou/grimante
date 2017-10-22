@@ -394,6 +394,7 @@ func unhovered():
 
 #called when hovered over during player turn		
 func hovered():
+	print('calling hovered')
 	if self.state != States.DEAD:
 		get_node("Timer").set_wait_time(0.01)
 		get_node("Timer").start()
@@ -522,7 +523,6 @@ func placed(ending_turn=false):
 	self.state = States.PLACED
 	self.attack_bonus = 0
 	self.movement_value = self.DEFAULT_MOVEMENT_VALUE
-	get_parent().selected = null
 
 
 func animate_placed(ending_turn=false):

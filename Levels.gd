@@ -241,6 +241,7 @@ func archer():
 	var enemies3 = EnemyWrappers.FiniteCuratedWrapper.new(load_level("archer_trial3.level"))
 	var enemies4 = EnemyWrappers.FiniteCuratedWrapper.new(load_level("archer_trial4.level"))
 	
+	
 	var challenge1 = LevelTypes.Timed.new(10001, "", allies1, enemies1, 2, null, extras1) 
 	var challenge2 = LevelTypes.Timed.new(10002, "", allies1, enemies2, 1, null, extras2)
 	var challenge3 = LevelTypes.Timed.new(10003, "", allies1, enemies3, 1, null, extras3)
@@ -322,9 +323,9 @@ func assassin():
 	var enemies2 = EnemyWrappers.FiniteCuratedWrapper.new(load_level("assassin_trial2.level"))
 	var enemies3 = EnemyWrappers.FiniteCuratedWrapper.new(load_level("assassin_trial3.level"))
 	
-	var challenge1 = LevelTypes.Timed.new(10005, allies1, enemies1, 3, null, extras1) 
-	var challenge2 = LevelTypes.Timed.new(10006, allies2, enemies2, 1, null, extras2)
-	var challenge3 = LevelTypes.Timed.new(10007, allies2, enemies3, 1, null, extras3)
+	var challenge1 = LevelTypes.Timed.new(10005, "", allies1, enemies1, 3, null, extras1) 
+	var challenge2 = LevelTypes.Timed.new(10006, "", allies2, enemies2, 1, null, extras2)
+	var challenge3 = LevelTypes.Timed.new(10007, "", allies2, enemies3, 1, null, extras3)
 	return LevelTypes.Trial.new(00012, "Assassin Trials", [challenge1, challenge2, challenge3])
 
 
