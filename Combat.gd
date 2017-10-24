@@ -54,7 +54,7 @@ func _ready():
 			add_child(self.tutorial)
 			print("adding tutorial")
 
-	get_node("/root/DataLogger").log_start_attempt(self.level_schematic.name)
+	get_node("/root/DataLogger").log_start_attempt(self.level_schematic.id)
 	
 	
 	#is here the big divide?
@@ -306,7 +306,7 @@ func restart():
 	get_node("/root/AnimationQueue").stop()
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	get_node("/root/DataLogger").log_restart(self.level_schematic.name, self.turn_count)
+	get_node("/root/DataLogger").log_restart(self.level_schematic.id, self.turn_count)
 	get_node("/root/global").goto_scene(self.combat_resource, {"level": self.level_schematic})
 
 
@@ -490,15 +490,11 @@ func enemy_phase_helper(double_time_turn):
 	print("calling enemy_phase_helper")
 	var enemy_pieces = get_enemies(double_time_turn)
 	if enemy_pieces != []:
-		print("reached here before breaking")
 		for enemy_piece in enemy_pieces:
 			enemy_piece.turn_start()
 		
 		if(get_node("/root/AnimationQueue").is_animating()):
 			yield(get_node("/root/AnimationQueue"), "animations_finished")
-			
-		print("reached here before breaking2")
-		
 		for enemy_piece in enemy_pieces:
 			enemy_piece.turn_update()
 			
@@ -657,7 +653,7 @@ func player_win():
 		
 	get_node("/root/AnimationQueue").stop()
 	
-	get_node("/root/DataLogger").log_win(self.level_schematic.name, self.turn_count)
+	get_node("/root/DataLogger").log_win(self.level_schematic.id, self.turn_count)
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 	get_node("Timer2").set_wait_time(0.5)
@@ -685,7 +681,7 @@ func enemy_win():
 		restart()
 	else:
 		get_node("/root/AnimationQueue").stop()
-		get_node("/root/DataLogger").log_lose(self.level_schematic.name, self.turn_count)
+		get_node("/root/DataLogger").log_lose(self.level_schematic.id, self.turn_count)
 		
 		print(get_node("/root/AnimationQueue").is_animating())
 		if get_node("/root/AnimationQueue").is_animating():

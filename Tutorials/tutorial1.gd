@@ -17,7 +17,7 @@ func get():
 	add_player_start_rule(tutorial, 1, text)
 	
 	#TURN 1
-	var text = ["Each Hero piece can move once per turn."]
+	var text = ["Each Hero piece can move once per {Player Phase}."]
 	
 	var fa_text = "The Berserker can freely move up to 2 tiles away."
 	
@@ -25,10 +25,10 @@ func get():
 	
 	fa_text = "The Cavalier can move {any number of tiles} in all 6 hex directions."
 	
-	text = ["When you have moved all of your Heroes, your turn ends."]
+	text = ["When you have moved all of your Heroes, Player Phase ends."]
 	add_forced_action(tutorial, 1, Vector2(2, 6), Vector2(2, 3), text, true, fa_text)
 	
-	text = ["Enemies {move down} 1 tile each turn.", \
+	text = ["Enemies {move down} 1 tile each {Enemy Phase}.", \
 	"If an Enemy {exits} from the bottom of the board, you {lose}."]
 	add_enemy_end_rule(tutorial, 1, text)
 	

@@ -12,6 +12,12 @@ var PLATFORMS = {"Android":1, "iOS":2, "PC":3}
 var platform = PLATFORMS.PC
 var combat_resource
 
+const VERSION = "0.7.7"
+
+var online_logging_flag = true
+
+var http_thread
+
 func _ready():
 	var root = get_tree().get_root()
 	current_scene = root.get_child( root.get_child_count() -1 )
@@ -20,6 +26,18 @@ func _ready():
 		combat_resource = "res://DesktopCombat.tscn"
 	else:
 		combat_resource = "res://Combat.tscn"
+		
+func get_version():
+	return VERSION
+
+func get_thread():
+#	var thread = Thread.new()
+#	return thread
+	if self.http_thread != null:
+		return http_thread
+	else:
+		self.http_thread = Thread.new()
+		return self.http_thread
 
 
 func goto_scene(path, params=null):

@@ -1,83 +1,63 @@
 extends Node
 
-var stats = {}
-
 var level_start_time
 
-const ATTEMPT_TYPES = {"lose":"lose", "restart":"restart", "win":"win"}
+const ATTEMPT_TYPES = {"lose":-1, "restart":0, "win":1}
 
 const FILE_NAME_FORMAT = "%s %s_%s %s_%s"
 var file_name = ""
+
+const URL = "http://www.putsreq.com"
 
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	var time = OS.get_datetime()
 	self.file_name = FILE_NAME_FORMAT % [time.year, time.month, time.day, time.hour, time.minute]
-
-
-func initialize_level_stats(level_name):
-	if !stats.has(level_name):
-		stats[level_name] = {"attempts_count":0, "attempts":[]}
 	
-func log_start_attempt(level_name):
+func log_start_attempt(level_id):
 	self.level_start_time = OS.get_unix_time()
-	initialize_level_stats(level_name)
-	stats[level_name].attempts_count += 1
-	save_state()
 
-func log_attempt_helper(level_name, attempt_type, turn):
+func log_attempt_helper(level_id, attempt_type, turn):
 	var time_now = OS.get_unix_time()
 	var elapsed = time_now - self.level_start_time
-	var minutes = elapsed / 60
-	var seconds = elapsed % 60
-	var str_elapsed = "%02dm %02ds" % [minutes, seconds]
-	var attempt = {"type":attempt_type, "turn":turn, "time":str_elapsed}
-	self.stats[level_name].attempts.append(attempt)
+	var user_id = get_node("/root/State").get_user_id()
+	var attempt_session_id = get_node("/root/State").get_attempt_session_id()
+	print("calling the log_attempt helper with this session_id: ", attempt_session_id)
+	var version = get_node("/root/global").get_version()
+	#these need to have already been grabbed from the server, otherwise there's a problem
+	if user_id != null and attempt_session_id != null:
+		var attempt = {"attempt_session_id":attempt_session_id, "user_id":user_id, "version":version, 
+		"level_id":level_id, "seconds":elapsed, "final_turn":turn, "outcome":attempt_type}
+		return attempt
+	else:
+		print("there's no user_id or there's no attempt_session_id, can't log attempt")
+		return null
 
-	
-func log_restart(level_name, turn):
-	initialize_level_stats(level_name)
-	log_attempt_helper(level_name, ATTEMPT_TYPES.restart, turn)
-	save_state()
+func log_restart(level_id, turn):
+	var attempt = log_attempt_helper(level_id, ATTEMPT_TYPES.restart, turn)
+	save_state(attempt)
+	log_online(attempt)
 
-func log_lose(level_name, turn):
-	initialize_level_stats(level_name)
-	log_attempt_helper(level_name, ATTEMPT_TYPES.lose, turn)
-	save_state()
+func log_lose(level_id, turn):
+	var attempt = log_attempt_helper(level_id, ATTEMPT_TYPES.lose, turn)
+	save_state(attempt)
+	log_online(attempt)
 
-func log_win(level_name, turn):
-	initialize_level_stats(level_name)
-	log_attempt_helper(level_name, ATTEMPT_TYPES.win, turn)
-	save_state()
+func log_win(level_id, turn):
+	var attempt = log_attempt_helper(level_id, ATTEMPT_TYPES.win, turn)
+	save_state(attempt)
+	log_online(attempt)
 
-func save_state():
+func save_state(attempt):
 	var save = File.new()
 	save.open("user://" + self.file_name + ".save", File.WRITE)
 	#have to do this instead of store_line because loading bugs out on the last linebreak
-	save.store_string(self.stats.to_json()) 
+	save.store_string(attempt.to_json()) 
 	save.close()
-	#log_online(self.stats.to_json())
 	
-func log_online(json_data):
-	var HTTP = HTTPClient.new()
-	var url = "/IQMcZufUb8e4mArWuTsa"
-	var RESPONSE = HTTP.connect("http://www.putsreq.com",80)
-	assert(RESPONSE == OK)
+func log_online(attempt):
+	if get_node("/root/global").online_logging_flag:
+		get_node("/root/HTTPHelper").log_online(attempt.to_json())
 	
-	while(HTTP.get_status() == HTTPClient.STATUS_CONNECTING or HTTP.get_status() == HTTPClient.STATUS_RESOLVING):
-		HTTP.poll()
-		OS.delay_msec(300)
 	
-	assert(HTTP.get_status() == HTTPClient.STATUS_CONNECTED)
-	var QUERY = json_data
-	var HEADERS = ["User-Agent: Jeff", "Content-Type: application/json"]
-	RESPONSE = HTTP.request(HTTPClient.METHOD_POST, url, HEADERS, QUERY)
-	assert(RESPONSE == OK)
-	
-	while (HTTP.get_status() == HTTPClient.STATUS_REQUESTING):
-		HTTP.poll()
-		OS.delay_msec(300)
-	#    # Make sure request finished
-	assert(HTTP.get_status() == HTTPClient.STATUS_BODY or HTTP.get_status() == HTTPClient.STATUS_CONNECTED)
-

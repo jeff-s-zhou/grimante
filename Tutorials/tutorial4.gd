@@ -9,7 +9,7 @@ func get():
 	var tutorial = TutorialPrototype.instance()
 	
 	var text = ["These are {Reinforcement Hexes}.", 
-	"An Enemy will appear on a {Reinforcement Hex} at the start of the following turn."]
+	"An Enemy will appear on a {Reinforcement Hex} at the end of the next {Enemy Phase}."]
 	add_player_start_rule(tutorial, 1, text, Vector2(3, 4))
 	
 	add_forced_action(tutorial, 1, Vector2(4, 7), Vector2(3, 5))

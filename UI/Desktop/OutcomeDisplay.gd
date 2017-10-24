@@ -38,9 +38,9 @@ func initialize_victory(next_level, current_level, turn):
 #		else:
 #			get_node("NextLevelButton").set_disabled(true)
 #			get_node("BossLevelLockedText").show()
-	
 	var score = current_level.get_score(turn)
 	get_node("/root/State").save_level_progress(self.current_level.name, score)
+	get_node("/root/State").request_attempt_session_id()
 	
 	if next_level == null:
 		get_node("NextLevelButton").set_disabled(true)

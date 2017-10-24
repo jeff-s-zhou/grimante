@@ -9,14 +9,15 @@ var seen_effect = {}
 
 var unit_roster = []
 var level_set_data = {}
+var user_info = {}
 var current_level_set = null
+var session_id = null #get a new one from server every time you go to a new level
 var current_user = "Jeff"
 
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	load_state()
-	print("initialized in State")
 
 func get_save_filename():
 	return "user://" + self.current_user + ".save"
@@ -24,6 +25,8 @@ func get_save_filename():
 func load_state():
 	var save = File.new()
 	if !save.file_exists(get_save_filename()):
+		request_user_id()
+		print("no save file")
 		return #Error!  We don't have a save to load
 	
 	# dict.parse_json() requires a declared dict.
@@ -38,6 +41,10 @@ func load_state():
 			self.unit_roster = state["unit_roster"]
 		if state.has("level_set_data"):
 			self.level_set_data = state["level_set_data"]
+		if state.has("user_info"):
+			self.user_info = state["user_info"]
+		else:
+			request_user_id() #if there's no user_info, we need a user id
 	save.close()
 
 func save_state():
@@ -45,7 +52,7 @@ func save_state():
 	save.open(get_save_filename(), File.WRITE)
 	
 	#have to do this instead of store_line because loading bugs out on the last linebreak
-	var save_data = {"unit_roster":unit_roster, "level_set_data":level_set_data}
+	var save_data = {"user_info":user_info, "unit_roster":unit_roster, "level_set_data":level_set_data}
 	#TODO: might need to clear the file?
 	save.store_string(save_data.to_json()) 
 	save.close()
@@ -90,3 +97,38 @@ func has_unlocked_boss_level():
 
 func has_completed_level_set():
 	pass
+
+
+#USER_ID BUSINESS
+func get_user_id():
+	if self.user_info.has("user_id"):
+		return self.user_info["user_id"]
+	else:
+		return null
+		
+func request_user_id():
+	#var thread = get_node("/root/global").get_thread()
+	#thread.start(get_node("/root/HTTPHelper"), "request_new_user_id")
+	get_node("/root/HTTPHelper").request_new_user_id(0)
+	
+func set_user_id(id):
+	self.user_info["user_id"] = id
+	save_state()
+
+
+#ATTEMPT SESSION ID BUSINESS
+func get_attempt_session_id():
+	if self.session_id != null:
+		return self.session_id
+	else:
+		return null
+
+#called whenever we start a new session of attempts
+func request_attempt_session_id():
+	self.session_id = null
+	#var thread = get_node("/root/global").get_thread()
+	#thread.start(get_node("/root/HTTPHelper"), "request_new_attempt_session_id")
+	get_node("/root/HTTPHelper").request_new_attempt_session_id(0)
+	
+func set_attempt_session_id(id):
+	self.session_id = id

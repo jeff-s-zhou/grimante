@@ -394,7 +394,6 @@ func unhovered():
 
 #called when hovered over during player turn		
 func hovered():
-	print('calling hovered')
 	if self.state != States.DEAD:
 		get_node("Timer").set_wait_time(0.01)
 		get_node("Timer").start()

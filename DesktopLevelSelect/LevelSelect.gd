@@ -45,6 +45,7 @@ func create_new_level_button(level, y_position):
 	
 func goto_level(level):
 	print("going to level")
+	get_node("/root/State").request_attempt_session_id()
 	get_node("/root/global").goto_scene(get_node("/root/global").combat_resource, {"level":level})
 	
 func back():
