@@ -26,16 +26,14 @@ func _ready():
 	
 	for level in self.level_set.get_levels():
 		create_new_level_button(level, y_position)
-		y_position += 76
+		y_position += 78
 		
 	for level in self.level_set.get_hard_levels():
 		create_new_level_button(level, hard_y_position)
-		hard_y_position += 76
+		hard_y_position += 78
 
 func create_new_level_button(level, y_position):
-	var score = null
-#	if self.level_set.score_dict.has(level.name):
-#		score = self.level_set.score_dict[level.name]
+	var score = get_node("/root/State").get_level_score(self.level_set.id, level.id)
 	var level_button = self.level_set_button_prototype.instance()
 	level_button.initialize(level, score)
 	level_button.set_pos(Vector2(screen_size.x/2, y_position))

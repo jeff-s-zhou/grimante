@@ -100,7 +100,7 @@ func shield_bash(new_coords):
 	var new_pos = get_parent().locations[new_coords].get_pos()
 	
 	var back_up_pos = self.get_pos() - unit_pos_distance/4
-	var shove_pos = new_pos - 3 * unit_pos_distance/4
+	var shove_pos = new_pos - 2 * unit_pos_distance/4
 	var original_pos = get_parent().locations[new_coords - unit_distance].get_pos()
 	
 	var arguments = [back_up_pos, 100, true, Tween.TRANS_QUAD, Tween.EASE_OUT]

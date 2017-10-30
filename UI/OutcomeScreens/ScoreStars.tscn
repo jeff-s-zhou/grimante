@@ -1,0 +1,28 @@
+[gd_scene load_steps=3 format=1]
+
+[ext_resource path="res://UI/OutcomeScreens/ScoreStars.gd" type="Script" id=1]
+[ext_resource path="res://UI/OutcomeScreens/ScoreStar.tscn" type="PackedScene" id=2]
+
+[node name="ScoreStars" type="Node2D"]
+
+script/script = ExtResource( 1 )
+
+[node name="3" parent="." instance=ExtResource( 2 )]
+
+[node name="4" parent="." instance=ExtResource( 2 )]
+
+transform/pos = Vector2( 50, 0 )
+
+[node name="5" parent="." instance=ExtResource( 2 )]
+
+transform/pos = Vector2( 100, 0 )
+
+[node name="2" parent="." instance=ExtResource( 2 )]
+
+transform/pos = Vector2( -50, 0 )
+
+[node name="1" parent="." instance=ExtResource( 2 )]
+
+transform/pos = Vector2( -100, 0 )
+
+

@@ -186,6 +186,14 @@ func remove_piece(coords):
 	self.pieces[coords].set_pickable(false)
 	self.pieces.erase(coords)
 	locations[coords].set_pickable(true)
+
+#called from playerpiece's select to make prediction simpler
+#(that way we don't have to ignore the playerpiece when figuring out pathing)
+func temp_remove_piece(coords):
+	self.pieces.erase(coords)
+	
+func temp_add_piece(coords, piece):
+	self.pieces[coords] = piece
 	
 
 
@@ -258,12 +266,18 @@ func reset_deployable_indicators():
 	for location in locations.values():
 		location.set_deployable_indicator(false)
 
+
+func set_selected(piece):
+	self.selected = piece
+	temp_remove_piece(piece.coords) #for easier prediction
+
+
 #acting is so we know when to properly unglow animations in PlayerPiece
 #if acting is true, then we don't unglow
 func deselect(acting=false):
-	#print("deselecting??")
 	if self.selected != null:
 		self.selected.deselect(acting)
+		temp_add_piece(self.selected.coords, self.selected) #because we removed it for easier prediction
 		self.selected = null
 		self.clear_display_state(true)
 		get_parent().check_hovered()

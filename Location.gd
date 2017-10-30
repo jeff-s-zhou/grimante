@@ -66,11 +66,17 @@ func add_corpse(player_piece):
 	self.corpse = player_piece
 	
 func animate_add_corpse():
-	get_node("CorpseIndicator").set_animation(self.corpse.unit_name.to_lower())
-	get_node("CorpseIndicator").show()
+	var corpse = get_node("CorpseIndicator")
+	corpse.set_animation(self.corpse.unit_name.to_lower())
+	get_node("/root/AnimationQueue").update_animation_count(1)
+	get_node("Tween").interpolate_property(corpse, "visibility/opacity", 0, 1, 0.8, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	emit_signal("animation_done")
+	get_node("/root/AnimationQueue").update_animation_count(-1)
 	
 func animate_hide_corpse():
-	get_node("CorpseIndicator").hide()
+	get_node("CorpseIndicator").set_opacity(0)
 	
 func set_reinforcement_indicator(type=null):
 	if type != null:

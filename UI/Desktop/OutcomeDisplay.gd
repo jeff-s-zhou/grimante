@@ -26,11 +26,12 @@ func fade_in():
 	if self.victory_flag:
 		get_node("OutcomeMessage").animate_glow()
 	
-func initialize_victory(next_level, current_level, turn):
+func initialize_victory(next_level, current_level, cleared_turn):
 	self.next_level = next_level
 	self.current_level = current_level
 	self.victory_flag = true
 	get_node("OutcomeMessage").set_victory()
+	
 	
 #	if next_level.is_boss_level():
 #		if get_node("/root/State").is_boss_level_unlocked():
@@ -38,8 +39,12 @@ func initialize_victory(next_level, current_level, turn):
 #		else:
 #			get_node("NextLevelButton").set_disabled(true)
 #			get_node("BossLevelLockedText").show()
-	var score = current_level.get_score(turn)
-	get_node("/root/State").save_level_progress(self.current_level.name, score)
+
+	var score = current_level.get_score(cleared_turn)
+	if score != null:
+		get_node("BetterScoreLabel").show()
+	get_node("ScoreStars").display_score(score)
+	get_node("/root/State").save_level_progress(self.current_level.id, score)
 	get_node("/root/State").request_attempt_session_id()
 	
 	if next_level == null:

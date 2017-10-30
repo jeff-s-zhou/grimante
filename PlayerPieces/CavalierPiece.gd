@@ -74,7 +74,7 @@ func end_attack(original_coords):
 	add_animation(self, "animate_move_to_pos", true, [new_position, 300, true, Tween.TRANS_SINE, Tween.EASE_IN])
 	
 
-func animate_hop(old_coords, new_coords, down=false):
+func animate_hop(old_coords, new_coords, down=false, enemy=null):
 	add_anim_count()
 	self.mid_leaping_animation = true
 	set_z(3)
@@ -100,6 +100,9 @@ func animate_hop(old_coords, new_coords, down=false):
 	if(down):
 		set_z(0)
 		self.mid_leaping_animation = false
+	
+	if enemy != null:
+		enemy.animate_hit()
 	emit_signal("animation_done")
 	subtract_anim_count()
 
@@ -182,15 +185,15 @@ func trample(new_coords):
 	
 	var was_hopping = false
 	
+	var attack_coords = []
 	while current_coords != new_coords:
 		current_coords = current_coords + increment
 		if get_parent().pieces.has(current_coords) and get_parent().pieces[current_coords].side == "ENEMY":
 			was_hopping = true
 			add_animation(self, "animate_move", false, [current_coords, 350, false])
-			add_animation(self, "animate_hop", true, [current_coords - increment, current_coords])
-			var action = get_new_action()
-			action.add_call("attacked", [self.trample_damage], current_coords)
-			action.execute()
+			var enemy = get_parent().pieces[current_coords]
+			add_animation(self, "animate_hop", true, [current_coords - increment, current_coords, false, enemy])
+			attack_coords.append(current_coords)
 		else:
 			if was_hopping:
 				#hop down
@@ -200,7 +203,9 @@ func trample(new_coords):
 			else:
 				add_animation(self, "animate_move", false, [current_coords, 350, false])
 				add_animation(self, "animate_hop", true, [current_coords - increment, current_coords, true])
-	
+	var action = get_new_action()
+	action.add_call("attacked", [self.trample_damage, 0, true], attack_coords)
+	action.execute()
 	set_coords(new_coords)
 	placed()
 

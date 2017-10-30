@@ -19,7 +19,7 @@ func _ready():
 		add_child(editor_piece)
 		enemies.append(editor_piece)
 		editor_piece.initialize_on_bar(prototype_name)
-		editor_piece.set_pos(Vector2(x_pos, 34))
+		editor_piece.set_pos(Vector2(24, x_pos))
 		x_pos += 110
 		
 		

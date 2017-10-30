@@ -53,9 +53,10 @@ func save_state(attempt):
 	var save = File.new()
 	save.open("user://" + self.file_name + ".save", File.WRITE)
 	#have to do this instead of store_line because loading bugs out on the last linebreak
-	save.store_string(attempt.to_json()) 
-	save.close()
-	
+	if attempt != null:
+		save.store_string(attempt.to_json()) 
+		save.close()
+		
 func log_online(attempt):
 	if get_node("/root/global").online_logging_flag:
 		get_node("/root/HTTPHelper").log_online(attempt.to_json())

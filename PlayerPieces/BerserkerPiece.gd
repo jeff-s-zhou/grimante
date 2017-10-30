@@ -36,7 +36,7 @@ func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
 	
 func highlight_indirect_range(movement_range):
-	print("highlighting indirect range berserker")
+	#print("highlighting indirect range berserker")
 	var indirect_range = []
 	var enemies = get_tree().get_nodes_in_group("enemy_pieces")
 	for enemy in enemies:
@@ -60,47 +60,23 @@ func _is_within_attack_range(new_coords):
 func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
 	
-func animate_move_and_hop(new_coords, speed=250, blocking=true, trans_type=Tween.TRANS_LINEAR, ease_type=Tween.EASE_IN):
-	add_anim_count()
-	var location = self.grid.locations[new_coords]
-	var position = location.get_pos()
-	
-	var distance = get_pos().distance_to(position)
-	var dim_distance = dim_multi_distance(distance)
-	var time = dim_distance/speed
-	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, time, trans_type, ease_type)
-	get_node("Tween").start()
-	animate_short_hop(speed, new_coords)
-	if blocking:
-		yield(get_node("Tween"), "tween_complete")
-		#need this in because apparently Tween emits the signal slightly early
-		get_node("Timer").set_wait_time(0.02)
-		get_node("Timer").start()
-		yield(get_node("Timer"), "timeout")
-		emit_signal("animation_done")
-		subtract_anim_count()
-	else:
-		yield(get_node("Tween"), "tween_complete")
-		subtract_anim_count()
-
 func jump_to(new_coords, dust=false):
 	add_anim_count()
 	self.mid_leaping_animation = true
 	set_z(3)
+	
+	var speed = 350
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
-	var speed = 300
-	var one_tile_travelled = 115
-	var time = 100 * (distance/one_tile_travelled)/speed
-	time = max(0.45, time)
-#	time = (distance) / (speed) 
-#	print(time)
+	var dim_distance = dim_multi_distance(distance)
+	var time = dim_distance/speed
+	time = max(0.30, time) #if short hop looks weird, switch this back to 0.35
 
 	var old_height = get_node("Physicals").get_pos()
-	#var new_height = Vector2(0, (-3 * distance/4))
-	var vertical = min(-3.0 * distance/4, -100)
+	var vertical = min(-3.0 * distance/4, -90)
 	var new_height = Vector2(0, vertical)
+
 	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
 		get_node("Physicals").get_pos(), new_height, time/2.0, Tween.TRANS_CUBIC, Tween.EASE_OUT)
 	get_node("Tween 2").start()
@@ -125,14 +101,19 @@ func jump_back(new_coords):
 	add_anim_count()
 	self.mid_leaping_animation = true
 	set_z(3)
+	
+	var speed = 300
 	var location = get_parent().locations[new_coords]
 	var new_position = location.get_pos()
 	var distance = get_pos().distance_to(new_position)
-	var speed = 300
-	var time = distance/speed
+	var dim_distance = dim_multi_distance(distance)
+	var time = dim_distance/speed
+	time = max(0.30, time) #if short hop looks weird, switch this back to 0.35
 
-	var old_height = Vector2(0, -5)
-	var new_height = Vector2(0, (-1 * distance/2.0))
+	var old_height = get_node("Physicals").get_pos()
+	var vertical = min(-1 * distance/2, -60)
+	var new_height = Vector2(0, vertical)
+
 	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
 		get_node("Physicals").get_pos(), new_height, time/2.0, Tween.TRANS_QUAD, Tween.EASE_OUT)
 	get_node("Tween 2").start()
@@ -145,6 +126,7 @@ func jump_back(new_coords):
 	set_z(0)
 	emit_signal("animation_done")
 	subtract_anim_count()
+
 
 func act(new_coords):
 	if _is_within_attack_range(new_coords):

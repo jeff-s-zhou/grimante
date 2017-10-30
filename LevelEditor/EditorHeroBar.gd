@@ -19,7 +19,7 @@ func _ready():
 		add_child(editor_piece)
 		heroes.append(editor_piece)
 		editor_piece.initialize_on_bar(prototype_name)
-		editor_piece.set_pos(Vector2(x_pos, 65))
+		editor_piece.set_pos(Vector2(65, x_pos))
 		x_pos += 110
 		
 	hide()

@@ -29,8 +29,8 @@ size_flags/horizontal = 2
 size_flags/vertical = 2
 margin/left = -62.0
 margin/top = -31.0
-margin/right = 1088.0
-margin/bottom = 105.0
+margin/right = 86.0
+margin/bottom = 779.0
 custom_styles/panel = SubResource( 1 )
 
 

@@ -15,7 +15,7 @@ func get():
 	"Use a Star on a dead Hero's grave to resurrect him/her.",
 	"Use a Star on a Hero who has already acted to let them act again.",
 	"For every {7} enemies killed, you gain {1} Star.",
-	"For this tutorial, we've given you {1} Star to start. Clear this level this turn."]
+	"You receive {1} Star on the last turn. Clear this level this turn."]
 	add_player_start_rule(tutorial, 1, text)
 
 	return tutorial

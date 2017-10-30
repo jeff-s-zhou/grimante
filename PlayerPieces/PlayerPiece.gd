@@ -23,6 +23,8 @@ var passive_description = []
 var state = States.PLACED
 var cursor_area
 
+var hovered_flag = false #has to be set to true in order to select
+
 var cooldown = 0
 
 var assist_flag = false
@@ -217,7 +219,7 @@ func delete_self(isolated_call=true):
 	get_node("CollisionArea").set_monitorable(false)
 
 	add_animation(self, "animate_delete_self", false)
-	add_animation(location, "animate_add_corpse", false)
+	add_animation(location, "animate_add_corpse", true)
 	self.state = States.DEAD
 	set_z(-9)
 	get_parent().remove_piece(self.coords)
@@ -361,6 +363,7 @@ func assist_highlight():
 
 #called when the whole board's highlighting is reset
 func clear_display_state():
+	self.hovered_flag = false
 	get_node("Physicals/OverlayLayers/White").hide()
 	get_node("Physicals/OverlayLayers/Green").hide()
 	if(self.state != States.PLACED):
@@ -385,6 +388,7 @@ func hover_highlight():
 #called on mouse exiting the CollisionArea
 func unhovered():
 	if self.state != States.DEAD:
+		self.hovered_flag = false
 		get_node("Physicals/OverlayLayers/White").hide()
 		if get_parent().selected == null:
 			#print(get_name() + " is calling clearing display state in unhovered" )
@@ -395,6 +399,7 @@ func unhovered():
 #called when hovered over during player turn		
 func hovered():
 	if self.state != States.DEAD:
+		self.hovered_flag = true
 		get_node("Timer").set_wait_time(0.01)
 		get_node("Timer").start()
 		yield(get_node("Timer"), "timeout")
@@ -402,7 +407,9 @@ func hovered():
 			hover_highlight()
 		
 		if get_parent().selected == null and self.state != States.PLACED:
+			get_parent().temp_remove_piece(self.coords)
 			display_action_range()
+			get_parent().temp_add_piece(self.coords, self)
 
 func star_input_event(event):
 	if self.state == States.PLACED:
@@ -413,7 +420,7 @@ func star_input_event(event):
 
 #called when an event happens inside the click area hitput
 func input_event(event, has_selected):
-	if self.state != States.DEAD:
+	if self.state != States.DEAD and self.hovered_flag:
 		if self.deploying_flag: #if in deploy phase
 			deploy_input_event(event, has_selected)
 			return
@@ -433,8 +440,7 @@ func deploy_input_event(event, has_selected):
 
 
 func select():
-	get_parent().selected = self
-	hovered()
+	get_parent().set_selected(self)
 	get_node("SamplePlayer").play("mouseover")
 	add_animation(self, "animate_glow", false)
 	self.state = States.CLICKED
@@ -483,11 +489,11 @@ func deploy_select_action_target(target):
 		add_animation(self, "animate_unglow", false)
 		if get_parent().has_piece(target.coords) and target.side == "PLAYER":
 			swap_coords_and_pos(target)
-			get_parent().selected = null
+			get_parent().deselect()
 		else:
 			set_coords(target.coords)
 			set_global_pos(target.get_global_pos())
-			get_parent().selected = null
+			get_parent().deselect()
 
 	else:
 		invalid_move()

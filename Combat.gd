@@ -542,6 +542,10 @@ func start_player_phase():
 		reinforce()
 		yield(self, "reinforced")
 	
+	#if final turn, gain bonus star
+	if self.turn_count == self.level_schematic.num_turns:
+		get_node("ControlBar/Combat/StarBar").add_star()
+	
 	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 		player_piece.turn_update()
 		

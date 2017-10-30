@@ -72,7 +72,7 @@ class BaseLevelType:
 		if self.score_guide.has(turn_count):
 			return self.score_guide[turn_count]
 		else:
-			return "A"
+			return 5
 
 
 class Timed extends BaseLevelType:

@@ -16,7 +16,7 @@
 [ext_resource path="res://UI/SeenIcon.tscn" type="PackedScene" id=14]
 [ext_resource path="res://EnemyPieces/Components/EnemyCollisionArea.tscn" type="PackedScene" id=15]
 [ext_resource path="res://Assets/processed_fonts/flyover.fnt" type="BitmapFont" id=16]
-[ext_resource path="res://Assets/processed_fonts/enemy_health.fnt" type="BitmapFont" id=17]
+[ext_resource path="res://Assets/processed_fonts/info_overlay_body_rubik_26_italic.fnt" type="BitmapFont" id=17]
 [ext_resource path="res://Assets/processed_sounds/monster_death.smp" type="Sample" id=18]
 [ext_resource path="res://Assets/processed_sounds/rocket glass explosion 2.smp" type="Sample" id=19]
 [ext_resource path="res://Assets/processed_sounds/rocket glass explosion 4.smp" type="Sample" id=20]

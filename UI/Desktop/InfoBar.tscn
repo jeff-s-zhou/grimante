@@ -11,8 +11,9 @@ script/script = ExtResource( 1 )
 
 [node name="WaveBackdrop" type="Sprite" parent="."]
 
+visibility/opacity = 0.3
 visibility/behind_parent = true
-transform/pos = Vector2( 103.904, 79.1465 )
+transform/pos = Vector2( 104, 79 )
 texture = ExtResource( 2 )
 
 [node name="WaveHeader" type="Label" parent="."]
@@ -49,8 +50,9 @@ max_lines_visible = -1
 
 [node name="TurnBackdrop" type="Sprite" parent="."]
 
+visibility/opacity = 0.3
 visibility/behind_parent = true
-transform/pos = Vector2( 105.108, 22.9094 )
+transform/pos = Vector2( 104, 23 )
 texture = ExtResource( 2 )
 
 [node name="TurnsHeader" type="Label" parent="."]

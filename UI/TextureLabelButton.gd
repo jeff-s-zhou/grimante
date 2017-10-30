@@ -45,8 +45,8 @@ func set_disabled(flag):
 	
 func hover():
 	if !get_node("TextureButton").is_disabled():
-		set_scale(Vector2(1.00, 1.00))
+		set_scale(Vector2(1.04, 1.04))
 	
 func unhover():
 	if !get_node("TextureButton").is_disabled():
-		set_scale(Vector2(0.94, 0.94))
+		set_scale(Vector2(1, 1))

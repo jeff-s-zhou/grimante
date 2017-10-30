@@ -41,8 +41,11 @@ func load_state():
 			self.unit_roster = state["unit_roster"]
 		if state.has("level_set_data"):
 			self.level_set_data = state["level_set_data"]
+			print("loaded level set data: ", self.level_set_data)
 		if state.has("user_info"):
 			self.user_info = state["user_info"]
+		if state.has("seen_units"):
+			self.seen_units = state["seen_units"]
 		else:
 			request_user_id() #if there's no user_info, we need a user id
 	save.close()
@@ -52,7 +55,7 @@ func save_state():
 	save.open(get_save_filename(), File.WRITE)
 	
 	#have to do this instead of store_line because loading bugs out on the last linebreak
-	var save_data = {"user_info":user_info, "unit_roster":unit_roster, "level_set_data":level_set_data}
+	var save_data = {"user_info":user_info, "unit_roster":unit_roster, "level_set_data":level_set_data, "seen_units":seen_units}
 	#TODO: might need to clear the file?
 	save.store_string(save_data.to_json()) 
 	save.close()
@@ -65,13 +68,22 @@ func add_to_roster(piece_filename):
 func get_roster():
 	return self.unit_roster
 	
-func get_level_set_data(level_set_id):
-	if self.level_set_data.has(level_set_id):
-		return self.level_set_data[level_set_id]
-	else:
-		return null
+func set_seen(unit_name):
+	self.seen_units[unit_name] = true
+	save_state()
+	
+
+func get_level_score(level_set_id, level_id):
+	if self.level_set_data.has(str(level_set_id)):
+		var s = self.level_set_data[str(level_set_id)]
+		if s.has(str(level_id)):
+			return s[str(level_id)]
+	return null
 	
 func save_level_progress(level_id, score):
+	if self.current_level_set == null:
+		return
+		
 	if !self.level_set_data.has(self.current_level_set.id):
 		self.level_set_data[self.current_level_set.id] = {}
 	
@@ -80,17 +92,15 @@ func save_level_progress(level_id, score):
 	
 	if level_set.has(level_id):
 		var existing_score = level_set[level_id]
-		if greater_than(score, existing_score):
+		if score > existing_score:
 			level_set[level_id] = score
 	else:
 		level_set[level_id] = score
+		print("logging score in level_set: ", level_set)
 	
 	save_state()
-			
-func greater_than(score, existing_score):
-	var score_values = {"S+":5, "S":4, "A":3, "B":2, "C":1, "F":0}
-	return score_values[score] > score_values[existing_score]
-
+	
+	print(self.level_set_data)
 
 func has_unlocked_boss_level():
 	pass
@@ -107,9 +117,8 @@ func get_user_id():
 		return null
 		
 func request_user_id():
-	#var thread = get_node("/root/global").get_thread()
-	#thread.start(get_node("/root/HTTPHelper"), "request_new_user_id")
-	get_node("/root/HTTPHelper").request_new_user_id(0)
+	if get_node("/root/global").online_logging_flag:
+		get_node("/root/HTTPHelper").request_new_user_id(0)
 	
 func set_user_id(id):
 	self.user_info["user_id"] = id
@@ -125,10 +134,9 @@ func get_attempt_session_id():
 
 #called whenever we start a new session of attempts
 func request_attempt_session_id():
-	self.session_id = null
-	#var thread = get_node("/root/global").get_thread()
-	#thread.start(get_node("/root/HTTPHelper"), "request_new_attempt_session_id")
-	get_node("/root/HTTPHelper").request_new_attempt_session_id(0)
+	if get_node("/root/global").online_logging_flag:
+		self.session_id = null
+		get_node("/root/HTTPHelper").request_new_attempt_session_id(0)
 	
 func set_attempt_session_id(id):
 	self.session_id = id

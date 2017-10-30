@@ -7,6 +7,8 @@ extends Node2D
 var star_count = 0
 var enabled = true
 
+var temp_enabled = true
+
 const FRONT_POS = Vector2(38, 39)
 var star_add_pos = Vector2(38, 39)
 
@@ -24,7 +26,7 @@ func _ready():
 	get_node("TextureButton").connect("pressed", self, "is_pressed")
 	
 func handle_enemy_death():
-	if enabled:
+	if enabled and temp_enabled:
 		if self.inactive_star != null:
 			self.inactive_star.increase()
 			#became active
@@ -70,14 +72,14 @@ func animate_remove_star(count):
 		star.set_pos(star.get_pos() - STAR_SHIFT)
 	self.star_add_pos -= STAR_SHIFT
 	
-	
+#
 func disable():
 	self.hide()
 	self.enabled = false
 
 #used to temporarily disable during pause screens and stuff
-func set_disabled(flag):
-	self.enabled = !flag
+func set_temp_disabled(flag):
+	self.temp_enabled = !flag
 
 func has_star():
 	return self.star_count > 0

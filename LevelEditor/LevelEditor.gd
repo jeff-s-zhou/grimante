@@ -32,8 +32,12 @@ func _ready():
 	get_node("EditorTurnSelector").connect("selected", self, "select_editor_grid")
 	
 	initialize_grids()
-
-
+#	Globals.set("display/height", 1000)
+#	Globals.set("display/width", 670)
+#	get_tree().get_root().set_size_override(true, Vector2(670, 1000))
+#	get_tree().get_root().set_size_override_stretch(true)
+#	
+	
 func select_editor_grid(turn_number):
 	self.current_turn = turn_number
 	for editor_grid in self.editor_grids:
@@ -41,7 +45,7 @@ func select_editor_grid(turn_number):
 		editor_grid.hide()
 	self.current_editor_grid = self.editor_grids[turn_number]
 	self.editor_grids[turn_number].show()
-	self.editor_grids[turn_number].set_pos(Vector2(73, 280))
+	self.editor_grids[turn_number].set_pos(Vector2(73, 160))
 	
 
 func get_current_editor_grid():
@@ -55,9 +59,9 @@ func input_event(event):
 		self.original_mouse_pos = null
 	if self.original_mouse_pos != null:
 		if get_node("EditorUnitBar").is_visible():
-			get_node("EditorUnitBar").translate(Vector2(event.pos.x - self.original_mouse_pos.x, 0))
+			get_node("EditorUnitBar").translate(Vector2(0, event.pos.y - self.original_mouse_pos.y))
 		else:
-			get_node("EditorHeroBar").translate(Vector2(event.pos.x - self.original_mouse_pos.x, 0))
+			get_node("EditorHeroBar").translate(Vector2(0, event.pos.y - self.original_mouse_pos.y))
 		self.original_mouse_pos = event.pos
 			
 	
@@ -81,6 +85,7 @@ func _input(event):
 	
 	elif event.is_action("test_action3") and event.is_pressed():
 		reset_grids()
+
 		
 	elif event.is_action("toggle") and event.is_pressed():
 		if get_node("EditorUnitBar").is_visible():

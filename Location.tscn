@@ -13,13 +13,13 @@
 [ext_resource path="res://UI/ReinforcementIndicator.tscn" type="PackedScene" id=11]
 [ext_resource path="res://Assets/Allies/assassin_corpse.png" type="Texture" id=12]
 [ext_resource path="res://Assets/Allies/archer_corpse.png" type="Texture" id=13]
-[ext_resource path="res://Assets/Allies/berserker_corpse.png" type="Texture" id=14]
-[ext_resource path="res://Assets/Allies/stormdancer_corpse.png" type="Texture" id=15]
-[ext_resource path="res://Assets/Allies/saint_corpse.png" type="Texture" id=16]
-[ext_resource path="res://Assets/Allies/crusader_corpse.png" type="Texture" id=17]
-[ext_resource path="res://Assets/Allies/corsair_corpse.png" type="Texture" id=18]
-[ext_resource path="res://Assets/Allies/pyromancer_corpse.png" type="Texture" id=19]
-[ext_resource path="res://Assets/Allies/cavalier_corpse.png" type="Texture" id=20]
+[ext_resource path="res://Assets/Allies/corsair_corpse.png" type="Texture" id=14]
+[ext_resource path="res://Assets/Allies/cavalier_corpse.png" type="Texture" id=15]
+[ext_resource path="res://Assets/Allies/stormdancer_corpse.png" type="Texture" id=16]
+[ext_resource path="res://Assets/Allies/berserker_corpse.png" type="Texture" id=17]
+[ext_resource path="res://Assets/Allies/saint_corpse.png" type="Texture" id=18]
+[ext_resource path="res://Assets/Allies/crusader_corpse.png" type="Texture" id=19]
+[ext_resource path="res://Assets/Allies/pyromancer_corpse.png" type="Texture" id=20]
 [ext_resource path="res://InputHandler.tscn" type="PackedScene" id=21]
 [ext_resource path="res://Assets/UI/endzone_single.png" type="Texture" id=22]
 
@@ -100,37 +100,37 @@ animations = [ {
 }, {
 "frames": [ ExtResource( 14 ) ],
 "loop": true,
-"name": "berserker",
+"name": "corsair",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 15 ) ],
 "loop": true,
-"name": "stormdancer",
+"name": "cavalier",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 16 ) ],
 "loop": true,
-"name": "saint",
+"name": "stormdancer",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 17 ) ],
 "loop": true,
-"name": "crusader",
+"name": "berserker",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 18 ) ],
 "loop": true,
-"name": "corsair",
+"name": "saint",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 19 ) ],
 "loop": true,
-"name": "pyromancer",
+"name": "crusader",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 20 ) ],
 "loop": true,
-"name": "cavalier",
+"name": "pyromancer",
 "speed": 5.0
 } ]
 
@@ -265,7 +265,7 @@ transform/pos = Vector2( 0, 1 )
 
 [node name="CorpseIndicator" type="AnimatedSprite" parent="."]
 
-visibility/visible = false
+visibility/opacity = 0.0
 frames = SubResource( 6 )
 animation = "berserker"
 

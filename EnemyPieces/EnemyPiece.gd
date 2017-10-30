@@ -97,6 +97,7 @@ func _ready():
 
 func initialize(unit_name, hover_description, movement_value, max_hp, modifiers, prototype, type):
 	self.unit_name = unit_name
+	check_global_seen()
 	self.hover_description = hover_description
 	self.movement_value = movement_value
 	self.default_movement_value = movement_value
@@ -114,7 +115,27 @@ func initialize(unit_name, hover_description, movement_value, max_hp, modifiers,
 	initialize_hp(max_hp)
 	if modifiers != null:
 		initialize_modifiers(modifiers)
-		
+
+
+func set_seen(flag):
+	if flag:
+		if get_node("SeenIcon").is_visible():
+			get_node("SeenIcon").hide()
+			get_node("/root/State").set_seen(self.unit_name)
+			#hide all other similar icons by calling them to re-check against the global seen list
+			for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
+				if enemy_piece != self:
+					enemy_piece.check_global_seen()
+	else:
+		get_node("SeenIcon").show()
+
+
+func check_global_seen():
+	if get_node("/root/State").seen_units.has(self.unit_name):
+		get_node("SeenIcon").hide()
+	else:
+		get_node("SeenIcon").show()
+
 		
 func toggle_desktop(flag):
 	if flag:
@@ -542,43 +563,19 @@ func animate_unsilenced():
 
 func animate_burning_hide():
 	get_node("Physicals/EnemyEffects/BurningEffect").hide()
-
-
-
-func handle_pre_payload(payload):
-	if payload["hp_change"] < 0:
-		#handle archer ultimate
-		pass
 	
-func handle_payload(payload):
-	if payload["hp_change"] < 0:
-		if self.shielded:
-			set_shield(false)
-		else:
-			if payload["effects"] == null:
-				pass
-			modify_hp(payload["hp_change"])
-			
-	elif payload["hp_change"] > 0:
-		modify_hp(payload["hp_change"])
-		
-func handle_post_payload(payload):
-	if payload["hp_change"] < 0:
-		#handle assassin's passive
-		pass	
-
 
 func heal(amount, delay=0.0):
 	modify_hp(amount, delay)
 
 
-func attacked(amount, delay=0.0):
+func attacked(amount, delay=0.0, after=false):
 	var damage = get_actual_damage(amount)
 	
 	if self.shielded:
 		set_shield(false)
 	
-	modify_hp(damage * -1, delay)
+	modify_hp(damage * -1, delay, after)
 	
 	var tile = get_parent().locations[coords]
 	
@@ -616,7 +613,7 @@ func lightning_attacked():
 #		modify_hp(amount * -1)
 
 
-func modify_hp(amount, delay=0):
+func modify_hp(amount, delay=0, after=false):
 	if self.hp != 0: #in the case that someone tries to modify hp after the unit is already in the process of dying
 		self.hp = min((max(0, self.hp + amount)), 9) #has to be between 0 and 9
 		self.temp_display_hp = self.hp
@@ -624,11 +621,12 @@ func modify_hp(amount, delay=0):
 #		if self.current_animation_sequence == null:
 #			get_new_animation_sequence()
 		if self.hp == 0:
-			add_animation(self, "animate_set_hp", false, [self.hp, amount, delay])
+			add_animation(self, "animate_set_hp", false, [self.hp, amount, delay, after])
+#			if !after: #this will be handled by something else if this is an after modification of hp
 			delete_self()
 			#set_animation_sequence_blocking()
 		else:
-			add_animation(self, "animate_set_hp", false, [self.hp, amount, delay])
+			add_animation(self, "animate_set_hp", false, [self.hp, amount, delay, after])
 #			
 #		enqueue_animation_sequence()
 
@@ -687,8 +685,8 @@ func animate_delete_self():
 	timer.queue_free()
 	queue_free()
 
-
-func animate_set_hp(hp, value, delay=0, flicker_flag=true):
+#after is if we need the set_hp to trigger after the physical hit has already occured
+func animate_set_hp(hp, value, delay=0, after=false):
 	add_anim_count()
 	reset_prediction_flyover()
 	#reset_just_prediction_flyover() #if you forget why you need this, attack same enemy quickly with 2 heroes
@@ -703,10 +701,8 @@ func animate_set_hp(hp, value, delay=0, flicker_flag=true):
 
 	get_node("Physicals/HealthDisplay").set_health(hp)
 	
-	if flicker_flag and value < 0:
-		emit_signal("small_shake")
-		get_node("Physicals/Cracks").crack()
-		get_node("SamplePlayer").play("rocket glass explosion thud 2")
+	if value < 0 and !after:
+		animate_hit()
 
 	
 
@@ -719,7 +715,7 @@ func animate_set_hp(hp, value, delay=0, flicker_flag=true):
 		text.set("custom_colors/font_color", Color(0,1,0))
 	elif value == 0:
 		value_text = "-" + value_text
-	elif flicker_flag:
+	else:
 		get_node("AnimationPlayer").play("FlickerAnimation")
 	text.set_opacity(1.0)
 	
@@ -741,6 +737,11 @@ func animate_set_hp(hp, value, delay=0, flicker_flag=true):
 	
 	self.mid_trailing_animation = false
 	subtract_anim_count()
+
+func animate_hit():
+	emit_signal("small_shake")
+	get_node("Physicals/Cracks").crack()
+	get_node("SamplePlayer").play("rocket glass explosion thud 2")
 
 
 func set_coords(new_coords, sequence=null):

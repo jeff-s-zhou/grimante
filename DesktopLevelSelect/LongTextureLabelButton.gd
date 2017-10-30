@@ -9,6 +9,8 @@ var level = null
 func initialize(level, score):
 	self.level = level
 	get_node("Toppings/Label").set_text(self.level.name.to_upper())
+	if score != null:
+		get_node("Toppings/SmallScoreStars").display_score(score)
 
 func is_pressed():
 	emit_signal("pressed", self.level)

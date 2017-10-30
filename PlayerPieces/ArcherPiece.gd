@@ -44,7 +44,7 @@ func get_passive_damage():
 	
 
 func get_attack_range():
-	var attack_range = get_parent().get_range(self.coords, [1, 11], "ENEMY", true)
+	var attack_range = get_parent().get_range(self.coords, [1, 8], "ENEMY", true)
 	var attack_range_diagonal = get_parent().get_diagonal_range(self.coords, [1, 8], "ENEMY", true)
 	return attack_range + attack_range_diagonal
 

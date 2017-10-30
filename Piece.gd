@@ -108,26 +108,6 @@ func enqueue_animation_sequence():
 		print("called enqueue_animation_sequence when there is none")
 
 
-func set_seen(flag):
-	if flag:
-		get_node("SeenIcon").hide()
-		get_node("/root/global").seen_units[self.unit_name] = true
-		#hide all other similar icons by calling them to re-check against the global seen list
-		if self.side == "ENEMY":
-			for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
-				if enemy_piece != self:
-					enemy_piece.check_global_seen()
-	else:
-		get_node("SeenIcon").show()
-
-
-func check_global_seen():
-	if get_node("/root/State").seen_units.has(self.unit_name):
-		get_node("SeenIcon").hide()
-	else:
-		get_node("SeenIcon").show()
-
-
 func collide(area):
 	if area.get_name() != "CursorArea":
 		var other_piece = area.get_parent()
@@ -212,20 +192,24 @@ func animate_move_and_hop(new_coords, speed=250, blocking=true, trans_type=Tween
 	var distance = get_pos().distance_to(position)
 	var dim_distance = dim_multi_distance(distance)
 	var time = dim_distance/speed
-	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), position, time, trans_type, ease_type)
-	get_node("Tween").start()
+	var tween = Tween.new()
+	add_child(tween)
+	tween.interpolate_property(self, "transform/pos", get_pos(), position, time, trans_type, ease_type)
+	tween.start()
 	animate_short_hop(speed, new_coords)
 	if blocking:
-		yield(get_node("Tween"), "tween_complete")
+		yield(tween, "tween_complete")
 		#need this in because apparently Tween emits the signal slightly early
-		get_node("Timer").set_wait_time(0.02)
+		get_node("Timer").set_wait_time(0.03)
 		get_node("Timer").start()
 		yield(get_node("Timer"), "timeout")
 		emit_signal("animation_done")
 		subtract_anim_count()
+		tween.queue_free()
 	else:
-		yield(get_node("Tween"), "tween_complete")
+		yield(tween, "tween_complete")
 		subtract_anim_count()
+		tween.queue_free()
 
 func animate_short_hop(speed, new_coords):
 	#add_anim_count()
@@ -239,7 +223,7 @@ func animate_short_hop(speed, new_coords):
 func dim_multi_distance(distance):
 	var x = distance/400 #400 is how far the biggest jump is
 	var y = ((-1 * pow(3, -1 * x)) + 1)/x
-	return y * distance
+	return round(y * distance)
 
 func animate_short_hop_to_pos(speed, distance):
 	var dim_distance = dim_multi_distance(distance)

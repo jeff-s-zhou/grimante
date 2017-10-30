@@ -51,5 +51,5 @@ func add_piece_on_bar(piece):
 
 		
 func set_disabled(flag):
-	get_node("Combat/StarBar").set_disabled(flag)
+	get_node("Combat/StarBar").set_temp_disabled(flag)
 	get_node("Combat/EndTurnButton").set_disabled(flag)

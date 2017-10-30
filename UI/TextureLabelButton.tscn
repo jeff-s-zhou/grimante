@@ -4,7 +4,6 @@
 
 [node name="TextureLabelButton" type="Node2D"]
 
-transform/scale = Vector2( 0.94, 0.94 )
 script/script = ExtResource( 1 )
 y_difference = 0
 
