@@ -85,7 +85,7 @@ func make(prototype, hp, modifiers=null):
 	return {"prototype": prototype, "hp": hp, "modifiers":modifiers}
 
 
-class LevelSet:
+class Set:
 	var id = null
 	var name = ""
 	var levels = []

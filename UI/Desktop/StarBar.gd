@@ -50,16 +50,10 @@ func add_inactive_star():
 
 #adds a full star, used for tutorial and debug purposes
 func add_star():
-	self.star_count += 1
-	var star = self.star_prototype.instance()
-	star.set_pos(self.star_add_pos)
-	self.inactive_star = star
-	add_child(star)
-	self.stars.append(star)
-	self.inactive_star.max_out() #increase to a full star
-	self.star_add_pos += STAR_SHIFT
-	get_node("TextureButton").set_disabled(false)
-	self.inactive_star = null
+	if self.star_count == 3:
+		self.inactive_star.max_out()
+	else:
+		refund()
 	
 func animate_remove_star(count):
 	var consumed_star = self.stars[0]

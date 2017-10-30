@@ -16,11 +16,10 @@
 {"hp":"2", "turn":1, "pos_x":4, "name":"ranged", "modifiers":{}, "pos_y":3}
 {"hp":"3", "turn":1, "pos_x":4, "name":"slime", "modifiers":{}, "pos_y":6}
 {"hp":"3", "turn":1, "pos_x":2, "name":"slime", "modifiers":{}, "pos_y":5}
-{"hp":"4", "turn":1, "pos_x":1, "name":"spectre", "modifiers":{}, "pos_y":3}
-{"hp":"4", "turn":1, "pos_x":5, "name":"grunt", "modifiers":{}, "pos_y":5}
+{"hp":"3", "turn":1, "pos_x":1, "name":"spectre", "modifiers":{}, "pos_y":3}
+{"hp":"3", "turn":1, "pos_x":5, "name":"grunt", "modifiers":{}, "pos_y":5}
 {"hp":"2", "turn":1, "pos_x":3, "name":"ranged", "modifiers":{"Shield":"Shield"}, "pos_y":3}
-{"hp":"3", "turn":1, "pos_x":3, "name":"grunt", "modifiers":{}, "pos_y":5}
+{"hp":"1", "turn":1, "pos_x":3, "name":"grunt", "modifiers":{}, "pos_y":5}
+{"hp":"2", "turn":3, "pos_x":3, "name":"slime", "modifiers":{}, "pos_y":3}
 {"hp":"3", "turn":3, "pos_x":1, "name":"ranged", "modifiers":{}, "pos_y":3}
 {"hp":"3", "turn":3, "pos_x":5, "name":"ranged", "modifiers":{}, "pos_y":5}
-{"hp":"2", "turn":3, "pos_x":3, "name":"slime", "modifiers":{}, "pos_y":5}
-{"hp":"2", "turn":3, "pos_x":3, "name":"slime", "modifiers":{}, "pos_y":3}

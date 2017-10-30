@@ -28,9 +28,9 @@ func _ready():
 		create_new_level_button(level, y_position)
 		y_position += 78
 		
-	for level in self.level_set.get_hard_levels():
-		create_new_level_button(level, hard_y_position)
-		hard_y_position += 78
+#	for level in self.level_set.get_hard_levels():
+#		create_new_level_button(level, hard_y_position)
+#		hard_y_position += 78
 
 func create_new_level_button(level, y_position):
 	var score = get_node("/root/State").get_level_score(self.level_set.id, level.id)

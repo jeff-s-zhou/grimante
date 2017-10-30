@@ -27,7 +27,7 @@ func increase():
 #add a full star
 func max_out():
 	self.active = true
-	for i in range(1, 8):
+	for i in range(index, 8):
 		get_node("/root/AnimationQueue").enqueue(self, "animate_increase", false, [i])
 
 
@@ -48,10 +48,14 @@ func animate_increase(index):
 			get_node("Tween").start()
 			
 func flash(flag):
+	print("calling star flash")
+	print(self.active)
 	if self.active:
 		if flag:
 			get_node("AnimationPlayer").play("glow_flash")
-		elif get_node("AnimationPlayer").is_playing():
-			yield(get_node("AnimationPlayer"), "finished")
-			get_node("AnimationPlayer").stop_all()
+		else:
+			print("got here?")
+#			if get_node("AnimationPlayer").is_playing():
+#				yield(get_node("AnimationPlayer"), "finished")
+			get_node("AnimationPlayer").stop(true)
 	

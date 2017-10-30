@@ -4,13 +4,8 @@ extends "LevelSet.gd"
 # var a = 2
 # var b = "textvar"
 
-func _ready():
-	# Called every time the node is added to the scene.
-	# Initialization here
-	pass
-
 func get_set():
-	return LevelSet.new(1, "First", 
+	return Set.new(1, "First", 
 	[tutorial1(), tutorial2(), tutorial3(), first_steps(), second_steps()], [])
 	
 	
@@ -50,7 +45,7 @@ func tutorial3():
 	var tutorial_func = funcref(tutorial, "get")
 	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
 	
-	return LevelTypes.Timed.new(00003, "The Indirect Blade is the Deadliest", allies, enemies, 7, null, extras)
+	return LevelTypes.Timed.new(00003, "Playing Coy", allies, enemies, 7, null, extras)
 
 
 func first_steps():
@@ -63,7 +58,7 @@ func first_steps():
 	var tutorial_func = funcref(tutorial, "get")
 	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
 	
-	return LevelTypes.Timed.new(00004, "Baby's First Fight Against the Forces of Evil", allies, enemies, 5, null, extras)
+	return LevelTypes.Timed.new(00004, "Baby's First Battle", allies, enemies, 5, null, extras)
 
 func second_steps():
 	var allies = {2: Berserker, 4: Cavalier}

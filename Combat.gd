@@ -241,17 +241,18 @@ func handle_piece_placed():
 			set_forced_action(false)
 
 
-	#shouldn't interfere with any other forced actions, since it'll only end when all pieces are placed
-	if !get_node("ControlBar/Combat/StarBar").has_star():
-		#check if we can automatically end turn
-		var player_pieces = get_tree().get_nodes_in_group("player_pieces")
-		for player_piece in player_pieces:
-			if !player_piece.is_placed():
-				return
-		end_turn()
-		
-	else:
+	
+	#check if we can automatically end turn
+	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
+	for player_piece in player_pieces:
+		if !player_piece.is_placed():
+			return
+			
+	if get_node("ControlBar/Combat/StarBar").has_star():
 		get_node("ControlBar/Combat/StarBar").star_flash(true)
+		return
+		
+	end_turn()
 
 #	
 #
