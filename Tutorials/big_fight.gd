@@ -12,8 +12,8 @@ func _ready():
 
 func get():
 	var tutorial = TutorialPrototype.instance()
-	var text = ["This level is the first Battle Grande.",
-	"In Battle Grandes, you control {5} pieces.",
+	var text = ["This level is the first {Grand Battle}.",
+	"In Grand Battles, you control {5} pieces.",
 	"In addition, you get access to the {Deploy Phase}.",
 	"Rearrange your Heroes on the highlighted tiles before the level starts.",
 	"Press DEPLOY when finished."]

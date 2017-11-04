@@ -11,9 +11,8 @@ func _ready():
 	get_node("FinalHeroScreen").connect("final_hero_selected", self, "final_hero_selected")
 	
 func initialize(flags, combat_scene):
-	#get_node("Combat/DeployButton").connect("pressed", combat_scene, "handle_deploy")
-	#get_node("Combat/EndTurnButton").connect("released", combat_scene, "handle_end_turn_released")
-	#get_node("Combat/EndTurnButton").connect("holding", combat_scene, "holding_end_turn")
+	get_node("Combat/EndTurnButton").connect("deploy_pressed", combat_scene, "handle_deploy")
+	get_node("Combat/EndTurnButton").connect("pressed", combat_scene, "handle_end_turn")
 	get_node("Combat/EndTurnButton").set_disabled(true)
 	
 	if flags.has("no_stars"):
@@ -30,13 +29,12 @@ func initialize(flags, combat_scene):
 
 
 func set_deploying(flag):
+	get_node("Combat/EndTurnButton").set_deploying(flag)
 	if flag:
-		#get_node("Combat/DeployButton").show()
 		get_node("FinalHeroScreen").show()
 		get_node("Combat").hide()
 	else:
 		get_node("FinalHeroScreen").queue_free()
-		#get_node("Combat/DeployButton").hide()
 		get_node("Combat/EndTurnButton").show()
 		get_node("Combat").show()
 		

@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=1]
+[gd_scene load_steps=16 format=1]
 
 [ext_resource path="res://Combat.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Backgrounds/new_style_background_desktop.png" type="Texture" id=2]
@@ -13,6 +13,7 @@
 [ext_resource path="res://UI/Desktop/ControlBar.tscn" type="PackedScene" id=11]
 [ext_resource path="res://UI/Desktop/InfoBar.tscn" type="PackedScene" id=12]
 [ext_resource path="res://UI/TurnUpdate.tscn" type="PackedScene" id=13]
+[ext_resource path="res://UI/Desktop/Settings.tscn" type="PackedScene" id=14]
 
 [sub_resource type="SampleLibrary" id=1]
 
@@ -139,5 +140,7 @@ transform/pos = Vector2( 833.097, 15 )
 [node name="PhaseShifter" parent="." instance=ExtResource( 13 )]
 
 transform/pos = Vector2( 511, 390 )
+
+[node name="Settings" parent="." instance=ExtResource( 14 )]
 
 

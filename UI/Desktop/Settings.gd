@@ -1,4 +1,4 @@
-extends Area2D
+extends Node2D
 
 # class member variables go here, for example:
 # var a = 2
@@ -8,7 +8,6 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	pass
-	set_process_input(true)
-	
-func _input_event(viewport, event, shape_idx):
-	get_parent().handle_arrow_input(event, get_name())
+
+func initialize(level_schematic):
+	get_node("Label").set_text(str(level_schematic.id) + " " + str(level_schematic.name))

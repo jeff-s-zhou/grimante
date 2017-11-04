@@ -23,7 +23,10 @@ func display_score(score):
 	else:
 		for i in range(1, score + 1):
 			get_node(str(i)).play("full")
-			get_node(str(i)).animate_spin_in(delay)
+			get_node(str(i)).animate_spin_in(animation_time, delay)
 			delay += diff
+			diff -= 0.06
+			animation_time -= 0.08
+			
 		for i in range(score + 1, 6):
 			get_node(str(i)).animate_fade_in(delay)

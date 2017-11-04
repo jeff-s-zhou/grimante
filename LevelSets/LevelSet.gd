@@ -108,3 +108,22 @@ class Set:
 			#change this call to set_next_level
 			self.hard_levels[i].set_next_level(self.hard_levels[i+1])
 		return self.hard_levels
+		
+		
+func sandbox(): 
+	var flags = []
+	var score_guide = {0:2, 1:4}
+	var extras1 = {"free_deploy":true, "flags":flags, "score_guide":score_guide}
+	var raw_enemies = {0:{Vector2(2, 5): make(Grunt, 2)}}
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var heroes = {0: Cavalier, 2: Berserker, 4:Assassin, 5: FrostKnight} 
+	return LevelTypes.Timed.new(33333, "", heroes, enemies, 2, null, extras1) 
+#	
+#func background():
+#	var pieces = load_level("background.level")
+#	var raw_enemies = pieces[0]
+#	var allies = pieces[1]
+#	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+#	var flags = []
+#	var extras = {"flags":flags, "free_deploy":false}
+#	return LevelTypes.Timed.new("Big Boss Fight", allies, enemies, 5, null, extras)

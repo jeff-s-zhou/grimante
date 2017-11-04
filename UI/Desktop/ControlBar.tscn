@@ -17,7 +17,7 @@ transform/pos = Vector2( 10, 0 )
 
 [node name="EndTurnButton" parent="Combat" instance=ExtResource( 3 )]
 
-transform/pos = Vector2( 940, 15 )
+transform/pos = Vector2( 940, 10 )
 
 [node name="FinalHeroScreen" parent="." instance=ExtResource( 4 )]
 

@@ -69,7 +69,7 @@ func execute():
 		var assassin_passive_range = []
 		for piece in affected_pieces.keys():
 			#if the piece is still alive after all deathrattles are resolved, let it trigger assassin's passive
-			if piece.hp != 0:
+			if piece.side == "ENEMY" and piece.hp != 0:
 				assassin_passive_range.append(piece.coords)
 
 		get_node("/root/Combat/Grid").handle_assassin_passive(assassin_passive_range, self.caller)

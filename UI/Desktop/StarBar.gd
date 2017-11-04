@@ -50,10 +50,11 @@ func add_inactive_star():
 
 #adds a full star, used for tutorial and debug purposes
 func add_star():
-	if self.star_count == 3:
-		self.inactive_star.max_out()
-	else:
-		refund()
+	if enabled:
+		if self.star_count == 3:
+			self.inactive_star.max_out()
+		else:
+			refund()
 	
 func animate_remove_star(count):
 	var consumed_star = self.stars[0]

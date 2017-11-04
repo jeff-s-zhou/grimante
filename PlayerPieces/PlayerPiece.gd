@@ -399,10 +399,11 @@ func unhovered():
 #called when hovered over during player turn		
 func hovered():
 	if self.state != States.DEAD:
-		self.hovered_flag = true
-		get_node("Timer").set_wait_time(0.01)
+		#you need this lol, otherwise moving from one piece to another real fast fucks everything up
+		get_node("Timer").set_wait_time(0.01) 
 		get_node("Timer").start()
 		yield(get_node("Timer"), "timeout")
+		self.hovered_flag = true
 		if !self.mid_animation:
 			hover_highlight()
 		

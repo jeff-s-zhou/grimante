@@ -45,7 +45,9 @@ func rule_of_three():
 	var flags = ["no_stars", "no_inspire", "no_waves"]
 	var tutorial = load("res://Tutorials/rule_of_three.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
-	var extras = {"free_deploy":false, "flags":flags, "tutorial":tutorial_func}
+	var score_guide = {1:5, 2:5, 3:4, 4:3, 5:3} 
+	var extras = {"free_deploy":false, "flags":flags, "tutorial":tutorial_func, "score_guide":score_guide}
+	
 	
 	return LevelTypes.Timed.new(00007, "Love Triangle Hexagons", allies, enemies, 5, null, extras)
 	
@@ -69,7 +71,8 @@ func tick_tock():
 	var flags = ["no_stars", "no_inspire"]
 	var tutorial = load("res://Tutorials/tick_tock.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
-	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
+	var score_guide = {1:5, 2:5, 3:5, 4:4, 5:3} 
+	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00009, "Quarterbats", allies, enemies, 5, null, extras)
 
 
@@ -78,5 +81,6 @@ func flying_solo():
 	var raw_enemies = load_level("flying_solo.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_stars", "no_inspire"]
-	var extras = {"free_deploy":false, "flags":flags}
+	var score_guide = {1:5, 2:5, 3:5, 4:4, 5:3} 
+	var extras = {"free_deploy":false, "flags":flags, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00010, "Flying Solo", allies, enemies, 5, null, extras)

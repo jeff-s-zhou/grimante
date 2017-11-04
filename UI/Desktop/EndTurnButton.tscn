@@ -1,20 +1,25 @@
-[gd_scene load_steps=8 format=1]
+[gd_scene load_steps=13 format=1]
 
 [ext_resource path="res://UI/Desktop/EndTurnButton.gd" type="Script" id=1]
-[ext_resource path="res://Assets/UI/Desktop/wheel/outer_ring.png" type="Texture" id=2]
-[ext_resource path="res://Assets/UI/Desktop/wheel/spinning_part_shadow2.png" type="Texture" id=3]
-[ext_resource path="res://Assets/UI/Desktop/wheel/spinning_part2.png" type="Texture" id=4]
-[ext_resource path="res://Assets/UI/Desktop/wheel/top_part.png" type="Texture" id=5]
-[ext_resource path="res://Assets/processed_fonts/desktop_end_turn_button.fnt" type="BitmapFont" id=6]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/shell.png" type="Texture" id=2]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/ring.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/inner_hands.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/outer_hands.png" type="Texture" id=5]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/button.png" type="Texture" id=6]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/button_pressed.png" type="Texture" id=7]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/button_pressed_disabled.png" type="Texture" id=8]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/deploy_button.png" type="Texture" id=9]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/deploy_button_pressed.png" type="Texture" id=10]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/deploy_button_disabled.png" type="Texture" id=11]
 
 [sub_resource type="Animation" id=1]
 
-resource/name = "spin"
+resource/name = "Spin"
 length = 60.0
 loop = true
-step = 5.0
+step = 1.0
 tracks/0/type = "value"
-tracks/0/path = NodePath("SpinningPart:transform/rot")
+tracks/0/path = NodePath("InnerHand:transform/rot")
 tracks/0/interp = 1
 tracks/0/imported = false
 tracks/0/keys = {
@@ -24,7 +29,7 @@ tracks/0/keys = {
 "values": [ 0.0, -360.0 ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("Shadow:transform/rot")
+tracks/1/path = NodePath("OuterHand:transform/rot")
 tracks/1/interp = 1
 tracks/1/imported = false
 tracks/1/keys = {
@@ -38,56 +43,76 @@ tracks/1/keys = {
 
 script/script = ExtResource( 1 )
 
-[node name="Ring" type="Sprite" parent="."]
+[node name="Holder" type="Sprite" parent="."]
 
-transform/pos = Vector2( 1, 1 )
+transform/pos = Vector2( 18, 16 )
 texture = ExtResource( 2 )
 
-[node name="Shadow" type="Sprite" parent="."]
+[node name="Ring" type="Sprite" parent="."]
 
-visibility/opacity = 0.5
-transform/pos = Vector2( 1, 3 )
-transform/rot = -187.21
 texture = ExtResource( 3 )
 
-[node name="SpinningPart" type="Sprite" parent="."]
+[node name="InnerHand" type="Sprite" parent="."]
 
-transform/rot = -187.21
+transform/pos = Vector2( 0, -1 )
+transform/rot = 19.9973
 texture = ExtResource( 4 )
 
-[node name="Top" type="Sprite" parent="."]
+[node name="OuterHand" type="Sprite" parent="."]
 
-transform/pos = Vector2( 0.5, 0.5 )
+visibility/opacity = 0.5
+transform/pos = Vector2( 0, -1 )
+transform/rot = 19.9973
 texture = ExtResource( 5 )
+
+[node name="EndTurnButton" type="TextureButton" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = -69.0
+margin/top = -93.0
+margin/right = 69.0
+margin/bottom = 93.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+textures/normal = ExtResource( 6 )
+textures/pressed = ExtResource( 7 )
+textures/disabled = ExtResource( 8 )
+params/resize_mode = 0
+params/stretch_mode = 0
+
+[node name="DeployButton" type="TextureButton" parent="."]
+
+visibility/visible = false
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = -69.0
+margin/top = -93.0
+margin/right = 69.0
+margin/bottom = 93.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+textures/normal = ExtResource( 9 )
+textures/pressed = ExtResource( 10 )
+textures/disabled = ExtResource( 11 )
+params/resize_mode = 0
+params/stretch_mode = 0
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 playback/process_mode = 1
 playback/default_blend_time = 0.0
 root/root = NodePath("..")
-anims/spin = SubResource( 1 )
+anims/Spin = SubResource( 1 )
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
-autoplay = "spin"
-
-[node name="Label" type="Label" parent="."]
-
-focus/ignore_mouse = true
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 0
-margin/left = -34.0
-margin/top = -33.0
-margin/right = 37.0
-margin/bottom = 30.0
-custom_fonts/font = ExtResource( 6 )
-text = "END
-TURN"
-align = 1
-valign = 1
-percent_visible = 1.0
-lines_skipped = 0
-max_lines_visible = -1
+autoplay = "Spin"
 
 

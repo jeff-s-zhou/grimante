@@ -28,57 +28,72 @@ func inspire():
 
 func shield_inspire(hard=false):
 	var pieces
+	var score_guide
 	if hard:
 		pieces = load_level("shield_inspire_hard.level")
+		score_guide = {1:5, 2:5, 3:4} #not tested
 	else:
-		piece = load_level("shield_inspire.level")
+		pieces = load_level("shield_inspire.level")
+		score_guide = {1:5, 2:5, 3:4} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var tutorial = load("res://Tutorials/inspire.gd").new()
+	var tutorial = load("res://Tutorials/shield_inspire.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
 	var flags = ["no_fifth"]
-	var extras = {"free_deploy":false, "flags":flags}
+	var extras = {"free_deploy":false, "flags":flags, "tutorial": tutorial_func, "hard":hard, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00031, "Power of Friendship 2", allies, enemies, 3, null, extras)
 
 
 func corrosion(hard=false):
 	var pieces
+	var score_guide
 	if hard:
 		pieces = load_level("corrosion_hard.level")
+		score_guide = {1:5, 2:5, 3:5, 4:4, 5:3} #not tested
 	else:
 		pieces = load_level("corrosion.level")
+		score_guide = {1:5, 2:5, 3:5, 4:4, 5:3}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth"]
-	var extras = {"free_deploy":false, "flags":flags}
+	var extras = {"free_deploy":false, "flags":flags, "hard":hard, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00032, "Corrosion", allies, enemies, 5, null, extras)
 
 	
 func griffon():
 	var pieces = load_level("griffon.level")
+	var score_guide = {1:5, 2:5, 3:4, 4:3}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth"]
-	var extras = {"free_deploy":false, "flags":flags}
+	var extras = {"free_deploy":false, "flags":flags, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00033, "Griffon", allies, enemies, 4, null, extras)
 	
-
+#might be too hard
 func defuse_the_bomb():
 	var pieces = load_level("defuse_the_bomb.level")
+	var score_guide = {1:5, 2:5, 3:5}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth"]
-	var extras = {"free_deploy":false, "flags":flags}
+	var extras = {"free_deploy":false, "flags":flags, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00034, "Defuse the Bomb", allies, enemies, 3, null, extras)
 	
-func ghost_boss():
-	var pieces = load_level("ghost_boss.level")
+func ghost_boss(hard=false):
+	var pieces
+	var score_guide
+	if hard:
+		pieces = load_level("ghost_boss_hard.level")
+		score_guide = {1:5, 2:5, 3:5, 4:4, 5:3, 6:2} #not tested
+	else:
+		pieces = load_level("ghost_boss.level")
+		score_guide = {1:5, 2:5, 3:5, 4:4, 5:3, 6:2}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var extras = {"free_deploy":true, "flags":[]}
+	var extras = {"free_deploy":true, "flags":[], "hard":hard, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00035, "Ghostbusters MAX", allies, enemies, 6, null, extras)

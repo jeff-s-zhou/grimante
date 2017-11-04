@@ -33,6 +33,9 @@ func is_deselect(event):
 	var is_mouse = event.is_action("deselect") and event.is_pressed()
 	return is_mouse
 	
+func is_ui_cancel(event):
+	return event.is_action("ui_cancel") and event.is_pressed()
+	
 func is_ui_accept(event):
 	if self.platform == self.PLATFORMS.Android:
 		return false

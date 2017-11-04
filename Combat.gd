@@ -39,6 +39,9 @@ func _ready():
 		self.desktop_flag = true
 	
 	get_node("/root/AnimationQueue").reset()
+	
+	
+	
 	var screen_size = get_viewport().get_rect().size
 	get_node("Grid").set_pos(Vector2(screen_size.x/2 - 310, screen_size.y/2- 350))
 	#get_node("Grid").set_pos(Vector2(400, 250))
@@ -56,7 +59,6 @@ func _ready():
 
 	get_node("/root/DataLogger").log_start_attempt(self.level_schematic.id)
 	
-	
 	#is here the big divide?
 
 	self.enemy_waves = self.level_schematic.enemies
@@ -64,6 +66,8 @@ func _ready():
 	self.reinforcements = self.level_schematic.reinforcements
 		
 	#we store the initial wave count as the first value in the array
+	
+	get_node("Settings").initialize(self.level_schematic)
 	
 	get_node("PhaseShifter").initialize(self.level_schematic.num_turns)
 	
@@ -74,6 +78,9 @@ func _ready():
 	get_node("/root/AssistSystem").initialize(self.level_schematic.flags)
 	
 	get_node("Grid").initialize(self.level_schematic.flags)
+	
+	if !get_node("/root/MusicPlayer").is_playing():
+		get_node("/root/MusicPlayer").play()
 
 	#key is the coords, value is the piece
 	for key in self.level_schematic.allies.keys():
@@ -208,7 +215,6 @@ func initialize_piece(piece_prototype, on_bar=false, key=null):
 			position = get_node("Grid").get_bottom_of_column(key)
 		else:
 			position = key #that way when we need to we can specify by coordinates
-		print("adding piece here??")
 		get_node("Grid").add_piece(position, new_piece)
 
 	#these require the piece to have been added as a child
@@ -295,13 +301,9 @@ func handle_deploy():
 	if self.state == self.STATES.deploying:
 		emit_signal("deployed")
 	
-func handle_end_turn_released():
+func handle_end_turn():
 	end_turn()
 		
-		
-func holding_end_turn():
-	pass
-
 func restart():
 	pause()
 	get_node("/root/AnimationQueue").stop()
@@ -347,7 +349,7 @@ func computer_input(event):
 		#we add this case so we don't trigger the invalid move during a forced action
 		elif self.tutorial != null and self.tutorial.has_forced_action(get_turn_count()):
 			pass
-		else:
+		elif has_selected:
 			handle_invalid_move()
 			get_node("Grid").deselect()
 			
@@ -355,9 +357,23 @@ func computer_input(event):
 	#don't handle any other input during forced actions
 	if self.mid_forced_action:
 		return
-		
-	if get_node("InputHandler").is_deselect(event): 
-		get_node("Grid").deselect()
+	
+	if get_node("InputHandler").is_ui_cancel(event):
+		if get_node("Grid").selected != null:
+			get_node("Grid").deselect()
+		else:
+			#pause
+			if get_node("Settings").is_visible():
+				get_node("Settings").hide()
+			else:
+				get_node("Settings").show()
+			#yield(get_node("Settings"), "settings_closed")
+			#unpause()
+			
+	elif get_node("InputHandler").is_deselect(event): 
+		if get_node("Grid").selected != null:
+			get_node("Grid").deselect()
+
 	
 	elif get_node("InputHandler").is_ui_accept(event):
 		if self.state == self.STATES.deploying:
@@ -430,8 +446,6 @@ func _process(delta):
 
 	if self.state == STATES.enemy_turn:
 		self.state = STATES.transitioning
-		print("state still equals STATES.enemy_turn")
-		print(self.state)
 		enemy_phase()
 	elif self.state == STATES.transitioning:
 		pass
@@ -488,7 +502,6 @@ func enemy_phase():
 
 
 func enemy_phase_helper(double_time_turn):
-	print("calling enemy_phase_helper")
 	var enemy_pieces = get_enemies(double_time_turn)
 	if enemy_pieces != []:
 		for enemy_piece in enemy_pieces:
@@ -526,8 +539,6 @@ func get_enemies(double_time_turn):
 			if enemy_piece.double_time:
 				double_time_enemies.append(enemy_piece)
 		double_time_enemies.sort_custom(self, "_sort_by_y_axis")
-		print("printing double_time_enemies")
-		print(double_time_enemies)
 		return double_time_enemies
 	else:
 		enemy_pieces.sort_custom(self, "_sort_by_y_axis")
@@ -698,9 +709,9 @@ func enemy_win():
 #
 		var lose_screen = self.outcome_screen_prototype.instance()
 		var screen_size = get_viewport().get_rect().size
+		add_child(lose_screen)
 		lose_screen.initialize_defeat(self.level_schematic.next_level, self.level_schematic)
 		lose_screen.set_pos(Vector2(screen_size.x/2, screen_size.y/2))
-		add_child(lose_screen)
 		lose_screen.fade_in()
 #	
 

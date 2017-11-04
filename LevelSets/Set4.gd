@@ -6,8 +6,8 @@ extends "LevelSet.gd"
 	
 func get_set():
 	return Set.new(4, "Fourth",
-	[frost_knight(), frost_knight_drive(), wyvern(), wyvern2(), shield(), football(), big_fight()], 
-	[wyvern(true)])
+	[frost_knight(), frost_knight_drive(), wyvern(), wyvern2(), shield(), big_fight()], 
+	[frost_knight_drive(true), wyvern(true), big_fight(true)])
 
 func frost_knight():
 	var tutorial = load("res://Tutorials/frost_knight_trial.gd").new()
@@ -48,66 +48,75 @@ func frost_knight():
 	return LevelTypes.Trial.new(00016, "Frost Knight Trials", [challenge1, challenge2, challenge3, challenge4, challenge5, challenge6])
 	
 
-func frost_knight_drive():
-	var pieces = load_level("frost_knight_drive.level")
-	var raw_enemies = pieces[0]
-	var allies = pieces[1]
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var flags = ["no_fifth", "no_inspire"]
-	var extras = {"flags":flags, "free_deploy":false}
-	return LevelTypes.Timed.new(00017, "Frost Knight Drive", allies, enemies, 5, null, extras)
-	
-func wyvern(hard=false):
+func frost_knight_drive(hard=false):
 	var pieces
 	if hard:
-		pieces = load_level("wyvern_hard.level")
+		pieces = load_level("frost_knight_drive_hard.level")
 	else:
-		pieces = load_level("wyvern.level")
+		pieces = load_level("frost_knight_drive.level")
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth", "no_inspire"]
-	var extras = {"flags":flags, "free_deploy":false}
+	var score_guide = {1:5, 2:5, 3:4, 4:4, 5:3} 
+	var extras = {"flags":flags, "free_deploy":false, "hard":hard, "score_guide":score_guide}
+	return LevelTypes.Timed.new(00017, "Frost Knight Drive", allies, enemies, 5, null, extras)
+
+
+func wyvern(hard=false):
+	var pieces
+	var score_guide
+	if hard:
+		pieces = load_level("wyvern_hard.level")
+		score_guide = {1:5, 2:5, 3:4, 4:4, 5:3} 
+	else:
+		pieces = load_level("wyvern.level")
+		score_guide = {1:5, 2:5, 3:4, 4:4, 5:3} 
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_fifth", "no_inspire"]
+	var extras = {"flags":flags, "free_deploy":false, "hard":hard, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00018, "Not Dragons", allies, enemies, 5, null, extras)
 	
 	
 func wyvern2():
+	var score_guide = {1:5, 2:5, 3:4} 
 	var pieces = load_level("wyvern2.level")
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth", "no_inspire"]
-	var extras = {"flags":flags, "free_deploy":false}
+	var extras = {"flags":flags, "free_deploy":false, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00019, "Rooks", allies, enemies, 3, null, extras)
 	
-	
+#needs a harder level probably
 func shield():
 	var pieces = load_level("shield.level")
+	var score_guide = {1:5, 2:5, 3:5, 4:4, 5:3, 6:2} #clearable on 2
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth", "no_inspire"]
-	var extras = {"flags":flags, "free_deploy":false}
-	return LevelTypes.Timed.new(00020, "Knockoff the Knockoff Shields", allies, enemies, 6, null, extras)
+	var extras = {"flags":flags, "free_deploy":false, "score_guide":score_guide}
+	return LevelTypes.Timed.new(00020, "Knockoff Shields", allies, enemies, 6, null, extras)
 	
-	
-func football():
-	var pieces = load_level("football.level")
-	var raw_enemies = pieces[0]
-	var allies = pieces[1]
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var flags = ["no_fifth", "no_inspire"]
-	var extras = {"flags":flags, "free_deploy":false}
-	return LevelTypes.Timed.new(00023, "Football", allies, enemies, 3, null, extras)
-	
-	
-func big_fight():
-	var pieces = load_level("big_fight.level")
+#needs an easier version
+#this is really hard lol
+func big_fight(hard=false):
+	var pieces
+	var score_guide
+	if hard:
+		pieces = load_level("big_fight_hard.level")
+		score_guide = {1:5, 2:5, 3:5, 4:5, 5:4, 6:3} #this hasn't been tested
+	else:
+		pieces = load_level("big_fight.level")
+		score_guide = {1:5, 2:5, 3:5, 4:4, 5:4, 6:3}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth", "no_inspire"]
 	var tutorial = load("res://Tutorials/big_fight.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
-	var extras = {"flags":flags, "tutorial":tutorial_func}
-	return LevelTypes.Timed.new(00021, "Big Fight", allies, enemies, 7, null, extras)
+	var extras = {"flags":flags, "tutorial":tutorial_func, "hard":hard, "score_guide":score_guide}
+	return LevelTypes.Timed.new(00021, "Big Fight", allies, enemies, 6, null, extras)

@@ -39,12 +39,15 @@ func stormdancer_trials():
 	
 func stormdancer_practice(hard=false):
 	var pieces
+	var score_guide
 	if hard:
 		pieces = load_level("stormdancer_practice_hard.level")
+		score_guide = {1:5, 2:5, 3:5, 4:4} #not tested
 	else:
 		pieces = load_level("stormdancer_practice.level")
+		score_guide = {1:5, 2:5, 3:5, 4:4} #not tested
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var extras = {"free_deploy":false, "flags":[]}
+	var extras = {"free_deploy":false, "flags":[], "hard":hard, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00037, "Stormdancer Drive", allies, enemies, 4, null, extras)

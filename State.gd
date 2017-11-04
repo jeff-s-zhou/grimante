@@ -84,11 +84,14 @@ func save_level_progress(level_id, score):
 	if self.current_level_set == null:
 		return
 		
-	if !self.level_set_data.has(self.current_level_set.id):
-		self.level_set_data[self.current_level_set.id] = {}
+	var current_level_set_id = str(self.current_level_set.id)
+	level_id = str(level_id)
+	
+	if !self.level_set_data.has(current_level_set_id):
+		self.level_set_data[current_level_set_id] = {}
 	
 	#ideally, this should be the same level set scored in self.level_set_data
-	var level_set = self.level_set_data[self.current_level_set.id]
+	var level_set = self.level_set_data[current_level_set_id]
 	
 	if level_set.has(level_id):
 		var existing_score = level_set[level_id]

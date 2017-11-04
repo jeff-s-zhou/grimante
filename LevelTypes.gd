@@ -55,6 +55,9 @@ class BaseLevelType:
 			self.flags = extras["flags"]
 		if extras.has("score_guide"):
 			self.score_guide = extras["score_guide"]
+		if extras.has("hard"):
+			if extras["hard"]:
+				self.id += 90000
 			
 	func set_end_conditions(conditions):
 		self.end_conditions[conditions] = true

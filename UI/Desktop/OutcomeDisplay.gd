@@ -41,7 +41,7 @@ func initialize_victory(next_level, current_level, cleared_turn):
 #			get_node("BossLevelLockedText").show()
 
 	var score = current_level.get_score(cleared_turn)
-	if score != null:
+	if score != null and score != 5:
 		get_node("BetterScoreLabel").show()
 	get_node("ScoreStars").display_score(score)
 	get_node("/root/State").save_level_progress(self.current_level.id, score)
