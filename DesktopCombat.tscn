@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=1]
+[gd_scene load_steps=17 format=1]
 
 [ext_resource path="res://Combat.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Backgrounds/new_style_background_desktop.png" type="Texture" id=2]
@@ -14,6 +14,7 @@
 [ext_resource path="res://UI/Desktop/InfoBar.tscn" type="PackedScene" id=12]
 [ext_resource path="res://UI/TurnUpdate.tscn" type="PackedScene" id=13]
 [ext_resource path="res://UI/Desktop/Settings.tscn" type="PackedScene" id=14]
+[ext_resource path="res://UI/QuickOptions/QuickOptionsBar.tscn" type="PackedScene" id=15]
 
 [sub_resource type="SampleLibrary" id=1]
 
@@ -84,28 +85,30 @@ autostart = false
 
 [node name="FpsLabel" type="Label" parent="."]
 
+visibility/visible = false
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
 margin/left = 23.0
-margin/top = 10.0
+margin/top = 47.0
 margin/right = 63.0
-margin/bottom = 24.0
+margin/bottom = 61.0
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
 [node name="AnimationCountLabel" type="Label" parent="."]
 
+visibility/visible = false
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
 margin/left = 25.0
-margin/top = 30.0
+margin/top = 67.0
 margin/right = 65.0
-margin/bottom = 44.0
+margin/bottom = 81.0
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
@@ -142,5 +145,9 @@ transform/pos = Vector2( 833.097, 15 )
 transform/pos = Vector2( 511, 390 )
 
 [node name="Settings" parent="." instance=ExtResource( 14 )]
+
+[node name="QuickOptionsBar" parent="." instance=ExtResource( 15 )]
+
+transform/pos = Vector2( 64.6638, 26.3445 )
 
 

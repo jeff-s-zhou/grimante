@@ -211,12 +211,12 @@ func walk_off(coords_distance, exits_bottom=true):
 	add_animation(self, "animate_walk_off", true, [coords_distance])
 	self.grid.remove_piece(self.coords)
 	remove_from_group("player_pieces")
-	
+
+
 func delete_self(isolated_call=true):
 	var location = get_parent().locations[self.coords]
 	location.add_corpse(self)
-	get_node("CollisionArea").set_pickable(false)
-	get_node("CollisionArea").set_monitorable(false)
+	set_targetable(false)
 
 	add_animation(self, "animate_delete_self", false)
 	add_animation(location, "animate_add_corpse", true)
@@ -239,7 +239,7 @@ func animate_delete_self():
 	get_node("Timer").set_wait_time(0.5)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
-	#emit_signal("animation_done")
+	explosion.queue_free()
 	subtract_anim_count()
 
 
@@ -260,8 +260,7 @@ func resurrect():
 
 
 func animate_resurrect(blocking=true):
-	get_node("CollisionArea").set_monitorable(true)
-	get_node("CollisionArea").set_pickable(true)
+	set_targetable(true)
 	set_pos(get_parent().locations[self.coords].get_pos())
 	add_anim_count()
 	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
@@ -400,9 +399,9 @@ func unhovered():
 func hovered():
 	if self.state != States.DEAD:
 		#you need this lol, otherwise moving from one piece to another real fast fucks everything up
-		get_node("Timer").set_wait_time(0.01) 
-		get_node("Timer").start()
-		yield(get_node("Timer"), "timeout")
+#		get_node("Timer").set_wait_time(0.01) 
+#		get_node("Timer").start()
+#		yield(get_node("Timer"), "timeout")
 		self.hovered_flag = true
 		if !self.mid_animation:
 			hover_highlight()
@@ -421,6 +420,7 @@ func star_input_event(event):
 
 #called when an event happens inside the click area hitput
 func input_event(event, has_selected):
+	print("in player piece input event, hovered_flag: ", self.hovered_flag)
 	if self.state != States.DEAD and self.hovered_flag:
 		if self.deploying_flag: #if in deploy phase
 			deploy_input_event(event, has_selected)

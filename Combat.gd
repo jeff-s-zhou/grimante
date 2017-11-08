@@ -303,6 +303,15 @@ func handle_deploy():
 	
 func handle_end_turn():
 	end_turn()
+	
+func display_settings():
+	#pause
+	if get_node("Settings").is_visible():
+		get_node("Settings").hide()
+	else:
+		get_node("Settings").show()
+	#yield(get_node("Settings"), "settings_closed")
+	#unpause()
 		
 func restart():
 	pause()
@@ -318,6 +327,10 @@ func check_hovered():
 	var hovered = get_node("CursorArea").get_piece_hovered()
 	if hovered:
 		hovered.hovered()
+		
+func get_hovered():
+	var hovered = get_node("CursorArea").get_piece_or_location_hovered()
+	return hovered
 
 
 func _input(event):
@@ -330,6 +343,9 @@ func computer_input(event):
 		instant_lighten()
 		var has_selected = get_node("Grid").selected != null
 		var hovered = get_node("CursorArea").get_piece_or_location_hovered()
+		print("has selected: ", has_selected)
+		if hovered:
+			print("has hovered, targetable: ", hovered.is_targetable())
 		if hovered and hovered.is_targetable():
 			
 			var star_bar = get_node("ControlBar/Combat/StarBar")
@@ -349,6 +365,7 @@ func computer_input(event):
 		#we add this case so we don't trigger the invalid move during a forced action
 		elif self.tutorial != null and self.tutorial.has_forced_action(get_turn_count()):
 			pass
+		
 		elif has_selected:
 			handle_invalid_move()
 			get_node("Grid").deselect()
@@ -362,13 +379,7 @@ func computer_input(event):
 		if get_node("Grid").selected != null:
 			get_node("Grid").deselect()
 		else:
-			#pause
-			if get_node("Settings").is_visible():
-				get_node("Settings").hide()
-			else:
-				get_node("Settings").show()
-			#yield(get_node("Settings"), "settings_closed")
-			#unpause()
+			display_settings()
 			
 	elif get_node("InputHandler").is_deselect(event): 
 		if get_node("Grid").selected != null:
@@ -449,7 +460,6 @@ func _process(delta):
 		enemy_phase()
 	elif self.state == STATES.transitioning:
 		pass
-		
 		
 func enemy_phase():
 	if self.tutorial != null and self.tutorial.has_enemy_turn_start_rule(get_turn_count()):

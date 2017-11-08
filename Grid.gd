@@ -286,6 +286,7 @@ func deselect(acting=false):
 func end_turn_clear_state():
 	if self.selected != null:
 		self.selected.deselect(false)
+		temp_add_piece(self.selected.coords, self.selected) #because we removed it for easier prediction
 		self.selected = null
 	self.clear_display_state(true)
 

@@ -111,19 +111,20 @@ class Set:
 		
 		
 func sandbox(): 
-	var flags = []
+	var flags = ["no_inspire"]
 	var score_guide = {0:2, 1:4}
-	var extras1 = {"free_deploy":true, "flags":flags, "score_guide":score_guide}
-	var raw_enemies = {0:{Vector2(2, 5): make(Grunt, 2)}}
+	var extras1 = {"free_deploy":false, "flags":flags, "score_guide":score_guide}
+	var raw_enemies = {0:{Vector2(2, 5): make(Grunt, 2, [shield]), Vector2(3, 5): make(Grunt, 2),
+	Vector2(4, 5): make(Grunt, 2)}}
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var heroes = {0: Cavalier, 2: Berserker, 4:Assassin, 5: FrostKnight} 
+	var heroes = {2: Berserker} 
 	return LevelTypes.Timed.new(33333, "", heroes, enemies, 2, null, extras1) 
 #	
-#func background():
-#	var pieces = load_level("background.level")
-#	var raw_enemies = pieces[0]
-#	var allies = pieces[1]
-#	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-#	var flags = []
-#	var extras = {"flags":flags, "free_deploy":false}
-#	return LevelTypes.Timed.new("Big Boss Fight", allies, enemies, 5, null, extras)
+func background():
+	var pieces = load_level("screenshot1.level")
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var flags = ["no_inspire"]
+	var extras = {"flags":flags, "free_deploy":false}
+	return LevelTypes.Timed.new(7777, "Big Boss Fight", allies, enemies, 5, null, extras)

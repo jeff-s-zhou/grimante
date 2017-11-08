@@ -147,6 +147,7 @@ func reset_highlight():
 	get_node("Sprite").set_opacity(self.default_opacity)
 	
 func _mouse_entered():
+	#print("mouse_entered")
 	get_node("SamplePlayer").play("tile_hover")
 	get_node("Sprite").set_opacity(self.highlight_opacity)
 	#we needed this in case you exited from a tile and it reset AFTER another tile called predict lol
@@ -154,8 +155,14 @@ func _mouse_entered():
 #	get_node("Timer").start()
 #	yield(get_node("Timer"), "timeout")
 	get_parent().predict(self.coords)
+#	var hovered = get_node("/root/Combat").get_hovered() #if we're staying on the tile, predict
+#	print("hovered in mouse_entered", hovered)
+#	if hovered == self:
+#		print("matched self, which is ", self)
+#		get_parent().predict(self.coords)
 
 func _mouse_exited():
+	#print("mouse exited")
 	get_node("Sprite").set_opacity(self.default_opacity)
 	if get_parent().selected != null:
 		get_parent().reset_prediction()
