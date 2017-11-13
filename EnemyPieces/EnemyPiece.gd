@@ -199,6 +199,7 @@ func get_modifiers():
 
 
 func input_event(event, has_selected):
+	print("in enemy input event")
 	if event.is_pressed():
 		self.grid.set_target(self)
 
@@ -278,10 +279,18 @@ func reset_prediction_flyover():
 			self.prediction_flyover = null
 
 
-func animate_predict_hp(hp, value, color):
+func animate_predict_hp(hp, value, is_passive_damage):
 	if get_parent().selected != null:
 		self.predicting_hp = true
 		self.temp_display_hp = self.hp
+		
+		var color = Color(1, 0, 0.4)
+		if is_passive_damage:
+			color = Color(1, 1, 0.0)
+			get_node("Physicals/EnemyOverlays/Orange").show()
+			if self.action_highlighted:
+				get_node("Physicals/EnemyOverlays/Red").hide()
+		
 		get_node("Physicals/HealthDisplay/AnimationPlayer").play("HealthFlicker")
 		yield(get_node("Physicals/HealthDisplay/AnimationPlayer"), "finished")
 		
@@ -326,26 +335,28 @@ func animate_predict_hp(hp, value, color):
 
 func predict(damage, is_passive_damage=false):
 	var actual_damage = get_actual_damage(damage)
-	var color = Color(1, 0, 0.4)
-	if is_passive_damage:
-		color = Color(1, 1, 0.0)
-		get_node("Physicals/EnemyOverlays/Orange").show()
-		if self.action_highlighted:
-			get_node("Physicals/EnemyOverlays/Red").hide()
-	
-	add_animation(self, "animate_predict_hp", false, [max(self.hp - actual_damage, 0), -1 * actual_damage, color])
+	add_animation(self, "animate_predict_hp", false, [max(self.hp - actual_damage, 0), -1 * actual_damage, is_passive_damage])
 		
 
 	
-func set_stunned(flag):
+func set_stunned(flag, delay=0.0):
 	if flag and !self.shielded:
 		self.stunned = true
-		add_animation(self, "animate_set_stunned", false)
+		add_animation(self, "animate_set_stunned", false, [delay])
 	else:
 		self.stunned = false
 		add_animation(self, "animate_hide_stunned", false)
 		
-func animate_set_stunned():
+func animate_set_stunned(delay=0.0):
+	if delay > 0.0:
+		var timer = Timer.new()
+		add_child(timer)
+		timer.set_wait_time(delay)
+		timer.start()
+		yield(timer, "timeout")
+		timer.queue_free()
+	
+		
 	get_node("Physicals/EnemyEffects/StunSpiral").show()
 
 
@@ -592,7 +603,11 @@ func corsair_attacked(damage):
 		set_corsair_marked(true)
 	attacked(damage)
 	
-	
+
+func fireball_attacked(damage):
+	attacked(damage)
+
+
 func shuriken_attacked(damage):
 	if get_parent().locations[coords].raining:
 		damage += 2
@@ -623,7 +638,7 @@ func modify_hp(amount, delay=0, after=false):
 		if self.hp == 0:
 			add_animation(self, "animate_set_hp", false, [self.hp, amount, delay, after])
 #			if !after: #this will be handled by something else if this is an after modification of hp
-			delete_self()
+			delete_self(delay)
 			#set_animation_sequence_blocking()
 		else:
 			add_animation(self, "animate_set_hp", false, [self.hp, amount, delay, after])
@@ -631,10 +646,10 @@ func modify_hp(amount, delay=0, after=false):
 #		enqueue_animation_sequence()
 
 
-func delete_self():
-	add_animation(self, "animate_delete_self", false)
+func delete_self(delay=0.0):
+	add_animation(self, "animate_delete_self", false, [delay])
 	delete_self_helper()
-	emit_signal("enemy_death")
+	emit_signal("enemy_death", self.coords)
 
 
 func walk_off(coords_distance, exits_bottom=true):
@@ -643,7 +658,7 @@ func walk_off(coords_distance, exits_bottom=true):
 	if exits_bottom:
 		emit_signal("broke_defenses")
 	else:
-		emit_signal("enemy_death")
+		emit_signal("enemy_death", self.coords)
 
 
 func delete_self_helper():
@@ -653,7 +668,15 @@ func delete_self_helper():
 
 
 #actually physically deletes it
-func animate_delete_self():
+func animate_delete_self(delay=0.0):
+	var timer = Timer.new()
+	add_child(timer)
+	
+	if delay > 0.0:
+		timer.set_wait_time(delay)
+		timer.start()
+		yield(timer, "timeout")
+	
 	add_anim_count()
 	get_node("SamplePlayer").play("rocket glass explosion 5")
 	get_node("Physicals").set_opacity(0)
@@ -667,8 +690,7 @@ func animate_delete_self():
 	explosion.set_emit_timeout(0.3)
 	explosion.set_emitting(true)
 	
-	var timer = Timer.new()
-	add_child(timer)
+	
 	timer.set_wait_time(0.5)
 	timer.start()
 	yield(timer, "timeout")
@@ -716,7 +738,7 @@ func animate_set_hp(hp, value, delay=0, after=false):
 	elif value == 0:
 		value_text = "-" + value_text
 	else:
-		get_node("AnimationPlayer").play("FlickerAnimation")
+		play_flicker_animation()
 	text.set_opacity(1.0)
 	
 	text.set_text(value_text)
@@ -737,6 +759,9 @@ func animate_set_hp(hp, value, delay=0, after=false):
 	
 	self.mid_trailing_animation = false
 	subtract_anim_count()
+	
+func play_flicker_animation():
+	get_node("AnimationPlayer").play("FlickerAnimation")
 
 func animate_hit():
 	emit_signal("small_shake")

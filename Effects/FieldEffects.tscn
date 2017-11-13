@@ -10,8 +10,6 @@ script/script = ExtResource( 1 )
 
 [node name="DustWaveParticles" parent="." instance=ExtResource( 2 )]
 
-config/process_mode = 1
-
 [node name="Tween" type="Tween" parent="."]
 
 playback/process_mode = 1
@@ -22,6 +20,13 @@ playback/speed = 1.0
 [node name="Frost" parent="." instance=ExtResource( 3 )]
 
 transform/pos = Vector2( 312.923, 356.245 )
+
+[node name="Timer" type="Timer" parent="."]
+
+process_mode = 1
+wait_time = 1.0
+one_shot = false
+autostart = false
 
 
 [editable path="Frost"]

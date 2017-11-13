@@ -48,8 +48,8 @@ func _process(delta):
  
 # Kick off a new screenshake effect.
 func shake(duration, frequency, amplitude):
-    # Don't interrupt current shake duration
-	if(_timer != 0):
+    # Don't interrupt current shake duration if it's a lesser shake
+	if(_timer != 0 and amplitude < _amplitude):
 	    return
 	# Initialize variables
 	_duration = duration

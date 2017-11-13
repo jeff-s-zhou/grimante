@@ -66,6 +66,10 @@ func has_forced_action(turn):
 
 
 func display_forced_action(turn):
+	get_node("Timer").set_wait_time(0.5)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
+	
 	var forced_action = self.forced_actions[turn][0]
 	var initial_coords = forced_action.get_initial_coords()
 	var target_coords = forced_action.get_final_coords()
@@ -156,6 +160,7 @@ func display_enemy_turn_end_rule(turn):
 
 
 func update_rule(next=false):
+	set_process_input(false)
 	var rule
 	var coords
 	if typeof(self.current_rule) == TYPE_DICTIONARY:
@@ -173,7 +178,6 @@ func update_rule(next=false):
 		get_node("Light2D").hide()
 		get_node("Label").hide()
 		get_node("TapLabel").hide()
-		set_process_input(false)
 		emit_signal("rule_finished")
 	else:
 		if typeof(line) == TYPE_ARRAY: #WTF? Oh this is for when we have images
@@ -199,6 +203,10 @@ func update_rule(next=false):
 				get_node("Sprite").show()
 			else:
 				get_node("RuleOverlay").show()
-				
+			
+			get_node("Timer").set_wait_time(0.3)
+			get_node("Timer").start()
+			yield(get_node("Timer"), "timeout")
+			
 			set_process_input(true)
 

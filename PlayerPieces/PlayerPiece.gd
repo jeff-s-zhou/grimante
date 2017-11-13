@@ -82,7 +82,7 @@ func load_description(unit_name):
 	
 func add_anim_count():
 	get_node("/root/AnimationQueue").update_animation_count(1)
-	get_node("CollisionArea").set_pickable(false) #so we don't have targeting shenanigans mid animation
+	set_targetable(false) #so we don't have targeting shenanigans mid animation
 	self.debug_anim_counter += 1
 	self.mid_animation = true
 	
@@ -90,7 +90,8 @@ func subtract_anim_count():
 	get_node("/root/AnimationQueue").update_animation_count(-1)
 	self.debug_anim_counter -=1
 	if self.debug_anim_counter == 0:
-		get_node("CollisionArea").set_pickable(true)
+		if self.state != States.DEAD: #dead units can't be targeted
+			set_targetable(true)
 	self.mid_animation = false
 	
 func darken(time, amount=0.3):
@@ -213,13 +214,13 @@ func walk_off(coords_distance, exits_bottom=true):
 	remove_from_group("player_pieces")
 
 
-func delete_self(isolated_call=true):
+func delete_self(isolated_call=true, corpse_anim_block=true):
 	var location = get_parent().locations[self.coords]
 	location.add_corpse(self)
 	set_targetable(false)
 
 	add_animation(self, "animate_delete_self", false)
-	add_animation(location, "animate_add_corpse", true)
+	add_animation(location, "animate_add_corpse", corpse_anim_block)
 	self.state = States.DEAD
 	set_z(-9)
 	get_parent().remove_piece(self.coords)
@@ -399,9 +400,9 @@ func unhovered():
 func hovered():
 	if self.state != States.DEAD:
 		#you need this lol, otherwise moving from one piece to another real fast fucks everything up
-#		get_node("Timer").set_wait_time(0.01) 
-#		get_node("Timer").start()
-#		yield(get_node("Timer"), "timeout")
+		get_node("Timer").set_wait_time(0.01) 
+		get_node("Timer").start()
+		yield(get_node("Timer"), "timeout")
 		self.hovered_flag = true
 		if !self.mid_animation:
 			hover_highlight()
@@ -421,6 +422,8 @@ func star_input_event(event):
 #called when an event happens inside the click area hitput
 func input_event(event, has_selected):
 	print("in player piece input event, hovered_flag: ", self.hovered_flag)
+	print(self.unit_name)
+	print(self.state)
 	if self.state != States.DEAD and self.hovered_flag:
 		if self.deploying_flag: #if in deploy phase
 			deploy_input_event(event, has_selected)
@@ -549,6 +552,14 @@ func attacked(attacker):
 	return smashed(attacker)
 
 
+func fireball_attacked(damage):
+	if !self.shielded:
+		delete_self(true, false)
+		return true
+	else:
+		set_shield(false)
+		return false
+
 func handle_nonlethal_shove(shover):
 	pass
 
@@ -571,9 +582,5 @@ func display_action_range():
 	pass
 #	for coords in get_ally_shove_range():
 #		get_parent().get_at_location(coords).assist_highlight()
-	
-func cast_ultimate():
-	pass
-
 
 

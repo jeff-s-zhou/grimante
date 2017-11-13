@@ -87,14 +87,40 @@ func jump_to(new_coords, dust=false):
 	get_node("Tween 2").start()
 	yield(get_node("Tween 2"), "tween_complete")
 	
+	var cracks = get_node("Cracks")
+	var slam_ring = get_node("SlamRing")
+	var explosion = get_node("SlamExplosion")
 	if dust:
+#		get_node("Tween 2").interpolate_property(cracks, "visibility/opacity", \
+#		0, 1, 0.1, Tween.TRANS_LINEAR, Tween.EASE_IN)
+#		get_node("Tween 2").start()
+		cracks.set_opacity(1)
+		explosion.set_opacity(1)
+		slam_ring.set_scale(Vector2(0.3, 0.3))
+		slam_ring.set_opacity(1)
 		get_parent().get_node("FieldEffects").emit_dust(self.get_pos())
+		var tween = Tween.new()
+		add_child(tween)
+		
+		tween.interpolate_property(slam_ring, "visibility/opacity", \
+		1, 0, 0.5, Tween.TRANS_QUAD, Tween.EASE_IN, 0.2)
+		tween.interpolate_property(slam_ring, "transform/scale", \
+		Vector2(0.3, 0.3), Vector2(1.6, 1.6), 0.7, Tween.TRANS_QUAD, Tween.EASE_OUT)
+		tween.start()
 	self.mid_leaping_animation = false
 	set_z(0)
 	get_node("SamplePlayer 2").play("explode3")
 	emit_signal("shake")
 	emit_signal("animation_done")
 	subtract_anim_count()
+	
+	if dust:
+		#yield(get_node("Tween 2"), "tween_complete")
+		get_node("Tween 2").interpolate_property(cracks, "visibility/opacity", \
+		1, 0, 1, Tween.TRANS_LINEAR, Tween.EASE_IN, 0.3)
+		get_node("Tween 2").interpolate_property(explosion, "visibility/opacity", \
+		1, 0, 0.2, Tween.TRANS_QUAD, Tween.EASE_IN, 0.3)
+		get_node("Tween 2").start()
 
 	
 func jump_back(new_coords):
@@ -173,9 +199,9 @@ func smash_move(new_coords):
 
 func smash(smash_range):
 	var action = get_new_action()
-	action.add_call("set_stunned", [true], smash_range)
+	action.add_call("set_stunned", [true, 0.2], smash_range)
 	#the false flag is so it doesn't interrupt the stun it just set lol
-	action.add_call("attacked", [self.aoe_damage], smash_range)
+	action.add_call("attacked", [self.aoe_damage, 0.2], smash_range)
 	action.execute()
 	
 	

@@ -127,6 +127,7 @@ custom_fonts/normal_font = ExtResource( 6 )
 bbcode/enabled = true
 bbcode/bbcode = ""
 visible_characters = -1
+percent_visible = 1.0
 
 [node name="TapLabel" type="Label" parent="."]
 

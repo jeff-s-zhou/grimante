@@ -4,8 +4,8 @@
 [ext_resource path="res://PlayerPieces/ArcherPiece.gd" type="Script" id=2]
 [ext_resource path="res://Assets/Allies/archer_piece_cooldown.png" type="Texture" id=3]
 [ext_resource path="res://Assets/Allies/archer_piece.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Allies/archer_piece_sepia.png" type="Texture" id=5]
-[ext_resource path="res://Assets/Allies/archer_piece_red.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Allies/archer_piece_red.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Allies/archer_piece_sepia.png" type="Texture" id=6]
 [ext_resource path="res://Assets/Allies/archer_glow.png" type="Texture" id=7]
 [ext_resource path="res://Assets/processed_sounds/bow_draw.smp" type="Sample" id=8]
 [ext_resource path="res://Assets/processed_sounds/bow_hit.smp" type="Sample" id=9]
@@ -19,14 +19,14 @@ animations = [ {
 "name": "default",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 5 ) ],
-"loop": true,
-"name": "cooldown",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 4 ), ExtResource( 6 ) ],
+"frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
 "loop": true,
 "name": "hurt",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 6 ) ],
+"loop": true,
+"name": "cooldown",
 "speed": 5.0
 } ]
 

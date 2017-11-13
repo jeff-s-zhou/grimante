@@ -205,6 +205,7 @@ func initialize_piece(piece_prototype, on_bar=false, key=null):
 	new_piece.connect("invalid_move", self, "handle_invalid_move")
 	new_piece.connect("shake", self, "screen_shake")
 	new_piece.connect("small_shake", self, "small_screen_shake")
+	new_piece.connect("big_shake", self, "big_screen_shake")
 	new_piece.connect("animated_placed", self, "handle_piece_placed")	
 	
 	if on_bar:
@@ -340,35 +341,36 @@ func _input(event):
 func computer_input(event):
 	#select a unit
 	if get_node("InputHandler").is_select(event):
-		instant_lighten()
-		var has_selected = get_node("Grid").selected != null
-		var hovered = get_node("CursorArea").get_piece_or_location_hovered()
-		print("has selected: ", has_selected)
-		if hovered:
-			print("has hovered, targetable: ", hovered.is_targetable())
-		if hovered and hovered.is_targetable():
-			
-			var star_bar = get_node("ControlBar/Combat/StarBar")
-			#if a star is active, handle it appropriately
-			if star_bar.handle_active_star(hovered, event): #returns true if successful
-				pass
-			else:
-				#if during a tutorial level, make sure move is as intended
-				if self.tutorial != null:
-					if self.tutorial.move_is_valid(get_turn_count(), hovered.coords):
-						hovered.input_event(event, has_selected)
-					else:
-						print("not valid??")
+		if self.state == STATES.player_turn:
+			instant_lighten()
+			var has_selected = get_node("Grid").selected != null
+			var hovered = get_node("CursorArea").get_piece_or_location_hovered()
+			print("has selected: ", has_selected)
+			if hovered:
+				print("has hovered, targetable: ", hovered.is_targetable())
+			if hovered and hovered.is_targetable():
+				
+				var star_bar = get_node("ControlBar/Combat/StarBar")
+				#if a star is active, handle it appropriately
+				if star_bar.handle_active_star(hovered, event): #returns true if successful
+					pass
 				else:
-					hovered.input_event(event, has_selected)
-		
-		#we add this case so we don't trigger the invalid move during a forced action
-		elif self.tutorial != null and self.tutorial.has_forced_action(get_turn_count()):
-			pass
-		
-		elif has_selected:
-			handle_invalid_move()
-			get_node("Grid").deselect()
+					#if during a tutorial level, make sure move is as intended
+					if self.tutorial != null:
+						if self.tutorial.move_is_valid(get_turn_count(), hovered.coords):
+							hovered.input_event(event, has_selected)
+						else:
+							print("not valid??")
+					else:
+						hovered.input_event(event, has_selected)
+			
+			#we add this case so we don't trigger the invalid move during a forced action
+			elif self.tutorial != null and self.tutorial.has_forced_action(get_turn_count()):
+				pass
+			
+			elif has_selected:
+				handle_invalid_move()
+				get_node("Grid").deselect()
 			
 	
 	#don't handle any other input during forced actions
@@ -593,12 +595,15 @@ func reinforce():
 		yield(self, "done_initializing")
 	emit_signal("reinforced")
 
-
 func screen_shake():
-	get_node("ShakeCamera").shake(0.6, 30, 12)
+	get_node("ShakeCamera").shake(0.6, 28, 15)
+	#get_node("ShakeCamera").shake(0.6, 30, 12)
 	
 func small_screen_shake():
 	get_node("ShakeCamera").shake(0.4, 24, 5)
+
+func big_screen_shake():
+	get_node("ShakeCamera").shake(0.8, 36, 25)
 
 func _sort_by_y_axis(enemy_piece1, enemy_piece2):
 		if enemy_piece1.coords.y > enemy_piece2.coords.y:
@@ -660,12 +665,12 @@ func handle_boss_death():
 		player_win()
 
 
-func handle_enemy_death():
+func handle_enemy_death(coords):
 	if get_node("/root/global").platform == PLATFORMS.PC:
 		get_node("ControlBar/Combat/StarBar").handle_enemy_death()
 	else:
 		get_node("InfoBar").handle_enemy_death()
-
+	get_node("Grid").handle_enemy_death(coords)
 	if get_tree().get_nodes_in_group("enemy_pieces").size() == 0:
 		player_win()
 

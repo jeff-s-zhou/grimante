@@ -16,7 +16,9 @@ func emit_dust(position):
 	#var dust_wave = DustWaveParticlesPrototype.instance()
 	var dust_wave = get_node("DustWaveParticles")
 	dust_wave.set_pos(position)
-	print(position)
+#	get_node("Timer").set_wait_time(0.2)
+#	get_node("Timer").start()
+#	yield(get_node("Timer"), "timeout")
 	dust_wave.set_emit_timeout(0.2)
 	dust_wave.set_emitting(true)
 

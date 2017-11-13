@@ -99,7 +99,6 @@ autostart = false
 
 [node name="FpsLabel" type="Label" parent="."]
 
-visibility/visible = false
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
@@ -116,7 +115,6 @@ max_lines_visible = -1
 
 [node name="AnimationCountLabel" type="Label" parent="."]
 
-visibility/visible = false
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2

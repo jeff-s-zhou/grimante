@@ -9,6 +9,7 @@ var locations = {}
 var pieces = {}
 
 var assassin = null
+var pyromancer = null
 
 var shadow_tile_range = []
 var shifting_sands = []
@@ -171,6 +172,8 @@ func add_piece(coords, piece, child_free=false):
 
 	if piece.unit_name == "Assassin":
 		self.assassin = piece
+	if piece.unit_name == "Pyromancer":
+		self.pyromancer = piece
 	
 	piece.set_global_pos(location.get_global_pos())
 	piece.added_to_grid()
@@ -180,6 +183,10 @@ func add_piece(coords, piece, child_free=false):
 func handle_assassin_passive(attack_range, caller):
 	if self.assassin != null and caller != self.assassin:
 		self.assassin.trigger_passive(attack_range)
+		
+func handle_enemy_death(coords):
+	if self.pyromancer != null:
+		self.pyromancer.gather_charges(coords)
 
 
 func remove_piece(coords):
@@ -500,7 +507,7 @@ func get_radial_range(coords, radial_range=[1, 1], side=null, collision_check=fa
 				if side==null and !pieces.has(hex_coords):
 					results.append(hex_coords)
 				
-				elif self.pieces.has(hex_coords) and self.pieces[hex_coords].side == side:
+				elif self.pieces.has(hex_coords) and (self.pieces[hex_coords].side == side or side == "ANY"):
 					results.append(hex_coords)
 	return results
 			

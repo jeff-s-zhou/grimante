@@ -14,7 +14,7 @@ var combat_resource
 
 const VERSION = "0.7.7"
 
-var online_logging_flag = false
+var online_logging_flag = true
 
 var http_thread
 

@@ -13,7 +13,7 @@ signal animation_done
 signal count_animation_done
 
 signal shake
-
+signal big_shake
 signal small_shake
 
 var current_animation_sequence = null
@@ -47,12 +47,7 @@ func _ready():
 	get_node("CollisionArea").connect("area_exit", self, "uncollide")
 	
 func set_targetable(flag):
-	if flag:
-		#set_opacity(1)
-		get_node("CollisionArea").set_pickable(true)
-	else:
-		#set_opacity(1)
-		get_node("CollisionArea").set_pickable(false)
+	get_node("CollisionArea").set_pickable(flag)
 		
 func is_targetable():
 	return get_node("CollisionArea").is_pickable()
@@ -291,6 +286,10 @@ func handle_shifting_sands():
 func hooked(new_coords):
 	add_animation(self, "animate_move", false, [new_coords, 600, false, Tween.TRANS_QUAD])
 	set_coords(new_coords)
+	
+	
+func fireball_attacked(damage):
+	pass
 
 
 func receive_shove(distance, damage):
