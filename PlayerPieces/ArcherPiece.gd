@@ -114,8 +114,8 @@ func piercing_arrow(new_coords):
 		final_hit_coords = coords
 		
 		var new_damage = damage
-		action.add_call("attacked", [new_damage], coords)
-		if self.grid.pieces[coords].will_die_to(damage) and damage > 0:
+		action.add_call("attacked", [new_damage, self], coords)
+		if self.grid.pieces[coords].will_die_to(damage, self) and damage > 0:
 			damage -= 1
 		else:
 			break
@@ -136,8 +136,9 @@ func animate_ranged_attack(new_coords):
 	var arrow = get_node("ArcherArrow")
 	arrow.set_rot(angle)
 	var distance = get_pos().distance_to(new_position)
-	var speed = 2200
-	var time = distance/speed
+	var dim_distance = dim_multi_distance(distance)
+	var speed = 1800
+	var time = dim_distance/speed
 	darken(0.3, 0.4)
 	get_node("Tween 2").interpolate_property(arrow, "visibility/opacity", 0, 1, 0.3, Tween.TRANS_SINE, Tween.EASE_IN)
 	
@@ -152,11 +153,11 @@ func animate_ranged_attack(new_coords):
 	yield(get_node("Tween 2"), "tween_complete")
 	yield(get_node("Tween 2"), "tween_complete")
 	
+	#arrow.set_scale(Vector2(1, 2))
 	get_node("Tween 2").interpolate_property(arrow, "transform/pos", arrow.get_pos(), new_arrow_pos, time, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	print("time to fire arrow is " + str(time))
-	
-	#get_node("Tween 2").interpolate_callback(self, max(time - 0.1, 0), "play_bow_hit")
+	get_node("Tween 2").interpolate_property(arrow, "transform/scale", Vector2(1, 2), Vector2(1, 1), time, Tween.TRANS_SINE, Tween.EASE_IN)
 	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
 	yield(get_node("Tween 2"), "tween_complete")
 	get_node("SamplePlayer 2").play("bow_hit")
 	arrow.set_opacity(0)
@@ -188,8 +189,8 @@ func predict_ranged_attack(position_coords, new_coords, is_passive=false):
 		final_hit_coords = coords
 		
 		var new_damage = damage
-		get_parent().pieces[coords].predict(new_damage, is_passive)
-		if self.grid.pieces[coords].will_die_to(damage) and damage > 0:
+		get_parent().pieces[coords].predict(new_damage, self, is_passive)
+		if self.grid.pieces[coords].will_die_to(damage, self) and damage > 0:
 			damage -= 1
 		else:
 			break

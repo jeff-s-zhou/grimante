@@ -13,7 +13,7 @@ func _ready():
 func get():
 	var tutorial = TutorialPrototype.instance()
 	
-	var text = ["Clear the board of enemies to win."]
+	var text = ["Clear the board of Enemies to win."]
 	add_player_start_rule(tutorial, 1, text)
 	
 	#TURN 1

@@ -204,7 +204,7 @@ func trample(new_coords):
 				add_animation(self, "animate_move", false, [current_coords, 350, false])
 				add_animation(self, "animate_hop", true, [current_coords - increment, current_coords, true])
 	var action = get_new_action()
-	action.add_call("attacked", [self.trample_damage, 0, true], attack_coords)
+	action.add_call("attacked", [self.trample_damage, self, 0, true], attack_coords)
 	action.execute()
 	set_coords(new_coords)
 	placed()
@@ -222,7 +222,7 @@ func charge_attack(new_coords, attack=false):
 	start_attack(new_coords)
 	var attack_range = [new_coords]
 	var action = get_new_action()
-	action.add_call("attacked", [get_charge_damage(tiles_travelled)], attack_range)
+	action.add_call("attacked", [get_charge_damage(tiles_travelled), self], attack_range)
 	action.execute()
 	var position_coords = decrement_one(new_coords)
 	end_attack(position_coords)
@@ -246,13 +246,13 @@ func predict_trample(new_coords):
 	while current_coords != new_coords:
 		current_coords = current_coords + increment
 		if get_parent().pieces.has(current_coords) and get_parent().pieces[current_coords].side == "ENEMY":
-			get_parent().pieces[current_coords].predict(self.trample_damage, true)
+			get_parent().pieces[current_coords].predict(self.trample_damage, self, true)
 
 
 func predict_charge_attack(new_coords):
 	var difference = new_coords - self.coords
 	var tiles_travelled = get_parent().hex_length(difference) - 1
-	get_parent().pieces[new_coords].predict(get_charge_damage(tiles_travelled))
+	get_parent().pieces[new_coords].predict(get_charge_damage(tiles_travelled), self)
 	
 	
 func cast_ultimate():

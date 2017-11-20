@@ -38,6 +38,7 @@ func animate_assist(assist_type, pos_difference):
 	for sparkles in sparkles_list:
 		sparkles.get_node("ParticleAttractor2D").set_pos(pos_difference)
 		sparkles.get_node("ParticleAttractor2D").set_enabled(true)
+		get_node("SamplePlayer").play("neutral_buff")
 	#	get_node("Timer").set_wait_time(0.1)
 	#	get_node("Timer").start()
 	#	yield(get_node("Timer"), "timeout")

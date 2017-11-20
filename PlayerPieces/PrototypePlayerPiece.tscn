@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=1]
+[gd_scene load_steps=18 format=1]
 
 [ext_resource path="res://Assets/Allies/piece_shadow.png" type="Texture" id=1]
 [ext_resource path="res://PlayerPieces/Components/SelectedGlow.tscn" type="PackedScene" id=2]
@@ -9,10 +9,11 @@
 [ext_resource path="res://PlayerPieces/Components/HeroShield.tscn" type="PackedScene" id=7]
 [ext_resource path="res://PlayerPieces/Components/InspirePiece.tscn" type="PackedScene" id=8]
 [ext_resource path="res://PlayerPieces/Components/InspireIndicator.tscn" type="PackedScene" id=9]
-[ext_resource path="res://PlayerPieces/Components/UltimateBar.tscn" type="PackedScene" id=10]
-[ext_resource path="res://PlayerPieces/Components/PlayerCollisionArea.tscn" type="PackedScene" id=11]
-[ext_resource path="res://PlayerPieces/Components/PieceSampleLibrary.tres" type="SampleLibrary" id=12]
-[ext_resource path="res://Assets/processed_fonts/info_overlay_body_rubik_26_italic.fnt" type="BitmapFont" id=13]
+[ext_resource path="res://Assets/effects/enemy_summon_light_layer.png" type="Texture" id=10]
+[ext_resource path="res://PlayerPieces/Components/UltimateBar.tscn" type="PackedScene" id=11]
+[ext_resource path="res://PlayerPieces/Components/PlayerCollisionArea.tscn" type="PackedScene" id=12]
+[ext_resource path="res://PlayerPieces/Components/PieceSampleLibrary.tres" type="SampleLibrary" id=13]
+[ext_resource path="res://Assets/processed_fonts/info_overlay_body_rubik_26_italic.fnt" type="BitmapFont" id=14]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -98,6 +99,7 @@ transform/pos = Vector2( 0, -5 )
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="Physicals"]
 
+visibility/light_mask = 129
 frames = SubResource( 1 )
 animation = "hurt"
 
@@ -121,9 +123,31 @@ transform/pos = Vector2( 0, 45.0514 )
 
 z/z = 6
 
-[node name="UltimateBar" parent="." instance=ExtResource( 10 )]
+[node name="Light2D" type="Light2D" parent="Physicals"]
 
-[node name="CollisionArea" parent="." instance=ExtResource( 11 )]
+enabled = false
+editor_only = false
+texture = ExtResource( 10 )
+offset = Vector2( 0, 0 )
+scale = 1.0
+color = Color( 1, 1, 1, 1 )
+energy = 1.0
+mode = 0
+range/height = 0.0
+range/z_min = -1024
+range/z_max = 1024
+range/layer_min = 0
+range/layer_max = 0
+range/item_mask = 128
+shadow/enabled = false
+shadow/color = Color( 0, 0, 0, 0 )
+shadow/buffer_size = 2048
+shadow/esm_multiplier = 80.0
+shadow/item_mask = 1
+
+[node name="UltimateBar" parent="." instance=ExtResource( 11 )]
+
+[node name="CollisionArea" parent="." instance=ExtResource( 12 )]
 
 [node name="Timer" type="Timer" parent="."]
 
@@ -142,7 +166,7 @@ playback/speed = 1.0
 [node name="SamplePlayer" type="SamplePlayer" parent="."]
 
 config/polyphony = 1
-config/samples = ExtResource( 12 )
+config/samples = ExtResource( 13 )
 default/volume_db = 0.0
 default/pitch_scale = 1.0
 default/pan = 0.0
@@ -173,7 +197,7 @@ margin/left = -29.0
 margin/top = -21.0
 margin/right = 11.0
 margin/bottom = 5.0
-custom_fonts/font = ExtResource( 13 )
+custom_fonts/font = ExtResource( 14 )
 custom_colors/font_color = Color( 0.804688, 0, 1, 1 )
 custom_colors/font_color_shadow = Color( 0, 0, 0, 1 )
 percent_visible = 1.0

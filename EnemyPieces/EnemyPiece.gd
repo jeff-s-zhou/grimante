@@ -92,7 +92,7 @@ func _ready():
 	get_node("Physicals/HealthDisplay").set_z(2)
 	#self.check_global_seen()
 	self.side = "ENEMY"
-	#set_opacity(0)
+	set_opacity(0)
 
 
 func initialize(unit_name, hover_description, movement_value, max_hp, modifiers, prototype, type):
@@ -152,6 +152,19 @@ func deploy():
 func added_to_grid():
 	add_to_group("enemy_pieces")
 	add_animation(self, "animate_summon", false)
+	
+func animate_summon():
+	add_anim_count()
+	var light2d = get_node("Physicals/Light2D")
+	light2d.set_enabled(true)
+	light2d.set_energy(15)
+	set_opacity(1)
+	get_node("Tween").interpolate_property(light2d, "energy", 15, 0.01, 0.8, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	light2d.set_enabled(false)
+	subtract_anim_count()
+
 	
 func set_hp(hp):
 	self.hp = hp
@@ -248,7 +261,7 @@ func attack_highlight():
 	self.action_highlighted = true
 	show_red()
 	
-func get_actual_damage(damage):
+func get_actual_damage(damage, unit):
 	var tile = get_parent().locations[coords]
 	
 	#TODO put this through an action call
@@ -264,8 +277,8 @@ func get_actual_damage(damage):
 	else:
 		return damage
 	
-func will_die_to(damage):
-	var actual_damage = get_actual_damage(damage)
+func will_die_to(damage, unit):
+	var actual_damage = get_actual_damage(damage, unit)
 	return (self.hp - actual_damage) <= 0
 
 
@@ -333,8 +346,8 @@ func animate_predict_hp(hp, value, is_passive_damage):
 
 
 
-func predict(damage, is_passive_damage=false):
-	var actual_damage = get_actual_damage(damage)
+func predict(damage, unit, is_passive_damage=false):
+	var actual_damage = get_actual_damage(damage, unit)
 	add_animation(self, "animate_predict_hp", false, [max(self.hp - actual_damage, 0), -1 * actual_damage, is_passive_damage])
 		
 
@@ -580,8 +593,15 @@ func heal(amount, delay=0.0):
 	modify_hp(amount, delay)
 
 
-func attacked(amount, delay=0.0, after=false):
-	var damage = get_actual_damage(amount)
+func attacked(amount, unit, delay=0.0, after=false):
+	if unit != null:
+		if unit.unit_name.to_lower() == "corsair" and !self.shielded:
+			set_corsair_marked(true)
+			
+		elif unit.unit_name.to_lower() == "stormdancer" and get_parent().locations[coords].raining:
+			amount += 2
+	
+	var damage = get_actual_damage(amount, unit)
 	
 	if self.shielded:
 		set_shield(false)
@@ -596,23 +616,11 @@ func attacked(amount, delay=0.0, after=false):
 #		var action = get_new_action()
 #		action.add_call("lightning_attacked", [], self.coords)
 #		action.execute()
-#	
-
-func corsair_attacked(damage):
-	if !self.shielded:
-		set_corsair_marked(true)
-	attacked(damage)
-	
-
-func fireball_attacked(damage):
-	attacked(damage)
 
 
-func shuriken_attacked(damage):
-	if get_parent().locations[coords].raining:
-		damage += 2
-	attacked(damage)
-	
+func fireball_attacked(damage, unit):
+	attacked(damage, unit)
+
 		
 func lightning_attacked():
 	var tile = get_parent().locations[coords]
@@ -863,7 +871,7 @@ func deathrattle():
 		add_animation(self, "animate_frozen_shatter", true)
 		var neighbor_coords_range = get_parent().get_range(self.coords, [1,2], "ENEMY")
 		var action = get_new_action()
-		action.add_call("attacked", [2], neighbor_coords_range)
+		action.add_call("attacked", [2, null], neighbor_coords_range)
 		action.execute()
 		
 func animate_frozen_shatter():

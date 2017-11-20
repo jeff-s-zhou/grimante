@@ -27,6 +27,10 @@ func initialize(flags):
 		self.assist_disabled = false
 	self.assist_type = null
 	self.assister = null
+	
+	
+func is_assist_enabled():
+	return !self.assist_disabled
 
 	
 func reset_combo():

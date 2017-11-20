@@ -1,10 +1,30 @@
-[gd_scene load_steps=6 format=1]
+[gd_scene load_steps=8 format=1]
 
 [ext_resource path="res://UI/HeroInfoSubOverlay.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/armor_icon.png" type="Texture" id=2]
-[ext_resource path="res://Assets/UI/movement_icon_small.png" type="Texture" id=3]
-[ext_resource path="res://Assets/processed_fonts/info_overlay_text.fnt" type="BitmapFont" id=4]
-[ext_resource path="res://Assets/UI/inspire_arrow_small.png" type="Texture" id=5]
+[ext_resource path="res://Assets/processed_fonts/hero_info_sub_overlay.fnt" type="BitmapFont" id=3]
+[ext_resource path="res://Assets/UI/Inspire/red_icon.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/Inspire/yellow_icon.png" type="Texture" id=5]
+[ext_resource path="res://Assets/UI/Inspire/blue_icon.png" type="Texture" id=6]
+
+[sub_resource type="SpriteFrames" id=1]
+
+animations = [ {
+"frames": [ ExtResource( 4 ) ],
+"loop": true,
+"name": "attack",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 5 ) ],
+"loop": true,
+"name": "movement",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 6 ) ],
+"loop": true,
+"name": "shield",
+"speed": 5.0
+} ]
 
 [node name="HeroInfoSubOverlay" type="Node2D"]
 
@@ -12,47 +32,45 @@ script/script = ExtResource( 1 )
 
 [node name="ArmorIcon" type="Sprite" parent="."]
 
-transform/pos = Vector2( 105.987, 14.5484 )
+transform/pos = Vector2( 15, 14 )
 texture = ExtResource( 2 )
 
-[node name="MovementIcon" type="Sprite" parent="."]
+[node name="Label" type="Label" parent="ArmorIcon"]
 
-transform/pos = Vector2( 45.6652, 13.7339 )
-texture = ExtResource( 3 )
-
-[node name="MovementLabel" type="Label" parent="."]
-
+visibility/opacity = 0.3
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
-margin/left = 9.0
-margin/top = 0.0
-margin/right = 49.0
-margin/bottom = 30.0
-custom_fonts/font = ExtResource( 4 )
-text = "3"
+margin/left = 21.0
+margin/top = -9.0
+margin/right = 214.0
+margin/bottom = 20.0
+custom_fonts/font = ExtResource( 3 )
+text = "Shield Start"
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="InspireIcon" type="Sprite" parent="."]
+[node name="InspireIcon" type="AnimatedSprite" parent="."]
 
-transform/pos = Vector2( 211.442, 13.7339 )
-texture = ExtResource( 5 )
+transform/pos = Vector2( 170, 14 )
+frames = SubResource( 1 )
+animation = "attack"
 
-[node name="InspireLabel" type="Label" parent="."]
+[node name="Label" type="Label" parent="InspireIcon"]
 
+visibility/opacity = 0.3
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
-margin/left = 145.0
-margin/top = -1.0
-margin/right = 193.0
-margin/bottom = 29.0
-custom_fonts/font = ExtResource( 4 )
-text = "ATK"
+margin/left = 21.0
+margin/top = -9.0
+margin/right = 214.0
+margin/bottom = 20.0
+custom_fonts/font = ExtResource( 3 )
+text = "Inspire Movement"
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1

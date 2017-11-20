@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=1]
+[gd_scene load_steps=24 format=1]
 
 [ext_resource path="res://EnemyPieces/GruntPiece.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Allies/piece_shadow.png" type="Texture" id=2]
@@ -10,19 +10,16 @@
 [ext_resource path="res://EnemyPieces/Components/HealthDisplay.tscn" type="PackedScene" id=8]
 [ext_resource path="res://EnemyPieces/Components/EnemyEffects.tscn" type="PackedScene" id=9]
 [ext_resource path="res://EnemyPieces/Components/FogEffect.tscn" type="PackedScene" id=10]
-[ext_resource path="res://EnemyPieces/Components/Sprinkles.tscn" type="PackedScene" id=11]
-[ext_resource path="res://EnemyPieces/Components/FlickerAnimation.tres" type="Animation" id=12]
-[ext_resource path="res://EnemyPieces/Components/SummonAnimation.tres" type="Animation" id=13]
+[ext_resource path="res://Assets/effects/enemy_summon_light_layer.png" type="Texture" id=11]
+[ext_resource path="res://EnemyPieces/Components/Sprinkles.tscn" type="PackedScene" id=12]
+[ext_resource path="res://EnemyPieces/Components/FlickerAnimation.tres" type="Animation" id=13]
 [ext_resource path="res://UI/SeenIcon.tscn" type="PackedScene" id=14]
 [ext_resource path="res://EnemyPieces/Components/EnemyCollisionArea.tscn" type="PackedScene" id=15]
 [ext_resource path="res://Assets/processed_fonts/flyover.fnt" type="BitmapFont" id=16]
 [ext_resource path="res://Assets/processed_fonts/info_overlay_body_rubik_26_italic.fnt" type="BitmapFont" id=17]
-[ext_resource path="res://Assets/processed_sounds/monster_death.smp" type="Sample" id=18]
-[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 2.smp" type="Sample" id=19]
-[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 4.smp" type="Sample" id=20]
-[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 5.smp" type="Sample" id=21]
-[ext_resource path="res://Assets/processed_sounds/rocket glass explosion thud 2.smp" type="Sample" id=22]
-[ext_resource path="res://Assets/processed_sounds/window glass break smash 2.smp" type="Sample" id=23]
+[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 5.smp" type="Sample" id=18]
+[ext_resource path="res://Assets/processed_sounds/rocket glass explosion thud 2.smp" type="Sample" id=19]
+[ext_resource path="res://Assets/processed_sounds/window glass break smash 2.smp" type="Sample" id=20]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -54,46 +51,27 @@ animations = [ {
 
 [sub_resource type="SampleLibrary" id=3]
 
-samples/monster_death = {
-"db": -5.0,
+"samples/rocket glass explosion 5" = {
+"db": 0.0,
 "pitch": 1.0,
 "priority": 0,
 "sample": ExtResource( 18 )
 }
-"samples/rocket glass explosion 2" = {
-"db": 5.0,
+"samples/rocket glass explosion thud 2" = {
+"db": 0.0,
 "pitch": 1.0,
 "priority": 0,
 "sample": ExtResource( 19 )
-}
-"samples/rocket glass explosion 4" = {
-"db": 5.0,
-"pitch": 1.0,
-"priority": 0,
-"sample": ExtResource( 20 )
-}
-"samples/rocket glass explosion 5" = {
-"db": 5.0,
-"pitch": 1.0,
-"priority": 0,
-"sample": ExtResource( 21 )
-}
-"samples/rocket glass explosion thud 2" = {
-"db": 5.0,
-"pitch": 1.0,
-"priority": 0,
-"sample": ExtResource( 22 )
 }
 "samples/window glass break smash 2" = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 23 )
+"sample": ExtResource( 20 )
 }
 
 [node name="GruntPiece" type="KinematicBody2D"]
 
-visibility/opacity = 0.0
 input/pickable = true
 collision/layers = 1
 collision/mask = 1
@@ -118,6 +96,7 @@ animation = "boss"
 
 [node name="AnimatedSprite" type="AnimatedSprite" parent="Physicals"]
 
+visibility/light_mask = 129
 frames = SubResource( 2 )
 animation = "damaged"
 
@@ -140,15 +119,36 @@ editor/display_folded = true
 
 visibility/visible = false
 
-[node name="Sprinkles" parent="." instance=ExtResource( 11 )]
+[node name="Light2D" type="Light2D" parent="Physicals"]
+
+enabled = false
+editor_only = false
+texture = ExtResource( 11 )
+offset = Vector2( 0, 0 )
+scale = 1.0
+color = Color( 1, 1, 1, 1 )
+energy = 0.0
+mode = 0
+range/height = 0.0
+range/z_min = -1024
+range/z_max = 1024
+range/layer_min = 0
+range/layer_max = 0
+range/item_mask = 128
+shadow/enabled = false
+shadow/color = Color( 0, 0, 0, 0 )
+shadow/buffer_size = 2048
+shadow/esm_multiplier = 80.0
+shadow/item_mask = 1
+
+[node name="Sprinkles" parent="." instance=ExtResource( 12 )]
 
 [node name="AnimationPlayer" type="AnimationPlayer" parent="."]
 
 playback/process_mode = 1
 playback/default_blend_time = 0.0
 root/root = NodePath("..")
-anims/FlickerAnimation = ExtResource( 12 )
-anims/SummonAnimation = ExtResource( 13 )
+anims/FlickerAnimation = ExtResource( 13 )
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]

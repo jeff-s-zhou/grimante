@@ -30,6 +30,7 @@ script/script = ExtResource( 1 )
 
 visibility/visible = false
 visibility/opacity = 0.5
+visibility/light_mask = 129
 transform/pos = Vector2( 0, -8 )
 texture = ExtResource( 2 )
 

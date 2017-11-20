@@ -1,42 +1,14 @@
-[gd_scene load_steps=12 format=1]
+[gd_scene load_steps=8 format=1]
 
 [ext_resource path="res://PlayerPieces/PrototypePlayerPiece.tscn" type="PackedScene" id=1]
 [ext_resource path="res://PlayerPieces/AssassinPiece.gd" type="Script" id=2]
 [ext_resource path="res://Assets/Allies/assassin_piece_cooldown.png" type="Texture" id=3]
 [ext_resource path="res://PlayerPieces/Components/AssassinPieceSprites.tres" type="SpriteFrames" id=4]
 [ext_resource path="res://Assets/Allies/assassin_glow.png" type="Texture" id=5]
-[ext_resource path="res://Assets/processed_sounds/explosion_thump.smp" type="Sample" id=6]
-[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 2.smp" type="Sample" id=7]
-[ext_resource path="res://Assets/processed_sounds/rocket glass explosion thud 2.smp" type="Sample" id=8]
-[ext_resource path="res://Assets/processed_sounds/rocket glass explosion thump.smp" type="Sample" id=9]
-[ext_resource path="res://Assets/effects/assassin_fade.png" type="Texture" id=10]
+[ext_resource path="res://Assets/effects/assassin_fade.png" type="Texture" id=6]
 
 [sub_resource type="SampleLibrary" id=1]
 
-samples/explosion_thump = {
-"db": 0.0,
-"pitch": 1.0,
-"priority": 0,
-"sample": ExtResource( 6 )
-}
-"samples/rocket glass explosion 2" = {
-"db": 5.0,
-"pitch": 1.0,
-"priority": 0,
-"sample": ExtResource( 7 )
-}
-"samples/rocket glass explosion thud 2" = {
-"db": 5.0,
-"pitch": 1.0,
-"priority": 0,
-"sample": ExtResource( 8 )
-}
-"samples/rocket glass explosion thump" = {
-"db": 5.0,
-"pitch": 1.0,
-"priority": 0,
-"sample": ExtResource( 9 )
-}
 
 [node name="AssassinPiece" instance=ExtResource( 1 )]
 
@@ -62,6 +34,6 @@ config/samples = SubResource( 1 )
 
 visibility/opacity = 0.0
 transform/pos = Vector2( 0, -4 )
-texture = ExtResource( 10 )
+texture = ExtResource( 6 )
 
 

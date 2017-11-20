@@ -16,9 +16,7 @@ onready var ASSIST_TYPES = AssistSystem.ASSIST_TYPES
 
 var assist_type = null
 
-var direct_attack_description = []
-var indirect_attack_description = []
-var passive_description = []
+var descriptions = []
 
 var state = States.PLACED
 var cursor_area
@@ -69,14 +67,9 @@ func load_description(unit_name):
 		var line_parts = line.split("/")
 		var type = line_parts[0]
 		var name = line_parts[1]
-		var description = line_parts[2]
-		if type == "Direct":
-			#todo, change this so maybe it's saved as a tuple
-			self.direct_attack_description.append(name + ". " + description)
-		elif type == "Indirect":
-			self.indirect_attack_description.append(name + ". " + description)
-		elif type == "Passive":
-			self.passive_description.append(name + ". " + description)
+		var text = line_parts[2]
+		
+		self.descriptions.append({"type":type, "name":name, "text":text})
 	save.close()
 	
 	
@@ -174,11 +167,9 @@ func get_movement_value():
 
 
 func star_reactivate():
-	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
 	self.state = States.DEFAULT
-	add_animation(self, "animate_reactivate", false)
+	add_animation(self, "animate_reactivate", false, [true])
 	if(get_node("CollisionArea").overlaps_area(self.cursor_area)):
-		print("hovering???")
 		self.hovered()
 
 
@@ -257,20 +248,44 @@ func resurrect():
 	var location = get_parent().locations[self.coords]
 	add_animation(location, "animate_hide_corpse", false)
 	add_animation(self, "animate_resurrect", true)
-	star_reactivate()
+	self.state = States.DEFAULT
 
 
 func animate_resurrect(blocking=true):
-	set_targetable(true)
 	set_pos(get_parent().locations[self.coords].get_pos())
 	add_anim_count()
-	get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	get_node("Tween").interpolate_property(get_node("Shadow"), "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	get_node("Tween").start()
-	yield(get_node("Tween"), "tween_complete")
+	get_node("SamplePlayer").play("revive2")
+	
+	var light2d = get_node("Physicals/Light2D")
+	light2d.set_enabled(true)
+	light2d.set_energy(15)
+	
+	get_node("Physicals").set_opacity(1)
+	var tween = Tween.new()
+	add_child(tween)
+	
+	#get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 0, 1, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.interpolate_property(get_node("Shadow"), "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.interpolate_property(light2d, "energy", 15, 0.01, 0.8, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.start()
+	
+	yield(tween, "tween_complete")
+	yield(tween, "tween_complete")
+	light2d.set_enabled(false)
+	tween.queue_free()
 	if blocking:
 		emit_signal("animation_done")
+	subtract_anim_count() #will set targetable to true, since state is no longer DEAD
+	if(get_node("CollisionArea").overlaps_area(self.cursor_area)):
+		self.hovered()
+	
+func animate_summon():
+	add_anim_count()
+	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
 	subtract_anim_count()
+
 	
 
 func initialize(cursor_area, flags):
@@ -280,12 +295,19 @@ func initialize(cursor_area, flags):
 		pass
 	else:
 		get_node("Physicals/InspirePiece").initialize(self.assist_type)
-		
+
+
+func is_inspire_enabled():
+	pass
+
+
 func added_to_grid():
 	pass
 	
-func animate_reactivate():
+func animate_reactivate(star_reactivate=false):
 	get_node("Physicals/CooldownSprite").show()
+	if star_reactivate:
+		get_node("SamplePlayer").play("star_reactivate")
 	#get_node("Physicals/AnimatedSprite").set_opacity(0)
 	var sprite = get_node("Physicals/AnimatedSprite")
 	var glow_sprite = get_node("Physicals/GlowSprite")
@@ -387,6 +409,7 @@ func hover_highlight():
 
 #called on mouse exiting the CollisionArea
 func unhovered():
+	print("unhovering??")
 	if self.state != States.DEAD:
 		self.hovered_flag = false
 		get_node("Physicals/OverlayLayers/White").hide()
@@ -552,7 +575,7 @@ func attacked(attacker):
 	return smashed(attacker)
 
 
-func fireball_attacked(damage):
+func fireball_attacked(damage, unit):
 	if !self.shielded:
 		delete_self(true, false)
 		return true

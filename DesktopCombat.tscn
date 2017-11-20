@@ -8,13 +8,13 @@
 [ext_resource path="res://Assets/processed_sounds/error.smp" type="Sample" id=6]
 [ext_resource path="res://Assets/UI/darken_layer_desktop.png" type="Texture" id=7]
 [ext_resource path="res://InputHandler.tscn" type="PackedScene" id=8]
-[ext_resource path="res://UI/InfoOverlay.tscn" type="PackedScene" id=9]
-[ext_resource path="res://Effects/Fireflies.tscn" type="PackedScene" id=10]
-[ext_resource path="res://UI/Desktop/ControlBar.tscn" type="PackedScene" id=11]
-[ext_resource path="res://UI/Desktop/InfoBar.tscn" type="PackedScene" id=12]
-[ext_resource path="res://UI/TurnUpdate.tscn" type="PackedScene" id=13]
-[ext_resource path="res://UI/Desktop/Settings.tscn" type="PackedScene" id=14]
-[ext_resource path="res://UI/QuickOptions/QuickOptionsBar.tscn" type="PackedScene" id=15]
+[ext_resource path="res://Effects/Fireflies.tscn" type="PackedScene" id=9]
+[ext_resource path="res://UI/Desktop/ControlBar.tscn" type="PackedScene" id=10]
+[ext_resource path="res://UI/Desktop/InfoBar.tscn" type="PackedScene" id=11]
+[ext_resource path="res://UI/TurnUpdate.tscn" type="PackedScene" id=12]
+[ext_resource path="res://UI/Desktop/Settings.tscn" type="PackedScene" id=13]
+[ext_resource path="res://UI/QuickOptions/QuickOptionsBar.tscn" type="PackedScene" id=14]
+[ext_resource path="res://UI/Desktop/DesktopInfoOverlay.tscn" type="PackedScene" id=15]
 
 [sub_resource type="SampleLibrary" id=1]
 
@@ -122,32 +122,31 @@ autostart = false
 
 [node name="InputHandler" parent="." instance=ExtResource( 8 )]
 
-[node name="InfoOverlay" parent="." instance=ExtResource( 9 )]
-
-visibility/visible = false
-transform/pos = Vector2( 25, 30 )
-
-[node name="Fireflies" parent="." instance=ExtResource( 10 )]
+[node name="Fireflies" parent="." instance=ExtResource( 9 )]
 
 transform/pos = Vector2( 512, 384 )
 config/half_extents = Vector2( 512, 384 )
 
-[node name="ControlBar" parent="." instance=ExtResource( 11 )]
+[node name="ControlBar" parent="." instance=ExtResource( 10 )]
 
 transform/pos = Vector2( 0, 680 )
 
-[node name="InfoBar" parent="." instance=ExtResource( 12 )]
+[node name="InfoBar" parent="." instance=ExtResource( 11 )]
 
 transform/pos = Vector2( 833.097, 15 )
 
-[node name="PhaseShifter" parent="." instance=ExtResource( 13 )]
+[node name="PhaseShifter" parent="." instance=ExtResource( 12 )]
 
 transform/pos = Vector2( 511, 390 )
 
-[node name="Settings" parent="." instance=ExtResource( 14 )]
+[node name="Settings" parent="." instance=ExtResource( 13 )]
 
-[node name="QuickOptionsBar" parent="." instance=ExtResource( 15 )]
+[node name="QuickOptionsBar" parent="." instance=ExtResource( 14 )]
 
 transform/pos = Vector2( 64.6638, 26.3445 )
+
+[node name="InfoOverlay" parent="." instance=ExtResource( 15 )]
+
+visibility/visible = false
 
 

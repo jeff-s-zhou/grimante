@@ -2,11 +2,11 @@
 
 [ext_resource path="res://PlayerPieces/Components/InspireIndicator.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/Inspire/inspire_attack_text.png" type="Texture" id=2]
-[ext_resource path="res://Assets/UI/Inspire/inspire_move_text.png" type="Texture" id=3]
-[ext_resource path="res://Assets/UI/Inspire/inspire_defense_text.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/Inspire/inspire_defense_text.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/Inspire/inspire_move_text.png" type="Texture" id=4]
 [ext_resource path="res://Assets/UI/Inspire/inspire_attack_arrow.png" type="Texture" id=5]
-[ext_resource path="res://Assets/UI/Inspire/inspire_move_arrow.png" type="Texture" id=6]
-[ext_resource path="res://Assets/UI/Inspire/inspire_defense_arrow.png" type="Texture" id=7]
+[ext_resource path="res://Assets/UI/Inspire/inspire_defense_arrow.png" type="Texture" id=6]
+[ext_resource path="res://Assets/UI/Inspire/inspire_move_arrow.png" type="Texture" id=7]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -18,12 +18,12 @@ animations = [ {
 }, {
 "frames": [ ExtResource( 3 ) ],
 "loop": true,
-"name": "movement",
+"name": "defense",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 4 ) ],
 "loop": true,
-"name": "defense",
+"name": "movement",
 "speed": 5.0
 } ]
 
@@ -37,12 +37,12 @@ animations = [ {
 }, {
 "frames": [ ExtResource( 6 ) ],
 "loop": true,
-"name": "movement",
+"name": "defense",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 7 ) ],
 "loop": true,
-"name": "defense",
+"name": "movement",
 "speed": 5.0
 } ]
 

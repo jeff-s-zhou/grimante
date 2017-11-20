@@ -88,18 +88,16 @@ func get_random_target():
 	randomize()
 	var random_range = self.grid.get_radial_range(self.coords, [1, 2], "ANY")
 	var random_targets = []
-	print("random_range:", random_range)
 	for coords in random_range:
 		if self.grid.has_piece(coords):
 			random_targets.append(self.grid.get_piece(coords))
-	print("random_targets:", random_targets)
 	if random_targets != []:
 		var selector = randi() % random_targets.size()
 		return random_targets[selector]
 
 func cast_fireball(coords):
 	add_animation(self, "animate_cast_fireball", true, [coords])
-	self.grid.get_piece(coords).fireball_attacked(self.fireball_damage)
+	self.grid.get_piece(coords).fireball_attacked(self.fireball_damage, self)
 	
 	
 func animate_cast_fireball(coords):

@@ -5,26 +5,19 @@ extends "EnemyPiece.gd"
 # var b="textvar"
 
 var max_hp = 5
+var mirrored_hero_name = null
 var DESCRIPTION = "Only the original Hero deals full damage. Receives 1 damage from attacks by all other Heroes."
 
+#todo: initialize with the mirrored hero name
 func initialize(max_hp, modifiers, prototype):
+	if modifiers.has("unit_name"): #modifiers is only a dict when made through the level editor
+		self.mirrored_hero_name = unit_name 
 	.initialize("Shadow", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, TYPES.selfish)
-	
 
-#going to need to get the caller of the attack fuuuuck
-func get_actual_damage(damage):
-	var tile = get_parent().locations[coords]
-	
-	#TODO put this through an action call
-	
-	if self.boss_flag:
-		if damage > 1:
-			damage = 1
-		else:
-			damage = 0
 
-	if self.shielded:
-		return 0
+func get_actual_damage(damage, unit):
+	if !unit.unit_name == self.mirrored_hero_name:
+		.get_actual_damage(1, unit)
 	else:
-		return damage
+		.get_actual_damage(damage, unit)
 	

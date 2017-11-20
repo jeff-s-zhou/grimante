@@ -160,7 +160,7 @@ func emit_animated_placed():
 
 func predict(new_coords):
 	if _is_within_attack_range(new_coords):
-		get_parent().pieces[new_coords].predict(self.get_backstab_damage(new_coords))
+		get_parent().pieces[new_coords].predict(self.get_backstab_damage(new_coords), self)
 
 
 #resets the assassin to be able to act again

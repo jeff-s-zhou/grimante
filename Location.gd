@@ -84,7 +84,15 @@ func set_reinforcement_indicator(type=null):
 		get_node("ReinforcementIndicator").show()
 	else:
 		get_node("ReinforcementIndicator").hide()
-		
+
+func animate_reinforcement_summon():
+	get_node("ReinforcementIndicator").animate_summon()
+	yield(get_node("ReinforcementIndicator"), "animation_done")
+	emit_signal("animation_done")
+	set_reinforcement_indicator(null)
+	
+func play_summon_sound():
+	get_node("SamplePlayer").play("summon4")
 		
 func set_deployable_indicator(flag):
 	if flag:
@@ -148,7 +156,7 @@ func reset_highlight():
 	
 func _mouse_entered():
 	#print("mouse_entered")
-	get_node("SamplePlayer").play("tile_hover")
+	get_node("SamplePlayer").play("magic tile hover")
 	get_node("Sprite").set_opacity(self.highlight_opacity)
 	#we needed this in case you exited from a tile and it reset AFTER another tile called predict lol
 #	get_node("Timer").set_wait_time(0.01)

@@ -78,7 +78,7 @@ func _ready():
 	get_node("/root/AssistSystem").initialize(self.level_schematic.flags)
 	
 	get_node("Grid").initialize(self.level_schematic.flags)
-	
+#	
 	if !get_node("/root/MusicPlayer").is_playing():
 		get_node("/root/MusicPlayer").play()
 
@@ -98,7 +98,7 @@ func _ready():
 				initialize_piece(prototype, true)
 	
 	load_in_next_wave(true)
-	deploy_wave()
+	deploy_wave(true)
 	load_in_next_wave()
 	display_wave_preview()
 	
@@ -480,6 +480,10 @@ func enemy_phase():
 	for enemy in enemy_pieces:
 		enemy.turn_end()
 	
+	get_node("Timer2").set_wait_time(0.25)
+	get_node("Timer2").start()
+	yield(get_node("Timer2"), "timeout")
+	
 	deploy_wave()
 	load_in_next_wave()
 	display_wave_preview()
@@ -611,9 +615,13 @@ func _sort_by_y_axis(enemy_piece1, enemy_piece2):
 		return false
 
 
-func deploy_wave():
+func deploy_wave(first=false):
 	for coords in self.enemy_reinforcements.keys():
 		var piece = self.enemy_reinforcements[coords]
+		var location = get_node("Grid").locations[coords]
+		if !first:
+			get_node("/root/AnimationQueue").enqueue(location, "animate_reinforcement_summon", true)
+		
 		if get_node("Grid").pieces.has(coords):
 			var blocking_piece = get_node("Grid").pieces[coords]
 			if blocking_piece.side == "PLAYER":
@@ -654,7 +662,8 @@ func load_in_next_wave(zero_wave=false):
 	
 	
 func display_wave_preview():
-	get_node("Grid").reset_reinforcement_indicators()
+#	get_node("Grid").reset_reinforcement_indicators()
+#	#get_node("/root/AnimationQueue").enqueue(get_node("Grid"), "reset_reinforcement_indicators", false)
 	for coords in self.enemy_reinforcements.keys():
 		var type = self.enemy_reinforcements[coords].type
 		get_node("Grid").locations[coords].set_reinforcement_indicator(type)

@@ -124,8 +124,11 @@ func uncollide(area):
 
 func set_mid_animation(flag):
 	self.mid_animation = flag
-
+	
 func animate_summon():
+	pass
+
+func animate_summon2():
 	add_anim_count()
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
@@ -305,10 +308,11 @@ func receive_shove(distance, damage):
 		
 	#will land on something
 	elif get_parent().pieces.has(new_coords):
+		add_animation(self, "animate_receive_shove_noise", false)
 		add_animation(self, "animate_move_and_hop", true, [new_coords, 300])
 		var action = get_new_action()
 		if get_parent().pieces[new_coords].side == "ENEMY":
-			action.add_call("attacked", [damage], [new_coords])
+			action.add_call("attacked", [damage, self], [new_coords])
 		else:
 			action.add_call("smashed", [self], [new_coords])
 		action.execute()
@@ -319,9 +323,14 @@ func receive_shove(distance, damage):
 
 	#otherwise just move forward
 	else:
+		add_animation(self, "animate_receive_shove_noise", false)
 		add_animation(self, "animate_move_and_hop", false, [new_coords, 300, false])
 		set_coords(new_coords)
 
+
+func animate_receive_shove_noise():
+	get_node("SamplePlayer").play("rocket glass explosion thud 2")
+	
 
 func smashed(attacker):
 	if !self.shielded or attacker.is_deadly():

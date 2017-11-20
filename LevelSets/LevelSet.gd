@@ -111,14 +111,15 @@ class Set:
 		
 		
 func sandbox(): 
-	var flags = ["no_inspire", "bonus_star"]
+	var flags = []
 	var score_guide = {0:2, 1:4}
 	var extras1 = {"free_deploy":false, "flags":flags, "score_guide":score_guide}
-	var raw_enemies = {0:{Vector2(2, 5): make(Spectre, 4), Vector2(3, 5): make(Grunt, 4),
-	Vector2(4, 5): make(Grunt, 5),Vector2(3, 4): make(Grunt, 3)}}
+	var raw_enemies = {0:{Vector2(2, 5): make(Spectre, 2),
+	Vector2(3, 5): make(Grunt, 2), Vector2(3, 3): make(Grunt, 6)},
+	1:{Vector2(2, 2): make(Fortifier, 3), Vector2(3, 3): make(Grunt, 3), Vector2(5, 6): make(Melee, 5)}}
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var heroes = {2: Pyromancer, 3:Berserker} 
-	return LevelTypes.Timed.new(33333, "", heroes, enemies, 3, null, extras1) 
+	var heroes = {2: Archer, 3:Berserker, Vector2(4, 3): Cavalier} 
+	return LevelTypes.Timed.new(33333, "", heroes, enemies, 2, null, extras1) 
 #	
 func background():
 	var pieces = load_level("screenshot1.level")

@@ -55,7 +55,7 @@ script/script = ExtResource( 1 )
 
 visibility/light_mask = 32
 frames = SubResource( 1 )
-animation = "defeat"
+animation = "victory"
 
 [node name="Glow" type="Sprite" parent="."]
 
@@ -65,7 +65,7 @@ texture = ExtResource( 4 )
 
 [node name="Light2D" type="Light2D" parent="."]
 
-transform/pos = Vector2( 0, -32.5525 )
+transform/pos = Vector2( 0, -238.844 )
 enabled = true
 editor_only = false
 texture = ExtResource( 5 )
@@ -88,7 +88,7 @@ shadow/item_mask = 1
 
 [node name="Light2D1" type="Light2D" parent="."]
 
-transform/pos = Vector2( 0, 367.447 )
+transform/pos = Vector2( 0, 161.156 )
 enabled = true
 editor_only = false
 texture = ExtResource( 5 )

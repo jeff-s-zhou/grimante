@@ -143,7 +143,7 @@ func slash(new_coords):
 	get_node("/root/AnimationQueue").enqueue(self, "animate_slash", true, [new_coords])
 	var action = get_new_action()
 	var damage = get_marked_damage(self.slash_damage, new_coords)
-	action.add_call("corsair_attacked", [damage], new_coords)
+	action.add_call("attacked", [damage, self], new_coords)
 	action.execute()
 	get_node("/root/AnimationQueue").enqueue(self, "animate_slash_end", true, [self.coords])
 
@@ -181,7 +181,7 @@ func move_shoot(move_coords):
 		
 		
 		var damage = get_marked_damage(self.shoot_damage, attack_coords)
-		action.add_call("corsair_attacked", [damage], attack_coords)
+		action.add_call("attacked", [damage, self], attack_coords)
 		action.execute()
 	else: #if just moving, block other shit from happening
 		var args = [move_coords, 450, true]
@@ -206,55 +206,6 @@ func animate_shoot(attack_coords, delay=0.0):
 	yield(get_node("Tween 2"), "tween_complete")
 	emit_signal("animation_done")
 	bullet.queue_free()
-	
-func animate_extend_hook(start_coords, end_coords):
-	add_anim_count()
-	var new_pos = get_parent().locations[end_coords].get_pos()
-	var current_pos = get_parent().locations[start_coords].get_pos()
-	var angle = get_pos().angle_to_point(new_pos)
-	
-	var distance_length = (new_pos - current_pos).length()
-	get_node("CorsairHook").animate_extend(distance_length, angle)
-	yield(get_node("CorsairHook"), "animation_done")
-	get_node("Timer").set_wait_time(0.1)
-	get_node("Timer").start()
-	yield(get_node("Timer"), "timeout")
-	emit_signal("animation_done")
-	subtract_anim_count()
-	
-func animate_retract_hook():
-	add_anim_count()
-	
-	get_node("CorsairHook").animate_retract(630)
-	yield(get_node("CorsairHook"), "animation_done")
-	emit_signal("animation_done")
-	subtract_anim_count()
-	
-func pull(new_coords):
-	add_animation(self, "animate_extend_hook", true, [self.coords, new_coords])
-	var adjacent_coords = self.coords + get_parent().hex_normalize(new_coords - self.coords)
-	get_parent().pieces[new_coords].hooked(adjacent_coords)
-	add_animation(self, "animate_retract_hook", true)
-
-
-func hookshot(new_coords):
-	var increment = get_parent().hex_normalize(new_coords - self.coords)
-	add_animation(self, "animate_extend_hook", true, [self.coords, new_coords + increment])
-	
-	#need to call this before hooked, because hooked calls set_coords
-	var attack_coords = get_shoot_coords(new_coords, self.coords)
-	
-	hooked(new_coords)
-	add_animation(self, "animate_retract_hook", true)
-
-	if attack_coords != null:
-		var action = get_new_action()
-		
-		#okay. the bullet HAS to be blocking so the damage is handled at the right time
-		add_animation(self, "animate_shoot", true, [attack_coords])
-		action.add_call("set_bleeding", [true], attack_coords)
-		action.add_call("attacked", [self.shoot_damage], attack_coords)
-		action.execute()
 
 
 func predict(new_coords):
@@ -266,7 +217,7 @@ func predict(new_coords):
 		
 func predict_melee(attack_coords):
 	var damage = get_marked_damage(self.slash_damage, attack_coords)
-	get_parent().pieces[attack_coords].predict(damage)
+	get_parent().pieces[attack_coords].predict(damage, self)
 
 		
 func predict_shoot(move_coords):
@@ -275,7 +226,7 @@ func predict_shoot(move_coords):
 	if attack_coords != null:
 		var action = get_new_action()
 		var damage = get_marked_damage(self.shoot_damage, attack_coords)
-		get_parent().pieces[attack_coords].predict(damage, true)
+		get_parent().pieces[attack_coords].predict(damage, self, true)
 
 func cast_ultimate():
 	pass

@@ -188,7 +188,7 @@ func throw_shurikens(attack_range, attack_range_dict):
 	#attack_range.invert()
 	add_animation(self, "animate_throw_shurikens", true, [attack_range])
 	var action = get_new_action()
-	action.add_call("shuriken_attacked", [self.shuriken_damage], attack_range)
+	action.add_call("attacked", [self.shuriken_damage, self], attack_range)
 	action.execute()
 
 #throw them all at the same time, block for one
@@ -238,6 +238,6 @@ func predict(new_coords):
 	var attack_range = get_shuriken_damage_range(new_coords)
 	for coords in attack_range:
 		if get_parent().locations[coords].raining:
-			get_parent().pieces[coords].predict(self.shuriken_damage + LIGHTNING_BONUS_DAMAGE, true)
+			get_parent().pieces[coords].predict(self.shuriken_damage + LIGHTNING_BONUS_DAMAGE, self, true)
 		else:
-			get_parent().pieces[coords].predict(self.shuriken_damage, true)
+			get_parent().pieces[coords].predict(self.shuriken_damage, self, true)

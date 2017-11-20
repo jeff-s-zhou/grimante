@@ -34,7 +34,7 @@ animations = [ {
 [sub_resource type="SampleLibrary" id=2]
 
 samples/explode3 = {
-"db": 0.0,
+"db": -3.0,
 "pitch": 1.0,
 "priority": 0,
 "sample": ExtResource( 8 )

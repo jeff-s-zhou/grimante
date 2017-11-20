@@ -95,6 +95,7 @@ config/process_mode = 1
 
 visibility/visible = false
 visibility/opacity = 0.5
+visibility/light_mask = 129
 transform/pos = Vector2( 0, -6 )
 z/z = 3
 texture = ExtResource( 9 )

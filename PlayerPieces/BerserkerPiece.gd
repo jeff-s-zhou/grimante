@@ -171,9 +171,9 @@ func smash_attack(new_coords):
 	add_animation(self, "jump_to", true, [new_coords])
 	var action = get_new_action()
 	
-	var lethal = get_parent().pieces[new_coords].will_die_to(damage)
+	var lethal = get_parent().pieces[new_coords].will_die_to(damage, self)
 	
-	action.add_call("attacked", [self.damage], new_coords)
+	action.add_call("attacked", [self.damage, self], new_coords)
 	action.execute()
 	if lethal:
 		set_coords(new_coords)
@@ -201,7 +201,7 @@ func smash(smash_range):
 	var action = get_new_action()
 	action.add_call("set_stunned", [true, 0.2], smash_range)
 	#the false flag is so it doesn't interrupt the stun it just set lol
-	action.add_call("attacked", [self.aoe_damage, 0.2], smash_range)
+	action.add_call("attacked", [self.aoe_damage, self, 0.2], smash_range)
 	action.execute()
 	
 	
@@ -242,14 +242,14 @@ func predict(new_coords):
 
 
 func predict_smash_attack(new_coords):
-	get_parent().pieces[new_coords].predict(self.damage)
+	get_parent().pieces[new_coords].predict(self.damage, self)
 	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 
 
 func predict_smash_move(new_coords):
 	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 	for coords in smash_range:
-		get_parent().pieces[coords].predict(self.aoe_damage, true)
+		get_parent().pieces[coords].predict(self.aoe_damage, self, true)
 
 
 func cast_ultimate():

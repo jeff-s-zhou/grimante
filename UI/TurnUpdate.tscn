@@ -1,29 +1,33 @@
-[gd_scene load_steps=17 format=1]
+[gd_scene load_steps=23 format=1]
 
 [ext_resource path="res://UI/TurnUpdate.gd" type="Script" id=1]
 [ext_resource path="res://UI/BlurDarkenLayer.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Assets/UI/TurnUpdate/hexagon.png" type="Texture" id=3]
-[ext_resource path="res://Assets/UI/TurnUpdate/hexagon_red.png" type="Texture" id=4]
-[ext_resource path="res://Assets/UI/TurnUpdate/inner_circle.png" type="Texture" id=5]
-[ext_resource path="res://Assets/UI/TurnUpdate/inner_circle_red.png" type="Texture" id=6]
-[ext_resource path="res://Assets/UI/TurnUpdate/outer_circle.png" type="Texture" id=7]
-[ext_resource path="res://Assets/UI/TurnUpdate/outer_circle_red.png" type="Texture" id=8]
+[ext_resource path="res://Assets/UI/TurnUpdate/hexagon_red.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/TurnUpdate/hexagon.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/TurnUpdate/inner_circle_red.png" type="Texture" id=5]
+[ext_resource path="res://Assets/UI/TurnUpdate/inner_circle.png" type="Texture" id=6]
+[ext_resource path="res://Assets/UI/TurnUpdate/outer_circle_red.png" type="Texture" id=7]
+[ext_resource path="res://Assets/UI/TurnUpdate/outer_circle.png" type="Texture" id=8]
 [ext_resource path="res://Assets/UI/TurnUpdate/flash.png" type="Texture" id=9]
 [ext_resource path="res://Assets/processed_fonts/turn_update_small_header.fnt" type="BitmapFont" id=10]
 [ext_resource path="res://Assets/processed_fonts/turn_update.fnt" type="BitmapFont" id=11]
 [ext_resource path="res://Assets/processed_fonts/turn_update_phase_header.fnt" type="BitmapFont" id=12]
+[ext_resource path="res://Assets/processed_fonts/turn_update_final_phase_header.fnt" type="BitmapFont" id=13]
+[ext_resource path="res://Assets/UI/VictoryScreen/victory_glow_mask.png" type="Texture" id=14]
+[ext_resource path="res://Assets/processed_sounds/enemy_phase.smp" type="Sample" id=15]
+[ext_resource path="res://Assets/processed_sounds/player_phase.smp" type="Sample" id=16]
 
 [sub_resource type="SpriteFrames" id=1]
 
 animations = [ {
 "frames": [ ExtResource( 3 ) ],
 "loop": true,
-"name": "player_phase",
+"name": "enemy_phase",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 4 ) ],
 "loop": true,
-"name": "enemy_phase",
+"name": "player_phase",
 "speed": 5.0
 } ]
 
@@ -32,12 +36,12 @@ animations = [ {
 animations = [ {
 "frames": [ ExtResource( 5 ) ],
 "loop": true,
-"name": "player_phase",
+"name": "enemy_phase",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 6 ) ],
 "loop": true,
-"name": "enemy_phase",
+"name": "player_phase",
 "speed": 5.0
 } ]
 
@@ -46,23 +50,39 @@ animations = [ {
 animations = [ {
 "frames": [ ExtResource( 7 ) ],
 "loop": true,
-"name": "player_phase",
+"name": "enemy_phase",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 8 ) ],
 "loop": true,
-"name": "enemy_phase",
+"name": "player_phase",
 "speed": 5.0
 } ]
 
 [sub_resource type="Animation" id=4]
 
-resource/name = "Spin"
+resource/name = "FinalPhaseFlash"
+length = 2.0
+loop = true
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("Light2D:transform/pos")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = {
+"times": FloatArray( 0, 2 ),
+"transitions": FloatArray( 1, 1 ),
+"update": 0,
+"values": [ Vector2( -500, 0 ), Vector2( 500, 0 ) ]
+}
+
+[sub_resource type="Animation" id=5]
+
 length = 60.0
 loop = true
 step = 1.0
 tracks/0/type = "value"
-tracks/0/path = NodePath("InnerCircle:transform/rot")
+tracks/0/path = NodePath("Main/InnerCircle:transform/rot")
 tracks/0/interp = 1
 tracks/0/imported = false
 tracks/0/keys = {
@@ -72,7 +92,7 @@ tracks/0/keys = {
 "values": [ 0.0, 720.0 ]
 }
 tracks/1/type = "value"
-tracks/1/path = NodePath("OuterCircle:transform/rot")
+tracks/1/path = NodePath("Main/OuterCircle:transform/rot")
 tracks/1/interp = 1
 tracks/1/imported = false
 tracks/1/keys = {
@@ -80,6 +100,21 @@ tracks/1/keys = {
 "transitions": FloatArray( 1, 1 ),
 "update": 0,
 "values": [ 0.0, -720.0 ]
+}
+
+[sub_resource type="SampleLibrary" id=6]
+
+samples/enemy_phase = {
+"db": -2.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 15 )
+}
+samples/player_phase = {
+"db": -1.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 16 )
 }
 
 [node name="TurnUpdate" type="Node2D"]
@@ -92,38 +127,38 @@ script/script = ExtResource( 1 )
 
 transform/pos = Vector2( -541.343, -420.361 )
 
-[node name="Hexagon" type="AnimatedSprite" parent="."]
+[node name="Main" type="Node2D" parent="."]
+
+[node name="Hexagon" type="AnimatedSprite" parent="Main"]
 
 frames = SubResource( 1 )
 animation = "player_phase"
 
-[node name="InnerCircle" type="AnimatedSprite" parent="."]
+[node name="InnerCircle" type="AnimatedSprite" parent="Main"]
 
-transform/rot = 198.549
 frames = SubResource( 2 )
 animation = "player_phase"
 
-[node name="OuterCircle" type="AnimatedSprite" parent="."]
+[node name="OuterCircle" type="AnimatedSprite" parent="Main"]
 
-transform/rot = -198.549
 frames = SubResource( 3 )
 animation = "player_phase"
 
-[node name="Flash" type="Sprite" parent="."]
+[node name="Flash" type="Sprite" parent="Main"]
 
 visibility/opacity = 0.0
 texture = ExtResource( 9 )
 
-[node name="TurnHeader" type="Label" parent="."]
+[node name="TurnHeader" type="Label" parent="Main"]
 
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
-margin/left = -36.0
-margin/top = -55.0
-margin/right = 45.0
-margin/bottom = -21.0
+margin/left = -38.0
+margin/top = -56.0
+margin/right = 44.0
+margin/bottom = -22.0
 custom_fonts/font = ExtResource( 10 )
 text = "TURN"
 align = 1
@@ -132,17 +167,37 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="Turn" type="Label" parent="."]
+[node name="Turn" type="Label" parent="Main"]
+
+visibility/light_mask = 64
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = -56.0
+margin/top = -15.0
+margin/right = 58.0
+margin/bottom = 53.0
+custom_fonts/font = ExtResource( 11 )
+align = 1
+valign = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="PhaseHeader" type="Label" parent="Main"]
 
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
-margin/left = -54.0
-margin/top = -14.0
-margin/right = 60.0
-margin/bottom = 54.0
-custom_fonts/font = ExtResource( 11 )
+margin/left = -512.0
+margin/top = -260.0
+margin/right = 512.0
+margin/bottom = -210.0
+custom_fonts/font = ExtResource( 12 )
+custom_colors/font_color = Color( 1, 1, 1, 1 )
+text = "PLAYER PHASE"
 align = 1
 valign = 1
 percent_visible = 1.0
@@ -154,29 +209,56 @@ max_lines_visible = -1
 playback/process_mode = 1
 playback/default_blend_time = 0.0
 root/root = NodePath("..")
-anims/Spin = SubResource( 4 )
+anims/FinalPhaseFlash = SubResource( 4 )
+anims/Spin = SubResource( 5 )
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
 autoplay = "Spin"
 
-[node name="PhaseHeader" type="Label" parent="."]
+[node name="FinalPhaseHeader" type="Label" parent="."]
 
+visibility/opacity = 0.0
+visibility/light_mask = 64
 focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
-margin/left = -153.0
-margin/top = -260.0
-margin/right = 158.0
-margin/bottom = -210.0
-custom_fonts/font = ExtResource( 12 )
-text = "PLAYER PHASE"
+margin/left = -512.0
+margin/top = -76.0
+margin/right = 512.0
+margin/bottom = -16.0
+custom_fonts/font = ExtResource( 13 )
+custom_colors/font_color = Color( 0.0534668, 0.570313, 0.412836, 1 )
+text = "FINAL PLAYER PHASE"
 align = 1
 valign = 1
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
+
+[node name="Light2D" type="Light2D" parent="."]
+
+transform/pos = Vector2( -208.732, 0 )
+enabled = true
+editor_only = false
+texture = ExtResource( 14 )
+offset = Vector2( 0, 0 )
+scale = 1.0
+color = Color( 1, 1, 1, 1 )
+energy = 5.0
+mode = 0
+range/height = 0.0
+range/z_min = -1024
+range/z_max = 1024
+range/layer_min = 0
+range/layer_max = 0
+range/item_mask = 64
+shadow/enabled = false
+shadow/color = Color( 0, 0, 0, 0 )
+shadow/buffer_size = 2048
+shadow/esm_multiplier = 80.0
+shadow/item_mask = 1
 
 [node name="Tween" type="Tween" parent="."]
 
@@ -198,5 +280,22 @@ process_mode = 1
 wait_time = 1.0
 one_shot = false
 autostart = false
+
+[node name="SamplePlayer" type="SamplePlayer" parent="."]
+
+config/polyphony = 1
+config/samples = SubResource( 6 )
+default/volume_db = 0.0
+default/pitch_scale = 1.0
+default/pan = 0.0
+default/depth = 0.0
+default/height = 0.0
+default/filter/type = 0
+default/filter/cutoff = 5000.0
+default/filter/resonance = 1.0
+default/filter/gain = 1.0
+default/reverb_room = 2
+default/reverb_send = 0.0
+default/chorus_send = 0.0
 
 

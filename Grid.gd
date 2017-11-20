@@ -177,7 +177,8 @@ func add_piece(coords, piece, child_free=false):
 	
 	piece.set_global_pos(location.get_global_pos())
 	piece.added_to_grid()
-	piece.animate_summon()
+	get_node("/root/AnimationQueue").enqueue(piece, "animate_summon", false)
+	#piece.animate_summon()
 	
 		
 func handle_assassin_passive(attack_range, caller):
