@@ -95,25 +95,16 @@ func refund():
 	star.max_out() #increase to a full star
 	get_node("TextureButton").set_disabled(false)
 	
-	
-func set_active_star(flag):
-	get_node("/root/Combat/CursorArea").set_star_cursor(flag)
-	self.has_active_star = flag
-	
 
 func handle_active_star(hovered, event):
-	if self.has_active_star:
-		set_active_star(false)
-		var successful = hovered.star_input_event(event)
-		if !successful:
-			refund()
-		return true
-	return false
+	var successful = hovered.star_input_event(event)
+	if !successful:
+		refund()
 
 
 func is_pressed():
-	if self.star_count > 0:
-		set_active_star(true)
+	if self.star_count > 0 and !get_node("/root/Combat").has_active_star:
+		get_node("/root/Combat").set_active_star(true)
 		self.star_count -= 1
 		get_node("/root/AnimationQueue").enqueue(self, "animate_remove_star", false, [self.star_count])
 		if self.star_count == 0:

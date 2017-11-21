@@ -28,6 +28,7 @@ class BaseLevelType:
 	var previous_level = null
 	var tutorial = null
 	var reinforcements = {}
+	var traps = {}
 	var flags = []
 	var free_deploy = true
 	var king = null
@@ -51,6 +52,8 @@ class BaseLevelType:
 			self.tutorial = extras["tutorial"]
 		if extras.has("reinforcements"):
 			self.reinforcements = extras["reinforcements"]
+		if extras.has("traps"):
+			self.traps = extras["traps"]
 		if extras.has("flags"):
 			self.flags = extras["flags"]
 		if extras.has("score_guide"):
@@ -76,7 +79,10 @@ class BaseLevelType:
 			return self.score_guide[turn_count]
 		else:
 			return 5
-
+	
+	func get_traps(turn_count):
+		if self.traps.has(turn_count):
+			return self.traps[turn_count]
 
 class Timed extends BaseLevelType:
 	var Constants = preload("constants.gd").new()

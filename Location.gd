@@ -9,7 +9,8 @@ var coords
 #STATE
 var raining = false
 var deployable = false
-var corpse = null
+
+var revivable = false
 
 var default_opacity = 0.2
 
@@ -33,15 +34,11 @@ func _ready():
 	
 func soft_reset():
 	set_rain(false)
-	self.corpse = null
 	set_deployable_indicator(false)
-	animate_hide_corpse()
 	
 func debug():
 	get_node("Label").set_text(str(coords.x) + "," + str(coords.y))
-	if self.corpse != null:
-		get_node("Label1").set_text(str(self.corpse.unit_name))
-	
+
 func hide_indirect_highlighting():
 	self.indirect_highlighting = false
 	
@@ -62,22 +59,15 @@ func set_targetable(flag):
 func is_targetable():
 	return self.is_pickable()
 
-func add_corpse(player_piece):
-	self.corpse = player_piece
-	
-func animate_add_corpse():
-	var corpse = get_node("CorpseIndicator")
-	corpse.set_animation(self.corpse.unit_name.to_lower())
-	get_node("/root/AnimationQueue").update_animation_count(1)
-	get_node("Tween").interpolate_property(corpse, "visibility/opacity", 0, 1, 0.8, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	get_node("Tween").start()
-	yield(get_node("Tween"), "tween_complete")
-	emit_signal("animation_done")
-	get_node("/root/AnimationQueue").update_animation_count(-1)
-	
-func animate_hide_corpse():
-	get_node("CorpseIndicator").set_opacity(0)
-	
+
+func set_revivable(flag):
+	self.revivable = flag
+	if flag:
+		get_node("ReviveSymbol").show()
+	else:
+		get_node("ReviveSymbol").hide()
+
+
 func set_reinforcement_indicator(type=null):
 	if type != null:
 		get_node("ReinforcementIndicator").display(type)
@@ -176,11 +166,11 @@ func _mouse_exited():
 		get_parent().reset_prediction()
 	
 func star_input_event(event):
-	if self.corpse != null and !get_parent().pieces.has(coords):
-		self.corpse.resurrect()
-		self.corpse = null
-		return true
-	
+	if self.revivable:
+		var dead_heroes = get_tree().get_nodes_in_group("dead_heroes")
+		if dead_heroes.size() > 0:
+			dead_heroes[0].resurrect(self.coords)
+			return true
 	return false
 
 	

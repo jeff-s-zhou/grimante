@@ -16,6 +16,8 @@ var state_manager = null
 var mid_forced_action = false
 var desktop_flag = false
 
+var has_active_star = false
+
 var combat_resource = "res://Combat.tscn"
 
 const outcome_screen_prototype = preload("res://UI/Desktop/OutcomeDisplay.tscn")
@@ -352,8 +354,9 @@ func computer_input(event):
 				
 				var star_bar = get_node("ControlBar/Combat/StarBar")
 				#if a star is active, handle it appropriately
-				if star_bar.handle_active_star(hovered, event): #returns true if successful
-					pass
+				if self.has_active_star:
+					star_bar.handle_active_star(hovered, event)
+					set_active_star(false)
 				else:
 					#if during a tutorial level, make sure move is as intended
 					if self.tutorial != null:
@@ -662,11 +665,14 @@ func load_in_next_wave(zero_wave=false):
 	
 	
 func display_wave_preview():
-#	get_node("Grid").reset_reinforcement_indicators()
-#	#get_node("/root/AnimationQueue").enqueue(get_node("Grid"), "reset_reinforcement_indicators", false)
 	for coords in self.enemy_reinforcements.keys():
 		var type = self.enemy_reinforcements[coords].type
 		get_node("Grid").locations[coords].set_reinforcement_indicator(type)
+	
+	var traps = self.level_prototype.get_traps(self.turn_count)
+	if traps != null:
+		for coords in traps:
+			get_node("Grid").locations[coords].set_trap()
 		
 #called IN ADDITION to handle_enemy_death on a boss dying
 func handle_boss_death():
@@ -765,3 +771,7 @@ func handle_invalid_move():
 	get_node("SamplePlayer").play("error")
 	#get_node("InvalidMoveIndicator/AnimationPlayer").play("flash")
 	
+func set_active_star(flag):
+	self.has_active_star = flag
+	get_node("CursorArea").set_star_cursor(flag)
+	get_node("Grid").set_revive_tiles(flag)

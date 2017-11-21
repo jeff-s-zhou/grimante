@@ -6,7 +6,7 @@ const UNIT_TYPE = "Stormdancer"
 const DEFAULT_SHURIKEN_DAMAGE = 1
 const LIGHTNING_BONUS_DAMAGE = 2
 const DEFAULT_MOVEMENT_VALUE = 2
-const DEFAULT_SHIELD = true
+const DEFAULT_SHIELD = false
 
 var shuriken_damage = DEFAULT_SHURIKEN_DAMAGE setget , get_shuriken_damage
 

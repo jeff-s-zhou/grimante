@@ -44,6 +44,7 @@ var corrosive = enemy_modifiers["Corrosive"]
 func load_level(file_name):
 	var enemy_waves = {}
 	var heroes = {}
+	var traps = {}
 	for i in range(0, 9): #TODO: don't hardcode this in, so you can have varied game lengths
 		#initialize a subdict for each wave
 		enemy_waves[i] = {}
@@ -69,17 +70,22 @@ func load_level(file_name):
 			
 			var enemy_wave = enemy_waves[turn]
 			enemy_wave[coords] = make(prototype, hp, modifiers)
-		else:
+		elif current_line.has("name"): #already not an enemy, thus is a hero
 			var name = current_line["name"]
 			var coords = Vector2(int(current_line["pos_x"]), int(current_line["pos_y"]))
 			var prototype = self.hero_roster[name]
 			heroes[coords] = prototype
+			
+		else:
+			var coords = Vector2(int(current_line["pos_x"]), int(current_line["pos_y"]))
+			var turn = int(current_line["turn"])
+			traps[turn] = coords
 	save.close()
 	
 	if heroes.empty():
 		return enemy_waves # backwards compatibility with the old levels format
 	else:
-		return [enemy_waves, heroes]
+		return [enemy_waves, heroes, traps]
 
 func make(prototype, hp, modifiers=null):
 	return {"prototype": prototype, "hp": hp, "modifiers":modifiers}
@@ -111,7 +117,7 @@ class Set:
 		
 		
 func sandbox(): 
-	var flags = []
+	var flags = ["bonus_star"]
 	var score_guide = {0:2, 1:4}
 	var extras1 = {"free_deploy":false, "flags":flags, "score_guide":score_guide}
 	var raw_enemies = {0:{Vector2(2, 5): make(Spectre, 2),
@@ -119,7 +125,7 @@ func sandbox():
 	1:{Vector2(2, 2): make(Fortifier, 3), Vector2(3, 3): make(Grunt, 3), Vector2(5, 6): make(Melee, 5)}}
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var heroes = {2: Archer, 3:Berserker, Vector2(4, 3): Cavalier} 
-	return LevelTypes.Timed.new(33333, "", heroes, enemies, 2, null, extras1) 
+	return LevelTypes.Timed.new(33333, "", heroes, enemies, 1, null, extras1) 
 #	
 func background():
 	var pieces = load_level("screenshot1.level")

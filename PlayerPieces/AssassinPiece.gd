@@ -137,7 +137,7 @@ func backstab(new_coords):
 	else:
 		add_animation(self, "animate_backstab", true, [new_coords])
 	var action = get_new_action()
-	action.add_call("attacked", [self.get_backstab_damage(new_coords)], new_coords)
+	action.add_call("attacked", [self.get_backstab_damage(new_coords), self], new_coords)
 	action.execute()
 	var return_position = get_parent().locations[new_coords + BEHIND].get_pos()
 	add_animation(self, "animate_move_to_pos", true, [return_position, 200, true])
@@ -177,7 +177,7 @@ func trigger_passive(attack_range):
 			print("adding passive")
 			add_animation(self, "animate_passive", true, [attack_coords])
 			var action = get_new_action(false)
-			action.add_call("attacked", [self.passive_damage], attack_coords)
+			action.add_call("attacked", [self.passive_damage, self], attack_coords)
 			action.execute()
 	
 			if !get_parent().pieces.has(attack_coords) and self.state == States.PLACED:

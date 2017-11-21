@@ -45,14 +45,29 @@ func sludge():
 	
 
 func star_power():
-	var allies = {2: Cavalier, 4: Berserker}
-	var raw_enemies = load_level("star_power.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	
+	var allies1 = {3: Berserker}
+	var allies2 = {2: Archer, 4: Assassin}
+	var allies3 = {2: Berserker, 4: Archer}
+	var allies4 = {2: Cavalier, 4:Archer}
+
+	
+	var allies = [allies1, allies2, allies3, allies4]
+	
 	var tutorial = load("res://Tutorials/star_power.gd").new()
-	var tutorial_func = funcref(tutorial, "get")
-	var flags = ["no_inspire"]
-	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
-	return LevelTypes.Timed.new(00011, "Star Power", allies, enemies, 1, null, extras)
+
+	var flags = ["no_inspire", "hints"]
+	var challenges = []
+	var base_id = 10021 #which means first id is 10022
+	for i in range(1, 5):
+		var trial_hint = funcref(tutorial, "get_trial" + str(i) + "_hints")
+		var extras = {"free_deploy":false, "tutorial":trial_hint, "flags":flags}
+		var pieces = load_level("star_power" + str(i) +".level")
+		var enemies = EnemyWrappers.FiniteCuratedWrapper.new(pieces)
+		var heroes = allies[i-1]
+		var challenge = LevelTypes.Timed.new(base_id + i, "", heroes, enemies, 1, null, extras) 
+		challenges.append(challenge)
+	return LevelTypes.Trial.new(00011, "Star Power", challenges)
 
 
 func seraph():

@@ -206,12 +206,9 @@ func walk_off(coords_distance, exits_bottom=true):
 
 
 func delete_self(isolated_call=true, corpse_anim_block=true):
-	var location = get_parent().locations[self.coords]
-	location.add_corpse(self)
 	set_targetable(false)
-
+	add_to_group("dead_heroes")
 	add_animation(self, "animate_delete_self", false)
-	add_animation(location, "animate_add_corpse", corpse_anim_block)
 	self.state = States.DEAD
 	set_z(-9)
 	get_parent().remove_piece(self.coords)
@@ -240,13 +237,15 @@ func queue_free():
 		remove_from_group("player_pieces")
 	.queue_free()
 
-func resurrect():
+func resurrect(coords):
+	self.coords = coords
+	var pos = self.grid.locations[coords].get_pos()
+	set_pos(pos)
 	print("resurrecting")
 	add_to_group("player_pieces")
+	remove_from_group("dead_heroes")
 	set_z(0)
 	get_parent().add_piece(self.coords, self, true)
-	var location = get_parent().locations[self.coords]
-	add_animation(location, "animate_hide_corpse", false)
 	add_animation(self, "animate_resurrect", true)
 	self.state = States.DEFAULT
 

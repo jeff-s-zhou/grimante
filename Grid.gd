@@ -11,9 +11,6 @@ var pieces = {}
 var assassin = null
 var pyromancer = null
 
-var shadow_tile_range = []
-var shifting_sands = []
-
 var deploying = false
 
 const DEPLOY_TILES_5 = [Vector2(1, 6), Vector2(2, 6),
@@ -72,28 +69,7 @@ func _ready():
 			var location_y_coord = _LOCATION_Y_OFFSETS[i] + j
 			locations[Vector2(i, location_y_coord)] = location1
 			location1.set_coords(Vector2(i, location_y_coord))
-			
-#func draw_pyromancer_selectors():
-#	var selector_prototype = load("res://UI/PyromancerSelector.tscn")
-#	
-#	for i in range(0, self.tiles_x):
-#		for j in range(_LOCATION_Y_OFFSETS[i], _LOCATION_Y_OFFSETS[i] + 7 - 1):
-#			
-#			var tri_coords = [Vector2(i, j), Vector2(i, j+1), Vector2(i-1, j)]
-#			if self.locations.has(Vector2(i-1, j)) and !self.pyromancer_selectors.has(tri_coords): #if it has the offset to the left of the pair
-#				var selector = selector_prototype.instance()
-#				selector.tri_coords = tri_coords
-#				add_child(selector)
-#				selector.triangulate_set_pos()
-#				self.pyromancer_selectors[tri_coords] = selector
-#			
-#			tri_coords = [Vector2(i, j), Vector2(i, j+1), Vector2(i+1, j+1)]
-#			if self.locations.has(Vector2(i+1, j+1)) and !self.pyromancer_selectors.has(tri_coords): #if it has the offset to the right of the pair
-#				var selector = selector_prototype.instance()
-#				selector.tri_coords = tri_coords
-#				add_child(selector)
-#				selector.triangulate_set_pos()
-#				self.pyromancer_selectors[tri_coords] = selector
+
 
 func clear_board():
 	for piece in self.pieces.values():
@@ -129,25 +105,6 @@ func initialize(flags):
 		for location in self.locations.values():
 			location.hide_indirect_highlighting()
 		
-func initialize_shadow_tiles(shadow_tile_range):
-	self.shadow_tile_range = shadow_tile_range
-	for coords in shadow_tile_range:
-		self.locations[coords].set_shadow(true)
-		
-func initialize_shifting_sands(shifting_sands):
-	self.shifting_sands = shifting_sands
-	var i = 6 #the initial value we use for setting the light mask
-	for coords in shifting_sands:
-		#self.locations[coords].set_shifting_sands(3)
-		self.locations[coords].set_shifting_sands(self.shifting_sands[coords], i)
-		i+=1
-		
-func handle_sand_shifts(new_coords):
-	if new_coords in self.shifting_sands:
-		var direction = self.locations[new_coords].shifting_direction
-		var change_vector = get_change_vector(direction)
-		var piece = self.pieces[new_coords].shift(change_vector)
-		
 
 func debug():
 	for key in self.locations.keys():
@@ -155,7 +112,7 @@ func debug():
 
 #so we know what target
 func set_target(target):
-	if self.selected != null and !(target.coords in self.shadow_tile_range):
+	if self.selected != null:
 		self.selected.select_action_target(target)
 
 
@@ -317,6 +274,19 @@ func unfocus():
 		location.set_targetable(true)
 	for piece in pieces.values():
 		piece.set_targetable(true)
+		
+
+func set_revive_tiles(flag):
+	if flag and get_tree().get_nodes_in_group("dead_heroes").size() > 0:
+		for piece in self.pieces.values():
+			if !piece.is_enemy():
+				var revive_range = get_range(piece.coords) 
+				for coords in revive_range:
+					self.locations[coords].set_revivable(true)
+	else:
+		for location in self.locations.values():
+			location.set_revivable(false)
+
 
 #done once a piece is moved by the player	
 #right click flag is so if we know to check immediately after if cursor is still in a piece's area
@@ -481,10 +451,10 @@ func get_range_helper(return_set, change_vector, coords, magnitude_range, side, 
 					break #break regardless on first collision
 	
 			elif side:
-				if pieces.has(new_coords) and pieces[new_coords].side == side and !(new_coords in self.shadow_tile_range):
+				if pieces.has(new_coords) and pieces[new_coords].side == side:
 					return_set.append(new_coords)
 
-			elif locations.has(new_coords) and !pieces.has(new_coords)  and !(new_coords in self.shadow_tile_range): #only return empty locations
+			elif locations.has(new_coords) and !pieces.has(new_coords): #only return empty locations
 				return_set.append(new_coords)
 
 func cube_to_hex(h): # axial

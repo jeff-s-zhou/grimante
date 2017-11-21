@@ -1,4 +1,4 @@
-[gd_scene load_steps=32 format=1]
+[gd_scene load_steps=23 format=1]
 
 [ext_resource path="res://Location.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/location.png" type="Texture" id=2]
@@ -15,17 +15,9 @@
 [ext_resource path="res://Assets/processed_sounds/summon4.smp" type="Sample" id=13]
 [ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=14]
 [ext_resource path="res://UI/ReinforcementIndicator.tscn" type="PackedScene" id=15]
-[ext_resource path="res://Assets/Allies/assassin_corpse.png" type="Texture" id=16]
-[ext_resource path="res://Assets/Allies/cavalier_corpse.png" type="Texture" id=17]
-[ext_resource path="res://Assets/Allies/archer_corpse.png" type="Texture" id=18]
-[ext_resource path="res://Assets/Allies/berserker_corpse.png" type="Texture" id=19]
-[ext_resource path="res://Assets/Allies/stormdancer_corpse.png" type="Texture" id=20]
-[ext_resource path="res://Assets/Allies/saint_corpse.png" type="Texture" id=21]
-[ext_resource path="res://Assets/Allies/corsair_corpse.png" type="Texture" id=22]
-[ext_resource path="res://Assets/Allies/crusader_corpse.png" type="Texture" id=23]
-[ext_resource path="res://Assets/Allies/pyromancer_corpse.png" type="Texture" id=24]
-[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=25]
-[ext_resource path="res://Assets/UI/endzone_single.png" type="Texture" id=26]
+[ext_resource path="res://InputHandler.tscn" type="PackedScene" id=16]
+[ext_resource path="res://Assets/UI/endzone_single.png" type="Texture" id=17]
+[ext_resource path="res://UI/ReviveSymbol.tscn" type="PackedScene" id=18]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 
@@ -103,55 +95,6 @@ samples/tile_hover = {
 "priority": 0,
 "sample": ExtResource( 14 )
 }
-
-[sub_resource type="SpriteFrames" id=5]
-
-animations = [ {
-"frames": [ ExtResource( 16 ) ],
-"loop": true,
-"name": "assassin",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 17 ) ],
-"loop": true,
-"name": "cavalier",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 18 ) ],
-"loop": true,
-"name": "archer",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 19 ) ],
-"loop": true,
-"name": "berserker",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 20 ) ],
-"loop": true,
-"name": "stormdancer",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 21 ) ],
-"loop": true,
-"name": "saint",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 22 ) ],
-"loop": true,
-"name": "corsair",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 23 ) ],
-"loop": true,
-"name": "crusader",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 24 ) ],
-"loop": true,
-"name": "pyromancer",
-"speed": 5.0
-} ]
 
 [node name="Location" type="Area2D"]
 
@@ -271,18 +214,14 @@ visibility/visible = false
 visibility/visible = false
 transform/pos = Vector2( 0, 1 )
 
-[node name="CorpseIndicator" type="AnimatedSprite" parent="."]
-
-visibility/opacity = 0.0
-frames = SubResource( 5 )
-animation = "berserker"
-
-[node name="InputHandler" parent="." instance=ExtResource( 25 )]
+[node name="InputHandler" parent="." instance=ExtResource( 16 )]
 
 [node name="EndzoneHighlight" type="Sprite" parent="."]
 
 visibility/visible = false
 transform/pos = Vector2( 2, 0 )
-texture = ExtResource( 26 )
+texture = ExtResource( 17 )
+
+[node name="ReviveSymbol" parent="." instance=ExtResource( 18 )]
 
 
