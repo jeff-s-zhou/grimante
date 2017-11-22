@@ -4,7 +4,7 @@
 [ext_resource path="res://Assets/UI/location.png" type="Texture" id=2]
 [ext_resource path="res://Assets/UI/location_blue.png" type="Texture" id=3]
 [ext_resource path="res://Assets/UI/location_red.png" type="Texture" id=4]
-[ext_resource path="res://Objects/ShiftingSands.tscn" type="PackedScene" id=5]
+[ext_resource path="res://UI/TrapSymbol.tscn" type="PackedScene" id=5]
 [ext_resource path="res://Assets/UI/location_orange.png" type="Texture" id=6]
 [ext_resource path="res://Effects/StormEffect.tscn" type="PackedScene" id=7]
 [ext_resource path="res://Assets/processed_fonts/info_overlay_body_rubik_26_med.fnt" type="BitmapFont" id=8]
@@ -124,10 +124,7 @@ _update_shape_index = 0
 frames = SubResource( 2 )
 animation = "default"
 
-[node name="ShiftingSands" parent="." instance=ExtResource( 5 )]
-
-visibility/visible = false
-transform/rot = -180.0
+[node name="TrapSymbol" parent="." instance=ExtResource( 5 )]
 
 [node name="HighlightSprite" type="AnimatedSprite" parent="."]
 

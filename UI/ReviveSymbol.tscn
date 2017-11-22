@@ -43,6 +43,6 @@ anims/glow = SubResource( 1 )
 playback/active = true
 playback/speed = 1.0
 blend_times = [  ]
-autoplay = "glow"
+autoplay = ""
 
 

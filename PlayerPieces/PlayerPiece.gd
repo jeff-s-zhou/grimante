@@ -182,7 +182,6 @@ func block_summon():
 	if !self.shielded:
 		delete_self()
 	else:
-		print("setting shield in block summon")
 		set_shield(false)
 
 	
@@ -551,9 +550,20 @@ func placed(ending_turn=false):
 	if self.state != States.PLACED:
 		add_animation(self, "animate_placed", false, [ending_turn])
 	get_node("SelectedGlow").hide()
+	check_for_traps()
 	self.state = States.PLACED
 	self.attack_bonus = 0
 	self.movement_value = self.DEFAULT_MOVEMENT_VALUE
+
+
+func check_for_traps():
+	if self.grid.locations[self.coords].is_trapped():
+		self.grid.locations[self.coords].trigger_trap()
+		if !self.shielded:
+			delete_self()
+		else:
+			set_shield(false)
+		
 
 
 func animate_placed(ending_turn=false):

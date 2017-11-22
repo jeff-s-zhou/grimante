@@ -127,6 +127,8 @@ func act(new_coords):
 		handle_pre_assisted()
 		#get_node("/root/Combat").display_overlay(self.unit_name)
 		backstab(new_coords)
+		check_for_traps()
+		
 	else:
 		invalid_move()
 

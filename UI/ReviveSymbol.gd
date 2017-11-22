@@ -10,7 +10,9 @@ func _ready():
 	hide()
 	
 func hover():
+	get_node("Glow").play()
 	get_node("Glow").show()
 
 func unhover():
 	get_node("Glow").hide()
+	get_node("Glow").stop()

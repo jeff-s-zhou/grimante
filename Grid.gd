@@ -116,6 +116,15 @@ func set_target(target):
 		self.selected.select_action_target(target)
 
 
+func handle_incoming(first=false):
+	for location in self.locations.values():
+		location.handle_incoming(first)
+		
+		
+func display_incoming():
+	for location in self.locations.values():
+		location.display_incoming()
+
 #child_free is when the saint and crusader swap locations
 func add_piece(coords, piece, child_free=false):
 	
@@ -222,11 +231,8 @@ func get_at_location(coords):
 		return locations[coords]
 	else:
 		return null
-		
-func reset_reinforcement_indicators():
-	for location in locations.values():
-		location.set_reinforcement_indicator(null)
-		
+
+
 func reset_deployable_indicators():
 	for location in locations.values():
 		location.set_deployable_indicator(false)

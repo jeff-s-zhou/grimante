@@ -10,6 +10,10 @@ var coords
 var raining = false
 var deployable = false
 
+var reinforcement = null
+var laid_trap = false
+var armed_trap = false
+
 var revivable = false
 
 var default_opacity = 0.2
@@ -58,8 +62,83 @@ func set_targetable(flag):
 
 func is_targetable():
 	return self.is_pickable()
+	
+func handle_incoming(first=false):
+	deploy_enemy(first)
+	arm_trap(first)
+	
+func set_reinforcement(reinforcement):
+	self.reinforcement = reinforcement
+	
+func is_trapped():
+	return self.armed_trap
+	
+func set_trap():
+	self.laid_trap = true
+	
+func trigger_trap():
+	get_node("/root/AnimationQueue").enqueue(self, "animate_trigger_trap", false)
+	self.armed_trap = false
+
+#do we just want to do the flashing light again? No that doesn't work...
+#also in that case, the animation for when it procs from summoning might be different?
+func animate_trigger_trap():
+	get_node("TrapSymbol").hide()
 
 
+
+func deploy_enemy(first=false):
+	if self.reinforcement != null:
+		if !first:
+			get_node("/root/AnimationQueue").enqueue(self, "animate_reinforcement_summon", true)
+		
+		if get_parent().pieces.has(coords):
+			var blocking_piece = get_parent().pieces[coords]
+			if blocking_piece.side == "PLAYER":
+				blocking_piece.block_summon()
+				self.reinforcement.queue_free()
+			else:
+				blocking_piece.summon_buff(self.reinforcement.hp, self.reinforcement.get_modifiers())
+				self.reinforcement.queue_free()
+				
+		else:
+			get_parent().add_piece(coords, self.reinforcement, true)
+			
+		self.reinforcement = null
+
+
+func arm_trap(first=false):
+	if self.laid_trap:
+		if !first:
+			get_node("/root/AnimationQueue").enqueue(self, "animate_arm_trap", true)
+		else:
+			get_node("TrapSymbol").show()
+	
+		if get_parent().pieces.has(coords):
+			var blocking_piece = get_parent().pieces[coords]
+			if blocking_piece.side == "PLAYER":
+				blocking_piece.block_summon()
+			else:
+				blocking_piece.trap_buff()
+		else:
+			self.armed_trap = true
+			
+		self.laid_trap = false
+		
+func display_incoming():
+	display_reinforcement()
+	display_laid_trap()
+	
+func display_reinforcement():
+	if self.reinforcement != null:
+		set_reinforcement_indicator(self.reinforcement.type)
+		
+func display_laid_trap():
+	if self.laid_trap:
+		get_node("ReinforcementIndicator").display("trap")
+		get_node("ReinforcementIndicator").show()
+
+		
 func set_revivable(flag):
 	self.revivable = flag
 	if flag:
@@ -74,6 +153,13 @@ func set_reinforcement_indicator(type=null):
 		get_node("ReinforcementIndicator").show()
 	else:
 		get_node("ReinforcementIndicator").hide()
+		
+func animate_arm_trap():
+	get_node("ReinforcementIndicator").animate_summon()
+	yield(get_node("ReinforcementIndicator"), "animation_done")
+	emit_signal("animation_done")
+	set_reinforcement_indicator(null)
+	get_node("TrapSymbol").show()
 
 func animate_reinforcement_summon():
 	get_node("ReinforcementIndicator").animate_summon()

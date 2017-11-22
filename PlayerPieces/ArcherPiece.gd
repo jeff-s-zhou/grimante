@@ -86,13 +86,17 @@ func act(new_coords):
 	
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
-		var args = [new_coords, 350, false]
-		add_animation(self, "animate_move_and_hop", false, args)
+		
+		
 		set_coords(new_coords)
 		var coords = get_step_shot_coords(self.coords)
 		if coords != null:
-			#get_node("/root/Combat").display_overlay(self.unit_name)
+			var args = [new_coords, 350, false]
+			add_animation(self, "animate_move_and_hop", false, args)
 			piercing_arrow(coords)
+		else:
+			var args = [new_coords, 350, true]
+			add_animation(self, "animate_move_and_hop", true, args)
 		placed()
 
 	#elif the tile selected is within attack range

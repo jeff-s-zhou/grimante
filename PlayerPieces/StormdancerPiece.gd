@@ -22,11 +22,11 @@ func _ready():
 	self.assist_type = ASSIST_TYPES.movement
 
 
-	
-func handle_assist():
-	if self.assist_flag:
-		self.assist_flag = false
-	self.AssistSystem.activate_assist(self.assist_type, self)
+#	
+#func handle_assist():
+#	if self.assist_flag:
+#		self.assist_flag = false
+#	self.AssistSystem.activate_assist(self.assist_type, self)
 	
 
 func get_shuriken_damage():
@@ -81,7 +81,7 @@ func act(new_coords):
 		handle_pre_assisted()
 		tango(new_coords)
 		shuriken_storm(new_coords)
-		placed()
+		attack_placed()
 		
 	elif _is_within_movement_range(new_coords):
 		handle_pre_assisted()
@@ -99,6 +99,7 @@ func attack_placed():
 	handle_assist()
 	get_node("SelectedGlow").hide()
 	self.state = States.PLACED
+	check_for_traps()
 	self.attack_bonus = 0
 	self.movement_value = self.DEFAULT_MOVEMENT_VALUE
 	get_parent().selected = null

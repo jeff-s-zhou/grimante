@@ -99,10 +99,10 @@ func _ready():
 			if !prototype in self.level_schematic.allies.values():
 				initialize_piece(prototype, true)
 	
-	load_in_next_wave(true)
-	deploy_wave(true)
-	load_in_next_wave()
-	display_wave_preview()
+	load_in_next_incoming(true)
+	get_node("Grid").handle_incoming(true)
+	load_in_next_incoming()
+	get_node("Grid").display_incoming()
 	
 	unpause()
 		
@@ -487,9 +487,9 @@ func enemy_phase():
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
 	
-	deploy_wave()
-	load_in_next_wave()
-	display_wave_preview()
+	get_node("Grid").handle_incoming()
+	load_in_next_incoming()
+	get_node("Grid").display_incoming()
 		
 	if(get_node("/root/AnimationQueue").is_animating()):
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
@@ -618,25 +618,9 @@ func _sort_by_y_axis(enemy_piece1, enemy_piece2):
 		return false
 
 
-func deploy_wave(first=false):
-	for coords in self.enemy_reinforcements.keys():
-		var piece = self.enemy_reinforcements[coords]
-		var location = get_node("Grid").locations[coords]
-		if !first:
-			get_node("/root/AnimationQueue").enqueue(location, "animate_reinforcement_summon", true)
-		
-		if get_node("Grid").pieces.has(coords):
-			var blocking_piece = get_node("Grid").pieces[coords]
-			if blocking_piece.side == "PLAYER":
-				blocking_piece.block_summon()
-				piece.queue_free()
-			else:
-				blocking_piece.summon_buff(piece.hp, piece.get_modifiers())
-				piece.queue_free()
-				
-		else:
-			get_node("Grid").add_piece(coords, piece, true)
-		self.enemy_reinforcements.erase(coords)
+func load_in_next_incoming(zero_wave=false):
+	load_in_next_wave(zero_wave)
+	load_in_next_traps(zero_wave)
 
 
 func load_in_next_wave(zero_wave=false):
@@ -660,19 +644,20 @@ func load_in_next_wave(zero_wave=false):
 			var modifiers = prototype_parts["modifiers"]
 
 			var enemy_piece = initialize_enemy_piece(coords, prototype, hp, modifiers)
-			self.enemy_reinforcements[coords] = enemy_piece
+			get_node("Grid").locations[coords].set_reinforcement(enemy_piece)
 
+
+func load_in_next_traps(zero_wave=false):
+	var traps_range
+	if zero_wave:
+		traps_range = self.level_schematic.get_traps(0)
+	else:
+		traps_range = self.level_schematic.get_traps(self.turn_count + 1)
 	
-	
-func display_wave_preview():
-	for coords in self.enemy_reinforcements.keys():
-		var type = self.enemy_reinforcements[coords].type
-		get_node("Grid").locations[coords].set_reinforcement_indicator(type)
-	
-	var traps = self.level_prototype.get_traps(self.turn_count)
-	if traps != null:
-		for coords in traps:
+	if traps_range != null:
+		for coords in traps_range:
 			get_node("Grid").locations[coords].set_trap()
+
 		
 #called IN ADDITION to handle_enemy_death on a boss dying
 func handle_boss_death():

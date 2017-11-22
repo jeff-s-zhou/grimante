@@ -67,6 +67,7 @@ func placed(ending_turn=false):
 	else:
 		self.handle_assist()
 		add_animation(self, "emit_animated_placed", false)
+		check_for_traps()
 
 #neede for tutorials
 func emit_animated_placed():
