@@ -91,11 +91,9 @@ func jump_to(new_coords, dust=false):
 	var slam_ring = get_node("SlamRing")
 	var explosion = get_node("SlamExplosion")
 	if dust:
-#		get_node("Tween 2").interpolate_property(cracks, "visibility/opacity", \
-#		0, 1, 0.1, Tween.TRANS_LINEAR, Tween.EASE_IN)
-#		get_node("Tween 2").start()
 		cracks.set_opacity(1)
-		explosion.set_opacity(1)
+		#explosion.set_opacity(1)
+		explosion.set_enabled(true)
 		slam_ring.set_scale(Vector2(0.3, 0.3))
 		slam_ring.set_opacity(1)
 		get_parent().get_node("FieldEffects").emit_dust(self.get_pos())
@@ -118,10 +116,15 @@ func jump_to(new_coords, dust=false):
 		#yield(get_node("Tween 2"), "tween_complete")
 		get_node("Tween 2").interpolate_property(cracks, "visibility/opacity", \
 		1, 0, 1, Tween.TRANS_LINEAR, Tween.EASE_IN, 0.3)
-		get_node("Tween 2").interpolate_property(explosion, "visibility/opacity", \
-		1, 0, 0.2, Tween.TRANS_QUAD, Tween.EASE_IN, 0.3)
+#		get_node("Tween 2").interpolate_property(explosion, "visibility/opacity", \
+#		1, 0, 0.2, Tween.TRANS_QUAD, Tween.EASE_IN, 0.3)
+		get_node("Tween 2").interpolate_property(explosion, "energy", \
+		4, 0.01, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN, 0.3)
 		get_node("Tween 2").start()
-
+		
+		yield(get_node("Tween 2"), "tween_complete")
+		yield(get_node("Tween 2"), "tween_complete")
+		explosion.set_enabled(false)
 	
 func jump_back(new_coords):
 	add_anim_count()

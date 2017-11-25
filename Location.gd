@@ -77,13 +77,17 @@ func set_trap():
 	self.laid_trap = true
 	
 func trigger_trap():
-	get_node("/root/AnimationQueue").enqueue(self, "animate_trigger_trap", false)
+	get_node("/root/AnimationQueue").enqueue(self, "animate_trigger_trap", true)
 	self.armed_trap = false
 
 #do we just want to do the flashing light again? No that doesn't work...
 #also in that case, the animation for when it procs from summoning might be different?
 func animate_trigger_trap():
-	get_node("TrapSymbol").hide()
+	get_node("/root/AnimationQueue").update_animation_count(1)
+	get_node("TrapSymbol").animate_explode()
+	yield(get_node("TrapSymbol"), "animation_done")
+	emit_signal("animation_done")
+	get_node("/root/AnimationQueue").update_animation_count(-1)
 
 
 

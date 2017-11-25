@@ -6,7 +6,7 @@
 [ext_resource path="res://Assets/processed_sounds/rocket glass explosion thud 2.smp" type="Sample" id=4]
 [ext_resource path="res://Assets/processed_sounds/star_reactivate.smp" type="Sample" id=5]
 [ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=6]
-[ext_resource path="res://Assets/processed_sounds/window glass break smash 2.smp" type="Sample" id=7]
+[ext_resource path="res://Assets/processed_sounds/window glass break smash 3.smp" type="Sample" id=7]
 
 [resource]
 
@@ -46,7 +46,7 @@ samples/tile_hover = {
 "priority": 0,
 "sample": ExtResource( 6 )
 }
-"samples/window glass break smash 2" = {
+"samples/window glass break smash 3" = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,

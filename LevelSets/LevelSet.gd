@@ -36,8 +36,8 @@ var enemy_modifiers = constants.enemy_modifiers
 var shield = enemy_modifiers["Shield"]
 var poisonous = enemy_modifiers["Poisonous"]
 var cloaked = enemy_modifiers["Cloaked"]
-var rabid = enemy_modifiers["Predator"]
-var corrosive = enemy_modifiers["Corrosive"]
+var unstable = enemy_modifiers["Unstable"]
+
 
 #var available_unit_roster = get_node("/root/global").available_unit_roster
 
@@ -120,8 +120,8 @@ func sandbox():
 	var flags = ["bonus_star"]
 	var score_guide = {0:2, 1:4}
 	
-	var raw_enemies = {0:{
-	Vector2(3, 5): make(Grunt, 2), Vector2(3, 3): make(Grunt, 6)},
+	var raw_enemies = {0:{Vector2(4, 6): make(Slime, 3, [unstable]),
+	Vector2(3, 5): make(Fortifier, 4, [shield]), Vector2(3, 4): make(Grunt, 6, [shield])},
 	1:{Vector2(2, 2): make(Fortifier, 3), Vector2(3, 3): make(Grunt, 3), Vector2(5, 6): make(Melee, 5)}}
 	
 	var trap_tiles = {0:[Vector2(2, 5), Vector2(2, 3)],
@@ -130,7 +130,7 @@ func sandbox():
 	var extras1 = {"free_deploy":false, "flags":flags, "score_guide":score_guide, "traps":trap_tiles}
 	
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var heroes = {1: Archer, 3:Berserker, Vector2(4, 3): Cavalier} 
+	var heroes = {1: Stormdancer, 3:Berserker, Vector2(4, 3): Cavalier} 
 	return LevelTypes.Timed.new(33333, "", heroes, enemies, 1, null, extras1) 
 #	
 func background():

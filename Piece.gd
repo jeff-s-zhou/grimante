@@ -39,7 +39,7 @@ func get_unit_name():
 	
 func debug():
 	#get_node("DebugText").show()
-	get_node("DebugText").set_text(str(self.debug_anim_counter) + "\n" + str(self.coords))
+	get_node("DebugText").set_text(str(self.debug_anim_counter) + "\n" + str(get_z()))
 
 func _ready():
 	pass
@@ -314,7 +314,7 @@ func receive_shove(distance, damage):
 		if get_parent().pieces[new_coords].side == "ENEMY":
 			action.add_call("attacked", [damage, self], [new_coords])
 		else:
-			action.add_call("smashed", [self], [new_coords])
+			action.add_call("attacked", [self], [new_coords])
 		action.execute()
 		if get_parent().pieces.has(new_coords): #leap backwards if something's still there
 			add_animation(self, "animate_move_and_hop", false, [self.coords, 300, false])
@@ -330,15 +330,6 @@ func receive_shove(distance, damage):
 
 func animate_receive_shove_noise():
 	get_node("SamplePlayer").play("rocket glass explosion thud 2")
-	
-
-func smashed(attacker):
-	if !self.shielded or attacker.is_deadly():
-		delete_self()
-		return true
-	else:
-		set_shield(false)
-		return false
 
 		
 func handle_nonlethal_shove(pusher):

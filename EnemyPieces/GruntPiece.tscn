@@ -19,7 +19,7 @@
 [ext_resource path="res://Assets/processed_fonts/info_overlay_body_rubik_26_italic.fnt" type="BitmapFont" id=17]
 [ext_resource path="res://Assets/processed_sounds/rocket glass explosion 5.smp" type="Sample" id=18]
 [ext_resource path="res://Assets/processed_sounds/rocket glass explosion thud 2.smp" type="Sample" id=19]
-[ext_resource path="res://Assets/processed_sounds/window glass break smash 2.smp" type="Sample" id=20]
+[ext_resource path="res://Assets/processed_sounds/window glass break smash 3.smp" type="Sample" id=20]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -63,7 +63,7 @@ animations = [ {
 "priority": 0,
 "sample": ExtResource( 19 )
 }
-"samples/window glass break smash 2" = {
+"samples/window glass break smash 3" = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,

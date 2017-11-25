@@ -11,6 +11,9 @@ const RED_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/RedExplosionPa
 const BLACK_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/BlackExplosionParticles.tscn")
 const FROZEN_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/FrozenExplosionParticles.tscn")
 const TYPES = {"assist":"assist", "attack":"attack", "selfish":"selfish", "boss":"boss"}
+
+const UNSTABLE_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/UnstableExplosion.tscn")
+
 var type
 
 var explosion_prototype = self.YELLOW_EXPLOSION_SCENE
@@ -27,7 +30,7 @@ var hp
 
 var deadly = false
 var cloaked = false
-var predator = false
+var unstable = false
 var corrosive = false
 
 var double_time = false
@@ -164,7 +167,23 @@ func animate_summon():
 	yield(get_node("Tween"), "tween_complete")
 	light2d.set_enabled(false)
 	subtract_anim_count()
-
+	
+func animate_heal():
+	add_anim_count()
+	var light2d = get_node("Physicals/Light2D")
+	light2d.set_enabled(true)
+	set_opacity(1)
+	var tween = Tween.new()
+	add_child(tween)
+	tween.interpolate_property(light2d, "energy", 0.01, 10, 0.3, Tween.TRANS_SINE, Tween.EASE_IN)
+	tween.start()
+	yield(tween, "tween_complete")
+	tween.interpolate_property(light2d, "energy", 10, 0.01, 0.8, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.start()
+	yield(tween, "tween_complete")
+	light2d.set_enabled(false)
+	tween.queue_free()
+	subtract_anim_count()
 	
 func set_hp(hp):
 	self.hp = hp
@@ -189,10 +208,8 @@ func initialize_modifiers(modifiers):
 			self.set_shield(true)
 		elif modifier == enemy_modifiers["Cloaked"]:
 			self.set_cloaked(true)
-		elif modifier == enemy_modifiers["Predator"]:
-			self.set_predator(true)
-		elif modifier == enemy_modifiers["Corrosive"]:
-			self.set_corrosive(true)
+		elif modifier == enemy_modifiers["Unstable"]:
+			self.set_unstable(true)
 
 
 func get_modifiers():
@@ -206,8 +223,8 @@ func get_modifiers():
 		modifiers["Cloaked"] = enemy_modifiers["Cloaked"]
 	if self.predator:
 		modifiers["Predator"] = enemy_modifiers["Predator"]
-	if self.corrosive:
-		modifiers["Corrosive"] = enemy_modifiers["Corrosive"]
+	if self.unstable:
+		modifiers["Unstable"] = enemy_modifiers["Unstable"]
 	return modifiers
 
 
@@ -477,31 +494,19 @@ func animate_set_shield(flag):
 	if flag:
 		get_node("Physicals/EnemyEffects/Bubble").show()
 	else:
-		get_node("SamplePlayer").play("window glass break smash 2")
+		get_node("SamplePlayer").play("window glass break smash 3")
 		get_node("Physicals/EnemyEffects").animate_shield_explode()
-
-
 	
-
-func set_corrosive(flag):
-	self.corrosive = flag
-	var name = get_node("/root/constants").enemy_modifiers["Corrosive"]
-	update_description(flag, name)
-	add_animation(self, "animate_set_corrosive", false, [flag])
 	
-func animate_set_corrosive(flag):
-	get_node("Physicals/EnemyEffects/CorrosiveParticles").set_emitting(flag)
-
-
-func set_predator(flag):
-	self.predator = flag
-	var name = get_node("/root/constants").enemy_modifiers["Predator"]
-	update_description(flag, name)
-	add_animation(self, "animate_set_predator", false, [flag])
-
-func animate_set_predator(flag):
-	get_node("Physicals/EnemyEffects/RabidParticles").set_emitting(flag)
-
+func set_unstable(flag):
+	self.unstable = flag
+	add_animation(self, "animate_set_unstable", false, [flag])
+	
+func animate_set_unstable(flag):
+	if flag:
+		get_node("Physicals/EnemyEffects/Unstable").set_emitting(true)
+	else:
+		get_node("Physicals/EnemyEffects/Unstable").set_emitting(false)
 
 func set_bleeding(flag):
 	if flag and !self.shielded:
@@ -590,6 +595,7 @@ func animate_burning_hide():
 	
 
 func heal(amount, delay=0.0):
+	add_animation(self, "animate_heal", false)
 	modify_hp(amount, delay)
 
 
@@ -655,9 +661,39 @@ func modify_hp(amount, delay=0, after=false):
 
 
 func delete_self(delay=0.0):
-	add_animation(self, "animate_delete_self", false, [delay])
+	if self.unstable:
+		unstable_explode(delay)
+		add_animation(self, "animate_delete_self", false)
+	else:
+		add_animation(self, "animate_delete_self", false, [delay])
 	delete_self_helper()
 	emit_signal("enemy_death", self.coords)
+	
+
+func unstable_explode(delay):
+	add_animation(self, "animate_unstable_explode", true, [delay])
+	var explosion_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
+	for coords in explosion_range:
+		self.grid.pieces[coords].enemy_attacked()
+
+
+func animate_unstable_explode(delay):
+	add_anim_count()
+	get_node("Physicals/Light2D").set_enabled(true)
+	var tween = Tween.new()
+	add_child(tween)
+	tween.interpolate_property(get_node("Physicals/Light2D"), "energy", 0.01, 15, 1, Tween.TRANS_LINEAR, Tween.EASE_IN, delay)
+	tween.start()
+	yield(tween, "tween_complete")
+	var explosion = UNSTABLE_EXPLOSION_SCENE.instance()
+	add_child(explosion)
+	explosion.animate_explode(0)
+	emit_signal("animation_done")
+	yield(explosion, "animation_done")
+	explosion.queue_free()
+	tween.queue_free()
+	get_node("Physicals/Light2D").set_enabled(false)
+	subtract_anim_count()
 
 
 func walk_off(coords_distance, exits_bottom=true):
@@ -812,7 +848,7 @@ func turn_update():
 
 #called after all pieces finish moving
 func turn_attack_update():
-	if self.bleeding:
+	if self.unstable:
 		var action = get_new_action()
 		action.add_call("attacked", [1], self.coords)
 		action.execute()
@@ -822,6 +858,9 @@ func turn_attack_update():
 	
 	if self.stunned:
 		set_stunned(false)
+		
+	if self.grid.locations[self.coords].is_trapped():
+		heal(self.hp)
 
 
 

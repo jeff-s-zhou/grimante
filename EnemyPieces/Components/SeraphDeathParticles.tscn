@@ -4,7 +4,7 @@
 
 [sub_resource type="ColorRamp" id=1]
 
-offsets = FloatArray( 0, 1 )
+offsets = FloatArray( 0.426901, 1 )
 colors = ColorArray( 1, 1, 1, 1, 1, 1, 1, 0 )
 
 [node name="SeraphDeathParticles" type="Particles2D"]
@@ -13,6 +13,7 @@ config/amount = 96
 config/lifetime = 1.3
 config/time_scale = 1.5
 config/emitting = false
+config/process_mode = 1
 config/explosiveness = 0.01
 config/texture = ExtResource( 1 )
 params/direction = 0.0

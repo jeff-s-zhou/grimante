@@ -30,7 +30,7 @@ const Saint = preload("res://PlayerPieces/SaintPiece.tscn")
 var end_conditions = {"Defend":0, "Escort":1, "Timed":2, "Sandbox":3}
 
 
-var enemy_modifiers = {"Poisonous":"Poisonous", "Shield":"Shield", "Cloaked":"Cloaked", "Corrosive":"Corrosive", "Predator":"Predator"}
+var enemy_modifiers = {"Poisonous":"Poisonous", "Shield":"Shield", "Cloaked":"Cloaked", "Unstable":"Unstable"}
 
 #used in the level editor
 var enemy_roster = {"dummy":Dummy, "grunt":Grunt, "fortifier":Fortifier, "grower":Grower, "drummer":Drummer, 
@@ -75,8 +75,7 @@ var MODIFIER_POWER_LEVELS = {
 enemy_modifiers["Shield"]: 14,
 enemy_modifiers["Poisonous"]: 18,
 enemy_modifiers["Cloaked"] : 10,
-enemy_modifiers["Corrosive"] : 10,
-enemy_modifiers["Predator"] : 10
+enemy_modifiers["Unstable"] : 20,
 }
 
 #used in the generator
@@ -100,8 +99,7 @@ var FULL_MODIFIER_ROSTER = {
 0: enemy_modifiers["Shield"],
 1: enemy_modifiers["Poisonous"],
 2: enemy_modifiers["Cloaked"],
-3: enemy_modifiers["Corrosive"],
-4: enemy_modifiers["Predator"]
+3: enemy_modifiers["Unstable"],
 }
 
 const GRUNT_HEALTH_PROB_DIST = {

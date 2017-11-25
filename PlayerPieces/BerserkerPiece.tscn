@@ -66,6 +66,7 @@ config/samples = SubResource( 2 )
 visibility/opacity = 0.0
 visibility/behind_parent = true
 transform/pos = Vector2( 2.44351, -0.814514 )
+z/z = -8
 texture = ExtResource( 9 )
 
 [node name="Tween2" type="Tween" parent="."]
@@ -79,13 +80,32 @@ playback/speed = 1.0
 
 visibility/opacity = 0.0
 visibility/behind_parent = true
+z/z = -8
+z/relative = false
 texture = ExtResource( 10 )
 
-[node name="SlamExplosion" type="Sprite" parent="."]
+[node name="SlamExplosion" type="Light2D" parent="."]
 
-visibility/opacity = 0.0
 visibility/behind_parent = true
-transform/pos = Vector2( -0.814514, 10.5886 )
+transform/pos = Vector2( -1, 11 )
+enabled = false
+editor_only = false
 texture = ExtResource( 11 )
+offset = Vector2( 0, 0 )
+scale = 1.0
+color = Color( 1, 1, 1, 1 )
+energy = 2.0
+mode = 0
+range/height = 0.0
+range/z_min = -1024
+range/z_max = -8
+range/layer_min = 0
+range/layer_max = 0
+range/item_mask = 1
+shadow/enabled = false
+shadow/color = Color( 0, 0, 0, 0 )
+shadow/buffer_size = 2048
+shadow/esm_multiplier = 80.0
+shadow/item_mask = 1
 
 

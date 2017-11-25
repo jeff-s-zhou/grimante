@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=1]
+[gd_scene load_steps=12 format=1]
 
 [ext_resource path="res://EnemyPieces/Components/EnemyEffects.gd" type="Script" id=1]
 [ext_resource path="res://Assets/effects/frozen.png" type="Texture" id=2]
@@ -6,11 +6,10 @@
 [ext_resource path="res://EnemyPieces/Components/DeathTouch.tscn" type="PackedScene" id=4]
 [ext_resource path="res://EnemyPieces/Components/FrozenParticles.tscn" type="PackedScene" id=5]
 [ext_resource path="res://EnemyPieces/Components/FireEffect.tscn" type="PackedScene" id=6]
-[ext_resource path="res://EnemyPieces/Components/CorrosiveParticles.tscn" type="PackedScene" id=7]
-[ext_resource path="res://EnemyPieces/Components/RabidParticles.tscn" type="PackedScene" id=8]
-[ext_resource path="res://Assets/effects/bubble_small.png" type="Texture" id=9]
-[ext_resource path="res://Effects/StunSpiral.tscn" type="PackedScene" id=10]
-[ext_resource path="res://EnemyPieces/Components/EnemyShieldExplosionParticles.tscn" type="PackedScene" id=11]
+[ext_resource path="res://Assets/effects/bubble_small.png" type="Texture" id=7]
+[ext_resource path="res://Effects/StunSpiral.tscn" type="PackedScene" id=8]
+[ext_resource path="res://EnemyPieces/Components/EnemyShieldExplosionParticles.tscn" type="PackedScene" id=9]
+[ext_resource path="res://EnemyPieces/Components/Unstable.tscn" type="PackedScene" id=10]
 
 [sub_resource type="Animation" id=1]
 
@@ -83,14 +82,6 @@ config/process_mode = 1
 transform/pos = Vector2( 0, 15 )
 config/process_mode = 1
 
-[node name="CorrosiveParticles" parent="." instance=ExtResource( 7 )]
-
-config/process_mode = 1
-
-[node name="RabidParticles" parent="." instance=ExtResource( 8 )]
-
-config/process_mode = 1
-
 [node name="Bubble" type="Sprite" parent="."]
 
 visibility/visible = false
@@ -98,14 +89,16 @@ visibility/opacity = 0.5
 visibility/light_mask = 129
 transform/pos = Vector2( 0, -6 )
 z/z = 3
-texture = ExtResource( 9 )
+texture = ExtResource( 7 )
 
-[node name="StunSpiral" parent="." instance=ExtResource( 10 )]
+[node name="StunSpiral" parent="." instance=ExtResource( 8 )]
 
 visibility/visible = false
 transform/pos = Vector2( 0, -30 )
 z/z = 3
 
-[node name="EnemyShieldExplosionParticles" parent="." instance=ExtResource( 11 )]
+[node name="EnemyShieldExplosionParticles" parent="." instance=ExtResource( 9 )]
+
+[node name="Unstable" parent="." instance=ExtResource( 10 )]
 
 

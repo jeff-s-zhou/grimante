@@ -736,8 +736,8 @@ func damage_defenses():
 func display_overlay(unit_name):
 	get_node("/root/AnimationQueue").enqueue(get_node("OverlayDisplayer"), "animate_display_overlay", true, [unit_name])
 
-func darken(time=0.4, amount=0.3):
-	get_node("Tween").interpolate_property(get_node("DarkenLayer"), "visibility/opacity", 0, amount, time, Tween.TRANS_SINE, Tween.EASE_IN)
+func darken(time=0.4, amount=0.3, delay=0.0):
+	get_node("Tween").interpolate_property(get_node("DarkenLayer"), "visibility/opacity", 0, amount, time, Tween.TRANS_SINE, Tween.EASE_IN, delay)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	emit_signal("animation_done")

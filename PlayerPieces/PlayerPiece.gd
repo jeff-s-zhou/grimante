@@ -94,19 +94,23 @@ func lighten(time):
 	get_node("/root/Combat").lighten(time)
 	
 	
-func set_shield(flag):
+func set_shield(flag, delay=0.0):
 	if self.shielded != flag:
 		self.shielded = flag
 		print("calling the set shield animation here?")
-		add_animation(self, "animate_set_shield", false, [flag])
+		add_animation(self, "animate_set_shield", false, [flag, delay])
 
 
-func animate_set_shield(flag):
+func animate_set_shield(flag, delay=0.0):
+	if delay > 0.0:
+		get_node("Timer").set_wait_time(delay)
+		get_node("Timer").start()
+		yield(get_node("Timer"), "timeout")
 	if flag:
 		#TODO: play a sound here
 		get_node("Physicals/HeroShield").display()
 	else:
-		get_node("SamplePlayer").play("window glass break smash 2")
+		get_node("SamplePlayer").play("window glass break smash 3")
 		get_node("Physicals/HeroShield").animate_explode()
 
 
@@ -179,10 +183,7 @@ func deploy():
 	self.state = States.PLACED
 	
 func block_summon():
-	if !self.shielded:
-		delete_self()
-	else:
-		set_shield(false)
+	attacked()
 
 	
 func set_cooldown(cooldown):
@@ -204,18 +205,23 @@ func walk_off(coords_distance, exits_bottom=true):
 	remove_from_group("player_pieces")
 
 
-func delete_self(isolated_call=true, corpse_anim_block=true):
+func delete_self(isolated_call=true, delay=0.0):
 	set_targetable(false)
 	add_to_group("dead_heroes")
-	add_animation(self, "animate_delete_self", false)
+	add_animation(self, "animate_delete_self", false, [delay])
 	self.state = States.DEAD
-	set_z(-9)
 	get_parent().remove_piece(self.coords)
 	remove_from_group("player_pieces")
 
 
-func animate_delete_self():
+func animate_delete_self(delay=0.0):
 	add_anim_count()
+	set_z(-9)
+	if delay > 0.0:
+		print("in animate_delete_self branch, ", delay)
+		get_node("Timer").set_wait_time(delay)
+		get_node("Timer").start()
+		yield(get_node("Timer"), "timeout")
 	get_node("SamplePlayer").play("rocket glass explosion 5")
 	get_node("Physicals").set_opacity(0)
 	get_node("Shadow").set_opacity(0)
@@ -254,6 +260,9 @@ func animate_resurrect(blocking=true):
 	add_anim_count()
 	get_node("SamplePlayer").play("revive2")
 	
+	get_node("Physicals/AnimatedSprite").set_opacity(1)
+	get_node("Physicals/CooldownSprite").hide()
+	
 	var light2d = get_node("Physicals/Light2D")
 	light2d.set_enabled(true)
 	light2d.set_energy(15)
@@ -262,7 +271,6 @@ func animate_resurrect(blocking=true):
 	var tween = Tween.new()
 	add_child(tween)
 	
-	#get_node("Tween").interpolate_property(get_node("Physicals"), "visibility/opacity", 0, 1, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	tween.interpolate_property(get_node("Shadow"), "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	tween.interpolate_property(light2d, "energy", 15, 0.01, 0.8, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	tween.start()
@@ -580,16 +588,21 @@ func animate_placed(ending_turn=false):
 func is_deadly():
 	return false
 
-func attacked(attacker):
-	return smashed(attacker)
-
-
-func fireball_attacked(damage, unit):
+func attacked(attacker=null):
 	if !self.shielded:
-		delete_self(true, false)
+		delete_self()
 		return true
 	else:
 		set_shield(false)
+		return false
+
+func enemy_attacked(delay=0.0):
+	if !self.shielded:
+		print("in enemy attacked")
+		delete_self(true, delay)
+		return true
+	else:
+		set_shield(false, delay)
 		return false
 
 func handle_nonlethal_shove(shover):
