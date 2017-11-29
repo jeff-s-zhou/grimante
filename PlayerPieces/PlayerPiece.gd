@@ -218,7 +218,6 @@ func animate_delete_self(delay=0.0):
 	add_anim_count()
 	set_z(-9)
 	if delay > 0.0:
-		print("in animate_delete_self branch, ", delay)
 		get_node("Timer").set_wait_time(delay)
 		get_node("Timer").start()
 		yield(get_node("Timer"), "timeout")

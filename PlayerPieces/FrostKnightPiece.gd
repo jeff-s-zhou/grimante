@@ -76,8 +76,8 @@ func act(new_coords):
 		handle_pre_assisted()
 		var args = [new_coords, 250, true]
 		add_animation(self, "animate_move_and_hop", true, args)
-		frostbringer(new_coords)
 		set_coords(new_coords)
+		frostbringer(new_coords)
 		placed()
 	elif _is_within_attack_range(new_coords):
 		handle_pre_assisted()
@@ -121,8 +121,8 @@ func shield_bash(new_coords):
 	
 	#if we moved, freeze shit
 	if self.coords != new_coords - unit_distance:
-		frostbringer(new_coords - unit_distance)
 		set_coords(new_coords - unit_distance)
+		frostbringer(new_coords - unit_distance)
 	
 	
 func frostbringer(new_coords):

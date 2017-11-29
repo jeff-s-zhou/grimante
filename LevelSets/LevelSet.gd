@@ -136,7 +136,7 @@ func sandbox():
 func background():
 	var pieces = load_level("unstable_test.level")
 	var raw_enemies = pieces
-	var allies = {3: Berserker, 4:Cavalier}
+	var allies = {Vector2(3, 6): Berserker, 4:Cavalier}
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_inspire"]
 	var extras = {"flags":flags, "free_deploy":false}

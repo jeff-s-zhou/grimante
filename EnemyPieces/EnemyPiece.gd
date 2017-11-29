@@ -663,7 +663,7 @@ func modify_hp(amount, delay=0, after=false):
 func delete_self(delay=0.0):
 	if self.unstable:
 		unstable_explode(delay)
-		add_animation(self, "animate_delete_self", false)
+		add_animation(self, "animate_delete_self", false, [delay + 1])
 	else:
 		add_animation(self, "animate_delete_self", false, [delay])
 	delete_self_helper()
@@ -671,10 +671,10 @@ func delete_self(delay=0.0):
 	
 
 func unstable_explode(delay):
-	add_animation(self, "animate_unstable_explode", true, [delay])
+	add_animation(self, "animate_unstable_explode", false, [delay])
 	var explosion_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
 	for coords in explosion_range:
-		self.grid.pieces[coords].enemy_attacked()
+		self.grid.pieces[coords].enemy_attacked(delay + 1)
 
 
 func animate_unstable_explode(delay):

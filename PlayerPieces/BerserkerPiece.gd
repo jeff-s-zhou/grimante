@@ -193,10 +193,10 @@ func smash_move(new_coords):
 	add_animation(self, "animate_move", false, [new_coords, 350, false])
 	add_animation(self, "jump_to", true, [new_coords, true])
 	
+	set_coords(new_coords)
 	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 	#add_animation(self, "animate_smash", false, [new_coords])
 	smash(smash_range)
-	set_coords(new_coords)
 	placed()
 
 

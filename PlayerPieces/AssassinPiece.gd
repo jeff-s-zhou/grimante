@@ -138,12 +138,12 @@ func backstab(new_coords):
 		add_animation(self, "animate_directly_below_backstab", true, [new_coords])
 	else:
 		add_animation(self, "animate_backstab", true, [new_coords])
+	set_coords(new_coords + BEHIND)
 	var action = get_new_action()
 	action.add_call("attacked", [self.get_backstab_damage(new_coords), self], new_coords)
 	action.execute()
 	var return_position = get_parent().locations[new_coords + BEHIND].get_pos()
 	add_animation(self, "animate_move_to_pos", true, [return_position, 200, true])
-	set_coords(new_coords + BEHIND)
 		
 	if get_parent().pieces.has(new_coords): #if it didn't kill
 		placed()

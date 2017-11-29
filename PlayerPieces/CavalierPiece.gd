@@ -185,6 +185,8 @@ func trample(new_coords):
 	
 	var was_hopping = false
 
+	set_coords(new_coords)
+	
 	while current_coords != new_coords:
 		current_coords = current_coords + increment
 		if get_parent().pieces.has(current_coords) and get_parent().pieces[current_coords].side == "ENEMY":
@@ -204,7 +206,6 @@ func trample(new_coords):
 			else:
 				add_animation(self, "animate_move", false, [current_coords, 350, false])
 				add_animation(self, "animate_hop", true, [current_coords - increment, current_coords, true])
-	set_coords(new_coords)
 	placed()
 
 
@@ -219,12 +220,12 @@ func charge_attack(new_coords, attack=false):
 	var tiles_travelled = get_parent().hex_length(difference) - 1
 	start_attack(new_coords)
 	var attack_range = [new_coords]
+	var position_coords = decrement_one(new_coords)
+	set_coords(position_coords)
 	var action = get_new_action()
 	action.add_call("attacked", [get_charge_damage(tiles_travelled), self], attack_range)
 	action.execute()
-	var position_coords = decrement_one(new_coords)
 	end_attack(position_coords)
-	set_coords(position_coords)
 	placed()
 	
 
