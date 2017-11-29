@@ -110,10 +110,8 @@ func set_modifiers(modifiers):
 			self.set_shield(true)
 		elif modifier == enemy_modifiers["Cloaked"]:
 			self.set_cloaked(true)
-		elif modifier == enemy_modifiers["Predator"]:
-			self.set_rabid(true)
-		elif modifier == enemy_modifiers["Corrosive"]:
-			self.set_corrosive(true)
+		elif modifier == enemy_modifiers["Unstable"]:
+			self.set_unstable(true)
 
 
 func set_cloaked(flag):
@@ -144,24 +142,15 @@ func set_poisonous(flag):
 		get_node("EnemyEffects/DeathTouch").set_emitting(false)
 		
 
-func set_corrosive(flag):
+func set_unstable(flag):
 	if flag:
-		var corrosive = enemy_modifiers["Corrosive"]
-		get_node("EnemyEffects/CorrosiveParticles").set_emitting(true)
-		self.modifiers["Corrosive"] = corrosive
+		var unstable = enemy_modifiers["Unstable"]
+		get_node("EnemyEffects/Unstable").set_emitting(true)
+		self.modifiers["Unstable"] = unstable
 	else:
-		self.modifiers.erase("Corrosive")
-		get_node("EnemyEffects/CorrosiveParticles").set_emitting(false)
+		self.modifiers.erase("Unstable")
+		get_node("EnemyEffects/Unstable").set_emitting(false)
 		
-		
-func set_rabid(flag):
-	if flag:
-		var rabid = enemy_modifiers["Predator"]
-		get_node("EnemyEffects/RabidParticles").set_emitting(true)
-		self.modifiers["Predator"] = rabid
-	else:
-		self.modifiers.erase("Predator")
-		get_node("EnemyEffects/RabidParticles").set_emitting(false)
 		
 
 func save():

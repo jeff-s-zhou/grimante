@@ -8,7 +8,7 @@ var descriptions = {
 "Poisonous": "Any Hero attacked by this Enemy is KOed.",
 "Shield": "The first attack on this Enemy is nullified, as well as any applied status effects.",
 "Cloaked": "This Enemy's health and identity is unknown until is it attacked, or a Hero moves adjacent to it.",
-"Unstable": ""
+"Unstable": "This Enemy loses 1 health at the end of each turn. When it dies, it damages all adjacent Heroes."
 }
 
 func _ready():

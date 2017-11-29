@@ -134,9 +134,9 @@ func sandbox():
 	return LevelTypes.Timed.new(33333, "", heroes, enemies, 1, null, extras1) 
 #	
 func background():
-	var pieces = load_level("screenshot1.level")
-	var raw_enemies = pieces[0]
-	var allies = pieces[1]
+	var pieces = load_level("unstable_test.level")
+	var raw_enemies = pieces
+	var allies = {3: Berserker, 4:Cavalier}
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_inspire"]
 	var extras = {"flags":flags, "free_deploy":false}
