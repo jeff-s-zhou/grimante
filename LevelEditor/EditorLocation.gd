@@ -6,6 +6,10 @@ extends Area2D
 
 var coords
 
+var trapped = false
+
+var turn = null
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
@@ -23,3 +27,18 @@ func set_coords(coords):
 	
 func input_event(event):
 	get_node("/root/LevelEditor").set_target(self)
+	
+func toggle_trap():
+	self.trapped = !self.trapped
+	if self.trapped:
+		get_node("TrapSymbol").show()
+	else:
+		get_node("TrapSymbol").hide()
+
+func save():
+	var save_dict = {
+		pos_x = coords.x, #Vector2 is not supported by json
+		pos_y = coords.y,
+		turn = self.turn,
+	}
+	return save_dict

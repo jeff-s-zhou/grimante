@@ -660,21 +660,29 @@ func modify_hp(amount, delay=0, after=false):
 #		enqueue_animation_sequence()
 
 
-func delete_self(delay=0.0):
+func delete_self(delay=0.0, blocking=false):
 	if self.unstable:
-		unstable_explode(delay)
-		add_animation(self, "animate_delete_self", false, [delay + 1])
+		unstable_explode(delay, blocking)
+		if blocking:
+			add_animation(self, "animate_delete_self", false, [delay])
+		else:
+			add_animation(self, "animate_delete_self", false, [delay + 1])
 	else:
 		add_animation(self, "animate_delete_self", false, [delay])
 	delete_self_helper()
 	emit_signal("enemy_death", self.coords)
-	
 
-func unstable_explode(delay):
-	add_animation(self, "animate_unstable_explode", false, [delay])
+#Do we just pass in another argument, so that the animation only blocks on smash killed??
+
+func unstable_explode(delay, blocking=false):
+	add_animation(self, "animate_unstable_explode", blocking, [delay])
 	var explosion_range = self.grid.get_range(self.coords, [1, 2], "PLAYER")
 	for coords in explosion_range:
-		self.grid.pieces[coords].enemy_attacked(delay + 1)
+		if blocking:
+			self.grid.pieces[coords].enemy_attacked(delay)
+		else:
+			
+			self.grid.pieces[coords].enemy_attacked(delay + 1)
 
 
 func animate_unstable_explode(delay):

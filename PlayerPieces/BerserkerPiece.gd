@@ -125,6 +125,55 @@ func jump_to(new_coords, dust=false):
 		yield(get_node("Tween 2"), "tween_complete")
 		yield(get_node("Tween 2"), "tween_complete")
 		explosion.set_enabled(false)
+
+
+func start_jump_to(new_coords, dust=false):
+	add_anim_count()
+	self.mid_leaping_animation = true
+	set_z(3)
+	
+	var speed = 350
+	var location = get_parent().locations[new_coords]
+	var new_position = location.get_pos()
+	var distance = get_pos().distance_to(new_position)
+	var dim_distance = dim_multi_distance(distance)
+	var time = dim_distance/speed
+	time = max(0.30, time) #if short hop looks weird, switch this back to 0.35
+
+	var old_height = get_node("Physicals").get_pos() + 30
+	var vertical = min(-3.0 * distance/4, -90)
+	var new_height = Vector2(0, vertical)
+
+	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
+		get_node("Physicals").get_pos(), new_height, time/2.0, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
+	
+	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
+		get_node("Physicals").get_pos(), old_height, time/2.0 - 0.05, Tween.TRANS_QUART, Tween.EASE_IN)
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
+
+	emit_signal("animation_done")
+	subtract_anim_count()
+		
+
+
+#only called when using the direct attack
+func finish_jump_to(new_coords):
+	add_anim_count()
+	get_node("Tween 2").interpolate_property(get_node("Physicals"), "transform/pos", \
+		get_node("Physicals").get_pos(), Vector2(0, -5), 0.05, Tween.TRANS_QUART, Tween.EASE_IN)
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
+
+	self.mid_leaping_animation = false
+	set_z(0)
+	get_node("SamplePlayer 2").play("explode3")
+	emit_signal("shake")
+	emit_signal("animation_done")
+	subtract_anim_count()
+
 	
 func jump_back(new_coords):
 	add_anim_count()
@@ -179,6 +228,7 @@ func smash_attack(new_coords):
 	action.add_call("attacked", [self.damage, self], new_coords)
 	action.execute()
 	if lethal:
+		#add finished animation, where it just falls directly at a speed
 		set_coords(new_coords)
 		placed()
 	#else leap back

@@ -57,7 +57,12 @@ func _ready():
 			var location_y_coord = _LOCATION_Y_OFFSETS[i] + j
 			self.locations[Vector2(i, location_y_coord)] = location1
 			location1.set_coords(Vector2(i, location_y_coord))
-			
+
+
+func initialize(turn):
+	for location in self.locations.values():
+		location.turn = turn
+
 			
 func update_total_hp():
 	get_node("Label").set_text("Wave HP: " + str(self.total_hp))

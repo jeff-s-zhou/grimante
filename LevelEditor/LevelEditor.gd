@@ -16,6 +16,8 @@ var editor_grids = []
 
 var in_menu = false
 
+var placing_traps = false
+
 var selected = null
 
 var target = null
@@ -71,6 +73,10 @@ func _input(event):
 			var hovered = get_node("CursorArea").get_modifier_mock_hovered()
 			if hovered:
 				hovered.input_event(event)
+				
+		elif self.placing_traps:
+			var hovered = get_node("CursorArea").get_piece_or_location_hovered()
+			hovered.toggle_trap()
 		else:
 			var hovered = get_node("CursorArea").get_piece_or_location_hovered()
 			if hovered:
@@ -94,6 +100,15 @@ func _input(event):
 		else:
 			get_node("EditorUnitBar").show()
 			get_node("EditorHeroBar").hide()
+			
+	elif event.is_action("placing_traps") and event.is_pressed():
+		if get_node("EditorUnitBar").is_visible() or get_node("EditorHeroBar").is_visible():
+			self.placing_traps = true
+			get_node("EditorUnitBar").hide()
+			get_node("EditorHeroBar").hide()
+		else:
+			get_node("EditorUnitBar").show()
+			get_node("EditorHeroBar").show()
 
 func set_target(target):
 	self.target = target
@@ -159,6 +174,12 @@ func save_level():
 				save.store_string("\n")
 			save.store_string(data.to_json()) 
 			
+		for location in editor_grid.locations.values():
+			if location.trapped:
+				var data = location.save()
+				save.store_string("\n")
+				save.store_string(data.to_json()) 
+			
 	save.close()
 	
 	
@@ -176,6 +197,7 @@ func initialize_grids():
 	for i in range(0, 9):
 		var editor_grid = editor_grid_prototype.instance()
 		add_child(editor_grid)
+		editor_grid.initialize(i)
 		self.editor_grids.append(editor_grid)
 		editor_grid.set_pos(Vector2(73, 280))
 		editor_grid.hide()
