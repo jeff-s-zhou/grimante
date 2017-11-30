@@ -40,6 +40,7 @@ func animate_max():
 	tween.interpolate_property(get_node("Full"), "visibility/opacity", 0, 1, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	tween.interpolate_property(get_node("Glow"), "visibility/opacity", 0, 1, 0.8, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	tween.start()
+	get_parent().play_star_charged()
 	yield(tween, "tween_complete")
 	yield(tween, "tween_complete")
 	tween.interpolate_property(get_node("Glow"), "visibility/opacity", 1, 0, 1.2, Tween.TRANS_LINEAR, Tween.EASE_IN, 0.6)
@@ -55,14 +56,15 @@ func animate_increase(i):
 		yield(tween, "tween_complete")
 		
 		if i == 7:
+			
 			tween.interpolate_property(get_node("Full"), "visibility/opacity", 0, 1, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
 			tween.interpolate_property(get_node("Glow"), "visibility/opacity", 0, 1, 0.8, Tween.TRANS_LINEAR, Tween.EASE_IN)
 			tween.start()
+			get_parent().get_node("SamplePlayer").play("star_charged")
 			yield(tween, "tween_complete")
 			yield(tween, "tween_complete")
 			tween.interpolate_property(get_node("Glow"), "visibility/opacity", 1, 0, 1.2, Tween.TRANS_LINEAR, Tween.EASE_IN, 0.6)
 			tween.start()
-
 
 func flash(flag):
 	print("calling star flash")

@@ -141,12 +141,19 @@ func act(new_coords):
 		invalid_move()
 		
 func slash(new_coords):
+	get_node("/root/AnimationQueue").enqueue(self, "animate_draw_back", true, [new_coords])
 	get_node("/root/AnimationQueue").enqueue(self, "animate_slash", true, [new_coords])
 	var action = get_new_action()
 	var damage = get_marked_damage(self.slash_damage, new_coords)
 	action.add_call("attacked", [damage, self], new_coords)
 	action.execute()
 	get_node("/root/AnimationQueue").enqueue(self, "animate_slash_end", true, [self.coords])
+	
+func animate_draw_back(new_coords):
+	var unit_distance = get_parent().hex_normalize(new_coords - self.coords)
+	var unit_pos_distance = get_parent().get_real_distance(unit_distance)
+	var back_up_pos = self.get_pos() - unit_pos_distance/4
+	animate_move_to_pos(back_up_pos, 100, true, Tween.TRANS_QUAD, Tween.EASE_OUT)
 
 func animate_slash(attack_coords):
 	var location = get_parent().locations[attack_coords]

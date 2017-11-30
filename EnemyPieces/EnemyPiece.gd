@@ -599,7 +599,7 @@ func heal(amount, delay=0.0):
 	modify_hp(amount, delay)
 
 
-func attacked(amount, unit, delay=0.0, after=false):
+func attacked(amount, unit, delay=0.0, blocking=false):
 	if unit != null:
 		if unit.unit_name.to_lower() == "corsair" and !self.shielded:
 			set_corsair_marked(true)
@@ -612,7 +612,7 @@ func attacked(amount, unit, delay=0.0, after=false):
 	if self.shielded:
 		set_shield(false)
 	
-	modify_hp(damage * -1, delay, after)
+	modify_hp(damage * -1, delay, blocking)
 	
 	var tile = get_parent().locations[coords]
 	
@@ -642,7 +642,7 @@ func lightning_attacked():
 #		modify_hp(amount * -1)
 
 
-func modify_hp(amount, delay=0, after=false):
+func modify_hp(amount, delay=0, blocking=false):
 	if self.hp != 0: #in the case that someone tries to modify hp after the unit is already in the process of dying
 		self.hp = min((max(0, self.hp + amount)), 9) #has to be between 0 and 9
 		self.temp_display_hp = self.hp
@@ -650,12 +650,12 @@ func modify_hp(amount, delay=0, after=false):
 #		if self.current_animation_sequence == null:
 #			get_new_animation_sequence()
 		if self.hp == 0:
-			add_animation(self, "animate_set_hp", false, [self.hp, amount, delay, after])
+			add_animation(self, "animate_set_hp", false, [self.hp, amount, delay])
 #			if !after: #this will be handled by something else if this is an after modification of hp
-			delete_self(delay)
+			delete_self(delay, blocking)
 			#set_animation_sequence_blocking()
 		else:
-			add_animation(self, "animate_set_hp", false, [self.hp, amount, delay, after])
+			add_animation(self, "animate_set_hp", false, [self.hp, amount, delay])
 #			
 #		enqueue_animation_sequence()
 
@@ -665,7 +665,7 @@ func delete_self(delay=0.0, blocking=false):
 		unstable_explode(delay, blocking)
 		if blocking:
 			add_animation(self, "animate_delete_self", false, [delay])
-		else:
+		else: #if not blocking, we still need to wait for the extra animation to process
 			add_animation(self, "animate_delete_self", false, [delay + 1])
 	else:
 		add_animation(self, "animate_delete_self", false, [delay])
@@ -680,8 +680,7 @@ func unstable_explode(delay, blocking=false):
 	for coords in explosion_range:
 		if blocking:
 			self.grid.pieces[coords].enemy_attacked(delay)
-		else:
-			
+		else: #if not blocking, we still need to wait for the extra animation to process
 			self.grid.pieces[coords].enemy_attacked(delay + 1)
 
 
@@ -759,8 +758,7 @@ func animate_delete_self(delay=0.0):
 	timer.queue_free()
 	queue_free()
 
-#after is if we need the set_hp to trigger after the physical hit has already occured
-func animate_set_hp(hp, value, delay=0, after=false):
+func animate_set_hp(hp, value, delay=0):
 	add_anim_count()
 	reset_prediction_flyover()
 	#reset_just_prediction_flyover() #if you forget why you need this, attack same enemy quickly with 2 heroes
@@ -772,13 +770,11 @@ func animate_set_hp(hp, value, delay=0, after=false):
 		timer.start()
 		yield(timer, "timeout")
 		timer.queue_free()
-
-	get_node("Physicals/HealthDisplay").set_health(hp)
-	
-	if value < 0 and !after:
+		
+	if value < 0:
 		animate_hit()
 
-	
+	get_node("Physicals/HealthDisplay").set_health(hp)
 
 	var flyover = self.flyover_prototype.instance()
 	add_child(flyover)
@@ -806,6 +802,8 @@ func animate_set_hp(hp, value, delay=0, after=false):
 #	#if we don't flicker, we won't have it blocking either
 #	if flicker_flag:
 #		emit_signal("animation_done")
+
+	
 	flyover.queue_free()
 	tween.queue_free()
 	
@@ -816,6 +814,7 @@ func play_flicker_animation():
 	get_node("AnimationPlayer").play("FlickerAnimation")
 
 func animate_hit():
+	print("animating hit")
 	emit_signal("small_shake")
 	get_node("Physicals/Cracks").crack()
 	get_node("SamplePlayer").play("rocket glass explosion thud 2")

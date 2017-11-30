@@ -114,3 +114,9 @@ func is_pressed():
 func star_flash(flag):
 	for star in self.stars:
 		star.flash(flag)
+		
+func play_star_charged():
+	get_node("Timer").set_wait_time(0.3)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
+	get_node("SamplePlayer").play("star_charged")

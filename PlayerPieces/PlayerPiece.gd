@@ -414,7 +414,6 @@ func hover_highlight():
 
 #called on mouse exiting the CollisionArea
 func unhovered():
-	print("unhovering??")
 	if self.state != States.DEAD:
 		self.hovered_flag = false
 		get_node("Physicals/OverlayLayers/White").hide()

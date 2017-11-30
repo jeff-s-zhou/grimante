@@ -107,8 +107,9 @@ func _input(event):
 			get_node("EditorUnitBar").hide()
 			get_node("EditorHeroBar").hide()
 		else:
+			self.placing_traps = false
 			get_node("EditorUnitBar").show()
-			get_node("EditorHeroBar").show()
+			#get_node("EditorHeroBar").show()
 
 func set_target(target):
 	self.target = target
@@ -227,12 +228,16 @@ func load_level():
 			var modifiers = current_line["modifiers"]
 			var turn = current_line["turn"]
 			self.editor_grids[turn].add_piece(name, turn, coords, new_piece, hp, modifiers)
-		else:
+		elif current_line.has("name"): #HeroPiece
 			var new_piece = editor_hero_piece_prototype.instance()
 			var name = current_line["name"]
 			var coords = Vector2(current_line["pos_x"],current_line["pos_y"])
 			var turn = current_line["turn"]
 			self.editor_grids[turn].add_hero_piece(name, turn, coords, new_piece)
+		else:
+			var coords = Vector2(current_line["pos_x"],current_line["pos_y"])
+			var turn = current_line["turn"]
+			self.editor_grids[turn].locations[coords].toggle_trap()
 
 
 	save.close()

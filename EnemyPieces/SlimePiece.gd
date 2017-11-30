@@ -26,9 +26,9 @@ func move(distance, passed_animation_sequence=null):
 	add_animation(self, "show_sludge", false)
 	
 	
-func delete_self(delay=0.0):
+func delete_self(delay=0.0, blocking=false):
 	add_animation(self, "hide_sludge", false)
-	.delete_self(delay)
+	.delete_self(delay, blocking)
 	
 	
 func is_slime():

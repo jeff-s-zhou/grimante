@@ -567,25 +567,25 @@ func get_enemies(double_time_turn):
 func start_player_phase():
 	self.turn_count += 1
 	get_node("ControlBar/Combat/EndTurnButton").set_disabled(false)
-	
-	get_node("/root/AssistSystem").reset_combo()
-	if self.reinforcements.has(get_turn_count()):
-		reinforce()
-		yield(self, "reinforced")
-	
-	#if final turn, gain bonus star
-	if self.turn_count == self.level_schematic.num_turns:
-		get_node("ControlBar/Combat/StarBar").add_star()
-	
-	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
-		player_piece.turn_update()
+
 		
 	if self.tutorial != null and self.tutorial.has_player_turn_start_rule(get_turn_count()):
 		self.tutorial.display_player_turn_start_rule(get_turn_count())
 		pause()
 		yield(self.tutorial, "rule_finished")
 		unpause()
+
+	get_node("/root/AssistSystem").reset_combo()
+	if self.reinforcements.has(get_turn_count()):
+		reinforce()
+		yield(self, "reinforced")
+
+	for player_piece in get_tree().get_nodes_in_group("player_pieces"):
+		player_piece.turn_update()
 	
+	#if final turn, gain bonus star
+	if self.turn_count == self.level_schematic.num_turns:
+		get_node("ControlBar/Combat/StarBar").add_star()
 	
 	if self.tutorial != null and self.tutorial.has_forced_action(self.turn_count):
 		set_forced_action(true)

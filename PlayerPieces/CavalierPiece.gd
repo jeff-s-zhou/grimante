@@ -27,53 +27,6 @@ func get_trample_damage():
 func get_charge_damage(distance_travelled):
 	return get_assist_bonus_attack() + DEFAULT_CHARGE_DAMAGE + self.attack_bonus + distance_travelled
 
-func start_attack(attack_coords):
-	var location = get_parent().locations[attack_coords]
-	var decremented_coords = decrement_one(attack_coords)
-	
-	var difference = 4 * (location.get_pos() - get_parent().locations[decremented_coords].get_pos())/5
-	var new_position = location.get_pos() - difference
-	#add_animation(self, "animate_show_spear", true, [attack_coords])
-	add_animation(self, "animate_charge", true, [new_position])
-	
-func animate_charge(new_position):
-	animate_move_to_pos(new_position, 700, true, Tween.TRANS_QUAD, Tween.EASE_IN)
-	yield(self, "animation_done")
-	emit_signal("shake")
-
-func animate_show_spear(attack_coords):
-	add_anim_count()
-	var location = self.grid.locations[attack_coords]
-	var new_position = location.get_pos()
-	var angle = get_pos().angle_to_point(new_position)
-	get_node("Spear").set_rot(angle)
-	
-	var tween = Tween.new()
-	add_child(tween)
-	tween.interpolate_property(get_node("Spear"), "visibility/opacity", 0, 1, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	tween.start()
-	yield(tween, "tween_complete")
-	emit_signal("animation_done")
-	subtract_anim_count()
-	
-	tween.queue_free()
-	
-func animate_hide_spear():
-	var tween = Tween.new()
-	add_child(tween)
-	tween.interpolate_property(get_node("Spear"), "visibility/opacity", 1, 0, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	tween.start()
-	yield(tween, "tween_complete")
-	tween.queue_free()
-	
-
-func end_attack(original_coords):
-	var location = get_parent().locations[original_coords]
-	var new_position = location.get_pos()
-	#add_animation(self, "animate_hide_spear", false)
-	add_animation(self, "animate_move_to_pos", true, [new_position, 300, true, Tween.TRANS_SINE, Tween.EASE_IN])
-	
-
 func animate_hop(old_coords, new_coords, down=false, enemy=null):
 	add_anim_count()
 	self.mid_leaping_animation = true
@@ -217,16 +170,37 @@ func decrement_one(new_coords):
 
 func charge_attack(new_coords, attack=false):
 	var difference = new_coords - self.coords
-	var tiles_travelled = get_parent().hex_length(difference) - 1
-	start_attack(new_coords)
+	
+	var unit_distance = get_parent().hex_normalize(new_coords - self.coords)
+	var unit_pos_distance = get_parent().get_real_distance(unit_distance)
+	var back_up_pos = self.get_pos() - unit_pos_distance/4
+	var arguments = [back_up_pos, 100, true, Tween.TRANS_QUAD, Tween.EASE_OUT]
+	add_animation(self, "animate_move_to_pos", true, arguments)
+	
+	add_animation(self, "animate_charge", true, [new_coords])
 	var attack_range = [new_coords]
 	var position_coords = decrement_one(new_coords)
 	set_coords(position_coords)
+	var tiles_travelled = get_parent().hex_length(difference) - 1
 	var action = get_new_action()
 	action.add_call("attacked", [get_charge_damage(tiles_travelled), self], attack_range)
 	action.execute()
-	end_attack(position_coords)
+	
+	var location = get_parent().locations[position_coords]
+	var new_position = location.get_pos()
+	add_animation(self, "animate_move_to_pos", true, [new_position, 300, true, Tween.TRANS_SINE, Tween.EASE_IN])
 	placed()
+
+	
+func animate_charge(attack_coords):
+	var location = get_parent().locations[attack_coords]
+	var decremented_coords = decrement_one(attack_coords)
+	var difference = 4 * (location.get_pos() - get_parent().locations[decremented_coords].get_pos())/5
+	var new_position = location.get_pos() - difference
+	
+	animate_move_to_pos(new_position, 1000, true, Tween.TRANS_SINE, Tween.EASE_IN, 0.3)
+	yield(self, "animation_done")
+	emit_signal("shake")
 	
 
 func predict(new_coords):

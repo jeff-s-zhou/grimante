@@ -81,6 +81,7 @@ class BaseLevelType:
 			return 5
 	
 	func get_traps(turn_count):
+		var trap_subset = []
 		if self.traps.has(turn_count):
 			return self.traps[turn_count]
 

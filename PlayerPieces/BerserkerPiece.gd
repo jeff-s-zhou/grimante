@@ -140,7 +140,7 @@ func start_jump_to(new_coords, dust=false):
 	var time = dim_distance/speed
 	time = max(0.30, time) #if short hop looks weird, switch this back to 0.35
 
-	var old_height = get_node("Physicals").get_pos() + 30
+	var old_height = get_node("Physicals").get_pos() + Vector2(0, -12)
 	var vertical = min(-3.0 * distance/4, -90)
 	var new_height = Vector2(0, vertical)
 
@@ -220,17 +220,22 @@ func act(new_coords):
 
 func smash_attack(new_coords):
 	add_animation(self, "animate_move", false, [new_coords, 350, false])
-	add_animation(self, "jump_to", true, [new_coords])
+#	add_animation(self, "jump_to", true, [new_coords])
+	add_animation(self, "start_jump_to", true, [new_coords])
 	var action = get_new_action()
 	
 	var lethal = get_parent().pieces[new_coords].will_die_to(damage, self)
+	var unstable = get_parent().pieces[new_coords].unstable
 	
-	action.add_call("attacked", [self.damage, self], new_coords)
+	action.add_call("attacked", [self.damage, self, 0, true], new_coords)
 	action.execute()
+	
 	if lethal:
-		#add finished animation, where it just falls directly at a speed
+		add_animation(self, "finish_jump_to", true, [new_coords])
 		set_coords(new_coords)
 		placed()
+		if unstable:
+			enemy_attacked() #should take damage when attacking an unstable enemy, special case
 	#else leap back
 	else:
 		add_animation(self, "animate_move", false, [self.coords, 300, false])

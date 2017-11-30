@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=1]
+[gd_scene load_steps=16 format=1]
 
 [ext_resource path="res://UI/Desktop/EndTurnButton.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/Desktop/NewEndTurn/shell.png" type="Texture" id=2]
@@ -7,10 +7,13 @@
 [ext_resource path="res://Assets/UI/Desktop/NewEndTurn/outer_hands.png" type="Texture" id=5]
 [ext_resource path="res://Assets/UI/Desktop/NewEndTurn/button.png" type="Texture" id=6]
 [ext_resource path="res://Assets/UI/Desktop/NewEndTurn/button_pressed.png" type="Texture" id=7]
-[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/button_pressed_disabled.png" type="Texture" id=8]
-[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/deploy_button.png" type="Texture" id=9]
-[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/deploy_button_pressed.png" type="Texture" id=10]
-[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/deploy_button_disabled.png" type="Texture" id=11]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/button_highlight.png" type="Texture" id=8]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/button_pressed_disabled.png" type="Texture" id=9]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/click_mask.pbm" type="BitMap" id=10]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/deploy_button.png" type="Texture" id=11]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/deploy_button_pressed.png" type="Texture" id=12]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/deploy_button_highlight.png" type="Texture" id=13]
+[ext_resource path="res://Assets/UI/Desktop/NewEndTurn/deploy_button_disabled.png" type="Texture" id=14]
 
 [sub_resource type="Animation" id=1]
 
@@ -80,7 +83,9 @@ enabled_focus_mode = 2
 shortcut = null
 textures/normal = ExtResource( 6 )
 textures/pressed = ExtResource( 7 )
-textures/disabled = ExtResource( 8 )
+textures/hover = ExtResource( 8 )
+textures/disabled = ExtResource( 9 )
+textures/click_mask = ExtResource( 10 )
 params/resize_mode = 0
 params/stretch_mode = 0
 
@@ -98,9 +103,11 @@ margin/bottom = 93.0
 toggle_mode = false
 enabled_focus_mode = 2
 shortcut = null
-textures/normal = ExtResource( 9 )
-textures/pressed = ExtResource( 10 )
-textures/disabled = ExtResource( 11 )
+textures/normal = ExtResource( 11 )
+textures/pressed = ExtResource( 12 )
+textures/hover = ExtResource( 13 )
+textures/disabled = ExtResource( 14 )
+textures/click_mask = ExtResource( 10 )
 params/resize_mode = 0
 params/stretch_mode = 0
 
