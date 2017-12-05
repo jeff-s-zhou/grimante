@@ -12,72 +12,69 @@ func _ready():
 	pass
 	
 func animate_clear_inspire():
-	self.hide()
-	
+	get_node("Highlights").set_opacity(0)
+	get_node("ComboSparkleManager").animate_clear_assist()
+
+
 func animate_inspire_ready(type):
 	get_node("/root/AnimationQueue").update_animation_count(1)
-	self.set_opacity(0)
-	get_node("InspireArrow").set_rotd(0)
-	get_node("InspireArrow").set_opacity(1)
-	self.show()
-	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	var highlights = get_node("Highlights")
+	highlights.set_opacity(0)
+	highlights.get_node("InspireArrow").set_rotd(0)
+	
+	get_node("Highlights/InspireText").play(type)
+	get_node("Highlights/InspireArrow").play(type)
+	get_node("Tween").interpolate_property(highlights, "visibility/opacity", 0, 1, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
-	get_node("InspireText").play(type)
-	get_node("InspireArrow").play(type)
+
 	get_node("AnimationPlayer").play("hover")
+	get_node("ComboSparkleManager").animate_activate_assist(type)
 	yield(get_node("Tween"), "tween_complete")
 	get_node("/root/AnimationQueue").update_animation_count(-1)
 	emit_signal("animation_done")
 
-func animate_give_inspire(type):
+func animate_give_inspire(type, target_piece):
 	get_node("/root/AnimationQueue").update_animation_count(1)
-	self.show()
-	self.set_opacity(1)
-	get_node("InspireText").play(type)
-	get_node("InspireArrow").play(type)
+	
+	get_node("Highlights/InspireText").play(type)
+	get_node("Highlights/InspireArrow").play(type)
 	get_node("AnimationPlayer").stop()
 	
-	get_node("Tween").interpolate_property(get_node("InspireText"), "visibility/opacity", 1, 0, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)	
-	var arrow = get_node("InspireArrow")
-	arrow.set_opacity(1)
+	get_node("Tween").interpolate_property(get_node("Highlights"), "visibility/opacity", 1, 0, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)	
+	var arrow = get_node("Highlights/InspireArrow")
 	var final_pos = arrow.get_pos() + Vector2(0, -15)
-	
 	get_node("Tween").interpolate_property(arrow, "transform/pos", arrow.get_pos(), final_pos, 0.3, Tween.TRANS_SINE, Tween.EASE_OUT) 
-	get_node("Tween").interpolate_property(arrow, "visibility/opacity", 1, 0, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	yield(get_node("Tween"), "tween_complete")
-	yield(get_node("Tween"), "tween_complete")
+
+	
+	var pos_difference = target_piece.get_global_pos() - get_parent().get_global_pos()
+	print("pos difference is ", pos_difference)
+	get_node("ComboSparkleManager").animate_assist(type, pos_difference)
+	yield(get_node("ComboSparkleManager"), "animation_done")
+	
+	
 	get_node("/root/AnimationQueue").update_animation_count(-1)
 	emit_signal("animation_done")
-	self.hide()
 
 
 func animate_receive_inspire(type):
-	pass
 	get_node("/root/AnimationQueue").update_animation_count(1)
-	var arrow = get_node("InspireArrow")
-	arrow.set_opacity(0)
+	var arrow = get_node("Highlights/InspireArrow")
 	arrow.set_pos(Vector2(0, -50))
 	arrow.set_rotd(180)
-	
-	get_node("InspireText").set_opacity(0)
-	
-	self.show()
+
 	var final_pos = Vector2(0, -35)
-	get_node("InspireText").play(type)
-	get_node("InspireArrow").play(type)
+	get_node("Highlights/InspireText").play(type)
+	get_node("Highlights/InspireArrow").play(type)
 	get_node("Tween").interpolate_property(arrow, "transform/pos", arrow.get_pos(), final_pos, 0.3, Tween.TRANS_SINE, Tween.EASE_IN) 
-	get_node("Tween").interpolate_property(arrow, "visibility/opacity", 0, 1, 0.3, Tween.TRANS_QUAD, Tween.EASE_OUT)
-	get_node("Tween").interpolate_property(get_node("InspireText"), "visibility/opacity", 0, 1, 0.3, Tween.TRANS_CUBIC, Tween.EASE_OUT)
+	get_node("Tween").interpolate_property(get_node("Highlights"), "visibility/opacity", 0, 1, 0.3, Tween.TRANS_CUBIC, Tween.EASE_OUT)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	yield(get_node("Tween"), "tween_complete")
-	yield(get_node("Tween"), "tween_complete")
-	get_node("Tween 2").interpolate_property(self, "visibility/opacity", 1, 0, 0.3, Tween.TRANS_CUBIC, Tween.EASE_IN)
+	get_node("Tween 2").interpolate_property(get_node("Highlights"), "visibility/opacity", 1, 0, 0.3, Tween.TRANS_CUBIC, Tween.EASE_IN)
 	get_node("Tween 2").start()
 	yield(get_node("Tween 2"), "tween_complete")
 	emit_signal("animation_done")
 	get_node("/root/AnimationQueue").update_animation_count(-1)
-	self.hide()
-	self.set_opacity(1)

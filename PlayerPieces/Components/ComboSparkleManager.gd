@@ -51,7 +51,7 @@ func animate_assist(assist_type, pos_difference):
 		sparkles.get_node("ParticleAttractor2D").set_enabled(false)
 	emit_signal("animation_done")
 	
-func animate_clear_assist(assist_type):
+func animate_clear_assist():
 	get_node("ComboSparklesRed").set_emitting(false)
 	get_node("ComboSparklesYellow").set_emitting(false)
 	get_node("ComboSparklesBlue").set_emitting(false)

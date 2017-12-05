@@ -127,10 +127,10 @@ func sandbox():
 	var raw_enemies = {0:{Vector2(3, 5): make(Grunt, 2), Vector2(2, 2): make(Fortifier, 3), 
 	Vector2(3, 3): make(Grunt, 3), Vector2(5, 6): make(Melee, 5)}}
 #	
-#	var trap_tiles = {0:[Vector2(3, 6), Vector2(2, 3)],
-#	1:[Vector2(4, 3), Vector2(4, 2)]}
+	var trap_tiles = {0:[Vector2(3, 6), Vector2(2, 3)],
+	1:[Vector2(4, 3), Vector2(4, 2)]}
 
-	var extras1 = {"free_deploy":false, "flags":flags, "score_guide":score_guide}
+	var extras1 = {"free_deploy":false, "flags":flags, "score_guide":score_guide, "traps":trap_tiles}
 	
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var heroes = {3: Cavalier, 2:Berserker} 
