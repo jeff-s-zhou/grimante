@@ -77,6 +77,7 @@ func set_trap():
 	self.laid_trap = true
 	
 func trigger_trap():
+	print("triggering trap")
 	get_node("/root/AnimationQueue").enqueue(self, "animate_trigger_trap", true)
 	self.armed_trap = false
 
@@ -124,20 +125,21 @@ func arm_trap(first=false):
 				blocking_piece.block_summon()
 			else:
 				blocking_piece.trap_buff()
+			get_node("TrapSymbol").hide() #trap is already consumed, 
 		else:
 			self.armed_trap = true
 			
 		self.laid_trap = false
 		
 func display_incoming():
-	display_reinforcement()
-	display_laid_trap()
+	get_node("/root/AnimationQueue").enqueue(self, "animate_display_reinforcement", false)
+	get_node("/root/AnimationQueue").enqueue(self, "animate_display_laid_trap", false)
 	
-func display_reinforcement():
+func animate_display_reinforcement():
 	if self.reinforcement != null:
 		set_reinforcement_indicator(self.reinforcement.type)
 		
-func display_laid_trap():
+func animate_display_laid_trap():
 	if self.laid_trap:
 		get_node("ReinforcementIndicator").display("trap")
 		get_node("ReinforcementIndicator").show()

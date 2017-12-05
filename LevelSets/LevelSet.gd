@@ -124,21 +124,20 @@ func sandbox():
 	var flags = []
 	var score_guide = {0:2, 1:4}
 	
-	var raw_enemies = {0:{Vector2(4, 6): make(Slime, 3, [unstable]),
-	Vector2(3, 5): make(Grunt, 4, [shield]), Vector2(3, 4): make(Grunt, 6, [shield])},
-	1:{Vector2(2, 2): make(Fortifier, 3), Vector2(3, 3): make(Grunt, 3), Vector2(5, 6): make(Melee, 5)}}
-	
-#	var trap_tiles = {0:[Vector2(2, 5), Vector2(2, 3)],
+	var raw_enemies = {0:{Vector2(3, 5): make(Grunt, 2), Vector2(2, 2): make(Fortifier, 3), 
+	Vector2(3, 3): make(Grunt, 3), Vector2(5, 6): make(Melee, 5)}}
+#	
+#	var trap_tiles = {0:[Vector2(3, 6), Vector2(2, 3)],
 #	1:[Vector2(4, 3), Vector2(4, 2)]}
-	
+
 	var extras1 = {"free_deploy":false, "flags":flags, "score_guide":score_guide}
 	
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var heroes = {1: Stormdancer, 3:Berserker, Vector2(4, 2): Cavalier} 
-	return LevelTypes.Timed.new(33333, "", heroes, enemies, 1, null, extras1) 
+	var heroes = {3: Cavalier, 2:Berserker} 
+	return LevelTypes.Timed.new(33333, "Sandbox", heroes, enemies, 5, null, extras1) 
 #	
 func background():
-	var pieces = load_level("trap_test.level")
+	var pieces = load_level("tutorial2.level")
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)

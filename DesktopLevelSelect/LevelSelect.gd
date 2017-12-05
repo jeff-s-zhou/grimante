@@ -33,7 +33,7 @@ func _ready():
 #		hard_y_position += 78
 
 func create_new_level_button(level, y_position):
-	var score = get_node("/root/State").get_level_score(self.level_set.id, level.id)
+	var score = get_node("/root/State").get_level_score(level.id, self.level_set.id)
 	var level_button = self.level_set_button_prototype.instance()
 	level_button.initialize(level, score)
 	level_button.set_pos(Vector2(screen_size.x/2, y_position))

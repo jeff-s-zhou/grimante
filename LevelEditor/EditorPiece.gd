@@ -151,7 +151,8 @@ func set_unstable(flag):
 		self.modifiers.erase("Unstable")
 		get_node("EnemyEffects/Unstable").set_emitting(false)
 		
-		
+func toggle_trap():
+	pass
 
 func save():
 	var save_dict = {

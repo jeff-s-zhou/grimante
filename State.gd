@@ -73,13 +73,19 @@ func set_seen(unit_name):
 	save_state()
 	
 
-func get_level_score(level_set_id, level_id):
+func get_level_score(level_id, level_set_id=null):
+	if level_set_id == null and self.current_level_set == null:
+		return
+		
+	if level_set_id == null:
+		level_set_id = self.current_level_set.id
 	if self.level_set_data.has(str(level_set_id)):
 		var s = self.level_set_data[str(level_set_id)]
 		if s.has(str(level_id)):
 			return s[str(level_id)]
 	return null
 	
+
 func save_level_progress(level_id, score):
 	if self.current_level_set == null:
 		return

@@ -76,7 +76,8 @@ func _input(event):
 				
 		elif self.placing_traps:
 			var hovered = get_node("CursorArea").get_piece_or_location_hovered()
-			hovered.toggle_trap()
+			if hovered:
+				hovered.toggle_trap()
 		else:
 			var hovered = get_node("CursorArea").get_piece_or_location_hovered()
 			if hovered:

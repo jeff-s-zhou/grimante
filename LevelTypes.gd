@@ -79,6 +79,22 @@ class BaseLevelType:
 			return self.score_guide[turn_count]
 		else:
 			return 5
+			
+	#ok, the problem is that you can have the same score for multiple turns
+	#so instead of "You cleared in 4 turns", we need something like
+	#To improve your score, beat on turn 4
+	func get_turn_to_improve_score(score):
+#		so right now it's turn count -> score
+#		what we need to do is find the turn count with a score > score
+		var lowest_improved_score = 9999
+		var target_turn = 0
+		for turn_count in self.score_guide.keys():
+			if self.score_guide[turn_count] > score:
+				if self.score_guide[turn_count] < lowest_improved_score:
+					lowest_improved_score = self.score_guide[turn_count]
+					target_turn = turn_count
+					
+		return target_turn
 	
 	func get_traps(turn_count):
 		var trap_subset = []

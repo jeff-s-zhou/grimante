@@ -11,8 +11,8 @@ func _ready():
 	
 func get_set():
 	return Set.new(6, "Sixth",
-	[inspire(), shield_inspire(), corrosion(), griffon(), defuse_the_bomb(), ghost_boss()], 
-	[shield_inspire(true), corrosion(true)])
+	[inspire(), shield_inspire(), trap(), griffon(), defuse_the_bomb(), ghost_boss()], 
+	[shield_inspire(true), trap(true)])
 
 func inspire():
 	var allies = {1: Berserker, 5: Cavalier}
@@ -45,21 +45,21 @@ func shield_inspire(hard=false):
 	return LevelTypes.Timed.new(00031, "Power of Friendship 2", allies, enemies, 3, null, extras)
 
 
-func corrosion(hard=false):
+func trap(hard=false):
 	var pieces
 	var score_guide
-	if hard:
-		pieces = load_level("corrosion_hard.level")
-		score_guide = {1:5, 2:5, 3:5, 4:4, 5:3} #not tested
-	else:
-		pieces = load_level("corrosion.level")
-		score_guide = {1:5, 2:5, 3:5, 4:4, 5:3}
+	pieces = load_level("trap2.level")
+	#score_guide = {1:5, 2:5, 3:5, 4:4, 5:3}
+	score_guide = {1:5, 2:5, 3:4, 4:3}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
+	var traps = pieces[2]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth"]
-	var extras = {"free_deploy":false, "flags":flags, "hard":hard, "score_guide":score_guide}
-	return LevelTypes.Timed.new(00032, "Corrosion", allies, enemies, 5, null, extras)
+	var tutorial = load("res://Tutorials/trap.gd").new()
+	var tutorial_func = funcref(tutorial, "get")
+	var extras = {"free_deploy":false, "flags":flags, "hard":hard, "score_guide":score_guide, "traps":traps, "tutorial":tutorial_func}
+	return LevelTypes.Timed.new(00032, "Ackbar on the Backbar", allies, enemies, 4, null, extras)
 
 	
 func griffon():

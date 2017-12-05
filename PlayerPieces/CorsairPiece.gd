@@ -157,14 +157,14 @@ func animate_draw_back(new_coords):
 
 func animate_slash(attack_coords):
 	var location = get_parent().locations[attack_coords]
-	var difference = 4 * (location.get_pos() - get_pos())/5
+	var difference = (location.get_pos() - get_pos())/2
 	var new_position = location.get_pos() - difference
-	animate_move_to_pos(new_position, 450, true, Tween.TRANS_SINE, Tween.EASE_IN)
+	animate_move_to_pos(new_position, 1000, true, Tween.TRANS_LINEAR, Tween.EASE_IN, 0.2)
 
 func animate_slash_end(original_coords):
 	var location = get_parent().locations[original_coords]
 	var new_position = location.get_pos()
-	animate_move_to_pos(new_position, 300, true)
+	animate_move_to_pos(new_position, 700, true)
 
 
 func get_marked_damage(base_damage, attack_coords):

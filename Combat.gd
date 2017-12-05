@@ -71,7 +71,7 @@ func _ready():
 	
 	get_node("Settings").initialize(self.level_schematic)
 	
-	get_node("PhaseShifter").initialize(self.level_schematic.num_turns)
+	get_node("PhaseShifter").initialize(self.level_schematic)
 	
 	get_node("InfoBar").initialize(self.level_schematic, get_node("ControlBar/Combat/StarBar"), self.level_schematic.flags)
 	
@@ -80,9 +80,9 @@ func _ready():
 	get_node("/root/AssistSystem").initialize(self.level_schematic.flags)
 	
 	get_node("Grid").initialize(self.level_schematic.flags)
-#	
-	if !get_node("/root/MusicPlayer").is_playing():
-		get_node("/root/MusicPlayer").play()
+	
+#	if !get_node("/root/MusicPlayer").is_playing():
+#		get_node("/root/MusicPlayer").play()
 
 	#key is the coords, value is the piece
 	for key in self.level_schematic.allies.keys():
@@ -681,13 +681,17 @@ func player_win():
 	
 	self.state = STATES.end
 	pause()
+	
+	get_node("Timer2").set_wait_time(0.3)
+	get_node("Timer2").start()
+	yield(get_node("Timer2"), "timeout")
 		
 	get_node("/root/AnimationQueue").stop()
 	
 	get_node("/root/DataLogger").log_win(self.level_schematic.id, self.turn_count)
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
-	get_node("Timer2").set_wait_time(0.5)
+	get_node("Timer2").set_wait_time(0.3)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
 	

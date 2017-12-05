@@ -17,8 +17,15 @@ func _ready():
 	set_opacity(0)
 	pass
 	
-func initialize(turn_limit):
-	self.turn_limit = turn_limit
+func initialize(level_schematic):
+	self.turn_limit = level_schematic.num_turns
+	get_node("Name").set_text(str(level_schematic.name))
+	var score = get_node("/root/State").get_level_score(level_schematic.id)
+	if score != null:
+		var turn = level_schematic.get_turn_to_improve_score(score)
+		get_node("Name/TurnSubtext").set_text("CLEAR IN " + str(turn) + " TURNS TO BEAT YOUR SCORE")
+		
+	
 
 func animate_player_phase(current_turn):
 	animate(current_turn, false)
@@ -83,8 +90,20 @@ func animate(current_turn, enemy_phase=false):
 	
 	get_node("Tween").start()
 	get_node("Tween 2").start()
+
 	
-	#if final player phase, give additional indicator
+	#if first turn, display name and previous score to beat
+#	if current_turn == 0:
+#		get_node("Tween").interpolate_property(get_node("Main"), "visibility/opacity", 1, 0, 0.2, Tween.TRANS_CUBIC, Tween.EASE_IN)
+#		get_node("Tween").start()
+#		yield(get_node("Tween"), "tween_complete")
+#		get_node("Tween").interpolate_property(get_node("Name"), "visibility/opacity", 0, 1, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
+#		get_node("Tween").interpolate_property(get_node("Name"), "visibility/opacity", 1, 0, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN, 1.2)
+#		get_node("Tween").start()
+#		yield(get_node("Tween"), "tween_complete")
+#		yield(get_node("Tween"), "tween_complete")
+		
+#if final player phase, give additional indicator
 	if !enemy_phase and current_turn + 1 == turn_limit:
 		get_node("Tween").interpolate_property(get_node("Main"), "visibility/opacity", 1, 0, 0.2, Tween.TRANS_CUBIC, Tween.EASE_IN)
 		get_node("Tween").start()
@@ -97,7 +116,6 @@ func animate(current_turn, enemy_phase=false):
 		get_node("Tween").start()
 		yield(get_node("Tween"), "tween_complete")
 		yield(get_node("Tween"), "tween_complete")
-		
 		
 
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 0.2, Tween.TRANS_CUBIC, Tween.EASE_IN)

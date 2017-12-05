@@ -60,7 +60,7 @@ func _is_within_attack_range(new_coords):
 func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
 	
-func jump_to(new_coords, dust=false):
+func jump_to(new_coords):
 	add_anim_count()
 	self.mid_leaping_animation = true
 	set_z(3)
@@ -90,21 +90,20 @@ func jump_to(new_coords, dust=false):
 	var cracks = get_node("Cracks")
 	var slam_ring = get_node("SlamRing")
 	var explosion = get_node("SlamExplosion")
-	if dust:
-		cracks.set_opacity(1)
-		#explosion.set_opacity(1)
-		explosion.set_enabled(true)
-		slam_ring.set_scale(Vector2(0.3, 0.3))
-		slam_ring.set_opacity(1)
-		get_parent().get_node("FieldEffects").emit_dust(self.get_pos())
-		var tween = Tween.new()
-		add_child(tween)
-		
-		tween.interpolate_property(slam_ring, "visibility/opacity", \
-		1, 0, 0.5, Tween.TRANS_QUAD, Tween.EASE_IN, 0.2)
-		tween.interpolate_property(slam_ring, "transform/scale", \
-		Vector2(0.3, 0.3), Vector2(1.6, 1.6), 0.7, Tween.TRANS_QUAD, Tween.EASE_OUT)
-		tween.start()
+	#cracks.set_opacity(1)
+	#explosion.set_opacity(1)
+	explosion.set_enabled(true)
+	slam_ring.set_scale(Vector2(0.3, 0.3))
+	slam_ring.set_opacity(1)
+	get_parent().get_node("FieldEffects").emit_dust(self.get_pos())
+	var tween = Tween.new()
+	add_child(tween)
+	
+	tween.interpolate_property(slam_ring, "visibility/opacity", \
+	1, 0, 0.5, Tween.TRANS_QUAD, Tween.EASE_IN, 0.3)
+	tween.interpolate_property(slam_ring, "transform/scale", \
+	Vector2(0.3, 0.3), Vector2(1.6, 1.6), 0.7, Tween.TRANS_QUAD, Tween.EASE_OUT, 0.1)
+	tween.start()
 	self.mid_leaping_animation = false
 	set_z(0)
 	get_node("SamplePlayer 2").play("explode3")
@@ -112,19 +111,18 @@ func jump_to(new_coords, dust=false):
 	emit_signal("animation_done")
 	subtract_anim_count()
 	
-	if dust:
-		#yield(get_node("Tween 2"), "tween_complete")
-		get_node("Tween 2").interpolate_property(cracks, "visibility/opacity", \
-		1, 0, 1, Tween.TRANS_LINEAR, Tween.EASE_IN, 0.3)
+	#yield(get_node("Tween 2"), "tween_complete")
+	get_node("Tween 2").interpolate_property(cracks, "visibility/opacity", \
+	1, 0, 1, Tween.TRANS_LINEAR, Tween.EASE_IN, 0.3)
 #		get_node("Tween 2").interpolate_property(explosion, "visibility/opacity", \
 #		1, 0, 0.2, Tween.TRANS_QUAD, Tween.EASE_IN, 0.3)
-		get_node("Tween 2").interpolate_property(explosion, "energy", \
-		4, 0.01, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN, 0.3)
-		get_node("Tween 2").start()
-		
-		yield(get_node("Tween 2"), "tween_complete")
-		yield(get_node("Tween 2"), "tween_complete")
-		explosion.set_enabled(false)
+	get_node("Tween 2").interpolate_property(explosion, "energy", \
+	10, 0.01, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").start()
+	
+	yield(get_node("Tween 2"), "tween_complete")
+	yield(get_node("Tween 2"), "tween_complete")
+	explosion.set_enabled(false)
 
 
 func start_jump_to(new_coords, dust=false):
@@ -168,11 +166,14 @@ func finish_jump_to(new_coords):
 	yield(get_node("Tween 2"), "tween_complete")
 
 	self.mid_leaping_animation = false
+
 	set_z(0)
 	get_node("SamplePlayer 2").play("explode3")
 	emit_signal("shake")
 	emit_signal("animation_done")
 	subtract_anim_count()
+	
+	
 
 	
 func jump_back(new_coords):
@@ -188,7 +189,7 @@ func jump_back(new_coords):
 	var time = dim_distance/speed
 	time = max(0.30, time) #if short hop looks weird, switch this back to 0.35
 
-	var old_height = get_node("Physicals").get_pos()
+	var old_height = Vector2(0, -5)
 	var vertical = min(-1 * distance/2, -60)
 	var new_height = Vector2(0, vertical)
 
@@ -231,11 +232,11 @@ func smash_attack(new_coords):
 	action.execute()
 	
 	if lethal:
+		if unstable:
+			enemy_attacked() #should take damage when attacking an unstable enemy, special case
 		add_animation(self, "finish_jump_to", true, [new_coords])
 		set_coords(new_coords)
 		placed()
-		if unstable:
-			enemy_attacked() #should take damage when attacking an unstable enemy, special case
 	#else leap back
 	else:
 		add_animation(self, "animate_move", false, [self.coords, 300, false])
@@ -246,7 +247,7 @@ func smash_attack(new_coords):
 
 func smash_move(new_coords):
 	add_animation(self, "animate_move", false, [new_coords, 350, false])
-	add_animation(self, "jump_to", true, [new_coords, true])
+	add_animation(self, "jump_to", true, [new_coords])
 	
 	set_coords(new_coords)
 	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
@@ -257,9 +258,9 @@ func smash_move(new_coords):
 
 func smash(smash_range):
 	var action = get_new_action()
-	action.add_call("set_stunned", [true, 0.2], smash_range)
+	action.add_call("set_stunned", [true, 0.3], smash_range)
 	#the false flag is so it doesn't interrupt the stun it just set lol
-	action.add_call("attacked", [self.aoe_damage, self, 0.2], smash_range)
+	action.add_call("attacked", [self.aoe_damage, self, 0.3], smash_range)
 	action.execute()
 	
 	
@@ -301,8 +302,6 @@ func predict(new_coords):
 
 func predict_smash_attack(new_coords):
 	get_parent().pieces[new_coords].predict(self.damage, self)
-	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
-
 
 func predict_smash_move(new_coords):
 	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")

@@ -221,8 +221,6 @@ func get_modifiers():
 		modifiers["Shield"] = enemy_modifiers["Shield"]
 	if self.cloaked:
 		modifiers["Cloaked"] = enemy_modifiers["Cloaked"]
-	if self.predator:
-		modifiers["Predator"] = enemy_modifiers["Predator"]
 	if self.unstable:
 		modifiers["Unstable"] = enemy_modifiers["Unstable"]
 	return modifiers
@@ -867,7 +865,12 @@ func turn_attack_update():
 		set_stunned(false)
 		
 	if self.grid.locations[self.coords].is_trapped():
-		heal(self.hp)
+		trap_buff()
+		
+
+func trap_buff():
+	self.grid.locations[self.coords].trigger_trap()
+	heal(self.hp)
 
 
 

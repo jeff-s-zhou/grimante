@@ -10,42 +10,52 @@ script/script = ExtResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]
 
-transform/pos = Vector2( 510, 390 )
+transform/pos = Vector2( 508, 386 )
 texture = ExtResource( 2 )
 
 [node name="1" parent="." instance=ExtResource( 3 )]
 
-transform/pos = Vector2( 512, 223 )
+transform/pos = Vector2( 488.08, 473.08 )
 transform/scale = Vector2( 0.94, 0.94 )
 
 [node name="2" parent="." instance=ExtResource( 3 )]
 
-transform/pos = Vector2( 640, 297 )
+transform/pos = Vector2( 361, 256.08 )
 transform/scale = Vector2( 0.94, 0.94 )
 
 [node name="3" parent="." instance=ExtResource( 3 )]
 
-transform/pos = Vector2( 640, 444 )
+transform/pos = Vector2( 353.08, 541.16 )
 transform/scale = Vector2( 0.94, 0.94 )
 
 [node name="4" parent="." instance=ExtResource( 3 )]
 
-transform/pos = Vector2( 512, 516.79 )
+transform/pos = Vector2( 489.08, 328.08 )
 transform/scale = Vector2( 0.94, 0.94 )
 
 [node name="5" parent="." instance=ExtResource( 3 )]
 
-transform/pos = Vector2( 385, 444 )
+transform/pos = Vector2( 492.08, 189.08 )
 transform/scale = Vector2( 0.94, 0.94 )
 
 [node name="6" parent="." instance=ExtResource( 3 )]
 
-transform/pos = Vector2( 385, 297 )
+transform/pos = Vector2( 358.08, 393.16 )
 transform/scale = Vector2( 0.94, 0.94 )
 
 [node name="7" parent="." instance=ExtResource( 3 )]
 
-transform/pos = Vector2( 512, 370 )
+transform/pos = Vector2( 624.08, 255.08 )
+transform/scale = Vector2( 0.94, 0.94 )
+
+[node name="8" parent="." instance=ExtResource( 3 )]
+
+transform/pos = Vector2( 623.08, 116.08 )
+transform/scale = Vector2( 0.94, 0.94 )
+
+[node name="9" parent="." instance=ExtResource( 3 )]
+
+transform/pos = Vector2( 620.08, 398.08 )
 transform/scale = Vector2( 0.94, 0.94 )
 
 

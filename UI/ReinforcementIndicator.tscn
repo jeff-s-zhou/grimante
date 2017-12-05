@@ -1,19 +1,19 @@
 [gd_scene load_steps=21 format=1]
 
 [ext_resource path="res://UI/ReinforcementIndicator.gd" type="Script" id=1]
-[ext_resource path="res://Assets/UI/reinforcement_preview_red.png" type="Texture" id=2]
+[ext_resource path="res://Assets/UI/reinforcement_preview_green.png" type="Texture" id=2]
 [ext_resource path="res://Assets/UI/reinforcement_preview_yellow.png" type="Texture" id=3]
-[ext_resource path="res://Assets/UI/reinforcement_preview_green.png" type="Texture" id=4]
-[ext_resource path="res://Assets/UI/laid_trap_indicator.png" type="Texture" id=5]
-[ext_resource path="res://Assets/UI/reinforcement_friendly.png" type="Texture" id=6]
-[ext_resource path="res://Assets/UI/reinforcement_preview_red_glow.png" type="Texture" id=7]
+[ext_resource path="res://Assets/UI/reinforcement_preview_red.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/reinforcement_friendly.png" type="Texture" id=5]
+[ext_resource path="res://Assets/UI/laid_trap_indicator.png" type="Texture" id=6]
+[ext_resource path="res://Assets/UI/reinforcement_preview_green_glow.png" type="Texture" id=7]
 [ext_resource path="res://Assets/UI/reinforcement_preview_yellow_glow.png" type="Texture" id=8]
-[ext_resource path="res://Assets/UI/reinforcement_preview_green_glow.png" type="Texture" id=9]
-[ext_resource path="res://Assets/UI/laid_trap_indicator_glow.png" type="Texture" id=10]
-[ext_resource path="res://Assets/UI/reinforcement_friendly_glow.png" type="Texture" id=11]
-[ext_resource path="res://Assets/UI/reinforcement_preview_red_fill.png" type="Texture" id=12]
+[ext_resource path="res://Assets/UI/reinforcement_preview_red_glow.png" type="Texture" id=9]
+[ext_resource path="res://Assets/UI/reinforcement_friendly_glow.png" type="Texture" id=10]
+[ext_resource path="res://Assets/UI/laid_trap_indicator_glow.png" type="Texture" id=11]
+[ext_resource path="res://Assets/UI/reinforcement_preview_green_fill.png" type="Texture" id=12]
 [ext_resource path="res://Assets/UI/reinforcement_preview_yellow_fill.png" type="Texture" id=13]
-[ext_resource path="res://Assets/UI/reinforcement_preview_green_fill.png" type="Texture" id=14]
+[ext_resource path="res://Assets/UI/reinforcement_preview_red_fill.png" type="Texture" id=14]
 [ext_resource path="res://Assets/UI/laid_trap_indicator_fill.png" type="Texture" id=15]
 
 [sub_resource type="SpriteFrames" id=1]
@@ -21,7 +21,12 @@
 animations = [ {
 "frames": [ ExtResource( 2 ) ],
 "loop": true,
-"name": "attack",
+"name": "selfish",
+"speed": 5.0
+}, {
+"frames": [  ],
+"loop": true,
+"name": "boss",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 3 ) ],
@@ -31,22 +36,17 @@ animations = [ {
 }, {
 "frames": [ ExtResource( 4 ) ],
 "loop": true,
-"name": "selfish",
-"speed": 5.0
-}, {
-"frames": [  ],
-"loop": true,
-"name": "boss",
+"name": "attack",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 5 ) ],
 "loop": true,
-"name": "trap",
+"name": "friendly",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 6 ) ],
 "loop": true,
-"name": "friendly",
+"name": "trap",
 "speed": 5.0
 } ]
 
@@ -55,7 +55,12 @@ animations = [ {
 animations = [ {
 "frames": [ ExtResource( 7 ) ],
 "loop": true,
-"name": "attack",
+"name": "selfish",
+"speed": 5.0
+}, {
+"frames": [  ],
+"loop": true,
+"name": "boss",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 8 ) ],
@@ -65,22 +70,17 @@ animations = [ {
 }, {
 "frames": [ ExtResource( 9 ) ],
 "loop": true,
-"name": "selfish",
-"speed": 5.0
-}, {
-"frames": [  ],
-"loop": true,
-"name": "boss",
+"name": "attack",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 10 ) ],
 "loop": true,
-"name": "trap",
+"name": "friendly",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 11 ) ],
 "loop": true,
-"name": "friendly",
+"name": "trap",
 "speed": 5.0
 } ]
 
@@ -132,7 +132,7 @@ tracks/1/keys = {
 animations = [ {
 "frames": [ ExtResource( 12 ) ],
 "loop": true,
-"name": "attack",
+"name": "selfish",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 13 ) ],
@@ -142,7 +142,7 @@ animations = [ {
 }, {
 "frames": [ ExtResource( 14 ) ],
 "loop": true,
-"name": "selfish",
+"name": "attack",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 15 ) ],
