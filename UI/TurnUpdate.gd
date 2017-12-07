@@ -11,7 +11,9 @@ var end_pos = Vector2(-512, -260)
 var turn_limit = 0
 var current_turn = 0
 
-var score
+var name
+
+var has_previous_score
 
 func _ready():
 	# Called every time the node is added to the scene.
@@ -21,15 +23,16 @@ func _ready():
 	
 func initialize(level_schematic):
 	self.turn_limit = level_schematic.num_turns
-	get_node("Name").set_text(str(level_schematic.name.to_upper()))
-	self.score = get_node("/root/State").get_level_score(level_schematic.id)
-	if self.score != null and self.score != 5: #already attempted but not full score
+	self.name = level_schematic.name
+	var score = get_node("/root/State").get_level_score(level_schematic.id)
+	self.has_previous_score = score != null and score != 5
+	if self.has_previous_score: #already attempted but not full score
 		var turn = level_schematic.get_turn_to_improve_score(score)
 		if turn == 1:
-			get_node("Name/TurnSubtext").set_bbcode(
+			get_node("TurnSubtext").set_bbcode(
 			"[center]CLEAR IN [color=#00ffcc]" + str(turn) + "[/color] TURN TO BEAT YOUR SCORE[/center]")
 		else:
-			get_node("Name/TurnSubtext").set_bbcode(
+			get_node("TurnSubtext").set_bbcode(
 			"[center]CLEAR IN [color=#00ffcc]" + str(turn) + "[/color] TURNS TO BEAT YOUR SCORE[/center]")
 		
 		
@@ -98,7 +101,7 @@ func animate(current_turn, enemy_phase=false):
 	get_node("Tween").start()
 	get_node("Tween 2").start()
 	
-	var is_start = current_turn == 0
+	var is_start = current_turn == 0 and self.has_previous_score
 	var is_final_turn = !enemy_phase and current_turn + 1 == turn_limit
 	
 	if is_start or is_final_turn:
@@ -107,9 +110,9 @@ func animate(current_turn, enemy_phase=false):
 		yield(get_node("Tween"), "tween_complete")
 		
 		if is_start:
-			get_node("Tween").interpolate_property(get_node("Name"), "visibility/opacity", 0, 1, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
-			get_node("Tween").interpolate_property(get_node("Name"), "visibility/opacity", 1, 0, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN, 2)
-		if is_final_turn:
+			get_node("Tween").interpolate_property(get_node("TurnSubtext"), "visibility/opacity", 0, 1, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
+			get_node("Tween").interpolate_property(get_node("TurnSubtext"), "visibility/opacity", 1, 0, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN, 2)
+		elif is_final_turn:
 			get_node("Tween").interpolate_property(get_node("FinalPhaseHeader")
 			, "visibility/opacity", 0, 1, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
 			get_node("Tween").interpolate_property(get_node("FinalPhaseHeader")
@@ -120,10 +123,6 @@ func animate(current_turn, enemy_phase=false):
 
 		yield(get_node("Tween"), "tween_complete")
 		yield(get_node("Tween"), "tween_complete")
-		if is_start and is_final_turn: #need to wait for both
-			yield(get_node("Tween"), "tween_complete")
-			yield(get_node("Tween"), "tween_complete")
-
 
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 0.2, Tween.TRANS_CUBIC, Tween.EASE_IN)
 	get_node("Tween").start()
@@ -151,6 +150,7 @@ func set_phase(current_turn, enemy_phase):
 	else:
 		get_node("SamplePlayer").play("player_phase")
 		if current_turn == 0:
+			get_node("Main/PhaseHeader").set_text(str(self.name.to_upper()))
 		else:
 			get_node("Main/PhaseHeader").set_text("PLAYER PHASE")
 		get_node("Main/Hexagon").play("player_phase")

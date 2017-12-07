@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=1]
+[gd_scene load_steps=23 format=1]
 
 [ext_resource path="res://UI/TurnUpdate.gd" type="Script" id=1]
 [ext_resource path="res://UI/BlurDarkenLayer.tscn" type="PackedScene" id=2]
@@ -13,10 +13,9 @@
 [ext_resource path="res://Assets/processed_fonts/turn_update.fnt" type="BitmapFont" id=11]
 [ext_resource path="res://Assets/processed_fonts/turn_update_phase_header.fnt" type="BitmapFont" id=12]
 [ext_resource path="res://Assets/processed_fonts/turn_update_final_phase_header.fnt" type="BitmapFont" id=13]
-[ext_resource path="res://Assets/processed_fonts/turn_subtext.fnt" type="BitmapFont" id=14]
-[ext_resource path="res://Assets/UI/VictoryScreen/victory_glow_mask.png" type="Texture" id=15]
-[ext_resource path="res://Assets/processed_sounds/enemy_phase.smp" type="Sample" id=16]
-[ext_resource path="res://Assets/processed_sounds/player_phase.smp" type="Sample" id=17]
+[ext_resource path="res://Assets/UI/VictoryScreen/victory_glow_mask.png" type="Texture" id=14]
+[ext_resource path="res://Assets/processed_sounds/enemy_phase.smp" type="Sample" id=15]
+[ext_resource path="res://Assets/processed_sounds/player_phase.smp" type="Sample" id=16]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -109,13 +108,13 @@ samples/enemy_phase = {
 "db": -2.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 16 )
+"sample": ExtResource( 15 )
 }
 samples/player_phase = {
 "db": -1.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 17 )
+"sample": ExtResource( 16 )
 }
 
 [node name="TurnUpdate" type="Node2D"]
@@ -238,7 +237,7 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="Name" type="Label" parent="."]
+[node name="TurnSubtext" type="RichTextLabel" parent="."]
 
 visibility/opacity = 0.0
 focus/ignore_mouse = true
@@ -246,29 +245,10 @@ focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
 margin/left = -512.0
-margin/top = -260.0
+margin/top = -76.0
 margin/right = 512.0
-margin/bottom = -200.0
-custom_fonts/font = ExtResource( 12 )
-custom_colors/font_color = Color( 1, 1, 1, 1 )
-text = "0"
-align = 1
-valign = 1
-percent_visible = 1.0
-lines_skipped = 0
-max_lines_visible = -1
-
-[node name="TurnSubtext" type="RichTextLabel" parent="Name"]
-
-focus/ignore_mouse = true
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 0
-margin/left = 0.0
-margin/top = 70.0
-margin/right = 1024.0
-margin/bottom = 130.0
-custom_fonts/normal_font = ExtResource( 14 )
+margin/bottom = -16.0
+custom_fonts/normal_font = ExtResource( 12 )
 bbcode/enabled = true
 bbcode/bbcode = ""
 visible_characters = -1
@@ -279,7 +259,7 @@ percent_visible = 1.0
 transform/pos = Vector2( -208.732, 0 )
 enabled = true
 editor_only = false
-texture = ExtResource( 15 )
+texture = ExtResource( 14 )
 offset = Vector2( 0, 0 )
 scale = 1.0
 color = Color( 1, 1, 1, 1 )
