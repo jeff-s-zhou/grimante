@@ -16,10 +16,10 @@ y_difference = 4
 
 [node name="TextureButton" parent="."]
 
-margin/left = -84.0
-margin/top = -75.0
-margin/right = 86.0
-margin/bottom = 76.0
+margin/left = -77.0
+margin/top = -70.0
+margin/right = 77.0
+margin/bottom = 67.0
 textures/normal = ExtResource( 3 )
 textures/pressed = ExtResource( 4 )
 textures/hover = ExtResource( 5 )

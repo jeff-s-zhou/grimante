@@ -5,7 +5,7 @@ extends "EnemyPiece.gd"
 # var b="textvar"
 
 
-var DESCRIPTION2 = "Ghost Boss. Cannot be Direct Attacked. Ignores 1 damage attacks. All other attacks deal 1 damage. Cannot be Silenced."
+var DESCRIPTION2 = "Ghost Boss. Cannot be Direct Attacked. Ignores 1 damage attacks. All other attacks deal 1 damage."
 
 func initialize(max_hp, modifiers, prototype):
 	set_boss(true)

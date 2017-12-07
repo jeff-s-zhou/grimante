@@ -84,17 +84,29 @@ class BaseLevelType:
 	#so instead of "You cleared in 4 turns", we need something like
 	#To improve your score, beat on turn 4
 	func get_turn_to_improve_score(score):
+		
+		if self.score_guide != {}:
+			var turns = self.score_guide.keys()
+			turns.sort()
+			turns.invert()
+			for turn in turns:
+				if self.score_guide[turn] > score:
+					return turn
+#				
+#		
+#		
 #		so right now it's turn count -> score
 #		what we need to do is find the turn count with a score > score
-		var lowest_improved_score = 9999
-		var target_turn = 0
-		for turn_count in self.score_guide.keys():
-			if self.score_guide[turn_count] > score:
-				if self.score_guide[turn_count] < lowest_improved_score:
-					lowest_improved_score = self.score_guide[turn_count]
-					target_turn = turn_count
-					
-		return target_turn
+#		var lowest_improved_score = 9999
+#		var target_turn = 0
+#		if self.score_guide != {}:
+#			for turn_count in self.score_guide.keys():
+#				if self.score_guide[turn_count] > score:
+#					if self.score_guide[turn_count] < lowest_improved_score:
+#						lowest_improved_score = self.score_guide[turn_count]
+#						target_turn = turn_count
+#						
+#			return target_turn
 	
 	func get_traps(turn_count):
 		var trap_subset = []

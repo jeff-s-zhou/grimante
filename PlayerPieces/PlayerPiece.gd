@@ -135,7 +135,6 @@ func handle_assist():
 		#we specifically redirect it through the AssistSystem to check if it's disabled
 		self.AssistSystem.activate_assist(self.assist_type, self)
 	else:
-		print("clearing assist here")
 		self.AssistSystem.clear_assist()
 
 

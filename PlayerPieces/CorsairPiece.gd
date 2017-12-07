@@ -21,7 +21,7 @@ func _ready():
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
 	self.unit_name = UNIT_TYPE
 	load_description(self.unit_name)
-	self.assist_type = ASSIST_TYPES.defense
+	self.assist_type = ASSIST_TYPES.movement
 
 
 func get_shoot_damage():
@@ -127,16 +127,9 @@ func act(new_coords):
 		move_shoot(new_coords)
 		placed()
 	elif _is_within_melee_range(new_coords):
+		handle_pre_assisted()
 		slash(new_coords)
 		placed()
-#	elif _is_within_pull_range(new_coords):
-#		handle_pre_assisted()
-#		pull(new_coords)
-#		placed()
-#	elif _is_within_hookshot_range(new_coords):
-#		handle_pre_assisted()
-#		hookshot(new_coords)
-#		placed()
 	else:
 		invalid_move()
 		
