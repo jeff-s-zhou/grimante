@@ -4,11 +4,8 @@ const DEFAULT_MOVEMENT_VALUE = 1
 const DEFAULT_SHIELD = false
 const UNIT_TYPE = "Saint"
 
-var pathed_range
+var recorded_hero_coords = {}
 
-var alter_ego
-
-const CrusaderPrototype = preload("res://PlayerPieces/CrusaderPiece.tscn")
 
 func _ready():
 	set_shield(DEFAULT_SHIELD)
@@ -43,10 +40,14 @@ func display_action_range():
 		get_parent().get_at_location(coords).movement_highlight()
 	.display_action_range()
 	highlight_indirect_range(action_range)
-
+	
 	
 func _is_within_movement_range(new_coords):
 	return new_coords in get_movement_range()
+	
+	
+func get_lights_range():
+	return self.grid.get_range(self.coords, [2, 8], "PLAYER") + self.grid.get_diagonal_range(self.coords, [2, 6], "PLAYER")
 	
 
 func act(new_coords):
@@ -55,62 +56,93 @@ func act(new_coords):
 		var args = [new_coords, 300, true]
 		add_animation(self, "animate_move_and_hop", true, args)
 		set_coords(new_coords)
-		var transformed = transform()
-		purify_passive(new_coords)
-		if !transformed:
-			placed()
+		silence(new_coords)
+		placed()
 	else:
 		invalid_move()
+		
+func handle_break_chains(hero):
+	#chain is already formed
+	if self.recorded_hero_coords.has(hero.unit_name):
+		pass
+
+#called by the saint after it moves
+func self_handle_field_of_lights():
+	for hero in get_tree().get_nodes_in_group("player_pieces"): #update here in case pieces have moved
+		self.recorded_hero_coords[hero.unit_name] = hero.coords
+	var lights_range = get_lights_range()
+	for coords in lights_range:
+		cast_field_of_lights(self.coords, coords)
+
+#needs to be called after receiving shove
+#needs to be called after a piece moves
+func handle_field_of_lights(hero):
+	if (!self.recorded_hero_coords.has(hero.unit_name) 
+	or hero.coords != self.recorded_hero_coords[hero.unit_name]): #check if the hero has moved
+		self.recorded_hero_coords[hero.unit_name] = hero.coords
+		var lights_range = get_lights_range()
+		if hero.coords in lights_range:
+			cast_field_of_lights(self.coords, hero.coords)
+
+
+func cast_field_of_lights(start_coords, end_coords):
+	
+	var start_pos = self.grid.locations[start_coords].get_pos()
+	var end_pos = self.grid.locations[end_coords].get_pos()
+	add_animation(self, "animate_cast_chain", true, [start_pos, end_pos])
+	
+	var unit = self.grid.hex_normalize(end_coords - start_coords)
+	var current_coords = start_coords + unit
+	var attack_range = []
+	while current_coords != end_coords:
+		if self.grid.has_enemy(current_coords):
+			attack_range.append(current_coords)
+		current_coords += unit
+	
+	var action = get_new_action()
+	action.add_call("attacked", [1, self], attack_range)
+	action.execute()
+
+
+func animate_cast_chain(start_pos, end_pos):
+	var chains_prototype = load("res://PlayerPieces/Components/ChainsOfLight.tscn")
+	var chains = chains_prototype.instance()
+	add_child(chains)
+	chains.draw_chains(start_pos, end_pos)
+	yield(chains, "animation_done")
+	emit_signal("animation_done")
+	chains.explode()
 	
 
-func purify_passive(new_coords):
+func silence(new_coords):
 	var adjacent_enemy_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
+	add_animation(self, "animate_silence", false)
 	var action = get_new_action(false)
 	action.add_call("set_silenced", [true], adjacent_enemy_range)
 	action.execute()
 
 
-#if we've reached the top of the map
-func transform():
-	for i in range(0, 7):
-		if self.coords == get_parent().get_top_of_column(i):
-			switch_out()
-			return true
-	return false
+func animate_silence():
+	get_node("/root/Combat").darken(0.1, 0.2)
+	var ring = get_node("Physicals/SilenceRing")
+	var explosion = get_node("Physicals/SilenceExplosion")
+	ring.set_enabled(true)
+	explosion.set_enabled(true)
+	var tween = Tween.new()
+	add_child(tween)
+	tween.interpolate_property(explosion, "energy", \
+	2, 0.01, 0.2, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.interpolate_property(ring, "energy", \
+	5, 0.01, 0.7, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.interpolate_property(ring, "transform/scale", \
+	Vector2(0.3, 0.3), Vector2(1.6, 1.6), 0.5, Tween.TRANS_QUAD, Tween.EASE_OUT)
+	tween.start()
+	yield(tween, "tween_complete")
+	get_node("/root/Combat").lighten(0.2)
+	yield(tween, "tween_complete")
+	yield(tween, "tween_complete")
 	
-func switch_out():
-	remove_from_group("player_pieces")
-	get_parent().remove_piece(self.coords)
-	add_animation(self, "animate_switch_out", true)
-	
-	print("saint's global pos is " + str(get_parent().locations[self.coords].get_global_pos()))
-	self.alter_ego.switch_in(self.coords)
-			
-func switch_in(coords):
-	self.AssistSystem.clear_assist()
-	add_to_group("player_pieces")
-	get_parent().add_piece(coords, self, true)
-	var pos = get_parent().locations[coords].get_pos()
-	add_animation(self, "animate_switch_in", true, [pos])
-	placed()
-	
-func animate_switch_out():
-	add_anim_count()
-	get_node("Tween 2").interpolate_property(get_node("Flash"), "visibility/opacity", 0, 1, 0.7, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	get_node("Tween 2").start()
-	yield(get_node("Tween 2"), "tween_complete")
-	set_pos(Vector2(-999, -999))
-	emit_signal("animation_done")
-	subtract_anim_count()
-	
-func animate_switch_in(pos):
-	set_opacity(1)
-	#set_pos(pos)
-	print(get_global_pos())
-	get_node("Tween 2").interpolate_property(get_node("Flash"), "visibility/opacity", 1, 0, 0.7, Tween.TRANS_LINEAR, Tween.EASE_IN)
-	get_node("Tween 2").start()
-	yield(get_node("Tween 2"), "tween_complete")
-	emit_signal("animation_done")
+	tween.queue_free()
 	
 
 func predict(new_coords):

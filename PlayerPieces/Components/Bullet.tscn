@@ -4,6 +4,7 @@
 
 [node name="Bullet" type="Sprite"]
 
+visibility/opacity = 0.0
 z/z = 46
 z/relative = false
 texture = ExtResource( 1 )

@@ -37,7 +37,7 @@ func get_trial3_hints():
 	
 func get_trial4_hints():
 	var tutorial = TutorialPrototype.instance()
-	var text = ["The Archer died at the start of this level. Revive it to beat the Trial.",
+	var text = ["The Berserker died at the start of this level. Revive it to beat the Trial.",
 	"Hint: Think carefully about the positioning of your living Heroes before you revive."]
 	add_hint(tutorial, 1, text)
 	return tutorial

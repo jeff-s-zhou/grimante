@@ -1,8 +1,7 @@
 extends "PlayerPiece.gd"
 
-const DEFAULT_SHOOT_DAMAGE = 1
-const DEFAULT_SLASH_DAMAGE = 2
-const UNMARKED_DAMAGE = 2
+const DEFAULT_SHOOT_DAMAGE = 2
+const DEFAULT_SLASH_DAMAGE = 3
 const DEFAULT_MOVEMENT_VALUE = 2
 const DEFAULT_SHIELD = true
 const UNIT_TYPE = "Corsair"
@@ -66,18 +65,37 @@ func placed(ending_turn=false):
 		.placed(ending_turn)
 	else:
 		self.handle_assist()
-		add_animation(self, "emit_animated_placed", false)
+		self.grid.handle_field_of_lights(self)
+		add_animation(self, "animate_half_placed", false)
 		check_for_traps()
 
-#neede for tutorials
-func emit_animated_placed():
-	emit_signal("animated_placed")
+
+#func animate_reactivate(star_reactivate=false):
+#	get_node("Physicals/AnimatedSprite/HalfCooldownSprite").hide()
+#	get_node("Physicals/AnimatedSprite").set_self_opacity(1)
+#	.animate_reactivate(star_reactivate)
 	
+		
+func animate_half_placed():
+	print("animating half placed")
+	get_node("AnimationPlayer").stop() #stop the glow animation
+	animate_unglow()
+	get_node("Physicals/AnimatedSprite/HalfCooldownSprite").show()
+	var sprite = get_node("Physicals/AnimatedSprite")
+	var tween = Tween.new()
+	add_child(tween)
+	tween.interpolate_property(sprite, "visibility/self_opacity", 1, 0, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.start()
+	yield(tween, "tween_complete")
+	print("opacity: ", get_node("Physicals/GlowSprite").get_opacity())
+	tween.queue_free()
+	#emit_signal("animated_placed")
+
 
 #have to do this manually because for prediction, we need to specifically ignore the corsair's piece
 func get_shoot_coords(new_coords, old_coords):
 	var increment = self.grid.hex_normalize(old_coords - new_coords) #going in the opposite direction
-	var current_coords = new_coords
+	var current_coords = old_coords
 	#return first unit in this direction that is an enemy, ignoring the corsair
 	for i in range(0, 8):
 		current_coords += increment
@@ -90,10 +108,15 @@ func get_shoot_coords(new_coords, old_coords):
 					break
 	return null
 
+func get_en_garde_coords(new_coords):
+	if self.grid.has_enemy(new_coords + Vector2(0, -1)):
+		return new_coords + Vector2(0, -1)
 
 func highlight_indirect_range(movement_range):
 	for move_coords in movement_range:
 		if get_shoot_coords(move_coords, self.coords) != null:
+			get_parent().locations[move_coords].indirect_highlight()
+		elif get_en_garde_coords(move_coords) != null:
 			get_parent().locations[move_coords].indirect_highlight()
 	
 
@@ -120,11 +143,14 @@ func _is_within_pull_range(new_coords):
 func _is_within_melee_range(new_coords):
 	return new_coords in get_melee_range()
 
-
+#we have en_garde delayed scaling to how far the corsair lept
+#this is because we only have the bullet blocking in move_shoot so that the enemy animation can play in time
+#but the leap takes more time, but we need the en_garde to wait for the leap to finish lol
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
-		move_shoot(new_coords)
+		var shoot_leap_length = move_shoot(new_coords)
+		en_garde(new_coords, shoot_leap_length)
 		placed()
 	elif _is_within_melee_range(new_coords):
 		handle_pre_assisted()
@@ -132,39 +158,49 @@ func act(new_coords):
 		placed()
 	else:
 		invalid_move()
+
+	
+func en_garde(new_coords, shoot_leap_length):
+	var attack_coords = new_coords + Vector2(0, -1)
+	if self.grid.has_enemy(attack_coords):
+		if shoot_leap_length != null:
+			var delay = shoot_leap_length * 0.18
+			slash(attack_coords, delay)
+		else:
+			slash(attack_coords)
+
 		
-func slash(new_coords):
-	get_node("/root/AnimationQueue").enqueue(self, "animate_draw_back", true, [new_coords])
+func slash(new_coords, delay=0.0):
+	get_node("/root/AnimationQueue").enqueue(self, "animate_draw_back", true, [new_coords, delay])
 	get_node("/root/AnimationQueue").enqueue(self, "animate_slash", true, [new_coords])
 	var action = get_new_action()
-	var damage = get_marked_damage(self.slash_damage, new_coords)
-	action.add_call("attacked", [damage, self], new_coords)
+	action.add_call("attacked", [self.slash_damage, self], new_coords)
 	action.execute()
 	get_node("/root/AnimationQueue").enqueue(self, "animate_slash_end", true, [self.coords])
-	
-func animate_draw_back(new_coords):
+
+
+func animate_draw_back(new_coords, delay=0.0):
+	if delay > 0.0:
+		get_node("Timer").set_wait_time(delay)
+		get_node("Timer").start()
+		yield(get_node("Timer"), "timeout")
 	var unit_distance = get_parent().hex_normalize(new_coords - self.coords)
 	var unit_pos_distance = get_parent().get_real_distance(unit_distance)
-	var back_up_pos = self.get_pos() - unit_pos_distance/4
-	animate_move_to_pos(back_up_pos, 100, true, Tween.TRANS_QUAD, Tween.EASE_OUT)
+	var back_up_pos = self.get_pos() - unit_pos_distance/5
+	animate_move_to_pos(back_up_pos, 200, true, Tween.TRANS_QUAD, Tween.EASE_OUT)
+
 
 func animate_slash(attack_coords):
 	var location = get_parent().locations[attack_coords]
 	var difference = (location.get_pos() - get_pos())/2
 	var new_position = location.get_pos() - difference
-	animate_move_to_pos(new_position, 1000, true, Tween.TRANS_LINEAR, Tween.EASE_IN, 0.2)
+	animate_move_to_pos(new_position, 1200, true, Tween.TRANS_LINEAR, Tween.EASE_IN, 0.2)
 
 func animate_slash_end(original_coords):
 	var location = get_parent().locations[original_coords]
 	var new_position = location.get_pos()
-	animate_move_to_pos(new_position, 700, true)
+	animate_move_to_pos(new_position, 1000, true)
 
-
-func get_marked_damage(base_damage, attack_coords):
-	var damage = base_damage
-	if !self.grid.pieces[attack_coords].is_corsair_marked(): #do +2 damage to non-marked enemies
-		damage += UNMARKED_DAMAGE
-	return damage
 
 func move_shoot(move_coords):
 	#reverse the subtraction because we're getting the range in the opposite direction
@@ -180,28 +216,34 @@ func move_shoot(move_coords):
 		add_animation(self, "animate_move_and_hop", false, args)
 		add_animation(self, "animate_shoot", true, [attack_coords])
 		
-		
-		var damage = get_marked_damage(self.shoot_damage, attack_coords)
-		action.add_call("attacked", [damage, self], attack_coords)
+		action.add_call("attacked", [self.shoot_damage, self], attack_coords)
 		action.execute()
+		return self.grid.hex_length(move_coords - old_coords)
 	else: #if just moving, block other shit from happening
 		var args = [move_coords, 450, true]
-		
 		add_animation(self, "animate_move_and_hop", true, args)
-		
+		return null
 
-func animate_shoot(attack_coords, delay=0.0):
+func animate_shoot(attack_coords):
+	#get_node("/root/Combat").darken(0.1, 0.2)
+	var timer = Timer.new()
+	add_child(timer)
+	timer.set_wait_time(0.1)
+	timer.start()
+	yield(timer, "timeout")
+	timer.queue_free()
+	
 	var bullet = BULLET_PROTOTYPE.instance()
-	bullet.set_pos(get_pos())
-	get_parent().add_child(bullet)
-	var final_pos = get_parent().locations[attack_coords].get_pos()
+	self.grid.add_child(bullet)
+	bullet.set_global_pos(get_node("Physicals").get_global_pos())
+	var final_pos = get_parent().locations[attack_coords].get_pos() + (Vector2(0, -7)) #height of the piece
 	var distance = (final_pos - get_pos()).length()
 	var speed = 2200
 	
 	var angle = get_pos().angle_to_point(final_pos)
 	bullet.set_rot(angle)
-	
-	get_node("Tween 2").interpolate_property(bullet, "transform/pos", get_pos(), final_pos, distance/speed, Tween.TRANS_LINEAR, Tween.EASE_IN, delay)
+	bullet.set_opacity(1)
+	get_node("Tween 2").interpolate_property(bullet, "transform/pos", bullet.get_pos(), final_pos, distance/speed, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween 2").start()
 	
 	yield(get_node("Tween 2"), "tween_complete")
@@ -212,13 +254,19 @@ func animate_shoot(attack_coords, delay=0.0):
 func predict(new_coords):
 	if _is_within_movement_range(new_coords):
 		predict_shoot(new_coords)
+		predict_en_garde(new_coords)
 		
 	elif _is_within_melee_range(new_coords):
 		predict_melee(new_coords)
 		
 func predict_melee(attack_coords):
-	var damage = get_marked_damage(self.slash_damage, attack_coords)
-	get_parent().pieces[attack_coords].predict(damage, self)
+	get_parent().pieces[attack_coords].predict(self.slash_damage, self)
+	
+	
+func predict_en_garde(move_coords):
+	var attack_coords = move_coords + Vector2(0, -1)
+	if self.grid.has_enemy(attack_coords):
+		get_parent().pieces[attack_coords].predict(self.slash_damage, self, true)
 
 		
 func predict_shoot(move_coords):
@@ -226,8 +274,7 @@ func predict_shoot(move_coords):
 	var attack_coords = get_shoot_coords(move_coords, self.coords)
 	if attack_coords != null:
 		var action = get_new_action()
-		var damage = get_marked_damage(self.shoot_damage, attack_coords)
-		get_parent().pieces[attack_coords].predict(damage, self, true)
+		get_parent().pieces[attack_coords].predict(self.shoot_damage, self, true)
 
 func cast_ultimate():
 	pass

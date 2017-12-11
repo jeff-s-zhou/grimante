@@ -6,7 +6,7 @@ var animation_state = ANIMATION_STATES.default
 
 const DEFAULT_TRAMPLE_DAMAGE = 2
 const DEFAULT_CHARGE_DAMAGE = 3
-const DEFAULT_MOVEMENT_VALUE = 11
+const DEFAULT_MOVEMENT_VALUE = 8
 const DEFAULT_SHIELD = true
 
 var trample_damage = DEFAULT_TRAMPLE_DAMAGE setget , get_trample_damage
@@ -173,7 +173,7 @@ func charge_attack(new_coords, attack=false):
 	
 	var unit_distance = get_parent().hex_normalize(new_coords - self.coords)
 	var unit_pos_distance = get_parent().get_real_distance(unit_distance)
-	var back_up_pos = self.get_pos() - unit_pos_distance/4
+	var back_up_pos = self.get_pos() - unit_pos_distance/5
 	var arguments = [back_up_pos, 100, true, Tween.TRANS_QUAD, Tween.EASE_OUT]
 	add_animation(self, "animate_move_to_pos", true, arguments)
 	

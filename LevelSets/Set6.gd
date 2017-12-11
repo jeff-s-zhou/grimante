@@ -11,8 +11,8 @@ func _ready():
 	
 func get_set():
 	return Set.new(6, "Sixth",
-	[inspire(), shield_inspire(), trap(), griffon(), defuse_the_bomb(), ghost_boss()], 
-	[shield_inspire(true), trap(true)])
+	[inspire(), shield_inspire(), unstable(), griffon(), defuse_the_bomb(), ghost_boss()], 
+	[shield_inspire(true)])
 
 func inspire():
 	var allies = {1: Berserker, 5: Cavalier}
@@ -45,21 +45,21 @@ func shield_inspire(hard=false):
 	return LevelTypes.Timed.new(00031, "Power of Friendship 2", allies, enemies, 3, null, extras)
 
 
-func trap(hard=false):
+func unstable(hard=false):
 	var pieces
 	var score_guide
-	pieces = load_level("trap2.level")
+	pieces = load_level("unstable.level")
 	#score_guide = {1:5, 2:5, 3:5, 4:4, 5:3}
 	score_guide = {1:5, 2:5, 3:4, 4:3}
 	var raw_enemies = pieces[0]
-	var allies = pieces[1]
+	var allies = {1:Archer, 2: Assassin, 4:Corsair, 5:FrostKnight} #pieces[1]
 	var traps = pieces[2]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth"]
-	var tutorial = load("res://Tutorials/trap.gd").new()
+	var tutorial = load("res://Tutorials/unstable.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
 	var extras = {"free_deploy":false, "flags":flags, "hard":hard, "score_guide":score_guide, "traps":traps, "tutorial":tutorial_func}
-	return LevelTypes.Timed.new(00032, "Ackbar on the Backbar", allies, enemies, 4, null, extras)
+	return LevelTypes.Timed.new(00032, "Boom", allies, enemies, 4, null, extras)
 
 	
 func griffon():
@@ -67,15 +67,16 @@ func griffon():
 	var score_guide = {1:5, 2:5, 3:4, 4:3}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
+	var traps = pieces[2]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth"]
-	var extras = {"free_deploy":false, "flags":flags, "score_guide":score_guide}
+	var extras = {"free_deploy":false, "flags":flags, "score_guide":score_guide, "traps":traps}
 	return LevelTypes.Timed.new(00033, "Griffon", allies, enemies, 4, null, extras)
 	
 #might be too hard
 func defuse_the_bomb():
 	var pieces = load_level("defuse_the_bomb.level")
-	var score_guide = {1:5, 2:5, 3:5}
+	var score_guide = {1:5, 2:5, 3:4}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)

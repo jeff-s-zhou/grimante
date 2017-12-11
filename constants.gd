@@ -16,6 +16,7 @@ const Dummy = preload("res://EnemyPieces/DummyPiece.tscn")
 const Flanker = preload("res://EnemyPieces/FlankerPiece.tscn")
 const BossGrunt = preload("res://EnemyPieces/BossGruntPiece.tscn")
 const BossSpectre = preload("res://EnemyPieces/BossSpectrePiece.tscn")
+const Nemesis = preload("res://EnemyPieces/ShadowPiece.tscn")
 
 const Berserker = preload("res://PlayerPieces/BerserkerPiece.tscn")
 const Archer = preload("res://PlayerPieces/ArcherPiece.tscn")
@@ -34,7 +35,8 @@ var enemy_modifiers = {"Poisonous":"Poisonous", "Shield":"Shield", "Cloaked":"Cl
 
 #used in the level editor
 var enemy_roster = {"dummy":Dummy, "grunt":Grunt, "fortifier":Fortifier, "grower":Grower, "drummer":Drummer, 
-"melee":Melee, "ranged":Ranged, "slime":Slime, "spectre":Spectre, "flanker":Flanker, "boss_grunt":BossGrunt, "boss_spectre":BossSpectre}
+"melee":Melee, "ranged":Ranged, "slime":Slime, "spectre":Spectre, "flanker":Flanker, "boss_grunt":BossGrunt, 
+"boss_spectre":BossSpectre, "nemesis":Nemesis}
 
 var hero_roster = {"berserker":Berserker, "cavalier":Cavalier, "archer":Archer, "assassin":Assassin, "frost_knight":FrostKnight,
 "corsair":Corsair, "stormdancer":Stormdancer, "pyromancer":Pyromancer, "saint":Saint}
@@ -91,7 +93,8 @@ var FULL_UNIT_ROSTER = {
 8: Dummy,
 9: Flanker,
 10: BossGrunt,
-11: BossSpectre
+11: BossSpectre,
+12: Nemesis
 }
 
 #used in the generator

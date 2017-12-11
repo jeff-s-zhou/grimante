@@ -9,6 +9,7 @@ var locations = {}
 var pieces = {}
 
 var assassin = null
+var saint = null
 var pyromancer = null
 
 var deploying = false
@@ -138,7 +139,9 @@ func add_piece(coords, piece, child_free=false):
 
 	if piece.unit_name == "Assassin":
 		self.assassin = piece
-	if piece.unit_name == "Pyromancer":
+	elif piece.unit_name == "Saint":
+		self.saint = piece
+	elif piece.unit_name == "Pyromancer":
 		self.pyromancer = piece
 	
 	piece.set_global_pos(location.get_global_pos())
@@ -150,6 +153,14 @@ func add_piece(coords, piece, child_free=false):
 func handle_assassin_passive(attack_range, caller):
 	if self.assassin != null and caller != self.assassin:
 		self.assassin.trigger_passive(attack_range)
+		
+func handle_field_of_lights(hero):
+	print("handling field of lights")
+	if self.saint != null and hero != saint:
+		self.saint.handle_field_of_lights(hero)
+	elif hero == saint:
+		self.saint.self_handle_field_of_lights()
+		
 		
 func handle_enemy_death(coords):
 	if self.pyromancer != null:

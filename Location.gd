@@ -137,6 +137,7 @@ func display_incoming():
 	
 func animate_display_reinforcement():
 	if self.reinforcement != null:
+		print("setting reinforcement indicator")
 		set_reinforcement_indicator(self.reinforcement.type)
 		
 func animate_display_laid_trap():
@@ -154,24 +155,30 @@ func set_revivable(flag):
 
 
 func set_reinforcement_indicator(type=null):
+	print("calling set reinforcement indicator")
 	if type != null:
+		print("showing in set reinforcement indicator")
 		get_node("ReinforcementIndicator").display(type)
 		get_node("ReinforcementIndicator").show()
 	else:
 		get_node("ReinforcementIndicator").hide()
+	
+	print("visible: ", get_node("ReinforcementIndicator").is_visible())
 		
 func animate_arm_trap():
 	get_node("ReinforcementIndicator").animate_summon()
 	yield(get_node("ReinforcementIndicator"), "animation_done")
 	emit_signal("animation_done")
-	set_reinforcement_indicator(null)
+	if self.reinforcement == null:
+		set_reinforcement_indicator(null)
 	get_node("TrapSymbol").show()
 
 func animate_reinforcement_summon():
 	get_node("ReinforcementIndicator").animate_summon()
 	yield(get_node("ReinforcementIndicator"), "animation_done")
 	emit_signal("animation_done")
-	set_reinforcement_indicator(null)
+	if self.reinforcement == null:
+		set_reinforcement_indicator(null)
 	
 func play_summon_sound():
 	get_node("SamplePlayer").play("summon4")

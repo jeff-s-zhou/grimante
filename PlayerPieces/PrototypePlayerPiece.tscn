@@ -96,6 +96,8 @@ transform/pos = Vector2( 0, -5 )
 
 [node name="CooldownSprite" type="Sprite" parent="Physicals"]
 
+visibility/visible = false
+
 [node name="AnimatedSprite" type="AnimatedSprite" parent="Physicals"]
 
 visibility/light_mask = 129

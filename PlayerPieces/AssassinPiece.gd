@@ -22,9 +22,9 @@ func _ready():
 	load_description(self.unit_name)
 	self.assist_type = ASSIST_TYPES.attack
 
-func delete_self():
+func delete_self(isolated_call=true, delay=0.0):
 	get_parent().assassin = null
-	.delete_self()
+	.delete_self(isolated_call, delay)
 
 func queue_free():
 	get_parent().assassin = null
@@ -149,7 +149,9 @@ func backstab(new_coords):
 		placed()
 	else:
 		add_animation(self, "emit_animated_placed", false)
+		self.grid.handle_field_of_lights(self)
 		activate_bloodlust()
+		
 
 
 func activate_bloodlust():
@@ -158,6 +160,8 @@ func activate_bloodlust():
 
 #neede for tutorials
 func emit_animated_placed():
+	get_node("AnimationPlayer").stop(true)
+	animate_unglow()
 	emit_signal("animated_placed")
 
 func predict(new_coords):
@@ -172,20 +176,16 @@ func unplaced():
 
 
 func trigger_passive(attack_range):
-	print("attack range on trigger")
-	print(attack_range)
 	for attack_coords in attack_range:
 		if _is_within_passive_range(attack_coords):
-			print("adding passive")
 			add_animation(self, "animate_passive", true, [attack_coords])
 			var action = get_new_action(false)
 			action.add_call("attacked", [self.passive_damage, self], attack_coords)
 			action.execute()
 	
 			if !get_parent().pieces.has(attack_coords) and self.state == States.PLACED:
-				activate_bloodlust()
+				#activate_bloodlust()
 				unplaced()
-			print("adding passive end")
 			add_animation(self, "animate_passive_end", true, [self.coords])
 
 

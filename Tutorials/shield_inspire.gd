@@ -13,7 +13,7 @@ func _ready():
 func get():
 	var tutorial = TutorialPrototype.instance()
 	var text = ["The Frost Knight inspires allies to {Defend}.", 
-	"{Defend} is triggered whenever the Frost Knight moves.",
+	"Unlike other Inspirations, {Defend} is triggered whenever the Frost Knight moves.",
 	"The next Hero that acts receives a {Shield}."]
 	add_player_start_rule(tutorial, 1, text)
 

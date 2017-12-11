@@ -93,6 +93,36 @@ focus_mode = 2
 caret/caret_blink = false
 caret/caret_blink_speed = 0.65
 
+[node name="ShadowLabel" type="Label" parent="."]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 229.0
+margin/top = 40.0
+margin/right = 328.0
+margin/bottom = 54.0
+text = "Shadowed Hero"
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="MirroredHero" type="LineEdit" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 337.0
+margin/top = 35.0
+margin/right = 395.0
+margin/bottom = 59.0
+placeholder/alpha = 0.6
+focus_mode = 2
+caret/caret_blink = false
+caret/caret_blink_speed = 0.65
+
 [node name="DoneButton" type="Button" parent="."]
 
 focus/ignore_mouse = false

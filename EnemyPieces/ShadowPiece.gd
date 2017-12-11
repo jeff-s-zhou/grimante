@@ -10,17 +10,21 @@ var DESCRIPTION = "Only the mirrored Hero can kill this piece."
 
 #todo: initialize with the mirrored hero name
 func initialize(max_hp, modifiers, prototype):
-	if modifiers.has("unit_name"): #modifiers is only a dict when made through the level editor
-		self.mirrored_hero_name = unit_name 
+	print("modifiers : ", modifiers)
+	if modifiers.has("mirrored_hero"): #modifiers is only a dict when made through the level editor
+		self.mirrored_hero_name = modifiers["mirrored_hero"]
+		get_node("Physicals/AnimatedSprite").set_animation(self.mirrored_hero_name.to_lower())
+	else:
+		self.mirrored_hero_name = "Cavalier"
 	.initialize("Nemesis", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, TYPES.selfish)
 
 
 func get_actual_damage(damage, unit):
-	if self.hp > 0:
-		.get_actual_damage(damage, unit)
-	else:
-		if !unit.unit_name == self.mirrored_hero_name:
-			.get_actual_damage(damage, unit)
+	if unit != null:
+		if unit.unit_name.to_lower() == self.mirrored_hero_name.to_lower():
+			return .get_actual_damage(damage, unit)
 		else:
-			.get_actual_damage(0, unit)
-	
+			var max_damage = min(damage, self.hp - 1)
+			return .get_actual_damage(max_damage, unit)
+	return .get_actual_damage(damage, unit)
+		

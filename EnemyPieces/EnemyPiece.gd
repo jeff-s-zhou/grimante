@@ -574,8 +574,7 @@ func set_silenced(flag):
 	if flag:
 		set_shield(false)
 		set_deadly(false)
-		set_predator(false)
-		set_corrosive(false)
+		set_unstable(false)
 		add_animation(self, "animate_silenced", false)
 		get_node("CollisionArea").set_pickable(true)
 	else:
@@ -599,10 +598,7 @@ func heal(amount, delay=0.0):
 
 func attacked(amount, unit, delay=0.0, blocking=false):
 	if unit != null:
-		if unit.unit_name.to_lower() == "corsair" and !self.shielded:
-			set_corsair_marked(true)
-			
-		elif unit.unit_name.to_lower() == "stormdancer" and get_parent().locations[coords].raining:
+		if unit.unit_name.to_lower() == "stormdancer" and get_parent().locations[coords].raining:
 			amount += 2
 	
 	var damage = get_actual_damage(amount, unit)
@@ -855,7 +851,7 @@ func turn_update():
 func turn_attack_update():
 	if self.unstable:
 		var action = get_new_action()
-		action.add_call("attacked", [1], self.coords)
+		action.add_call("attacked", [1, null], self.coords)
 		action.execute()
 	
 	if self.frozen:

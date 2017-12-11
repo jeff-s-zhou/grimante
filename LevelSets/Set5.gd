@@ -11,12 +11,12 @@ func _ready():
 
 func get_set():
 	return Set.new(5, "Fifth",
-	[corsair_trials(), corsair_drive(), ghostbusters(), ghostbusters2(), boss_fight(), fray(), big_boss_fight()], 
+	[corsair_trials(), corsair_drive(), football(), ghostbusters2(), boss_fight(), fray(), big_boss_fight()], 
 	[fray(true), big_boss_fight(true)])
 
 func corsair_trials():
 	var tutorial = load("res://Tutorials/corsair_trial.gd").new()
-	var flags = ["no_stars", "no_inspire", "hints"]
+	var flags = ["no_inspire", "hints"]
 	var base_id = 10013
 	var challenges = []
 	for i in range(1, 6):
@@ -31,8 +31,8 @@ func corsair_trials():
 
 	
 func corsair_drive():
-	var pieces = load_level("corsair_drive.level")
-	var score_guide = {1:5, 2:5, 3:5, 4:4} 
+	var pieces = load_level("corsair_drive2.level")
+	var score_guide = {1:5, 2:5, 3:4, 4:4} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -43,22 +43,14 @@ func corsair_drive():
 	
 func football():
 	var pieces = load_level("football.level")
+	var score_guide = {1:5, 2:5, 3:4, 4:4} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth", "no_inspire"]
 	var extras = {"flags":flags, "free_deploy":false}
-	return LevelTypes.Timed.new(00023, "Football", allies, enemies, 3, null, extras)
-	
-func ghostbusters():
-	var pieces = load_level("ghostbusters.level")
-	var score_guide = {1:5, 2:5, 3:4} 
-	var raw_enemies = pieces[0]
-	var allies = pieces[1]
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var flags = ["no_fifth", "no_inspire"]
-	var extras = {"flags":flags, "free_deploy":false, "score_guide":score_guide}
-	return LevelTypes.Timed.new(00025, "Ghostbusters", allies, enemies, 3, null, extras)
+	return LevelTypes.Timed.new(00023, "Ghostbusters", allies, enemies, 4, null, extras)
+
 
 #probably too hard
 func ghostbusters2():

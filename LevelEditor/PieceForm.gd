@@ -51,6 +51,10 @@ func form_finished():
 	for modifier in self.selected_modifiers:
 		if self.selected_modifiers[modifier]:
 			cleaned_modifiers[modifier] = true
+			
+	var mirrored_hero = get_node("MirroredHero").get_text()
+	if mirrored_hero != "":
+		cleaned_modifiers["mirrored_hero"] = mirrored_hero
 	emit_signal("finished", text, cleaned_modifiers)
 	form_reset()
 	
@@ -62,4 +66,5 @@ func form_reset():
 	self.hide()
 	get_node("DeleteButton").hide()
 	get_node("LineEdit").clear()
+	get_node("MirroredHero").clear()
 	reset_modifiers()

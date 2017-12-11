@@ -137,8 +137,6 @@ func _ready():
 	for location in get_node("Grid").locations.values():
 		location.deploy()
 	
-	
-	
 	get_node("Timer2").set_wait_time(0.3)
 	get_node("Timer2").start()
 	yield(get_node("Timer2"), "timeout")
@@ -249,8 +247,6 @@ func handle_piece_placed():
 		else:
 			set_forced_action(false)
 
-
-	
 	#check if we can automatically end turn
 	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
 	for player_piece in player_pieces:
@@ -304,8 +300,6 @@ func handle_deploy():
 	if self.state == self.STATES.deploying:
 		emit_signal("deployed")
 	
-func handle_end_turn():
-	end_turn()
 	
 func display_settings():
 	#pause
@@ -343,7 +337,7 @@ func _input(event):
 func computer_input(event):
 	#select a unit
 	if get_node("InputHandler").is_select(event):
-		if self.state == STATES.player_turn:
+		if self.state == STATES.player_turn or STATES.deploying:
 			instant_lighten()
 			var has_selected = get_node("Grid").selected != null
 			var hovered = get_node("CursorArea").get_piece_or_location_hovered()

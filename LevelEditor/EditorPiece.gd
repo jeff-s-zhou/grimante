@@ -112,6 +112,8 @@ func set_modifiers(modifiers):
 			self.set_cloaked(true)
 		elif modifier == enemy_modifiers["Unstable"]:
 			self.set_unstable(true)
+		elif modifier == "mirrored_hero":
+			self.modifiers["mirrored_hero"] = modifiers[modifier]
 
 
 func set_cloaked(flag):

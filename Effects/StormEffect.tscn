@@ -20,27 +20,52 @@ tracks/0/type = "value"
 tracks/0/path = NodePath("AnimatedSprite:visibility/opacity")
 tracks/0/interp = 1
 tracks/0/imported = false
-tracks/0/keys = { "times":FloatArray( 0.22, 0.24, 0.94, 1.1 ), "transitions":FloatArray( 1, 1, 1, 1 ), "update":0, "values":[ 0.0, 1.0, 1.0, 0.0 ] }
+tracks/0/keys = {
+"times": FloatArray( 0.22, 0.24, 0.94, 1.1 ),
+"transitions": FloatArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 1.0, 1.0, 0.0 ]
+}
 tracks/1/type = "value"
 tracks/1/path = NodePath("FlashLayer:visibility/opacity")
 tracks/1/interp = 1
 tracks/1/imported = false
-tracks/1/keys = { "times":FloatArray( 0.4, 0.42, 0.48, 0.94 ), "transitions":FloatArray( 1, 1, 1, 1 ), "update":0, "values":[ 0.0, 1.0, 1.0, 0.0 ] }
+tracks/1/keys = {
+"times": FloatArray( 0.4, 0.42, 0.48, 0.94 ),
+"transitions": FloatArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 1.0, 1.0, 0.0 ]
+}
 tracks/2/type = "value"
 tracks/2/path = NodePath("HighlightLayer:visibility/opacity")
 tracks/2/interp = 1
 tracks/2/imported = false
-tracks/2/keys = { "times":FloatArray( 0.42, 0.44, 0.56 ), "transitions":FloatArray( 1, 1, 1 ), "update":0, "values":[ 0.0, 1.0, 0.0 ] }
+tracks/2/keys = {
+"times": FloatArray( 0.42, 0.44, 0.56 ),
+"transitions": FloatArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 1.0, 0.0 ]
+}
 tracks/3/type = "value"
 tracks/3/path = NodePath("AnimatedSprite:visibility/visible")
 tracks/3/interp = 1
 tracks/3/imported = false
-tracks/3/keys = { "times":FloatArray( 0, 0.3, 0.38 ), "transitions":FloatArray( 1, 1, 1 ), "update":1, "values":[ true, false, true ] }
+tracks/3/keys = {
+"times": FloatArray( 0, 0.3, 0.38 ),
+"transitions": FloatArray( 1, 1, 1 ),
+"update": 1,
+"values": [ true, false, true ]
+}
 tracks/4/type = "value"
 tracks/4/path = NodePath("LightSource:visibility/opacity")
 tracks/4/interp = 1
 tracks/4/imported = false
-tracks/4/keys = { "times":FloatArray( 0, 0.22, 0.94, 1.2 ), "transitions":FloatArray( 1, 1, 1, 1 ), "update":0, "values":[ 0.0, 1.0, 1.0, 0.0 ] }
+tracks/4/keys = {
+"times": FloatArray( 0, 0.22, 0.94, 1.2 ),
+"transitions": FloatArray( 1, 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 1.0, 1.0, 0.0 ]
+}
 
 [node name="StormEffect" type="Node2D"]
 
@@ -98,6 +123,7 @@ playback/speed = 1.0
 
 [node name="RainParticles" parent="." instance=ExtResource( 5 )]
 
+transform/pos = Vector2( 0, 4 )
 config/emitting = false
 
 

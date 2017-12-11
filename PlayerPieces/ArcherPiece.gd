@@ -86,8 +86,6 @@ func act(new_coords):
 	
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
-		
-		
 		set_coords(new_coords)
 		var coords = get_step_shot_coords(self.coords)
 		if coords != null:

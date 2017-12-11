@@ -1,3 +1,2 @@
-{"hp":"4", "turn":0, "pos_x":5, "name":"grunt", "modifiers":{}, "pos_y":5}
-{"hp":"3", "turn":0, "pos_x":1, "name":"grunt", "modifiers":{}, "pos_y":2}
-{"turn":0, "pos_x":3, "name":"corsair", "pos_y":4}
+{"turn":0, "pos_x":2, "name":"corsair", "pos_y":4}
+{"hp":"3", "turn":0, "pos_x":4, "name":"grunt", "modifiers":{}, "pos_y":3}

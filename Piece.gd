@@ -303,7 +303,8 @@ func receive_shove(distance, damage):
 	if !get_parent().locations.has(new_coords):
 		if unit_distance == Vector2(0, 1) and self.side == "ENEMY":
 			walk_off(distance)
-		else:
+		else: #handle for players
+			self.grid.handle_field_of_lights(self)
 			walk_off(distance, false) #delete self instead of triggering a lose condition
 		
 	#will land on something

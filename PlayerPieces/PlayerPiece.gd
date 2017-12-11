@@ -442,6 +442,7 @@ func input_event(event, has_selected):
 	print(self.state)
 	if self.state != States.DEAD and self.hovered_flag:
 		if self.deploying_flag: #if in deploy phase
+			print("handling deploy input event")
 			deploy_input_event(event, has_selected)
 			return
 	
@@ -541,10 +542,12 @@ func placed(ending_turn=false):
 	if ending_turn:
 		clear_assist()
 	else:
+		self.grid.handle_field_of_lights(self)
 		handle_assist()
 	if self.state != States.PLACED:
 		add_animation(self, "animate_placed", false, [ending_turn])
 	get_node("SelectedGlow").hide()
+	
 	check_for_traps()
 	self.state = States.PLACED
 	self.attack_bonus = 0
