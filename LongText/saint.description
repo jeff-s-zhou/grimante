@@ -1,3 +1,3 @@
-Indirect/Purify/When the Saint moves to a tile, Silence all adjacent Enemies, disabling all special effects.
+Indirect/Silence/When the Saint moves to a tile, disable the special abilities of all adjacent Enemies.
 
-Passive/Quest/If the Saint reaches the top of the map, transforms into the Crusader.
+Passive/Threads of Infinite Light/Whenever a hex line or hex-diagonal line is formed between the Saint and another Hero, deal 1 damage to all Enemies in between.

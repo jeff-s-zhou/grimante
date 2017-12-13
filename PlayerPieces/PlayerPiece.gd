@@ -539,11 +539,6 @@ func invalid_move():
 
 #helper function for act
 func placed(ending_turn=false):
-	if ending_turn:
-		clear_assist()
-	else:
-		self.grid.handle_field_of_lights(self)
-		handle_assist()
 	if self.state != States.PLACED:
 		add_animation(self, "animate_placed", false, [ending_turn])
 	get_node("SelectedGlow").hide()
@@ -552,6 +547,12 @@ func placed(ending_turn=false):
 	self.state = States.PLACED
 	self.attack_bonus = 0
 	self.movement_value = self.DEFAULT_MOVEMENT_VALUE
+	
+	if ending_turn:
+		clear_assist()
+	else:
+		self.grid.handle_field_of_lights(self)
+		handle_assist()
 
 
 func check_for_traps():

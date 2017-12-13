@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=1]
+
+[ext_resource path="res://PlayerPieces/Components/FrostWave.gd" type="Script" id=1]
+[ext_resource path="res://PlayerPieces/Components/FrostGroundParticles.tscn" type="PackedScene" id=2]
+
+[node name="FrostWave" type="Node2D"]
+
+script/script = ExtResource( 1 )
+
+[node name="LeftParticles" parent="." instance=ExtResource( 2 )]
+
+[node name="RightParticles" parent="." instance=ExtResource( 2 )]
+
+

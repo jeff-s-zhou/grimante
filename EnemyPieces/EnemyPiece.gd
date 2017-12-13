@@ -10,7 +10,7 @@ const GREEN_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/GreenExplosi
 const RED_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/RedExplosionParticles.tscn")
 const BLACK_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/BlackExplosionParticles.tscn")
 const FROZEN_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/FrozenExplosionParticles.tscn")
-const TYPES = {"assist":"assist", "attack":"attack", "selfish":"selfish", "boss":"boss"}
+const TYPES = {"assist":"assist", "attack":"attack", "selfish":"selfish", "boss":"boss", "nemesis":"nemesis"}
 
 const UNSTABLE_EXPLOSION_SCENE = preload("res://EnemyPieces/Components/UnstableExplosion.tscn")
 
@@ -113,6 +113,8 @@ func initialize(unit_name, hover_description, movement_value, max_hp, modifiers,
 	elif self.type == TYPES.selfish:
 		self.explosion_prototype = GREEN_EXPLOSION_SCENE
 	elif self.type == TYPES.boss:
+		self.explosion_prototype = BLACK_EXPLOSION_SCENE
+	elif self.type == TYPES.nemesis:
 		self.explosion_prototype = BLACK_EXPLOSION_SCENE
 	
 	initialize_hp(max_hp)
@@ -598,7 +600,9 @@ func heal(amount, delay=0.0):
 
 func attacked(amount, unit, delay=0.0, blocking=false):
 	if unit != null:
-		if unit.unit_name.to_lower() == "stormdancer" and get_parent().locations[coords].raining:
+		if (typeof(unit) != TYPE_STRING #we had to add this to easily have frost knight checking for nemeses enemies
+		and unit.unit_name.to_lower() == "stormdancer" 
+		and get_parent().locations[coords].raining):
 			amount += 2
 	
 	var damage = get_actual_damage(amount, unit)
@@ -916,7 +920,7 @@ func deathrattle():
 		add_animation(self, "animate_frozen_shatter", true)
 		var neighbor_coords_range = get_parent().get_range(self.coords, [1,2], "ENEMY")
 		var action = get_new_action()
-		action.add_call("attacked", [2, null], neighbor_coords_range)
+		action.add_call("attacked", [2, "frost knight"], neighbor_coords_range)
 		action.execute()
 		
 func animate_frozen_shatter():

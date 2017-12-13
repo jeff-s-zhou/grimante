@@ -11,7 +11,8 @@ func _ready():
 	
 func get_set():
 	return Set.new(7, "Seventh",
-	[stormdancer_trials(), stormdancer_practice()], [stormdancer_practice(true)])
+	[stormdancer_trials(), stormdancer_practice(), nemesis(), nemesis_big_fight(), trickshot(), double_boss(),
+	mirror_world()], [stormdancer_practice(true)])
 
 func stormdancer_trials():
 	var tutorial = load("res://Tutorials/stormdancer_trial.gd").new()
@@ -45,9 +46,60 @@ func stormdancer_practice(hard=false):
 		score_guide = {1:5, 2:5, 3:5, 4:4} #not tested
 	else:
 		pieces = load_level("stormdancer_practice.level")
-		score_guide = {1:5, 2:5, 3:5, 4:4} #not tested
+		score_guide = {1:5, 2:5, 3:4, 4:3} #not tested
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var extras = {"free_deploy":false, "flags":[], "hard":hard, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00037, "Stormdancer Drive", allies, enemies, 4, null, extras)
+
+
+func nemesis():
+	var pieces = load_level("nemesis.level")
+	var score_guide = {1:5, 2:5, 3:5, 4:4} 
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var extras = {"free_deploy":false, "flags":[], "score_guide":score_guide}
+	return LevelTypes.Timed.new(00043, "Nemesis", allies, enemies, 4, null, extras)
+	
+
+func nemesis_big_fight():
+	var pieces = load_level("nemesis_big_fight.level")
+	var score_guide = {1:5, 2:5, 3:5, 4:4, 5:4, 6:3} 
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var extras = {"free_deploy":true, "flags":[], "score_guide":score_guide}
+	return LevelTypes.Timed.new(00039, "Nemesis 2", allies, enemies, 6, null, extras)
+
+
+func trickshot():
+	var pieces = load_level("trickshot.level")
+	var score_guide = {1:5, 2:5, 3:5} 
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var extras = {"free_deploy":false, "flags":[], "score_guide":score_guide}
+	return LevelTypes.Timed.new(00040, "Trick Shot", allies, enemies, 3, null, extras)
+	
+	
+func double_boss():
+	var pieces = load_level("double_boss.level")
+	var score_guide = {1:5, 2:5, 3:4, 4:3} 
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var extras = {"free_deploy":false, "flags":[], "score_guide":score_guide}
+	return LevelTypes.Timed.new(00041, "McDouble", allies, enemies, 4, null, extras)
+	
+	
+func mirror_world():
+	var pieces = load_level("mirror_world.level")
+	var score_guide = {1:5, 2:5, 3:5, 4:4} 
+	var raw_enemies = pieces[0]
+	var allies = pieces[1]
+	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
+	var extras = {"free_deploy":true, "flags":[], "score_guide":score_guide}
+	return LevelTypes.Timed.new(00044, "Mirror World", allies, enemies, 4, null, extras)
+	

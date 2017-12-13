@@ -36,7 +36,6 @@ func get_movement_range():
 	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
 	
 func highlight_indirect_range(movement_range):
-	#print("highlighting indirect range berserker")
 	var indirect_range = []
 	var enemies = get_tree().get_nodes_in_group("enemy_pieces")
 	for enemy in enemies:
@@ -225,7 +224,7 @@ func smash_attack(new_coords):
 	add_animation(self, "start_jump_to", true, [new_coords])
 	var action = get_new_action()
 	
-	var lethal = get_parent().pieces[new_coords].will_die_to(damage, self)
+	var lethal = get_parent().pieces[new_coords].will_die_to(self.damage, self)
 	var unstable = get_parent().pieces[new_coords].unstable
 	
 	action.add_call("attacked", [self.damage, self, 0, true], new_coords)
@@ -246,12 +245,17 @@ func smash_attack(new_coords):
 
 
 func smash_move(new_coords):
-	add_animation(self, "animate_move", false, [new_coords, 350, false])
-	add_animation(self, "jump_to", true, [new_coords])
-	
 	set_coords(new_coords)
 	var smash_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
 	#add_animation(self, "animate_smash", false, [new_coords])
+	
+	if smash_range == []:
+		var args = [new_coords, 350, false]
+		add_animation(self, "animate_move_and_hop", false, args)
+	else:
+		add_animation(self, "animate_move", false, [new_coords, 350, false])
+		add_animation(self, "jump_to", true, [new_coords])
+	
 	smash(smash_range)
 	placed()
 

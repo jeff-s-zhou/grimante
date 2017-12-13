@@ -16,12 +16,18 @@ func initialize(max_hp, modifiers, prototype):
 		get_node("Physicals/AnimatedSprite").set_animation(self.mirrored_hero_name.to_lower())
 	else:
 		self.mirrored_hero_name = "Cavalier"
-	.initialize("Nemesis", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, TYPES.selfish)
+	.initialize("Nemesis", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, TYPES.nemesis)
 
 
 func get_actual_damage(damage, unit):
 	if unit != null:
-		if unit.unit_name.to_lower() == self.mirrored_hero_name.to_lower():
+		var name
+		if typeof(unit) == TYPE_STRING: #patched on for frost knight's explosion
+			name = unit.to_lower()
+		else:
+			name = unit.unit_name.to_lower()
+		
+		if self.silenced or name.to_lower() == self.mirrored_hero_name.to_lower():
 			return .get_actual_damage(damage, unit)
 		else:
 			var max_damage = min(damage, self.hp - 1)

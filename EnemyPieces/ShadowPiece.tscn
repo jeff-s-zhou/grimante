@@ -2,29 +2,29 @@
 
 [ext_resource path="res://EnemyPieces/GruntPiece.tscn" type="PackedScene" id=1]
 [ext_resource path="res://EnemyPieces/ShadowPiece.gd" type="Script" id=2]
-[ext_resource path="res://Assets/Enemies/Shadows/stormdancer.png" type="Texture" id=3]
-[ext_resource path="res://Assets/Enemies/Shadows/stormdancer_red.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Enemies/Shadows/cavalier.png" type="Texture" id=3]
+[ext_resource path="res://Assets/Enemies/Shadows/cavalier_red.png" type="Texture" id=4]
 [ext_resource path="res://Assets/Enemies/Shadows/archer.png" type="Texture" id=5]
 [ext_resource path="res://Assets/Enemies/Shadows/archer_red.png" type="Texture" id=6]
-[ext_resource path="res://Assets/Enemies/Shadows/cavalier.png" type="Texture" id=7]
-[ext_resource path="res://Assets/Enemies/Shadows/cavalier_red.png" type="Texture" id=8]
-[ext_resource path="res://Assets/Enemies/Shadows/corsair.png" type="Texture" id=9]
-[ext_resource path="res://Assets/Enemies/Shadows/corsair_red.png" type="Texture" id=10]
-[ext_resource path="res://Assets/Enemies/Shadows/shadow_assassin.png" type="Texture" id=11]
-[ext_resource path="res://Assets/Enemies/Shadows/shadow_assassin_red.png" type="Texture" id=12]
+[ext_resource path="res://Assets/Enemies/Shadows/corsair.png" type="Texture" id=7]
+[ext_resource path="res://Assets/Enemies/Shadows/corsair_red.png" type="Texture" id=8]
+[ext_resource path="res://Assets/Enemies/Shadows/shadow_assassin.png" type="Texture" id=9]
+[ext_resource path="res://Assets/Enemies/Shadows/shadow_assassin_red.png" type="Texture" id=10]
+[ext_resource path="res://Assets/Enemies/Shadows/stormdancer.png" type="Texture" id=11]
+[ext_resource path="res://Assets/Enemies/Shadows/stormdancer_red.png" type="Texture" id=12]
 [ext_resource path="res://Assets/Enemies/Shadows/berserker.png" type="Texture" id=13]
 [ext_resource path="res://Assets/Enemies/Shadows/berserker_red.png" type="Texture" id=14]
-[ext_resource path="res://Assets/Enemies/Shadows/frost_knight.png" type="Texture" id=15]
-[ext_resource path="res://Assets/Enemies/Shadows/frost_knight_red.png" type="Texture" id=16]
-[ext_resource path="res://Assets/Enemies/Shadows/pyromancer.png" type="Texture" id=17]
-[ext_resource path="res://Assets/Enemies/Shadows/pyromancer_red.png" type="Texture" id=18]
+[ext_resource path="res://Assets/Enemies/Shadows/saint.png" type="Texture" id=15]
+[ext_resource path="res://Assets/Enemies/Shadows/saint_red.png" type="Texture" id=16]
+[ext_resource path="res://Assets/Enemies/Shadows/frost_knight.png" type="Texture" id=17]
+[ext_resource path="res://Assets/Enemies/Shadows/frost_knight_red.png" type="Texture" id=18]
 
 [sub_resource type="SpriteFrames" id=1]
 
 animations = [ {
 "frames": [ ExtResource( 3 ), ExtResource( 4 ) ],
 "loop": true,
-"name": "stormdancer",
+"name": "cavalier",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 5 ), ExtResource( 6 ) ],
@@ -34,17 +34,17 @@ animations = [ {
 }, {
 "frames": [ ExtResource( 7 ), ExtResource( 8 ) ],
 "loop": true,
-"name": "cavalier",
+"name": "corsair",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 9 ), ExtResource( 10 ) ],
 "loop": true,
-"name": "corsair",
+"name": "assassin",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 11 ), ExtResource( 12 ) ],
 "loop": true,
-"name": "assassin",
+"name": "stormdancer",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 13 ), ExtResource( 14 ) ],
@@ -54,12 +54,12 @@ animations = [ {
 }, {
 "frames": [ ExtResource( 15 ), ExtResource( 16 ) ],
 "loop": true,
-"name": "frost knight",
+"name": "saint",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 17 ), ExtResource( 18 ) ],
 "loop": true,
-"name": "fire mage",
+"name": "frost knight",
 "speed": 5.0
 } ]
 

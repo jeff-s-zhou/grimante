@@ -70,10 +70,10 @@ func placed(ending_turn=false):
 		check_for_traps()
 
 
-#func animate_reactivate(star_reactivate=false):
-#	get_node("Physicals/AnimatedSprite/HalfCooldownSprite").hide()
-#	get_node("Physicals/AnimatedSprite").set_self_opacity(1)
-#	.animate_reactivate(star_reactivate)
+func animate_reactivate(star_reactivate=false):
+	get_node("Physicals/AnimatedSprite/HalfCooldownSprite").hide()
+	get_node("Physicals/AnimatedSprite").set_self_opacity(1)
+	.animate_reactivate(star_reactivate)
 	
 		
 func animate_half_placed():

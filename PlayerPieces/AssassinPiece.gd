@@ -190,14 +190,12 @@ func trigger_passive(attack_range):
 
 
 func animate_passive(attack_coords):
-	print("animating passive")
 	var location = get_parent().locations[attack_coords]
 	var difference = 2 * (location.get_pos() - get_pos())/3
 	var new_position = location.get_pos() - difference
 	animate_move_to_pos(new_position, 450, true, Tween.TRANS_SINE, Tween.EASE_IN, 0.5)
 
 func animate_passive_end(original_coords):
-	print("animating passive end")
 	var location = get_parent().locations[original_coords]
 	var new_position = location.get_pos()
 	animate_move_to_pos(new_position, 300, true)

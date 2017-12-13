@@ -1,0 +1,6 @@
+{"hp":"3", "turn":0, "pos_x":2, "name":"grunt", "modifiers":{}, "pos_y":4}
+{"hp":"3", "turn":0, "pos_x":2, "name":"grunt", "modifiers":{}, "pos_y":3}
+{"turn":0, "pos_x":4, "name":"berserker", "pos_y":7}
+{"turn":0, "pos_x":2, "name":"cavalier", "pos_y":6}
+{"hp":"4", "turn":0, "pos_x":4, "name":"grunt", "modifiers":{}, "pos_y":5}
+{"hp":"3", "turn":0, "pos_x":2, "name":"grunt", "modifiers":{}, "pos_y":2}

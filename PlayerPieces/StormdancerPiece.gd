@@ -22,45 +22,38 @@ func _ready():
 	self.assist_type = ASSIST_TYPES.movement
 
 
-#	
-#func handle_assist():
-#	if self.assist_flag:
-#		self.assist_flag = false
-#	self.AssistSystem.activate_assist(self.assist_type, self)
-	
-
 func get_shuriken_damage():
 	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_SHURIKEN_DAMAGE
 
 
 func get_movement_range():
-	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
+	return self.grid.get_radial_range(self.coords, [1, self.movement_value])
 	
 
 func get_ally_swap_range():
-	return get_parent().get_radial_range(self.coords, [1, self.movement_value], "PLAYER")
+	return self.grid.get_radial_range(self.coords, [1, self.movement_value], "PLAYER")
 	
 	
 func get_enemy_swap_range():
-	return get_parent().get_radial_range(self.coords, [1, self.movement_value], "ENEMY")
+	return self.grid.get_radial_range(self.coords, [1, self.movement_value], "ENEMY")
 
 func get_shuriken_damage_range(damage_coords):
-	return get_parent().get_diagonal_range(damage_coords, [1, 6], "ENEMY", true)
+	return self.grid.get_diagonal_range(damage_coords, [1, 6], "ENEMY", true)
 
 func highlight_indirect_range(movement_range):
 	for coords in movement_range:
 		var damage_range = get_shuriken_damage_range(coords)
 		if damage_range != []:
-			get_parent().locations[coords].indirect_highlight()
+			self.grid.locations[coords].indirect_highlight()
 
 
-#parameters to use for get_node("get_parent()").get_neighbors
+#parameters to use for get_node("self.grid").get_neighbors
 func display_action_range():
 	var action_range = get_movement_range() + get_enemy_swap_range()
 	for coords in action_range:
-		get_parent().get_at_location(coords).movement_highlight()
+		self.grid.get_at_location(coords).movement_highlight()
 	for coords in get_ally_swap_range():
-		get_parent().get_at_location(coords).assist_highlight()
+		self.grid.get_at_location(coords).assist_highlight()
 	
 	highlight_indirect_range(action_range)
 
@@ -86,7 +79,7 @@ func act(new_coords):
 	elif _is_within_movement_range(new_coords):
 		handle_pre_assisted()
 		add_animation(self, "animate_shunpo", true, [new_coords])
-		get_parent().locations[self.coords].set_rain(true)
+		self.grid.locations[self.coords].set_rain(true)
 		self.rain_coords_dict[self.coords] = true
 		set_coords(new_coords)
 		shuriken_storm(new_coords)
@@ -96,13 +89,14 @@ func act(new_coords):
 		
 #used so we can call the placed animation at the end of the spin
 func attack_placed():
+	self.grid.handle_field_of_lights(self)
 	handle_assist()
 	get_node("SelectedGlow").hide()
 	self.state = States.PLACED
 	check_for_traps()
 	self.attack_bonus = 0
 	self.movement_value = self.DEFAULT_MOVEMENT_VALUE
-	get_parent().selected = null
+	self.grid.selected = null
 	
 #need to always unglow because of the spinning shit
 func deselect(acting=false):
@@ -112,15 +106,17 @@ func deselect(acting=false):
 
 func shuriken_storm(new_coords):
 	var attack_range_dict = {}
-	var attack_range = get_parent().get_diagonal_range(new_coords, [1, 8], "ENEMY", true)
+	var attack_range = self.grid.get_diagonal_range(new_coords, [1, 8], "ENEMY", true)
 	for coords in attack_range:
-		if get_parent().locations[coords].raining:
+		if self.grid.locations[coords].raining:
 			attack_range_dict[coords] = true
 		else:
 			attack_range_dict[coords] = false
 	if attack_range.size() > 0:
 		add_animation(self, "animate_spin", true)
 		throw_shurikens(attack_range, attack_range_dict)
+	else:
+		add_animation(self, "animate_placed", false)
 	
 	
 func animate_spin():
@@ -156,6 +152,7 @@ func animate_jump():
 #	timer.set_wait_time(0.1)
 #	timer.start()
 #	yield(timer, "timeout")
+	set_z(3)
 	get_node("Tween 3").interpolate_property(physicals, "transform/pos", start_pos, end_pos, 0.3, Tween.TRANS_CUBIC, Tween.EASE_OUT)
 	get_node("Tween 3").start()
 	yield(get_node("Tween 3"), "tween_complete")
@@ -166,6 +163,9 @@ func animate_jump():
 	timer.queue_free()
 	get_node("Tween 3").interpolate_property(physicals, "transform/pos", end_pos, start_pos, 0.3, Tween.TRANS_QUAD, Tween.EASE_IN)
 	get_node("Tween 3").start()
+	yield(get_node("Tween 3"), "tween_complete")
+	print("finished yielding to the set z 0")
+	set_z(0)
 	
 func animate_spin_helper(time):
 	var top = get_node("Physicals/SpinningForm/Top")
@@ -203,7 +203,7 @@ func animate_throw_shurikens(attack_range):
 		else:
 			shuriken = self.shuriken_prototype.instance()
 			add_child(shuriken)
-		var global_position = get_parent().locations[attack_coords].get_global_pos()
+		var global_position = self.grid.locations[attack_coords].get_global_pos()
 		shuriken.animate_attack(global_position, 900)
 	yield(shuriken, "animation_done")
 	emit_signal("animation_done")
@@ -211,7 +211,7 @@ func animate_throw_shurikens(attack_range):
 func tango(new_coords):
 	add_animation(self, "animate_shunpo", true, [new_coords])
 	var target = self.grid.pieces[new_coords]
-	get_parent().locations[self.coords].set_rain(true)
+	self.grid.locations[self.coords].set_rain(true)
 	self.rain_coords_dict[self.coords] = true
 	swap_coords_and_pos(target)
 	
@@ -219,7 +219,7 @@ func animate_shunpo(new_coords):
 	add_anim_count()
 	get_node("AnimationPlayer 2").play("ShunpoOut")
 	yield(get_node("AnimationPlayer 2"), "finished")
-	var location = get_parent().locations[new_coords]
+	var location = self.grid.locations[new_coords]
 	var new_position = location.get_pos()
 	set_pos(new_position)
 	get_node("AnimationPlayer 2").play("ShunpoIn")
@@ -229,16 +229,16 @@ func animate_shunpo(new_coords):
 
 
 func predict(new_coords):
-	#will swap
-#	if get_parent().pieces.has_enemy(new_coords):
-#		var shuriken_range = get_parent().get_diagonal_range(new_coords, [1, 2], "ENEMY", true)
-#		if self.coords in shuriken_range:
-#			get_parent().pieces[coords].predict(shuriken_damage + LIGHTNING_BONUS_DAMAGE)
-#	#no swapping
-#	else:
+#	#will swap
+	if self.grid.has_enemy(new_coords):
+		var shuriken_range = self.grid.get_diagonal_range(self.coords, [1, 2], "ENEMY", true)
+		if new_coords in shuriken_range:
+			self.grid.pieces[new_coords].predict(shuriken_damage + LIGHTNING_BONUS_DAMAGE, self, true)
+	#no swapping
+	
 	var attack_range = get_shuriken_damage_range(new_coords)
 	for coords in attack_range:
-		if get_parent().locations[coords].raining:
-			get_parent().pieces[coords].predict(self.shuriken_damage + LIGHTNING_BONUS_DAMAGE, self, true)
+		if self.grid.locations[coords].raining:
+			self.grid.pieces[coords].predict(self.shuriken_damage + LIGHTNING_BONUS_DAMAGE, self, true)
 		else:
-			get_parent().pieces[coords].predict(self.shuriken_damage, self, true)
+			self.grid.pieces[coords].predict(self.shuriken_damage, self, true)

@@ -22,6 +22,7 @@ func turn_start():
 	if !self.silenced:
 		var column_range = get_parent().get_range(self.coords, [1, 8], "ENEMY", false, [3, 4])
 		for coords in column_range:
+			self.double_time = true
 			get_parent().pieces[coords].double_time = true
 	else:
 		self.double_time = false

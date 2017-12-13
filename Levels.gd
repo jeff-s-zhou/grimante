@@ -1,6 +1,6 @@
 extends Node
 
-var set = load("res://LevelSets/Set1.gd").new().get_set()
+var set1 = load("res://LevelSets/Set1.gd").new().get_set()
 
 var set2 = load("res://LevelSets/Set2.gd").new().get_set()
 
@@ -14,7 +14,9 @@ var set6 = load("res://LevelSets/Set6.gd").new().get_set()
 
 var set7 = load("res://LevelSets/Set7.gd").new().get_set()
 
-var level_sets = [set, set2, set3, set4, set5, set6, set7]
+var set8 = load("res://LevelSets/Set8.gd").new().get_set()
+
+var level_sets = [set1, set2, set3, set4, set5, set6, set7, set8]
 
 func get_level_sets():
 	return level_sets

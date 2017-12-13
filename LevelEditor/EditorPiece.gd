@@ -113,8 +113,13 @@ func set_modifiers(modifiers):
 		elif modifier == enemy_modifiers["Unstable"]:
 			self.set_unstable(true)
 		elif modifier == "mirrored_hero":
+			self.set_nemesis(modifiers[modifier])
 			self.modifiers["mirrored_hero"] = modifiers[modifier]
 
+
+func set_nemesis(unit_name):
+	get_node("NemesisSprites").show()
+	get_node("NemesisSprites").play(unit_name.to_lower())
 
 func set_cloaked(flag):
 	if flag:

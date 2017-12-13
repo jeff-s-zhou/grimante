@@ -16,7 +16,7 @@ func get_set():
 
 func corsair_trials():
 	var tutorial = load("res://Tutorials/corsair_trial.gd").new()
-	var flags = ["no_inspire", "hints"]
+	var flags = ["no_inspire", "hints", "no_stars"]
 	var base_id = 10013
 	var challenges = []
 	for i in range(1, 6):
