@@ -69,6 +69,14 @@ func placed(ending_turn=false):
 		add_animation(self, "animate_half_placed", false)
 		check_for_traps()
 
+func resurrect(coords):
+	self.moves_remaing = 2
+	.resurrect(coords)
+
+func animate_resurrect(blocking=true):
+	get_node("Physicals/AnimatedSprite/HalfCooldownSprite").hide()
+	get_node("Physicals/AnimatedSprite").set_self_opacity(1)
+	.animate_resurrect(blocking)
 
 func animate_reactivate(star_reactivate=false):
 	get_node("Physicals/AnimatedSprite/HalfCooldownSprite").hide()
@@ -191,10 +199,16 @@ func animate_draw_back(new_coords, delay=0.0):
 
 
 func animate_slash(attack_coords):
+	var timer = Timer.new()
+	add_child(timer)
+	timer.set_wait_time(0.2)
+	timer.start()
+	yield(timer, "timeout")
+	timer.queue_free()
 	var location = get_parent().locations[attack_coords]
-	var difference = (location.get_pos() - get_pos())/2
+	var difference = 2 * (location.get_pos() - get_pos())/3
 	var new_position = location.get_pos() - difference
-	animate_move_to_pos(new_position, 1200, true, Tween.TRANS_LINEAR, Tween.EASE_IN, 0.2)
+	animate_move_to_pos(new_position, 1200, true, Tween.TRANS_LINEAR, Tween.EASE_IN)
 
 func animate_slash_end(original_coords):
 	var location = get_parent().locations[original_coords]

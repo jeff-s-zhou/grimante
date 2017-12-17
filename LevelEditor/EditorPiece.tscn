@@ -1,72 +1,73 @@
-[gd_scene load_steps=28 format=1]
+[gd_scene load_steps=29 format=1]
 
 [ext_resource path="res://LevelEditor/EditorPiece.gd" type="Script" id=1]
 [ext_resource path="res://EnemyPieces/Components/EnemyCollisionArea.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Assets/Enemies/barrel_piece.png" type="Texture" id=3]
-[ext_resource path="res://Assets/Enemies/boss_grunt_piece.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Enemies/werewolf_piece.png" type="Texture" id=5]
-[ext_resource path="res://Assets/Enemies/boss_spectre_piece.png" type="Texture" id=6]
-[ext_resource path="res://Assets/Enemies/grunt_piece.png" type="Texture" id=7]
-[ext_resource path="res://Assets/Enemies/slime_piece.png" type="Texture" id=8]
-[ext_resource path="res://Assets/Enemies/Shadows/berserker.png" type="Texture" id=9]
-[ext_resource path="res://Assets/Enemies/gross_piece.png" type="Texture" id=10]
+[ext_resource path="res://Assets/Enemies/grunt_piece.png" type="Texture" id=3]
+[ext_resource path="res://Assets/Enemies/slime_piece.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Enemies/Shadows/berserker.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Enemies/werewolf_piece.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Enemies/harpy_piece.png" type="Texture" id=7]
+[ext_resource path="res://Assets/Enemies/boss_spectre_piece.png" type="Texture" id=8]
+[ext_resource path="res://Assets/Enemies/gross_piece.png" type="Texture" id=9]
+[ext_resource path="res://Assets/Enemies/dragon_piece.png" type="Texture" id=10]
 [ext_resource path="res://Assets/Enemies/spectre_piece.png" type="Texture" id=11]
-[ext_resource path="res://Assets/Enemies/harpy_piece.png" type="Texture" id=12]
-[ext_resource path="res://Assets/Enemies/flanker_piece.png" type="Texture" id=13]
-[ext_resource path="res://Assets/Enemies/griffon_piece.png" type="Texture" id=14]
-[ext_resource path="res://Assets/Enemies/dragon_piece.png" type="Texture" id=15]
-[ext_resource path="res://Assets/Enemies/Shadows/cavalier.png" type="Texture" id=16]
-[ext_resource path="res://Assets/Enemies/Shadows/archer.png" type="Texture" id=17]
-[ext_resource path="res://Assets/Enemies/Shadows/corsair.png" type="Texture" id=18]
-[ext_resource path="res://Assets/Enemies/Shadows/shadow_assassin.png" type="Texture" id=19]
-[ext_resource path="res://Assets/Enemies/Shadows/stormdancer.png" type="Texture" id=20]
+[ext_resource path="res://Assets/Enemies/flanker_piece.png" type="Texture" id=12]
+[ext_resource path="res://Assets/Enemies/barrel_piece.png" type="Texture" id=13]
+[ext_resource path="res://Assets/Enemies/boss_grunt_piece.png" type="Texture" id=14]
+[ext_resource path="res://Assets/Enemies/griffon_piece.png" type="Texture" id=15]
+[ext_resource path="res://Assets/Enemies/boss_dragon_piece.png" type="Texture" id=16]
+[ext_resource path="res://Assets/Enemies/Shadows/corsair.png" type="Texture" id=17]
+[ext_resource path="res://Assets/Enemies/Shadows/archer.png" type="Texture" id=18]
+[ext_resource path="res://Assets/Enemies/Shadows/stormdancer.png" type="Texture" id=19]
+[ext_resource path="res://Assets/Enemies/Shadows/frost_knight.png" type="Texture" id=20]
 [ext_resource path="res://Assets/Enemies/Shadows/saint.png" type="Texture" id=21]
-[ext_resource path="res://Assets/Enemies/Shadows/frost_knight.png" type="Texture" id=22]
-[ext_resource path="res://EnemyPieces/Components/EnemyEffects.tscn" type="PackedScene" id=23]
-[ext_resource path="res://EnemyPieces/Components/EnemyOverlayLayers.tscn" type="PackedScene" id=24]
-[ext_resource path="res://EnemyPieces/Components/HealthDisplay.tscn" type="PackedScene" id=25]
+[ext_resource path="res://Assets/Enemies/Shadows/shadow_assassin.png" type="Texture" id=22]
+[ext_resource path="res://Assets/Enemies/Shadows/cavalier.png" type="Texture" id=23]
+[ext_resource path="res://EnemyPieces/Components/EnemyEffects.tscn" type="PackedScene" id=24]
+[ext_resource path="res://EnemyPieces/Components/EnemyOverlayLayers.tscn" type="PackedScene" id=25]
+[ext_resource path="res://EnemyPieces/Components/HealthDisplay.tscn" type="PackedScene" id=26]
 
 [sub_resource type="SpriteFrames" id=1]
 
 animations = [ {
 "frames": [ ExtResource( 3 ) ],
 "loop": true,
-"name": "dummy",
+"name": "grunt",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 4 ) ],
 "loop": true,
-"name": "boss_grunt",
+"name": "slime",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 5 ) ],
 "loop": true,
-"name": "melee",
+"name": "nemesis",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 6 ) ],
 "loop": true,
-"name": "boss_spectre",
+"name": "melee",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 7 ) ],
 "loop": true,
-"name": "grunt",
+"name": "fortifier",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 8 ) ],
 "loop": true,
-"name": "slime",
+"name": "boss_spectre",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 9 ) ],
 "loop": true,
-"name": "nemesis",
+"name": "grower",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 10 ) ],
 "loop": true,
-"name": "grower",
+"name": "ranged",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 11 ) ],
@@ -76,56 +77,51 @@ animations = [ {
 }, {
 "frames": [ ExtResource( 12 ) ],
 "loop": true,
-"name": "fortifier",
+"name": "flanker",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 13 ) ],
 "loop": true,
-"name": "flanker",
+"name": "dummy",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 14 ) ],
 "loop": true,
-"name": "drummer",
+"name": "boss_grunt",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 15 ) ],
 "loop": true,
-"name": "ranged",
+"name": "drummer",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 16 ) ],
+"loop": true,
+"name": "boss_ranged",
 "speed": 5.0
 } ]
 
 [sub_resource type="SpriteFrames" id=2]
 
 animations = [ {
-"frames": [ ExtResource( 16 ) ],
-"loop": true,
-"name": "cavalier",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 17 ) ],
-"loop": true,
-"name": "archer",
-"speed": 5.0
-}, {
-"frames": [ ExtResource( 18 ) ],
 "loop": true,
 "name": "corsair",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 19 ) ],
+"frames": [ ExtResource( 18 ) ],
 "loop": true,
-"name": "assassin",
+"name": "archer",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 20 ) ],
+"frames": [ ExtResource( 19 ) ],
 "loop": true,
 "name": "stormdancer",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 9 ) ],
+"frames": [ ExtResource( 20 ) ],
 "loop": true,
-"name": "berserker",
+"name": "frost knight",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 21 ) ],
@@ -135,7 +131,17 @@ animations = [ {
 }, {
 "frames": [ ExtResource( 22 ) ],
 "loop": true,
-"name": "frost knight",
+"name": "assassin",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 23 ) ],
+"loop": true,
+"name": "cavalier",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 5 ) ],
+"loop": true,
+"name": "berserker",
 "speed": 5.0
 } ]
 
@@ -162,12 +168,12 @@ transform/pos = Vector2( 0, -5 )
 frames = SubResource( 2 )
 animation = "berserker"
 
-[node name="EnemyEffects" parent="." instance=ExtResource( 23 )]
+[node name="EnemyEffects" parent="." instance=ExtResource( 24 )]
 
 editor/display_folded = true
 transform/pos = Vector2( 0, -5 )
 
-[node name="EnemyOverlays" parent="." instance=ExtResource( 24 )]
+[node name="EnemyOverlays" parent="." instance=ExtResource( 25 )]
 
 transform/pos = Vector2( 0, -5 )
 
@@ -175,7 +181,7 @@ transform/pos = Vector2( 0, -5 )
 
 visibility/opacity = 0.5
 
-[node name="HealthDisplay" parent="." instance=ExtResource( 25 )]
+[node name="HealthDisplay" parent="." instance=ExtResource( 26 )]
 
 
 [editable path="EnemyEffects"]

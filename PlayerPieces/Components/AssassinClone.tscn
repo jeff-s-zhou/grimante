@@ -1,0 +1,11 @@
+[gd_scene load_steps=2 format=1]
+
+[ext_resource path="res://Assets/Allies/assassin_piece.png" type="Texture" id=1]
+
+[node name="AssassinClone" type="Sprite"]
+
+visibility/opacity = 0.6
+z/z = 99
+texture = ExtResource( 1 )
+
+

@@ -81,8 +81,8 @@ func _ready():
 	
 	get_node("Grid").initialize(self.level_schematic.flags)
 	
-	if !get_node("/root/MusicPlayer").is_playing():
-		get_node("/root/MusicPlayer").play()
+#	if !get_node("/root/MusicPlayer").is_playing():
+#		get_node("/root/Mu	sicPlayer").play()
 
 	#key is the coords, value is the piece
 	for key in self.level_schematic.allies.keys():

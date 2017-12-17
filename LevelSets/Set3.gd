@@ -29,7 +29,7 @@ func assassin():
 	var challenge1 = LevelTypes.Timed.new(10005, "", allies1, enemies1, 3, null, extras1) 
 	var challenge2 = LevelTypes.Timed.new(10006, "", allies2, enemies2, 1, null, extras2)
 	var challenge3 = LevelTypes.Timed.new(10007, "", allies2, enemies3, 1, null, extras3)
-	return LevelTypes.Trial.new(00012, "Assassin", [challenge1, challenge2, challenge3])
+	return LevelTypes.Trial.new(10007, "Assassin", [challenge1, challenge2, challenge3])
 
 
 func sludge():
@@ -67,7 +67,7 @@ func star_power():
 		var heroes = allies[i-1]
 		var challenge = LevelTypes.Timed.new(base_id + i, "", heroes, enemies, 1, null, extras) 
 		challenges.append(challenge)
-	return LevelTypes.Trial.new(00011, "Star Power", challenges)
+	return LevelTypes.Trial.new(10025, "Star Power", challenges)
 
 
 func seraph():

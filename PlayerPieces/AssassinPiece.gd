@@ -8,6 +8,8 @@ const DEFAULT_MOVEMENT_VALUE = 2
 const DEFAULT_SHIELD = false
 const UNIT_TYPE = "Assassin"
 
+const CLONE_PROTOTYPE = preload("res://PlayerPieces/Components/AssassinClone.tscn")
+
 const BEHIND = Vector2(0, -1)
 
 var backstab_damage = DEFAULT_BACKSTAB_DAMAGE setget , get_backstab_damage
@@ -176,20 +178,74 @@ func unplaced():
 
 
 func trigger_passive(attack_range):
+	var passive_range = []
 	for attack_coords in attack_range:
 		if _is_within_passive_range(attack_coords):
-			add_animation(self, "animate_passive", true, [attack_coords])
-			var action = get_new_action(false)
-			action.add_call("attacked", [self.passive_damage, self], attack_coords)
-			action.execute()
+			passive_range.append(attack_coords)
 	
+	
+	if passive_range.size() > 0:
+		var attack_coords = passive_range[0]
+		passive_range.pop_front()
+		#animate shadow targets
+		for coords in passive_range:
+			print('adding shadow passive animation')
+			add_animation(self, "animate_shadow_passive", false, [coords])
+		
+		#animate direct target
+		add_animation(self, "animate_passive", true, [attack_coords])
+		var action = get_new_action(false)
+		passive_range.append(attack_coords) #add all the coords back together again to deal damage
+		action.add_call("attacked", [self.passive_damage, self], passive_range)
+		action.execute()
+		
+		#if any of the passive attacks killed, trigger bloodlust
+		for attack_coords in passive_range:
 			if !get_parent().pieces.has(attack_coords) and self.state == States.PLACED:
 				#activate_bloodlust()
 				unplaced()
-			add_animation(self, "animate_passive_end", true, [self.coords])
+				break
+				
+		add_animation(self, "animate_passive_end", true, [self.coords])
+
+func animate_shadow_passive(attack_coords):
+	var timer = Timer.new()
+	add_child(timer)
+	timer.set_wait_time(0.5)
+	timer.start()
+	yield(timer, "timeout")
+	timer.queue_free()
+	print("animating shadow passive: ", attack_coords)
+	var clone = CLONE_PROTOTYPE.instance()
+	get_parent().add_child(clone)
+	clone.set_pos(get_pos())
+	
+	var old_position = get_pos()
+	var location = get_parent().locations[attack_coords]
+	var difference = 2 * (location.get_pos() - get_pos())/3
+	var new_position = location.get_pos() - difference
+	var speed = 450
+	
+	add_anim_count()
+	var tween = Tween.new()
+	add_child(tween)
+	var distance = get_pos().distance_to(new_position)
+	var dim_distance = dim_multi_distance(distance)
+	tween.interpolate_property(clone, "transform/pos", clone.get_pos(), new_position, float(dim_distance)/450, Tween.TRANS_SINE, Tween.EASE_IN)
+	tween.start()
+	yield(tween, "tween_complete")
+	tween.interpolate_property(clone, "transform/pos", clone.get_pos(), old_position, float(dim_distance)/300, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.interpolate_property(clone, "visibility/opacity", 0.6, 0, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	tween.start()
+	yield(tween, "tween_complete")
+	tween.queue_free()
+	clone.queue_free()
+	subtract_anim_count()
+
 
 
 func animate_passive(attack_coords):
+	print("attack coords in passive:", attack_coords)
 	var location = get_parent().locations[attack_coords]
 	var difference = 2 * (location.get_pos() - get_pos())/3
 	var new_position = location.get_pos() - difference

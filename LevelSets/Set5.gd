@@ -27,7 +27,7 @@ func corsair_trials():
 		var heroes = pieces[1]
 		var challenge = LevelTypes.Timed.new(base_id + i, "", heroes, enemies, 1, null, extras) 
 		challenges.append(challenge)
-	return LevelTypes.Trial.new(00022, "Corsair Trials", challenges)
+	return LevelTypes.Trial.new(10018, "Corsair Trials", challenges)
 
 	
 func corsair_drive():

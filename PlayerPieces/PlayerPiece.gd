@@ -234,7 +234,6 @@ func resurrect(coords):
 	self.coords = coords
 	var pos = self.grid.locations[coords].get_pos()
 	set_pos(pos)
-	print("resurrecting")
 	add_to_group("player_pieces")
 	remove_from_group("dead_heroes")
 	set_z(0)
@@ -248,6 +247,8 @@ func animate_resurrect(blocking=true):
 	add_anim_count()
 	get_node("SamplePlayer").play("revive2")
 	
+	get_node("AnimationPlayer").stop()
+	get_node("Physicals").set_opacity(1)
 	get_node("Physicals/AnimatedSprite").set_opacity(1)
 	get_node("Physicals/CooldownSprite").hide()
 	
@@ -272,7 +273,13 @@ func animate_resurrect(blocking=true):
 	subtract_anim_count() #will set targetable to true, since state is no longer DEAD
 	if(get_node("CollisionArea").overlaps_area(self.cursor_area)):
 		self.hovered()
-	
+		
+		
+func animate_possible_revive():
+	get_node("Physicals/AnimatedSprite").set_opacity(1)
+	get_node("AnimationPlayer").play("possible_revive")
+
+
 func animate_summon():
 	add_anim_count()
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.5, Tween.TRANS_LINEAR, Tween.EASE_IN)

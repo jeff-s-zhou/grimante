@@ -1,6 +1,6 @@
 extends "PlayerPiece.gd"
 
-const DEFAULT_MOVEMENT_VALUE = 1
+const DEFAULT_MOVEMENT_VALUE = 0
 const DEFAULT_SHIELD = false
 const UNIT_TYPE = "Saint"
 
@@ -21,8 +21,14 @@ func handle_assist():
 	
 
 func get_movement_range():
-	return get_parent().get_radial_range(self.coords, [1, self.movement_value])
-
+	var player_pieces =  get_tree().get_nodes_in_group("player_pieces")
+	var fly_range = []
+	for piece in player_pieces:
+		fly_range += get_parent().get_range(piece.coords, [1, 2])
+	
+	if self.movement_value > 0:
+		fly_range +=  get_parent().get_radial_range(self.coords, [1, self.movement_value])
+	return fly_range
 
 func highlight_indirect_range(movement_range):
 	var indirect_range = []

@@ -12,7 +12,7 @@ func _ready():
 	
 func initialize(flags, combat_scene):
 	get_node("Combat/EndTurnButton").connect("deploy_pressed", combat_scene, "handle_deploy")
-	get_node("Combat/EndTurnButton").connect("pressed", combat_scene, "handle_end_turn")
+	get_node("Combat/EndTurnButton").connect("pressed", combat_scene, "end_turn")
 	get_node("Combat/EndTurnButton").set_disabled(true)
 	
 	if flags.has("no_stars"):

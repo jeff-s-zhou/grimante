@@ -101,4 +101,11 @@ z/z = 3
 
 [node name="Unstable" parent="." instance=ExtResource( 10 )]
 
+[node name="Tween" type="Tween" parent="."]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
+
 

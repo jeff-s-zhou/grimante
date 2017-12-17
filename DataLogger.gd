@@ -58,7 +58,7 @@ func save_state(attempt):
 		save.close()
 		
 func log_online(attempt):
-	if get_node("/root/global").online_logging_flag:
+	if get_node("/root/global").online_logging_flag and attempt != null:
 		get_node("/root/HTTPHelper").log_online(attempt.to_json())
 	
 	

@@ -14,16 +14,6 @@ func get_set():
 	[inspire_trials(), inspire(), unstable(), fray2(), griffon(), defuse_the_bomb(), ghost_boss()], 
 	[])
 
-#func inspire():
-#	var allies = {1: Berserker, 5: Cavalier}
-#	var raw_enemies = load_level("inspire.level")
-#	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-#	var tutorial = load("res://Tutorials/inspire.gd").new()
-#	var tutorial_func = funcref(tutorial, "get")
-#	var flags = ["no_fifth"]
-#	var reinforcements = {3: {2: Archer, 3: Assassin}}
-#	var extras = {"free_deploy":false, "tutorial": tutorial_func, "reinforcements":reinforcements, "flags":flags}
-#	return LevelTypes.Timed.new(00030, "Power of Friendship", allies, enemies, 4, null, extras)
 
 func inspire_trials():
 	var tutorial = load("res://Tutorials/inspire_trial.gd").new()
@@ -41,7 +31,7 @@ func inspire_trials():
 			turns = 2
 		var challenge = LevelTypes.Timed.new(base_id + i, "", heroes, enemies, turns, null, extras) 
 		challenges.append(challenge)
-	return LevelTypes.Trial.new(00030, "Inspire Trials", challenges)
+	return LevelTypes.Trial.new(10030, "Inspire Trials", challenges)
 
 
 func inspire(hard=false):

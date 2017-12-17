@@ -263,13 +263,11 @@ func _mouse_exited():
 	get_node("Sprite").set_opacity(self.default_opacity)
 	if get_parent().selected != null:
 		get_parent().reset_prediction()
-	
+
+#
 func star_input_event(event):
 	if self.revivable:
-		var dead_heroes = get_tree().get_nodes_in_group("dead_heroes")
-		if dead_heroes.size() > 0:
-			dead_heroes[0].resurrect(self.coords)
-			return true
+		return get_parent().handle_revive(self.coords)
 	return false
 
 	

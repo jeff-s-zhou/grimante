@@ -47,6 +47,8 @@ var selected = null
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
+	get_node("ReviveSelector").connect("selected", self, "delayed_revive")
+	
 	var location = load("res://Location.tscn")
 
 	# place location tiles
@@ -70,6 +72,21 @@ func _ready():
 			var location_y_coord = _LOCATION_Y_OFFSETS[i] + j
 			locations[Vector2(i, location_y_coord)] = location1
 			location1.set_coords(Vector2(i, location_y_coord))
+
+
+func handle_revive(coords):
+	var dead_heroes = get_tree().get_nodes_in_group("dead_heroes")
+	if dead_heroes.size() == 1:
+		dead_heroes[0].resurrect(self.coords)
+		return true
+	elif dead_heroes.size() > 1:
+		get_node("ReviveSelector").handle(coords)
+		return true
+	return false
+	
+
+func delayed_revive(dead_hero, coords):
+	dead_hero.resurrect(coords)
 
 
 func clear_board():

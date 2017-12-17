@@ -16,7 +16,7 @@ func get_set():
 
 func stormdancer_trials():
 	var tutorial = load("res://Tutorials/stormdancer_trial.gd").new()
-	var flags = ["hints"]
+	var flags = ["hints", "no_stars"]
 	var challenges = []
 	var base_id = 10018
 	for i in range(1, 4):
@@ -36,7 +36,7 @@ func stormdancer_trials():
 	challenges.append(challenge)
 	
 	
-	return LevelTypes.Trial.new(00036, "Stormdancer Trials", challenges)
+	return LevelTypes.Trial.new(10022, "Stormdancer Trials", challenges)
 	
 func stormdancer_practice(hard=false):
 	var pieces

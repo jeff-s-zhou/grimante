@@ -32,7 +32,7 @@ func get_trial3_hints():
 	var text = ["The Frost Knight {Inspires Armor}(Blue Heart Icon).", 
 	"Unlike other Inspires, {Inspire Armor} does not require a kill to trigger.",
 	"After the Frost Knight acts, the next Hero that acts gains {Shield}."]
-	add_player_start_rule(tutorial, 1, text, Vector2(3, 6))
+	add_player_start_rule(tutorial, 1, text, Vector2(4, 7))
 	return tutorial
 	
 	

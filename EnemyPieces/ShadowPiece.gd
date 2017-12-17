@@ -6,7 +6,7 @@ extends "EnemyPiece.gd"
 
 var max_hp = 5
 var mirrored_hero_name = null
-var DESCRIPTION = "Only the mirrored Hero can kill this piece."
+var DESCRIPTION = "Only the mirrored Hero can kill this piece. Otherwise it takes damage as normal."
 
 #todo: initialize with the mirrored hero name
 func initialize(max_hp, modifiers, prototype):

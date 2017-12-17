@@ -123,40 +123,6 @@ class Timed extends BaseLevelType:
 		set_end_conditions(Constants.end_conditions.Timed)
 
 
-class Sandbox extends BaseLevelType:
-	var Constants = preload("constants.gd").new()
-	
-	func _init(id, name, allies, enemies, \
-	next_level=null, extras={}).(id, name, allies, enemies, next_level, extras):
-		self.flags += ["sandbox", "no_turns"]
-		set_end_conditions(Constants.end_conditions.Sandbox)
-
-
-class MultiLevel:
-	var levels
-	var name = ""
-	var id
-	func _init(id, name, levels):
-		self.name = name
-		self.id = id
-		
-		for i in range(0, levels.size() - 1):
-			levels[i].is_sub_level = true
-			levels[i].set_next_level(levels[i+1])
-		for i in range(1, levels.size()):
-			levels[i].previous_level = levels[i-1]
-		self.levels = levels
-		
-	func get_level():
-		return self.levels[0]
-		
-	func set_next_level(level):
-		self.levels[self.levels.size() - 1].set_next_level(level)
-	
-	func is_sub_level():
-		return true
-
-
 class Trial:
 	var levels
 	var name = ""
@@ -186,4 +152,4 @@ class Trial:
 		return true
 		
 	func get_score(turn_count):
-		return "N/A"
+		return 5

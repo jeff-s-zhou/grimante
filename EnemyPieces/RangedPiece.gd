@@ -7,11 +7,12 @@ extends "EnemyPiece.gd"
 
 var max_hp = 5
 var DESCRIPTION = "Before moving, shoots a Fireball downwards if not blocked by other Enemies. The Fireball functions the same as a regular Enemy Attack."
+var NAME = "Fire Drake" #hackey fix for the ranged boss that extends off this scene
 
 const fireball_prototype = preload("res://EnemyPieces/Components/DragonFireball.tscn")
 
 func initialize(max_hp, modifiers, prototype):
-	.initialize("Fire Drake", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, TYPES.attack)
+	.initialize(NAME, DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, TYPES.attack)
 
 func turn_start():
 	if self.hp != 0 and !self.silenced and !self.stunned:

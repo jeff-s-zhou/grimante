@@ -2,7 +2,7 @@
 
 [ext_resource path="res://Effects/FieldEffects.gd" type="Script" id=1]
 [ext_resource path="res://Effects/DustWaveParticles.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Effects/Frost.tscn" type="PackedScene" id=3]
+[ext_resource path="res://PlayerPieces/Components/FrostGroundParticles.tscn" type="PackedScene" id=3]
 
 [node name="FieldEffects" type="Node2D"]
 
@@ -17,10 +17,6 @@ playback/active = false
 playback/repeat = false
 playback/speed = 1.0
 
-[node name="Frost" parent="." instance=ExtResource( 3 )]
-
-transform/pos = Vector2( 312.923, 356.245 )
-
 [node name="Timer" type="Timer" parent="."]
 
 process_mode = 1
@@ -28,5 +24,6 @@ wait_time = 1.0
 one_shot = false
 autostart = false
 
+[node name="FrostGroundParticles" parent="." instance=ExtResource( 3 )]
 
-[editable path="Frost"]
+

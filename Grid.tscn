@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=1]
+[gd_scene load_steps=6 format=1]
 
 [ext_resource path="res://Grid.gd" type="Script" id=1]
 [ext_resource path="res://Assets/effects/edge_mask.png" type="Texture" id=2]
 [ext_resource path="res://Effects/FieldEffects.tscn" type="PackedScene" id=3]
 [ext_resource path="res://UI/DottedLine.tscn" type="PackedScene" id=4]
+[ext_resource path="res://UI/ReviveSelector.tscn" type="PackedScene" id=5]
 
 [node name="Grid" type="Node2D"]
 
@@ -39,5 +40,10 @@ shadow/item_mask = 0
 [node name="DottedLine" parent="." instance=ExtResource( 4 )]
 
 visibility/visible = false
+
+[node name="ReviveSelector" parent="." instance=ExtResource( 5 )]
+
+visibility/visible = false
+transform/pos = Vector2( 401.716, 274.921 )
 
 

@@ -98,7 +98,7 @@ texture = ExtResource( 3 )
 
 [node name="LightSource" type="Sprite" parent="."]
 
-visibility/opacity = 4.76837e-07
+visibility/opacity = 0.0
 visibility/blend_mode = 1
 transform/pos = Vector2( 0, -50 )
 texture = ExtResource( 4 )

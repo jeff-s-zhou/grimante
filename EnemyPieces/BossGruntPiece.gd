@@ -6,7 +6,7 @@ extends "EnemyPiece.gd"
 # var b="textvar"
 
 var max_hp = 5
-var DESCRIPTION = "Basic Boss. Ignores 1 damage attacks. All other attacks deal 1 damage."
+var DESCRIPTION = "Ignores 1 damage attacks. All other attacks deal 1 damage. Kill all Bosses to defeat the level."
 
 func initialize(max_hp, modifiers, prototype):
 	.initialize("Pawn Boss", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, TYPES.selfish)

@@ -45,7 +45,7 @@ func frost_knight():
 	var challenge4 = LevelTypes.Timed.new(10011, "", allies4, enemies4, 1, null, extras4)
 	var challenge5 = LevelTypes.Timed.new(10012, "", allies5, enemies5, 1, null, extras5)
 	var challenge6 = LevelTypes.Timed.new(10013, "", allies6, enemies6, 1, null, extras6)
-	return LevelTypes.Trial.new(00016, "Frost Knight Trials", [challenge1, challenge2, challenge3, challenge4, challenge5, challenge6])
+	return LevelTypes.Trial.new(10013, "Frost Knight Trials", [challenge1, challenge2, challenge3, challenge4, challenge5, challenge6])
 	
 
 func frost_knight_drive(hard=false):

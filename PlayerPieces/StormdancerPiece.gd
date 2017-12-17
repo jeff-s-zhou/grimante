@@ -3,7 +3,7 @@ extends "PlayerPiece.gd"
 
 const UNIT_TYPE = "Stormdancer"
 
-const DEFAULT_SHURIKEN_DAMAGE = 1
+const DEFAULT_SHURIKEN_DAMAGE = 2
 const LIGHTNING_BONUS_DAMAGE = 2
 const DEFAULT_MOVEMENT_VALUE = 2
 const DEFAULT_SHIELD = false
@@ -233,12 +233,9 @@ func predict(new_coords):
 	if self.grid.has_enemy(new_coords):
 		var shuriken_range = self.grid.get_diagonal_range(self.coords, [1, 2], "ENEMY", true)
 		if new_coords in shuriken_range:
-			self.grid.pieces[new_coords].predict(shuriken_damage + LIGHTNING_BONUS_DAMAGE, self, true)
+			self.grid.pieces[new_coords].predict(shuriken_damage, self, true)
+
 	#no swapping
-	
 	var attack_range = get_shuriken_damage_range(new_coords)
 	for coords in attack_range:
-		if self.grid.locations[coords].raining:
-			self.grid.pieces[coords].predict(self.shuriken_damage + LIGHTNING_BONUS_DAMAGE, self, true)
-		else:
-			self.grid.pieces[coords].predict(self.shuriken_damage, self, true)
+		self.grid.pieces[coords].predict(self.shuriken_damage, self, true)

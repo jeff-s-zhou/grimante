@@ -1,0 +1,22 @@
+{"hp":"3", "turn":0, "pos_x":2, "name":"grunt", "modifiers":{"Unstable":"Unstable"}, "pos_y":4}
+{"hp":"1", "turn":0, "pos_x":5, "name":"fortifier", "modifiers":{}, "pos_y":6}
+{"turn":0, "pos_x":3, "name":"saint", "pos_y":6}
+{"turn":0, "pos_x":4, "name":"berserker", "pos_y":7}
+{"hp":"1", "turn":0, "pos_x":5, "name":"flanker", "modifiers":{}, "pos_y":2}
+{"hp":"2", "turn":0, "pos_x":3, "name":"fortifier", "modifiers":{}, "pos_y":2}
+{"hp":"4", "turn":0, "pos_x":1, "name":"spectre", "modifiers":{"Unstable":"Unstable"}, "pos_y":2}
+{"turn":0, "pos_x":2, "name":"stormdancer", "pos_y":6}
+{"turn":0, "pos_x":3, "name":"archer", "pos_y":7}
+{"hp":"1", "turn":0, "pos_x":1, "name":"fortifier", "modifiers":{}, "pos_y":4}
+{"hp":"1", "turn":0, "pos_x":1, "name":"flanker", "modifiers":{}, "pos_y":0}
+{"hp":"3", "turn":0, "pos_x":2, "name":"nemesis", "modifiers":{"mirrored_hero":"berserker"}, "pos_y":2}
+{"hp":"2", "turn":0, "pos_x":3, "name":"fortifier", "modifiers":{}, "pos_y":4}
+{"hp":"3", "turn":0, "pos_x":4, "name":"nemesis", "modifiers":{"mirrored_hero":"stormdancer"}, "pos_y":3}
+{"hp":"3", "turn":0, "pos_x":4, "name":"grunt", "modifiers":{"Unstable":"Unstable"}, "pos_y":5}
+{"hp":"4", "turn":0, "pos_x":5, "name":"spectre", "modifiers":{"Unstable":"Unstable"}, "pos_y":4}
+{"hp":"3", "turn":2, "pos_x":2, "name":"slime", "modifiers":{}, "pos_y":4}
+{"hp":"4", "turn":2, "pos_x":3, "name":"ranged", "modifiers":{"Shield":"Shield"}, "pos_y":2}
+{"hp":"1", "turn":2, "pos_x":1, "name":"flanker", "modifiers":{}, "pos_y":2}
+{"hp":"3", "turn":2, "pos_x":4, "name":"slime", "modifiers":{}, "pos_y":5}
+{"hp":"1", "turn":2, "pos_x":5, "name":"flanker", "modifiers":{}, "pos_y":4}
+{"hp":"1", "turn":2, "pos_x":3, "name":"fortifier", "modifiers":{}, "pos_y":5}

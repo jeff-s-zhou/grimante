@@ -500,6 +500,8 @@ func animate_set_shield(flag):
 	
 func set_unstable(flag):
 	self.unstable = flag
+	var name = get_node("/root/constants").enemy_modifiers["Unstable"]
+	update_description(flag, name)
 	add_animation(self, "animate_set_unstable", false, [flag])
 	
 func animate_set_unstable(flag):
@@ -565,9 +567,8 @@ func set_frozen(flag):
 		
 		
 func animate_freeze():
-	get_node("Physicals/EnemyEffects/FrozenEffect").show()
-	get_node("Physicals/EnemyEffects/FrozenParticles").set_emitting(true)
-
+	get_node("Physicals/EnemyEffects").animate_freeze()
+	
 func animate_freeze_hide():
 	get_node("Physicals/EnemyEffects/FrozenEffect").hide()
 	get_node("Physicals/EnemyEffects/FrozenParticles").set_emitting(false)
@@ -599,12 +600,6 @@ func heal(amount, delay=0.0):
 
 
 func attacked(amount, unit, delay=0.0, blocking=false):
-	if unit != null:
-		if (typeof(unit) != TYPE_STRING #we had to add this to easily have frost knight checking for nemeses enemies
-		and unit.unit_name.to_lower() == "stormdancer" 
-		and get_parent().locations[coords].raining):
-			amount += 2
-	
 	var damage = get_actual_damage(amount, unit)
 	
 	if self.shielded:
@@ -612,14 +607,13 @@ func attacked(amount, unit, delay=0.0, blocking=false):
 	
 	modify_hp(damage * -1, delay, blocking)
 	
-	var tile = get_parent().locations[coords]
-	
-	#TODO put this through an action call
-	if tile.raining:
-		add_animation(tile, "animate_lightning", false)
-#		var action = get_new_action()
-#		action.add_call("lightning_attacked", [], self.coords)
-#		action.execute()
+	if unit != null:
+		if get_parent().locations[coords].raining and damage > 1:
+			var tile = get_parent().locations[coords]
+			add_animation(tile, "animate_lightning", true)
+			var action = get_new_action()
+			action.add_call("attacked", [2, null], self.coords)
+			action.execute()
 
 
 func fireball_attacked(damage, unit):
@@ -854,10 +848,7 @@ func turn_update():
 #called after all pieces finish moving
 func turn_attack_update():
 	if self.unstable:
-		var action = get_new_action()
-		action.add_call("attacked", [1, null], self.coords)
-		action.execute()
-	
+		attacked(1, null) #so it won't bait the assassin into suiciding lmayo
 	if self.frozen:
 		set_frozen(false)
 	
