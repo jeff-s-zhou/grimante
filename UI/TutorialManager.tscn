@@ -60,7 +60,7 @@ custom_styles/panel = SubResource( 1 )
 [node name="Sprite" type="Sprite" parent="."]
 
 visibility/visible = false
-visibility/opacity = 0.6
+visibility/opacity = 0.2
 visibility/light_mask = 4
 z/z = 97
 z/relative = false

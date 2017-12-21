@@ -444,12 +444,8 @@ func star_input_event(event):
 
 #called when an event happens inside the click area hitput
 func input_event(event, has_selected):
-	print("in player piece input event, hovered_flag: ", self.hovered_flag)
-	print(self.unit_name)
-	print(self.state)
 	if self.state != States.DEAD and self.hovered_flag:
 		if self.deploying_flag: #if in deploy phase
-			print("handling deploy input event")
 			deploy_input_event(event, has_selected)
 			return
 	

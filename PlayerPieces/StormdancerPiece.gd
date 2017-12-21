@@ -230,12 +230,23 @@ func animate_shunpo(new_coords):
 
 func predict(new_coords):
 #	#will swap
+	var do_not_call_list 
+	
 	if self.grid.has_enemy(new_coords):
 		var shuriken_range = self.grid.get_diagonal_range(self.coords, [1, 2], "ENEMY", true)
 		if new_coords in shuriken_range:
 			self.grid.pieces[new_coords].predict(shuriken_damage, self, true)
+			
+			#get all the aditional coords in the opposite direction, add them to a do not call list
+			#then subtract all of those from the attack range below
+			var direction_vector = self.coords - new_coords #opposite direction
+			do_not_call_list = self.grid.get_line_range(self.coords, direction_vector, "ENEMY", [1, 5])
 
 	#no swapping
 	var attack_range = get_shuriken_damage_range(new_coords)
+	if do_not_call_list != null:
+		for coords in do_not_call_list:
+			attack_range.erase(coords)
+	
 	for coords in attack_range:
 		self.grid.pieces[coords].predict(self.shuriken_damage, self, true)

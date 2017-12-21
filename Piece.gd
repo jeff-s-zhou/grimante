@@ -313,7 +313,7 @@ func receive_shove(distance, damage):
 		add_animation(self, "animate_move_and_hop", true, [new_coords, 300])
 		var action = get_new_action()
 		if get_parent().pieces[new_coords].side == "ENEMY":
-			action.add_call("attacked", [damage, self], [new_coords])
+			action.add_call("attacked", [damage, "frost knight"], [new_coords])
 		else:
 			action.add_call("attacked", [self], [new_coords])
 		action.execute()

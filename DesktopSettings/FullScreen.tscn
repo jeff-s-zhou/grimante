@@ -1,0 +1,35 @@
+[gd_scene load_steps=5 format=1]
+
+[ext_resource path="res://DesktopSettings/Setting.tscn" type="PackedScene" id=1]
+[ext_resource path="res://DesktopSettings/FullScreen.gd" type="Script" id=2]
+[ext_resource path="res://Assets/UI/Desktop/Settings/checkbox_checked.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/Desktop/Settings/checkbox.png" type="Texture" id=4]
+
+[node name="FullScreen" instance=ExtResource( 1 )]
+
+script/script = ExtResource( 2 )
+
+[node name="Label" parent="."]
+
+margin/right = 124.0
+text = "FULL SCREEN"
+
+[node name="CheckBox" type="CheckBox" parent="."]
+
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 460.0
+margin/top = 4.0
+margin/right = 486.0
+margin/bottom = 27.0
+custom_icons/checked = ExtResource( 3 )
+custom_icons/unchecked = ExtResource( 4 )
+toggle_mode = true
+enabled_focus_mode = 2
+shortcut = null
+flat = false
+align = 0
+
+

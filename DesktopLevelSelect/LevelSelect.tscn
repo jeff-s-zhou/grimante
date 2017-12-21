@@ -1,15 +1,10 @@
-[gd_scene load_steps=11 format=1]
+[gd_scene load_steps=6 format=1]
 
 [ext_resource path="res://DesktopLevelSelect/LevelSelect.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Backgrounds/new_style_background_desktop.png" type="Texture" id=2]
-[ext_resource path="res://Assets/processed_fonts/level_select_header.fnt" type="BitmapFont" id=3]
-[ext_resource path="res://UI/TextureLabelButton.tscn" type="PackedScene" id=4]
-[ext_resource path="res://Assets/UI/Desktop/LevelSelect/glass_back_button.png" type="Texture" id=5]
-[ext_resource path="res://Assets/UI/Desktop/LevelSelect/glass_back_button_pressed.png" type="Texture" id=6]
-[ext_resource path="res://Assets/UI/Desktop/LevelSelect/glass_back_button_hovered.png" type="Texture" id=7]
-[ext_resource path="res://Assets/UI/Desktop/LevelSelect/glass_back_button_greyed.png" type="Texture" id=8]
-[ext_resource path="res://Assets/UI/Desktop/LevelSelect/glass_back_button_click_mask.pbm" type="BitMap" id=9]
-[ext_resource path="res://Assets/processed_fonts/button_text_small.fnt" type="BitmapFont" id=10]
+[ext_resource path="res://UI/TransitionHelper.tscn" type="PackedScene" id=3]
+[ext_resource path="res://UI/BackButton.tscn" type="PackedScene" id=4]
+[ext_resource path="res://Assets/processed_fonts/level_select_header.fnt" type="BitmapFont" id=5]
 
 [node name="LevelSelect" type="Node2D"]
 
@@ -20,7 +15,13 @@ script/script = ExtResource( 1 )
 transform/pos = Vector2( 510, 390 )
 texture = ExtResource( 2 )
 
-[node name="Label" type="Label" parent="."]
+[node name="T" parent="." instance=ExtResource( 3 )]
+
+[node name="BackButton" parent="T" instance=ExtResource( 4 )]
+
+transform/pos = Vector2( 511, 712 )
+
+[node name="Label" type="Label" parent="T"]
 
 focus/ignore_mouse = true
 focus/stop_mouse = true
@@ -30,7 +31,7 @@ margin/left = 0.0
 margin/top = 51.0
 margin/right = 1024.0
 margin/bottom = 111.0
-custom_fonts/font = ExtResource( 3 )
+custom_fonts/font = ExtResource( 5 )
 custom_colors/font_color = Color( 0.462745, 0.701961, 0.607843, 1 )
 text = "LEVEL SET 1"
 align = 1
@@ -39,38 +40,4 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="BackButton" parent="." instance=ExtResource( 4 )]
 
-transform/pos = Vector2( 108, 84 )
-y_difference = 4
-
-[node name="TextureButton" parent="BackButton"]
-
-margin/left = -98.0
-margin/top = -32.0
-margin/right = 101.0
-margin/bottom = 47.0
-textures/normal = ExtResource( 5 )
-textures/pressed = ExtResource( 6 )
-textures/hover = ExtResource( 7 )
-textures/disabled = ExtResource( 8 )
-textures/click_mask = ExtResource( 9 )
-
-[node name="Label" type="Label" parent="BackButton/Toppings"]
-
-focus/ignore_mouse = true
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 0
-margin/left = -47.0
-margin/top = -16.0
-margin/right = 22.0
-margin/bottom = 14.0
-custom_fonts/font = ExtResource( 10 )
-text = "BACK"
-percent_visible = 1.0
-lines_skipped = 0
-max_lines_visible = -1
-
-
-[editable path="BackButton"]

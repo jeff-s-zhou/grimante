@@ -6,7 +6,7 @@ extends Node2D
 # var a=2
 # var b="textvar"
 
-const levels_prototype = preload("res://LevelSets/Set6.gd")
+const levels_prototype = preload("res://LevelSets/Set1.gd")
 
 onready var levels = levels_prototype.new()
 

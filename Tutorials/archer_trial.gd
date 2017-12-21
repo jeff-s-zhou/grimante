@@ -47,7 +47,7 @@ func get_trial3_hints():
 func get_trial4_hints():
 	var tutorial = TutorialPrototype.instance()
 	
-	var hint = ["The Archer's shots are {blocked} by other Heroes."]
+	var hint = ["All projectiles are {blocked} by other Heroes."]
 	
 	add_hint(tutorial, 1, hint)
 	

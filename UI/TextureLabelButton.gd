@@ -24,7 +24,6 @@ func _ready():
 	get_node("TextureButton").connect("mouse_enter", self, "hover")
 	get_node("TextureButton").connect("mouse_exit", self, "unhover")
 	
-	
 	#connect all the signals from the button inside this
 	#have all the labels and sprites grouped inside a node2d called "Toppings"
 	#have them move downward the difference in y height of the default texture and the pressed texture

@@ -1,6 +1,0 @@
-{"hp":"3", "turn":0, "pos_x":2, "name":"grunt", "modifiers":{}, "pos_y":4}
-{"turn":0, "pos_x":1, "name":"cavalier", "pos_y":6}
-{"hp":"4", "turn":0, "pos_x":3, "name":"flanker", "modifiers":{}, "pos_y":2}
-{"turn":0, "pos_x":4, "name":"berserker", "pos_y":7}
-{"turn":0, "pos_x":2, "name":"assassin", "pos_y":6}
-{"hp":"5", "turn":0, "pos_x":4, "name":"nemesis", "modifiers":{"mirrored_hero":"berserker"}, "pos_y":5}

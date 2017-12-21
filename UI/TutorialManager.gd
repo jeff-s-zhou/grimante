@@ -80,7 +80,9 @@ func display_forced_action(turn):
 	
 	#so the text is more readable
 	if forced_action.has_text():
-		get_node("Sprite").set_opacity(0.8)
+		get_node("Sprite").set_opacity(0.6)
+	else:
+		get_node("Sprite").set_opacity(0.6)
 	get_node("Sprite").set_pos(initial_pos)
 	get_node("Sprite").show()
 	get_node("Light2D").set_pos(target_pos)
@@ -198,7 +200,7 @@ func update_rule(next=false):
 			get_node("TapLabel").show()
 			if coords != null:
 				var new_pos = get_parent().get_node("Grid").locations[coords].get_global_pos()
-				get_node("Sprite").set_opacity(0.8)
+				get_node("Sprite").set_opacity(0.6)
 				get_node("Sprite").set_pos(new_pos)
 				get_node("Sprite").show()
 			else:

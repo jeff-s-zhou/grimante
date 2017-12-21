@@ -4,7 +4,7 @@ extends "EnemyPiece.gd"
 # var a=2
 # var b="textvar"
 
-var DESCRIPTION = "Causes itself and all Enemies ahead of it to move twice each turn."
+var DESCRIPTION = "Causes itself and all Enemies ahead of it to act twice each turn."
 
 func initialize(max_hp, modifiers, prototype):
 	self.double_time = true

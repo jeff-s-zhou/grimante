@@ -18,11 +18,16 @@ func _ready():
 		get_node("/root/State").current_level_set = null
 	
 	for level_set in get_node("/root/Levels").get_level_sets():
-		var id_str = str(level_set.id)
+		var id_str = "T/" + str(level_set.id)
 		get_node(id_str).connect("pressed", self, "goto_level_set")
 		get_node(id_str).initialize(level_set)
+		
+	get_node("T").initialize()
+	get_node("T").animate_slide_in()
 
 
 func goto_level_set(level_set):
+	get_node("T").animate_slide_out()
+	yield(get_node("T"), "animation_done")
 	get_node("/root/State").current_level_set = level_set
 	get_node("/root/global").goto_scene("res://DesktopLevelSelect/LevelSelect.tscn", {"level_set":level_set})

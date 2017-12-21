@@ -26,9 +26,16 @@ func _ready():
 		combat_resource = "res://DesktopCombat.tscn"
 	else:
 		combat_resource = "res://Combat.tscn"
+	
+	var resolution = Vector2(Globals.get("display/width"), Globals.get("display/height"))
+	print("resolution saved: ", resolution)
+	#OS.set_window_size(Vector2(800, 600))
 		
 func get_version():
 	return VERSION
+	
+func get_resolution():
+	return Vector2(1024, 768)
 
 func get_thread():
 #	var thread = Thread.new()

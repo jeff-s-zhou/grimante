@@ -44,9 +44,8 @@ func _ready():
 	
 	
 	
-	var screen_size = get_viewport().get_rect().size
+	var screen_size = get_node("/root/global").get_resolution() #get_viewport().get_rect().size
 	get_node("Grid").set_pos(Vector2(screen_size.x/2 - 310, screen_size.y/2- 350))
-	#get_node("Grid").set_pos(Vector2(400, 250))
 	#debug_full_roster()
 	
 	get_node("/root/AnimationQueue").connect("animation_count_update", self, "update_animation_count_display")
@@ -69,7 +68,7 @@ func _ready():
 		
 	#we store the initial wave count as the first value in the array
 	
-	get_node("Settings").initialize(self.level_schematic)
+	get_node("PauseMenu").initialize(self.level_schematic)
 	
 	get_node("PhaseShifter").initialize(self.level_schematic)
 	
@@ -81,8 +80,8 @@ func _ready():
 	
 	get_node("Grid").initialize(self.level_schematic.flags)
 	
-#	if !get_node("/root/MusicPlayer").is_playing():
-#		get_node("/root/Mu	sicPlayer").play()
+	if !get_node("/root/MusicPlayer").is_playing():
+		get_node("/root/MusicPlayer").play()
 
 	#key is the coords, value is the piece
 	for key in self.level_schematic.allies.keys():
@@ -256,8 +255,12 @@ func handle_piece_placed():
 	if get_node("ControlBar/Combat/StarBar").has_star():
 		get_node("ControlBar/Combat/StarBar").star_flash(true)
 		return
-		
+	
 	end_turn()
+#	if get_tree().get_nodes_in_group("player_pieces").size() > 0: #otherwise will have won
+#		end_turn()
+#	else:
+#		pause() 
 
 #	
 #
@@ -301,14 +304,10 @@ func handle_deploy():
 		emit_signal("deployed")
 	
 	
-func display_settings():
-	#pause
-	if get_node("Settings").is_visible():
-		get_node("Settings").hide()
-	else:
-		get_node("Settings").show()
-	#yield(get_node("Settings"), "settings_closed")
-	#unpause()
+func display_pause_menu():
+		pause()
+		get_node("PauseMenu").show()
+	
 		
 func restart():
 	pause()
@@ -337,15 +336,13 @@ func _input(event):
 func computer_input(event):
 	#select a unit
 	if get_node("InputHandler").is_select(event):
+		print("handling select input")
 		if self.state == STATES.player_turn or STATES.deploying:
 			instant_lighten()
 			var has_selected = get_node("Grid").selected != null
 			var hovered = get_node("CursorArea").get_piece_or_location_hovered()
-			print("has selected: ", has_selected)
-			if hovered:
-				print("has hovered, targetable: ", hovered.is_targetable())
 			if hovered and hovered.is_targetable():
-				
+				print("detected hovered and targetable on input")
 				var star_bar = get_node("ControlBar/Combat/StarBar")
 				#if a star is active, handle it appropriately
 				if self.has_active_star:
@@ -373,12 +370,7 @@ func computer_input(event):
 	#don't handle any other input during forced actions
 	if self.mid_forced_action:
 		return
-	
-	if get_node("InputHandler").is_ui_cancel(event):
-		if get_node("Grid").selected != null:
-			get_node("Grid").deselect()
-		else:
-			display_settings()
+
 			
 	elif get_node("InputHandler").is_deselect(event): 
 		if get_node("Grid").selected != null:
@@ -420,17 +412,7 @@ func computer_input(event):
 			
 	elif event.is_action("restart") and event.is_pressed():
 		restart()
-	
-	elif event.is_action("toggle_fullscreen") and event.is_pressed():
-		if OS.is_window_fullscreen():
-			OS.set_window_fullscreen(false)
-			OS.set_window_maximized(true)
-			var current_size = OS.get_window_size()
-			OS.set_window_size(Vector2(670, current_size.y))
-		else:
-			OS.set_window_fullscreen(true)
-			OS.set_window_maximized(false)
-			
+
 			
 	elif event.is_action("test_action") and event.is_pressed():
 		print(get_tree().get_nodes_in_group("player_pieces"))
@@ -694,7 +676,7 @@ func player_win():
 	else:
 		var win_screen = self.outcome_screen_prototype.instance()
 		add_child(win_screen)
-		var screen_size = get_viewport().get_rect().size
+		var screen_size = get_node("/root/global").get_resolution()
 		win_screen.initialize_victory(self.level_schematic.next_level, self.level_schematic, self.turn_count)
 		win_screen.set_pos(Vector2(screen_size.x/2, screen_size.y/2))
 		win_screen.fade_in()
@@ -721,10 +703,13 @@ func enemy_win():
 		yield(get_node("Timer2"), "timeout")
 #
 		var lose_screen = self.outcome_screen_prototype.instance()
-		var screen_size = get_viewport().get_rect().size
+		var screen_size = get_node("/root/global").get_resolution()
+		print("screen size: ", screen_size)
 		add_child(lose_screen)
 		lose_screen.initialize_defeat(self.level_schematic.next_level, self.level_schematic)
 		lose_screen.set_pos(Vector2(screen_size.x/2, screen_size.y/2))
+		#lose_screen.set_pos(Vector2(512, 384))
+		print("lose screen pos: ", lose_screen.get_pos())
 		lose_screen.fade_in()
 #	
 
@@ -733,6 +718,7 @@ func damage_defenses():
 		
 func display_overlay(unit_name):
 	get_node("/root/AnimationQueue").enqueue(get_node("OverlayDisplayer"), "animate_display_overlay", true, [unit_name])
+
 
 func darken(time=0.4, amount=0.3, delay=0.0):
 	get_node("Tween").interpolate_property(get_node("DarkenLayer"), "visibility/opacity", 0, amount, time, Tween.TRANS_SINE, Tween.EASE_IN, delay)
@@ -748,6 +734,7 @@ func lighten(time=0.4):
 	get_node("Tween").interpolate_property(get_node("DarkenLayer"), "visibility/opacity", amount, 0, time, Tween.TRANS_SINE, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
+	get_node("DarkenLayer/Panel").set_stop_mouse(false)
 	emit_signal("animation_done")
 
 func handle_invalid_move():

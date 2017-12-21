@@ -13,6 +13,7 @@ var user_info = {}
 var current_level_set = null
 var session_id = null #get a new one from server every time you go to a new level
 var current_user = "Jeff"
+var settings = {}
 
 func _ready():
 	# Called every time the node is added to the scene.
@@ -46,6 +47,8 @@ func load_state():
 			self.user_info = state["user_info"]
 		if state.has("seen_units"):
 			self.seen_units = state["seen_units"]
+		if state.has("settings"):
+			self.settings = state["settings"]
 		else:
 			request_user_id() #if there's no user_info, we need a user id
 	save.close()
@@ -55,7 +58,8 @@ func save_state():
 	save.open(get_save_filename(), File.WRITE)
 	
 	#have to do this instead of store_line because loading bugs out on the last linebreak
-	var save_data = {"user_info":user_info, "unit_roster":unit_roster, "level_set_data":level_set_data, "seen_units":seen_units}
+	var save_data = {"user_info":user_info, "unit_roster":unit_roster, 
+	"level_set_data":level_set_data, "seen_units":seen_units, "settings":settings}
 	#TODO: might need to clear the file?
 	save.store_string(save_data.to_json()) 
 	save.close()
@@ -149,3 +153,13 @@ func request_attempt_session_id():
 	
 func set_attempt_session_id(id):
 	self.session_id = id
+	
+
+func set_setting(name, value):
+	self.settings[name] = value
+	save_state()
+
+
+func get_setting(name):
+	if self.settings.has(name):
+		return self.settings[name]
