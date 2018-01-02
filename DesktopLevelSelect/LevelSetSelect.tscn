@@ -2,8 +2,8 @@
 
 [ext_resource path="res://DesktopLevelSelect/LevelSetSelect.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Backgrounds/new_style_background_desktop.png" type="Texture" id=2]
-[ext_resource path="res://UI/TransitionHelper.tscn" type="PackedScene" id=3]
-[ext_resource path="res://DesktopLevelSelect/LevelSetSelectButton.tscn" type="PackedScene" id=4]
+[ext_resource path="res://DesktopLevelSelect/SetSelectTransitionHelper.gd" type="Script" id=3]
+[ext_resource path="res://DesktopLevelSelect/LayeredSetSelectButton.tscn" type="PackedScene" id=4]
 
 [node name="LevelSetSelect" type="Node2D"]
 
@@ -14,7 +14,23 @@ script/script = ExtResource( 1 )
 transform/pos = Vector2( 510, 390 )
 texture = ExtResource( 2 )
 
-[node name="T" parent="." instance=ExtResource( 3 )]
+[node name="T" type="Node2D" parent="."]
+
+script/script = ExtResource( 3 )
+
+[node name="Timer" type="Timer" parent="T"]
+
+process_mode = 1
+wait_time = 1.0
+one_shot = false
+autostart = false
+
+[node name="Tween" type="Tween" parent="T"]
+
+playback/process_mode = 1
+playback/active = false
+playback/repeat = false
+playback/speed = 1.0
 
 [node name="1" parent="T" instance=ExtResource( 4 )]
 

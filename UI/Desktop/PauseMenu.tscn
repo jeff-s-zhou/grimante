@@ -40,7 +40,7 @@ percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
 
-[node name="TurnSubtext" type="Label" parent="T"]
+[node name="TurnSubtext" type="RichTextLabel" parent="T"]
 
 focus/ignore_mouse = true
 focus/stop_mouse = true
@@ -50,12 +50,11 @@ margin/left = 0.0
 margin/top = 194.0
 margin/right = 1024.0
 margin/bottom = 244.0
-custom_fonts/font = ExtResource( 4 )
-align = 1
-valign = 1
+custom_fonts/normal_font = ExtResource( 4 )
+bbcode/enabled = false
+bbcode/bbcode = ""
+visible_characters = -1
 percent_visible = 1.0
-lines_skipped = 0
-max_lines_visible = -1
 
 [node name="LevelSelectButton" parent="T" instance=ExtResource( 5 )]
 
@@ -80,6 +79,21 @@ text = "EXIT GAME"
 [node name="BackButton" parent="T" instance=ExtResource( 6 )]
 
 transform/pos = Vector2( 517, 567 )
+
+[node name="SetProgress" type="Label" parent="T"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = 662.0
+margin/top = 738.0
+margin/right = 1022.0
+margin/bottom = 764.0
+custom_fonts/font = ExtResource( 4 )
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
 
 
 [editable path="T/SettingsButton"]

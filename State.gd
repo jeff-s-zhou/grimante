@@ -9,11 +9,11 @@ var seen_effect = {}
 
 var unit_roster = []
 var level_set_data = {}
+var completed_level_sets = {}
 var user_info = {}
 var current_level_set = null
 var session_id = null #get a new one from server every time you go to a new level
 var current_user = "Jeff"
-var settings = {}
 
 func _ready():
 	# Called every time the node is added to the scene.
@@ -43,12 +43,12 @@ func load_state():
 		if state.has("level_set_data"):
 			self.level_set_data = state["level_set_data"]
 			print("loaded level set data: ", self.level_set_data)
+		if state.has("completed_level_sets"):
+			self.completed_level_sets = state["completed_level_sets"]
 		if state.has("user_info"):
 			self.user_info = state["user_info"]
 		if state.has("seen_units"):
 			self.seen_units = state["seen_units"]
-		if state.has("settings"):
-			self.settings = state["settings"]
 		else:
 			request_user_id() #if there's no user_info, we need a user id
 	save.close()
@@ -59,7 +59,7 @@ func save_state():
 	
 	#have to do this instead of store_line because loading bugs out on the last linebreak
 	var save_data = {"user_info":user_info, "unit_roster":unit_roster, 
-	"level_set_data":level_set_data, "seen_units":seen_units, "settings":settings}
+	"level_set_data":level_set_data, "completed_level_sets": completed_level_sets, "seen_units":seen_units}
 	#TODO: might need to clear the file?
 	save.store_string(save_data.to_json()) 
 	save.close()
@@ -75,7 +75,50 @@ func get_roster():
 func set_seen(unit_name):
 	self.seen_units[unit_name] = true
 	save_state()
+
+
+func is_set_unlocked(level_set_id):
+	if level_set_id == 1: #first set is unlocked
+		return true
+
+	var previous_set_id = level_set_id - 1
+	return is_set_completed(previous_set_id)
 	
+func is_set_completed(level_set=null):
+	if level_set == null:
+		level_set = self.current_level_set
+	return level_set.id in self.completed_level_sets
+	
+func get_level_set_progress(level_set=null):
+	if level_set == null:
+		level_set = self.current_level_set
+	var level_set_id = level_set.id
+	if !self.level_set_data.has(str(level_set_id)): #if there's nothing, it's 0/x levels
+		return [0, level_set.get_level_count()]
+		
+	var s = self.level_set_data[str(level_set_id)]
+	var completed = 0
+	for level_id in s.keys():
+		if s.has(level_id) and s[level_id] != 0: #if attempted and succeeded
+			completed += 1
+	return [completed, level_set.get_level_count()]
+	
+
+func get_stars(level_set=null):
+	if level_set == null:
+		level_set = self.current_level_set
+	var level_set_id = level_set.id
+	if !self.level_set_data.has(str(level_set_id)): #if there's nothing, obvs no full cleared
+		return [0, level_set.get_level_count() * 5]
+		
+	var s = self.level_set_data[str(level_set_id)]
+	var stars = 0
+	for level_id in s.keys():
+		stars += s[level_id]
+	
+	print(str(stars) + "/" + str(level_set.get_level_count() * 5))
+	return [stars, level_set.get_level_count() * 5]
+
 
 func get_level_score(level_id, level_set_id=null):
 	if level_set_id == null and self.current_level_set == null:
@@ -110,17 +153,18 @@ func save_level_progress(level_id, score):
 	else:
 		level_set[level_id] = score
 		print("logging score in level_set: ", level_set)
+		
+	#separate structure to keep track of completed level sets
+	var progress = get_level_set_progress(self.current_level_set) 
+	if progress[0] == progress[1]:
+		set_completed_level_set(self.current_level_set.id)
 	
 	save_state()
-	
-	print(self.level_set_data)
 
-func has_unlocked_boss_level():
-	pass
 
-func has_completed_level_set():
-	pass
-
+func set_completed_level_set(id):
+	self.completed_level_sets[id] = true
+	save_state()
 
 #USER_ID BUSINESS
 func get_user_id():
@@ -153,13 +197,3 @@ func request_attempt_session_id():
 	
 func set_attempt_session_id(id):
 	self.session_id = id
-	
-
-func set_setting(name, value):
-	self.settings[name] = value
-	save_state()
-
-
-func get_setting(name):
-	if self.settings.has(name):
-		return self.settings[name]

@@ -8,7 +8,7 @@ const level_set_button_prototype = preload("res://DesktopLevelSelect/LongTexture
 
 var level_set
 
-onready var screen_size = get_node("/root/globals").get_resolution()
+var level_count = 0
 
 func _ready():
 	# Called every time the node is added to the scene.
@@ -24,20 +24,26 @@ func _ready():
 	
 	get_node("T/BackButton").connect("pressed", self, "back")
 	
+	var first_attempt = false
+	var progress = get_node("/root/State").get_level_set_progress(self.level_set)
+	if progress[0] == 0:
+		first_attempt = true
+
 	for level in self.level_set.get_levels():
-		create_new_level_button(level, y_position)
+		level_count += 1
+		var is_first_level = level_count == 1
+		create_new_level_button(level, y_position, !is_first_level and first_attempt)
 		y_position += 78
-		
-#	for level in self.level_set.get_hard_levels():
-#		create_new_level_button(level, hard_y_position)
-#		hard_y_position += 78
+
+
 	get_node("T").initialize()
 	get_node("T").animate_slide_in()
 
-func create_new_level_button(level, y_position):
+func create_new_level_button(level, y_position, disabled=false):
 	var score = get_node("/root/State").get_level_score(level.id, self.level_set.id)
 	var level_button = self.level_set_button_prototype.instance()
-	level_button.initialize(level, score)
+	level_button.initialize(level, score, disabled)
+	var screen_size = get_node("/root/global").get_resolution()
 	level_button.set_pos(Vector2(screen_size.x/2, y_position))
 	level_button.connect("pressed", self, "goto_level")
 	get_node("T").add_child(level_button)

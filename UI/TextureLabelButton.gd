@@ -9,8 +9,8 @@ signal released
 signal button_down
 signal button_up
 
-onready var normal_height = get_node("TextureButton").get_normal_texture().get_height()
-onready var pressed_height = get_node("TextureButton").get_pressed_texture().get_height()
+#onready var normal_height = get_node("TextureButton").get_normal_texture().get_height()
+#onready var pressed_height = get_node("TextureButton").get_pressed_texture().get_height()
 
 export var y_difference = 0
 
@@ -41,7 +41,12 @@ func is_button_up():
 	
 func set_disabled(flag):
 	get_node("TextureButton").set_disabled(flag)
-	
+	if flag:
+		get_node("Toppings").set_opacity(0.5)
+	else:
+		get_node("Toppings").set_opacity(1)
+
+
 func hover():
 	if !get_node("TextureButton").is_disabled():
 		set_scale(Vector2(1.04, 1.04))

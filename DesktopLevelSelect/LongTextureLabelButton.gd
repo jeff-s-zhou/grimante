@@ -6,11 +6,14 @@ extends "res://UI/TextureLabelButton.gd"
 
 var level = null
 
-func initialize(level, score):
+func initialize(level, score, disabled=false):
 	self.level = level
 	get_node("Toppings/Label").set_text(self.level.name.to_upper())
 	if score != null:
 		get_node("Toppings/SmallScoreStars").display_score(score)
+	if disabled:
+		set_disabled(true)
+
 
 func is_pressed():
 	emit_signal("pressed", self.level)

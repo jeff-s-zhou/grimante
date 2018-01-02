@@ -36,6 +36,9 @@ signal deployed
 signal animation_done
 
 func _ready():
+	var material = get_node("TransitionMask").get("material/material")
+	material.set("shader_param/strength", 0)
+	
 	self.combat_resource = get_node("/root/global").combat_resource
 	if get_node("/root/global").platform == PLATFORMS.PC:
 		self.desktop_flag = true
@@ -103,6 +106,9 @@ func _ready():
 	load_in_next_incoming()
 	get_node("Grid").display_incoming()
 	
+	get_node("AnimationPlayer").play("transition_in")
+	yield(get_node("AnimationPlayer"), "finished")
+	
 	unpause()
 		
 	if self.level_schematic.free_deploy:
@@ -169,13 +175,11 @@ func debug_full_roster():
 	
 func pause():
 	set_process_input(false)
-	set_process(false)
 	get_node("ControlBar").set_disabled(true)
 	
 
 func unpause():
 	set_process_input(true)
-	set_process(true)
 	#needed otherwise the control bar can still process the exact same inputs that unpaused lol
 	get_node("Timer").set_wait_time(0.1) 
 	get_node("Timer").start()
@@ -279,6 +283,9 @@ func initialize_enemy_piece(coords, prototype, health, modifiers, animation_sequ
 			
 
 func end_turn():
+	if self.state == STATES.end:
+		return
+
 	self.state = STATES.transitioning
 	get_node("ControlBar/Combat/EndTurnButton").set_disabled(true)
 	get_node("ControlBar/Combat/StarBar").star_flash(false)
@@ -297,7 +304,7 @@ func end_turn():
 	get_node("Grid").end_turn_clear_state()
 	get_node("PhaseShifter").animate_enemy_phase(self.turn_count)
 	yield(get_node("PhaseShifter"), "animation_done")
-	self.state = STATES.enemy_turn
+	enemy_phase()
 	
 func handle_deploy():
 	if self.state == self.STATES.deploying:
@@ -436,24 +443,35 @@ func computer_input(event):
 func _process(delta):
 	get_node('FpsLabel').set_text(str(OS.get_frames_per_second()))
 
-	if self.state == STATES.enemy_turn:
-		self.state = STATES.transitioning
-		enemy_phase()
-	elif self.state == STATES.transitioning:
-		pass
 		
 func enemy_phase():
+	self.state = STATES.enemy_turn
 	if self.tutorial != null and self.tutorial.has_enemy_turn_start_rule(get_turn_count()):
 		self.tutorial.display_enemy_turn_start_rule(get_turn_count())
 		pause()
 		yield(self.tutorial, "rule_finished")
 		unpause()
+
+	var enemy_pieces = get_enemies(false)
+	for enemy_piece in enemy_pieces:
+		enemy_piece.turn_start()
 	
+	if(get_node("/root/AnimationQueue").is_animating()):
+		yield(get_node("/root/AnimationQueue"), "animations_finished")
+		
 	enemy_phase_helper(false)
 	yield(self, "enemy_turn_done")
 	
 	enemy_phase_helper(true)
 	yield(self, "enemy_turn_done")
+	
+	enemy_pieces = get_enemies(false)
+	for enemy_piece in enemy_pieces:
+		enemy_piece.turn_attack_update()
+
+	#if there are enemy pieces, wait for them to finish
+	if(get_node("/root/AnimationQueue").is_animating()):
+		yield(get_node("/root/AnimationQueue"), "animations_finished")
 	
 	var enemy_pieces = get_enemies(false)
 	for enemy in enemy_pieces:
@@ -499,23 +517,10 @@ func enemy_phase():
 func enemy_phase_helper(double_time_turn):
 	var enemy_pieces = get_enemies(double_time_turn)
 	if enemy_pieces != []:
-		for enemy_piece in enemy_pieces:
-			enemy_piece.turn_start()
-		
-		if(get_node("/root/AnimationQueue").is_animating()):
-			yield(get_node("/root/AnimationQueue"), "animations_finished")
+
 		for enemy_piece in enemy_pieces:
 			enemy_piece.turn_update()
 			
-		if(get_node("/root/AnimationQueue").is_animating()):
-			yield(get_node("/root/AnimationQueue"), "animations_finished")
-		
-	enemy_pieces = get_enemies(double_time_turn)
-	if enemy_pieces != []:
-		for enemy_piece in enemy_pieces:
-			enemy_piece.turn_attack_update()
-	
-		#if there are enemy pieces, wait for them to finish
 		if(get_node("/root/AnimationQueue").is_animating()):
 			yield(get_node("/root/AnimationQueue"), "animations_finished")
 	
@@ -652,6 +657,7 @@ func handle_enemy_death(coords):
 
 
 func player_win():
+	print("calling player win")
 	if self.state == STATES.end:
 		return
 	
@@ -672,6 +678,8 @@ func player_win():
 	yield(get_node("Timer2"), "timeout")
 	
 	if self.level_schematic.is_sub_level():
+		get_node("AnimationPlayer").play("transition_out_fast")
+		yield(get_node("AnimationPlayer"), "finished")
 		get_node("/root/global").goto_scene(self.combat_resource, {"level": self.level_schematic.next_level})
 	else:
 		var win_screen = self.outcome_screen_prototype.instance()
@@ -679,7 +687,9 @@ func player_win():
 		var screen_size = get_node("/root/global").get_resolution()
 		win_screen.initialize_victory(self.level_schematic.next_level, self.level_schematic, self.turn_count)
 		win_screen.set_pos(Vector2(screen_size.x/2, screen_size.y/2))
+		blur_darken(0.3)
 		win_screen.fade_in()
+		get_node("AnimationPlayer").play("transition_out")
 
 
 func enemy_win():
@@ -689,6 +699,8 @@ func enemy_win():
 	self.state = STATES.end
 	pause()
 	if self.level_schematic.seamless:
+		get_node("AnimationPlayer").play("transition_out_fast")
+		yield(get_node("AnimationPlayer"), "finished")
 		restart()
 	else:
 		get_node("/root/AnimationQueue").stop()
@@ -710,7 +722,9 @@ func enemy_win():
 		lose_screen.set_pos(Vector2(screen_size.x/2, screen_size.y/2))
 		#lose_screen.set_pos(Vector2(512, 384))
 		print("lose screen pos: ", lose_screen.get_pos())
+		blur_darken(0.3)
 		lose_screen.fade_in()
+		get_node("AnimationPlayer").play("transition_out")
 #	
 
 func damage_defenses():
@@ -718,6 +732,19 @@ func damage_defenses():
 		
 func display_overlay(unit_name):
 	get_node("/root/AnimationQueue").enqueue(get_node("OverlayDisplayer"), "animate_display_overlay", true, [unit_name])
+
+#called when we want no interaction from the player, like when the settings screen is opened
+#opacity of the darken is set to 0.7 in the scene, but the blur is set to 1
+func blur_darken(time=0.3):
+	get_node("BlurDarkenLayer").animate_darken(time)
+	yield(get_node("BlurDarkenLayer"), "animation_done")
+	emit_signal("animation_done")
+	
+func blur_lighten(time=0.3):
+	get_node("BlurDarkenLayer").animate_lighten(time)
+	yield(get_node("BlurDarkenLayer"), "animation_done")
+	emit_signal("animation_done")
+
 
 
 func darken(time=0.4, amount=0.3, delay=0.0):
@@ -734,7 +761,6 @@ func lighten(time=0.4):
 	get_node("Tween").interpolate_property(get_node("DarkenLayer"), "visibility/opacity", amount, 0, time, Tween.TRANS_SINE, Tween.EASE_IN)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
-	get_node("DarkenLayer/Panel").set_stop_mouse(false)
 	emit_signal("animation_done")
 
 func handle_invalid_move():

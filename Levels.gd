@@ -16,7 +16,9 @@ var set7 = load("res://LevelSets/Set7.gd").new().get_set()
 
 var set8 = load("res://LevelSets/Set8.gd").new().get_set()
 
-var level_sets = [set1, set2, set3, set4, set5, set6, set7, set8]
+var set9 = load("res://LevelSets/Set9.gd").new().get_set()
+
+var level_sets = [set1, set2, set3, set4, set5, set6, set7, set8, set9]
 
 func get_level_sets():
 	return level_sets

@@ -9,18 +9,23 @@ func _ready():
 	# Initialization here
 	#add_child(levels)
 	
-	var cleared_level_set = get_node("/root/global").get_param("cleared_level_set")
-	#either null, false, or true
-	if cleared_level_set:
-		pass
-		#get the button associated with the current level set and play its cleared animation
-	else:
-		get_node("/root/State").current_level_set = null
 	
 	for level_set in get_node("/root/Levels").get_level_sets():
 		var id_str = "T/" + str(level_set.id)
 		get_node(id_str).connect("pressed", self, "goto_level_set")
 		get_node(id_str).initialize(level_set)
+	
+	
+	var first_clear = get_node("/root/global").get_param("cleared_level_set")
+	#either null, false, or true
+	if first_clear:
+		var id_str = "T/" + str(get_node("/root/State").current_level_set.id)
+		#get the button associated  with the next level set and play its cleared animation
+		get_node("T/5").defrost()
+	
+	get_node("/root/State").current_level_set = null
+	
+	
 		
 	get_node("T").initialize()
 	get_node("T").animate_slide_in()

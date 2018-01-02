@@ -48,8 +48,9 @@ func animate_enemy_phase(current_turn):
 #player phase: 1.7 secs
 #final player phase: 1.7 + 1.6 secs
 func animate(current_turn, enemy_phase=false):
-	set_phase(current_turn, enemy_phase)
 	
+	set_phase(current_turn, enemy_phase)
+	get_parent().blur_darken(0.2)
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.2, Tween.TRANS_CUBIC, Tween.EASE_OUT)
 	
 	var inner_circle = get_node("Main/InnerCircle")
@@ -126,6 +127,7 @@ func animate(current_turn, enemy_phase=false):
 
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 0.2, Tween.TRANS_CUBIC, Tween.EASE_IN)
 	get_node("Tween").start()
+	get_parent().blur_lighten(0.2)
 	yield(get_node("Tween"), "tween_complete")
 	
 	#reset needed for the final enemy phase after final player phase
@@ -133,7 +135,7 @@ func animate(current_turn, enemy_phase=false):
 	get_node("AnimationPlayer").play("Spin")
 	
 	if enemy_phase:
-		get_node("Timer").set_wait_time(0.3)
+		get_node("Timer").set_wait_time(0.2)
 		get_node("Timer").start()
 		yield(get_node("Timer"), "timeout")
 

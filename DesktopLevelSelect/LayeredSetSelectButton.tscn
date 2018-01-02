@@ -1,0 +1,303 @@
+[gd_scene load_steps=23 format=1]
+
+[ext_resource path="res://DesktopLevelSelect/LayeredSetSelectButton.gd" type="Script" id=1]
+[ext_resource path="res://UI/TextureLabelButton.tscn" type="PackedScene" id=2]
+[ext_resource path="res://Assets/UI/Desktop/LevelSelect/set_select_golden.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/Desktop/LevelSelect/set_select_golden_pressed.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/Desktop/LevelSelect/set_select_golden_highlight.png" type="Texture" id=5]
+[ext_resource path="res://Assets/UI/Desktop/LevelSelect/level_set_select_button_mask.pbm" type="BitMap" id=6]
+[ext_resource path="res://Assets/processed_fonts/level_set_select_button_text.fnt" type="BitmapFont" id=7]
+[ext_resource path="res://Assets/processed_fonts/level_set_select_star_text.fnt" type="BitmapFont" id=8]
+[ext_resource path="res://Assets/UI/ScoreStars/score_star_small_yellow.png" type="Texture" id=9]
+[ext_resource path="res://Assets/UI/Desktop/LevelSelect/set_select_animation_material2.png" type="Texture" id=10]
+[ext_resource path="res://Assets/UI/Desktop/LevelSelect/level_set_select_button.png" type="Texture" id=11]
+[ext_resource path="res://Assets/UI/Desktop/LevelSelect/level_set_select_button_pressed.png" type="Texture" id=12]
+[ext_resource path="res://Assets/UI/Desktop/LevelSelect/level_set_select_button_highlight.png" type="Texture" id=13]
+[ext_resource path="res://Assets/UI/ScoreStars/score_star_small.png" type="Texture" id=14]
+[ext_resource path="res://Assets/UI/Desktop/LevelSelect/level_set_select_button_grey.png" type="Texture" id=15]
+
+[sub_resource type="CanvasItemShader" id=1]
+
+_code = {
+"fragment": "uniform texture mask;
+uniform float strength = 0;
+
+float value = pow(tex(mask, UV).r, 5);
+
+COLOR.a -= (pow(strength + 1, 10) - 1) * value;
+",
+"fragment_ofs": 0,
+"light": "",
+"light_ofs": 0,
+"vertex": "",
+"vertex_ofs": 0
+}
+
+[sub_resource type="CanvasItemMaterial" id=2]
+
+shader/shader = SubResource( 1 )
+shader/shading_mode = 0
+shader_param/mask = ExtResource( 10 )
+shader_param/strength = 0.0
+
+[sub_resource type="CanvasItemShader" id=3]
+
+_code = {
+"fragment": "uniform texture mask;
+uniform float strength = 0;
+
+float value = pow(tex(mask, UV).r, 5);
+
+COLOR.a -= (pow(strength + 1, 10) - 1) * value;",
+"fragment_ofs": 0,
+"light": "",
+"light_ofs": 0,
+"vertex": "",
+"vertex_ofs": 0
+}
+
+[sub_resource type="CanvasItemMaterial" id=4]
+
+shader/shader = SubResource( 3 )
+shader/shading_mode = 0
+shader_param/mask = ExtResource( 10 )
+shader_param/strength = 0.0
+
+[sub_resource type="CanvasItemShader" id=8]
+
+_code = {
+"fragment": "uniform texture mask;
+uniform float strength = 0;
+
+float value = pow(tex(mask, UV).r, 5);
+
+COLOR.a -= (pow(strength + 1, 10) - 1) * value;
+",
+"fragment_ofs": 0,
+"light": "",
+"light_ofs": 0,
+"vertex": "",
+"vertex_ofs": 0
+}
+
+[sub_resource type="CanvasItemMaterial" id=9]
+
+shader/shader = SubResource( 8 )
+shader/shading_mode = 0
+shader_param/mask = ExtResource( 10 )
+shader_param/strength = 1.0
+
+[sub_resource type="Animation" id=7]
+
+resource/name = "defrost"
+length = 2.0
+loop = false
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("GreyedButton:material/material:shader_param/strength")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = {
+"times": FloatArray( 0.4, 0.8, 2 ),
+"transitions": FloatArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.0, 0.0, 1.0 ]
+}
+tracks/1/type = "value"
+tracks/1/path = NodePath("RegularButton:material/material:shader_param/strength")
+tracks/1/interp = 1
+tracks/1/imported = false
+tracks/1/keys = {
+"times": FloatArray( 0.4, 2 ),
+"transitions": FloatArray( 1, 1 ),
+"update": 0,
+"values": [ 2.0, 0.0 ]
+}
+
+[node name="LayeredSetSelectButton" type="Node2D"]
+
+script/script = ExtResource( 1 )
+
+[node name="GoldenButton" parent="." instance=ExtResource( 2 )]
+
+visibility/visible = false
+y_difference = 4
+
+[node name="TextureButton" parent="GoldenButton"]
+
+material/use_parent = true
+margin/left = -77.0
+margin/top = -61.0
+margin/right = 77.0
+margin/bottom = 76.0
+textures/normal = ExtResource( 3 )
+textures/pressed = ExtResource( 4 )
+textures/hover = ExtResource( 5 )
+textures/click_mask = ExtResource( 6 )
+
+[node name="Toppings" parent="GoldenButton"]
+
+material/use_parent = true
+
+[node name="Label" type="Label" parent="GoldenButton/Toppings"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = -19.0
+margin/top = -33.0
+margin/right = 21.0
+margin/bottom = 38.0
+custom_fonts/font = ExtResource( 7 )
+custom_colors/font_color = Color( 1, 0.972549, 0.529412, 1 )
+text = "0"
+align = 1
+valign = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="StarLabel" type="Label" parent="GoldenButton/Toppings"]
+
+visibility/visible = false
+material/use_parent = true
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = -9.0
+margin/top = 53.0
+margin/right = 36.0
+margin/bottom = 69.0
+custom_fonts/font = ExtResource( 8 )
+custom_colors/font_color = Color( 0.988235, 1, 0.694118, 1 )
+valign = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="Sprite" type="Sprite" parent="GoldenButton/Toppings/StarLabel"]
+
+material/use_parent = true
+transform/pos = Vector2( -11.0678, 6.58799 )
+texture = ExtResource( 9 )
+
+[node name="RegularButton" parent="." instance=ExtResource( 2 )]
+
+material/material = SubResource( 2 )
+y_difference = 4
+
+[node name="TextureButton" parent="RegularButton"]
+
+material/material = SubResource( 4 )
+material/use_parent = true
+margin/left = -77.0
+margin/top = -61.0
+margin/right = 77.0
+margin/bottom = 76.0
+textures/normal = ExtResource( 11 )
+textures/pressed = ExtResource( 12 )
+textures/hover = ExtResource( 13 )
+textures/click_mask = ExtResource( 6 )
+
+[node name="Toppings" parent="RegularButton"]
+
+material/use_parent = true
+
+[node name="Label" type="Label" parent="RegularButton/Toppings"]
+
+material/use_parent = true
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = -19.0
+margin/top = -33.0
+margin/right = 21.0
+margin/bottom = 38.0
+custom_fonts/font = ExtResource( 7 )
+text = "0"
+align = 1
+valign = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="StarLabel" type="Label" parent="RegularButton/Toppings"]
+
+visibility/visible = false
+material/use_parent = true
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = -9.0
+margin/top = 53.0
+margin/right = 36.0
+margin/bottom = 69.0
+custom_fonts/font = ExtResource( 8 )
+custom_colors/font_color = Color( 0.282353, 1, 0.890196, 1 )
+valign = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="Sprite" type="Sprite" parent="RegularButton/Toppings/StarLabel"]
+
+material/use_parent = true
+transform/pos = Vector2( -11.0678, 6.58799 )
+texture = ExtResource( 14 )
+
+[node name="GreyedButton" parent="." instance=ExtResource( 2 )]
+
+material/material = SubResource( 9 )
+
+[node name="TextureButton" parent="GreyedButton"]
+
+material/use_parent = true
+margin/left = -77.0
+margin/top = -61.0
+margin/right = 77.0
+margin/bottom = 76.0
+textures/normal = ExtResource( 15 )
+textures/disabled = ExtResource( 15 )
+
+[node name="Toppings" parent="GreyedButton"]
+
+material/use_parent = true
+
+[node name="Label" type="Label" parent="GreyedButton/Toppings"]
+
+material/use_parent = true
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = -19.0
+margin/top = -33.0
+margin/right = 21.0
+margin/bottom = 38.0
+custom_fonts/font = ExtResource( 7 )
+text = "0"
+align = 1
+valign = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+playback/process_mode = 1
+playback/default_blend_time = 0.0
+root/root = NodePath("..")
+anims/defrost = SubResource( 7 )
+playback/active = true
+playback/speed = 1.0
+blend_times = [  ]
+autoplay = "fade_to_gold"
+
+
+[editable path="GoldenButton"]
+[editable path="RegularButton"]
+[editable path="GreyedButton"]

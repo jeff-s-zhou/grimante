@@ -119,21 +119,24 @@ class Set:
 			self.hard_levels[i].set_next_level(self.hard_levels[i+1])
 		return self.hard_levels
 		
+	func get_level_count():
+		return self.levels.size()
+		
 		
 func sandbox(): 
 	var flags = ["bonus_star"]
 	var score_guide = {0:2, 1:4}
 	
-	var raw_enemies = {0:{Vector2(3, 4): make(Grunt, 2, [unstable])}}
+	var raw_enemies = {0:{Vector2(3, 3): make(Drummer, 3, [unstable]), Vector2(3, 4): make(Ranged, 3)}}
 
 	var extras1 = {"free_deploy":false, "flags":flags, "score_guide":score_guide}
 	
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var heroes = {2:Cavalier, 3: Corsair} 
+	var heroes = {2:Berserker, 3: Corsair} 
 	return LevelTypes.Timed.new(33333, "Sandbox", heroes, enemies, 4, null, extras1) 
 #	
 func background():
-	var pieces = load_level("cavalier_debug.level")
+	var pieces = load_level("full_enemy_test.level")
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
