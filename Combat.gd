@@ -112,15 +112,13 @@ func _ready():
 	unpause()
 		
 	if self.level_schematic.free_deploy:
+		get_node("DeployMessage").show()
 		get_node("ControlBar").set_deploying(true)
 		get_node("Grid").set_deploying(true, self.level_schematic.flags)
 		
 		for piece in get_node("Grid").pieces.values():
 			piece.start_deploy_phase()
-			
-		for location in get_node("Grid").locations.values():
-			location.start_deploy_phase()
-		
+
 		#handle turn 0 tutorial popups before even deploying
 		if self.tutorial != null and self.tutorial.has_player_turn_start_rule(get_turn_count()):
 			pause()
@@ -136,11 +134,10 @@ func _ready():
 	
 	get_node("Grid").set_deploying(false)
 	get_node("ControlBar").set_deploying(false)
+	get_node("DeployMessage").hide()
 	
 	for piece in get_node("Grid").pieces.values():
 		piece.deploy()
-	for location in get_node("Grid").locations.values():
-		location.deploy()
 	
 	get_node("Timer2").set_wait_time(0.3)
 	get_node("Timer2").start()
@@ -229,6 +226,7 @@ func initialize_piece(piece_prototype, on_bar=false, key=null):
 	
 
 func handle_piece_placed():
+	print("handling piece placed")
 	if self.tutorial != null:
 		if self.tutorial.has_forced_action_result(self.turn_count):
 			pause()
@@ -249,16 +247,17 @@ func handle_piece_placed():
 			
 		else:
 			set_forced_action(false)
-
+	
+	#this has to be before the other or it's a race condition
+	if get_node("ControlBar/Combat/StarBar").has_star():
+		get_node("ControlBar/Combat/StarBar").star_flash(true)
+		return
+		
 	#check if we can automatically end turn
 	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
 	for player_piece in player_pieces:
 		if !player_piece.is_placed():
 			return
-			
-	if get_node("ControlBar/Combat/StarBar").has_star():
-		get_node("ControlBar/Combat/StarBar").star_flash(true)
-		return
 	
 	end_turn()
 #	if get_tree().get_nodes_in_group("player_pieces").size() > 0: #otherwise will have won
@@ -304,6 +303,7 @@ func end_turn():
 	get_node("Grid").end_turn_clear_state()
 	get_node("PhaseShifter").animate_enemy_phase(self.turn_count)
 	yield(get_node("PhaseShifter"), "animation_done")
+	print("ending turn")
 	enemy_phase()
 	
 func handle_deploy():
@@ -322,6 +322,8 @@ func restart():
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
 	get_node("/root/DataLogger").log_restart(self.level_schematic.id, self.turn_count)
+	get_node("AnimationPlayer").play("transition_out_fast")
+	yield(get_node("AnimationPlayer"), "finished")
 	get_node("/root/global").goto_scene(self.combat_resource, {"level": self.level_schematic})
 
 
@@ -445,6 +447,9 @@ func _process(delta):
 
 		
 func enemy_phase():
+	if self.state == STATES.enemy_turn: 
+	#this fixes some obscure bug where the handle_piece_placed and manually ending turn both trigger?
+		return
 	self.state = STATES.enemy_turn
 	if self.tutorial != null and self.tutorial.has_enemy_turn_start_rule(get_turn_count()):
 		self.tutorial.display_enemy_turn_start_rule(get_turn_count())
@@ -618,14 +623,13 @@ func load_in_next_wave(zero_wave=false):
 				coords = get_node("Grid").get_top_of_column(key)
 			else:
 				coords = key
-	
 			var prototype_parts = wave[coords]
 			var prototype = prototype_parts["prototype"]
 			var hp = prototype_parts["hp"]
 			var modifiers = prototype_parts["modifiers"]
 
 			var enemy_piece = initialize_enemy_piece(coords, prototype, hp, modifiers)
-			get_node("Grid").locations[coords].set_reinforcement(enemy_piece)
+			get_node("Grid").set_reinforcement(coords, enemy_piece)
 
 
 func load_in_next_traps(zero_wave=false):

@@ -27,7 +27,7 @@ texture = ExtResource( 5 )
 
 [node name="SilenceExplosion" type="Light2D" parent="Physicals"]
 
-transform/pos = Vector2( 0, 5 )
+transform/pos = Vector2( -0.323517, 4.35294 )
 enabled = false
 editor_only = false
 texture = ExtResource( 6 )
@@ -76,7 +76,7 @@ shadow/item_mask = 1
 [node name="Flash" type="Sprite" parent="."]
 
 visibility/opacity = 0.0
-transform/pos = Vector2( 0, -4 )
+transform/pos = Vector2( 0, -5 )
 texture = ExtResource( 8 )
 
 

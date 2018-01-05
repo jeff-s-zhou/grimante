@@ -52,7 +52,7 @@ func get_trial4_hints():
 func get_trial5_hints():
 	var tutorial = TutorialPrototype.instance()
 	
-	var hint = ["Hint: Remember that the Corsair shoots while moving."]
+	var hint = ["Hint: The Corsair shoots before it leaps, not after."]
 	
 	add_hint(tutorial, 1, hint)
 	

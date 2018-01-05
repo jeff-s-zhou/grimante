@@ -41,6 +41,7 @@ func get():
 
 	#TURN 3
 	text = ["Look for orange highlighted tiles to let you know when you can Indirect Attack.",
+	"Press D or right click to deselect a Hero, or click somewhere it can't move.",
 	"Clear the board this turn."]
 	add_player_start_rule(tutorial, 3, text)
 	return tutorial

@@ -48,6 +48,7 @@ func display_enemy_info(hovered_piece):
 	var text = hovered_piece.hover_description
 	var modifier_descriptions = hovered_piece.modifier_descriptions
 	
+	print("modifier_descriptions:", modifier_descriptions)
 	
 	get_node("Overlay").set_global_pos(pos)
 	

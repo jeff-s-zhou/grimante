@@ -67,13 +67,10 @@ func animate_increase(i):
 			tween.start()
 
 func flash(flag):
-	print("calling star flash")
-	print(self.active)
 	if self.active:
 		if flag:
 			get_node("AnimationPlayer").play("glow_flash")
 		else:
-			print("got here?")
 #			if get_node("AnimationPlayer").is_playing():
 #				yield(get_node("AnimationPlayer"), "finished")
 			get_node("AnimationPlayer").stop(true)

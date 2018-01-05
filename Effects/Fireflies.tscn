@@ -9,12 +9,13 @@ colors = ColorArray( 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0 )
 
 [node name="Fireflies" type="Particles2D"]
 
+transform/pos = Vector2( 512, 384 )
 z/z = 101
 z/relative = false
 config/amount = 10
 config/lifetime = 4.0
 config/process_mode = 1
-config/half_extents = Vector2( 325, 475 )
+config/half_extents = Vector2( 512, 384 )
 config/texture = ExtResource( 1 )
 params/direction = 180.0
 params/spread = 30.0

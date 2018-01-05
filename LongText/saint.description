@@ -1,3 +1,3 @@
-Indirect/Silence/When the Saint moves to a tile, disable the special abilities of all adjacent Enemies. Does not affect Bosses.
+Indirect/Silence/When the Saint moves to a tile, silence all adjacent Enemies. Does not affect Bosses. Silence: Disable all special abilities and effects.
 
 Passive/Threads of Infinite Light/Whenever a hex line or hex-diagonal line is formed between the Saint and another Hero, deal 1 damage to all Enemies in between.

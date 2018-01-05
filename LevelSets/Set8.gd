@@ -11,14 +11,14 @@ func _ready():
 	
 func get_set():
 	return Set.new(8, "Eighth",
-	[saint_trials(), saint_practice(), assault(), god_is_faceless(), top_of_the_morning(), seraph_hell()], [])
+	[saint_trials(), saint_practice(), assault(), god_is_faceless(), top_of_the_morning(), seraph_hell(), saints_row()], [])
 
 func saint_trials():
 	var tutorial = load("res://Tutorials/saint_trial.gd").new()
 	var flags = ["no_stars"]
 	var challenges = []
 	var base_id = 10030
-	for i in range(1, 4):
+	for i in range(1, 5):
 		var trial_hint = funcref(tutorial, "get_trial" + str(i) + "_hints")
 		var extras = {"free_deploy":false, "tutorial":trial_hint, "flags":flags}
 		var pieces = load_level("saint_trial" + str(i) +".level")
@@ -49,7 +49,7 @@ func assault():
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var extras = {"free_deploy":true, "flags":[], "score_guide":score_guide}
-	return LevelTypes.Timed.new(99999, "Assault", allies, enemies, 6, null, extras)
+	return LevelTypes.Timed.new(00047, "Siegebreak", allies, enemies, 6, null, extras)
 	
 
 func god_is_faceless():
@@ -61,7 +61,7 @@ func god_is_faceless():
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var extras = {"free_deploy":false, "flags":[], "score_guide":score_guide}
-	return LevelTypes.Timed.new(99999, "Assault", allies, enemies, 4, null, extras)
+	return LevelTypes.Timed.new(00048, "God is Faceless", allies, enemies, 4, null, extras)
 	
 	
 func top_of_the_morning():
@@ -73,40 +73,28 @@ func top_of_the_morning():
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var extras = {"free_deploy":false, "flags":[], "score_guide":score_guide}
-	return LevelTypes.Timed.new(99999, "Assault", allies, enemies, 4, null, extras)
+	return LevelTypes.Timed.new(00049, "Top O' The Morn", allies, enemies, 4, null, extras)
 	
 	
 func seraph_hell():
 	var pieces
 	var score_guide
 	pieces = load_level("seraph_hell.level")
-	score_guide = {1:5, 2:5, 3:4, 4:4} #not tested
+	score_guide = {1:5, 2:5, 3:4, 4:3} #not tested
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var extras = {"free_deploy":false, "flags":[], "score_guide":score_guide}
-	return LevelTypes.Timed.new(99999, "Assault", allies, enemies, 4, null, extras)
+	return LevelTypes.Timed.new(00050, "Spiral", allies, enemies, 4, null, extras)
 	
 	
-func final_level():
+func saints_row():
 	var pieces
 	var score_guide
-	pieces = load_level("final_level.level")
-	score_guide = {1:5, 2:5, 3:5, 4:4, 5:4, 6:3} #not tested
+	pieces = load_level("saints_row.level")
+	score_guide = {1:5, 2:5, 3:5, 4:4, 5:3} #not tested
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var extras = {"free_deploy":true, "flags":[], "score_guide":score_guide}
-	return LevelTypes.Timed.new(99999, "Assault", allies, enemies, 6, null, extras)
-	
-	
-func final_level2():
-	var pieces
-	var score_guide
-	pieces = load_level("final_level2.level")
-	score_guide = {1:5, 2:5, 3:5, 4:4, 5:4, 6:3} #not tested
-	var raw_enemies = pieces[0]
-	var allies = pieces[1]
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var extras = {"free_deploy":true, "flags":[], "score_guide":score_guide}
-	return LevelTypes.Timed.new(99999, "Assault", allies, enemies, 6, null, extras)
+	return LevelTypes.Timed.new(00051, "March", allies, enemies, 5, null, extras)

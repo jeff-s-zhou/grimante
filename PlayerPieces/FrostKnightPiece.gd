@@ -74,7 +74,7 @@ func _is_within_assist_range(new_coords):
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
-		var args = [new_coords, 250, true]
+		var args = [new_coords, 300, true]
 		add_animation(self, "animate_move_and_hop", true, args)
 		set_coords(new_coords)
 		frostbringer(new_coords)

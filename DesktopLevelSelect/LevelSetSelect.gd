@@ -9,7 +9,6 @@ func _ready():
 	# Initialization here
 	#add_child(levels)
 	
-	
 	for level_set in get_node("/root/Levels").get_level_sets():
 		var id_str = "T/" + str(level_set.id)
 		get_node(id_str).connect("pressed", self, "goto_level_set")

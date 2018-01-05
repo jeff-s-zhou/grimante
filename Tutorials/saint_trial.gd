@@ -20,12 +20,20 @@ func get_trial1_hints():
 	
 func get_trial2_hints():
 	var tutorial = TutorialPrototype.instance()
+	var text = ["The Saint has a unique movement range.",
+	"The Saint by default has 0 movement range (1 when Inspired with Movement).",
+	"Instead, the Saint can move adjacent to any other Hero."]
+	add_player_start_rule(tutorial, 1, text, Vector2(4, 7))
+	return tutorial
+	
+func get_trial3_hints():
+	var tutorial = TutorialPrototype.instance()
 	var text = ["The Saint's Passive is Threads of Infinite Light.",
 	"Whenever a hex line or hex-diagonal line is formed between the Saint and another Hero, deal 1 damage to all Enemies in between."]
 	add_player_start_rule(tutorial, 1, text)
 	return tutorial
 	
-func get_trial3_hints():
+func get_trial4_hints():
 	var tutorial = TutorialPrototype.instance()
 	var text = ["Hint: The Saint's passive can also trigger when other Heroes move."]
 	add_player_start_rule(tutorial, 1, text)

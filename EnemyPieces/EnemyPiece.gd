@@ -612,7 +612,7 @@ func attacked(amount, unit, delay=0.0, blocking=false):
 			var tile = get_parent().locations[coords]
 			add_animation(tile, "animate_lightning", true)
 			var action = get_new_action()
-			action.add_call("attacked", [2, null], self.coords)
+			action.add_call("attacked", [2, "stormdancer"], self.coords)
 			action.execute()
 
 

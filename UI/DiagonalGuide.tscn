@@ -1,0 +1,69 @@
+[gd_scene load_steps=5 format=1]
+
+[ext_resource path="res://UI/DiagonalGuide.gd" type="Script" id=1]
+[ext_resource path="res://Assets/UI/hex_diagonal_guide.png" type="Texture" id=2]
+[ext_resource path="res://Assets/UI/hex_diagonal_guide_mask.png" type="Texture" id=3]
+
+[sub_resource type="Animation" id=1]
+
+resource/name = "flicker"
+length = 3.0
+loop = true
+step = 0.1
+tracks/0/type = "value"
+tracks/0/path = NodePath("Sprite:visibility/opacity")
+tracks/0/interp = 1
+tracks/0/imported = false
+tracks/0/keys = {
+"times": FloatArray( 0, 1.5, 3 ),
+"transitions": FloatArray( 1, 1, 1 ),
+"update": 0,
+"values": [ 0.3, 1.0, 0.3 ]
+}
+
+[node name="DiagonalGuide" type="Node2D"]
+
+z/z = 92
+z/relative = false
+script/script = ExtResource( 1 )
+
+[node name="Sprite" type="Sprite" parent="."]
+
+visibility/opacity = 0.6
+visibility/light_mask = 2
+texture = ExtResource( 2 )
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+
+playback/process_mode = 1
+playback/default_blend_time = 0.0
+root/root = NodePath("..")
+anims/flicker = SubResource( 1 )
+playback/active = true
+playback/speed = 1.0
+blend_times = [  ]
+autoplay = "flicker"
+
+[node name="Light2D" type="Light2D" parent="."]
+
+enabled = true
+editor_only = false
+texture = ExtResource( 3 )
+offset = Vector2( 0, 0 )
+scale = 1.1
+color = Color( 1, 1, 1, 1 )
+energy = 1.0
+mode = 3
+range/height = 0.0
+range/z_min = -1024
+range/z_max = 1024
+range/layer_min = 0
+range/layer_max = 0
+range/item_mask = 2
+shadow/enabled = false
+shadow/color = Color( 0, 0, 0, 0 )
+shadow/buffer_size = 2048
+shadow/esm_multiplier = 80.0
+shadow/item_mask = 1
+
+

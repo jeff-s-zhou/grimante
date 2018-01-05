@@ -33,9 +33,7 @@ func _ready():
 	load_description(UNIT_TYPE)
 	self.assist_type = ASSIST_TYPES.movement
 
-func displays_line():
-	return true
-	
+
 func get_shoot_damage():
 	return get_assist_bonus_attack() + self.attack_bonus + DEFAULT_SHOOT_DAMAGE
 	
@@ -71,7 +69,8 @@ func display_action_range():
 	var movement_range = get_movement_range()
 	var action_range = get_attack_range() + movement_range
 	for coords in action_range:
-		get_parent().get_at_location(coords).movement_highlight()
+		self.grid.get_at_location(coords).movement_highlight()
+	self.grid.toggle_hex_diagonal_guide(true, self.coords)
 	highlight_indirect_range(movement_range)
 
 

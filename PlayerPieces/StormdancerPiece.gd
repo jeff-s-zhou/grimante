@@ -20,6 +20,7 @@ func _ready():
 	self.unit_name = UNIT_TYPE
 	load_description(self.unit_name)
 	self.assist_type = ASSIST_TYPES.movement
+	self.diagonal_guide_prediction_flag = true
 
 
 func get_shuriken_damage():
@@ -93,7 +94,6 @@ func attack_placed():
 	handle_assist()
 	get_node("SelectedGlow").hide()
 	self.state = States.PLACED
-	check_for_traps()
 	self.attack_bonus = 0
 	self.movement_value = self.DEFAULT_MOVEMENT_VALUE
 	self.grid.selected = null
@@ -152,7 +152,7 @@ func animate_jump():
 #	timer.set_wait_time(0.1)
 #	timer.start()
 #	yield(timer, "timeout")
-	set_z(3)
+	set_z(get_z() + 3)
 	get_node("Tween 3").interpolate_property(physicals, "transform/pos", start_pos, end_pos, 0.3, Tween.TRANS_CUBIC, Tween.EASE_OUT)
 	get_node("Tween 3").start()
 	yield(get_node("Tween 3"), "tween_complete")
@@ -164,8 +164,7 @@ func animate_jump():
 	get_node("Tween 3").interpolate_property(physicals, "transform/pos", end_pos, start_pos, 0.3, Tween.TRANS_QUAD, Tween.EASE_IN)
 	get_node("Tween 3").start()
 	yield(get_node("Tween 3"), "tween_complete")
-	print("finished yielding to the set z 0")
-	set_z(0)
+	set_z(get_z() - 3)
 	
 func animate_spin_helper(time):
 	var top = get_node("Physicals/SpinningForm/Top")
@@ -229,9 +228,11 @@ func animate_shunpo(new_coords):
 
 
 func predict(new_coords):
+	if !(_is_within_movement_range(new_coords) or _is_within_swap_range(new_coords)):
+		return
+		
 #	#will swap
 	var do_not_call_list 
-	
 	if self.grid.has_enemy(new_coords):
 		var shuriken_range = self.grid.get_diagonal_range(self.coords, [1, 2], "ENEMY", true)
 		if new_coords in shuriken_range:
@@ -241,6 +242,10 @@ func predict(new_coords):
 			#then subtract all of those from the attack range below
 			var direction_vector = self.coords - new_coords #opposite direction
 			do_not_call_list = self.grid.get_line_range(self.coords, direction_vector, "ENEMY", [1, 5])
+			
+	elif self.grid.has_ally(new_coords):
+		var direction_vector = self.coords - new_coords #opposite direction
+		do_not_call_list = self.grid.get_line_range(self.coords, direction_vector, "ENEMY", [1, 5])
 
 	#no swapping
 	var attack_range = get_shuriken_damage_range(new_coords)

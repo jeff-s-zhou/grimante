@@ -20,8 +20,6 @@ var default_opacity = 0.2
 
 var highlight_opacity = 0.7
 
-var deploying_flag = false
-
 var indirect_highlighting = true
 
 signal animation_done
@@ -63,10 +61,6 @@ func set_targetable(flag):
 func is_targetable():
 	return self.is_pickable()
 	
-func handle_incoming(first=false):
-	deploy_enemy(first)
-	arm_trap(first)
-	
 func set_reinforcement(reinforcement):
 	self.reinforcement = reinforcement
 	
@@ -92,10 +86,10 @@ func animate_trigger_trap():
 
 
 
-func deploy_enemy(first=false):
+func deploy_enemy(animation_speed, first=false):
 	if self.reinforcement != null:
 		if !first:
-			get_node("/root/AnimationQueue").enqueue(self, "animate_reinforcement_summon", true)
+			get_node("/root/AnimationQueue").enqueue(self, "animate_reinforcement_summon", true, [animation_speed])
 		
 		if get_parent().pieces.has(coords):
 			var blocking_piece = get_parent().pieces[coords]
@@ -137,7 +131,6 @@ func display_incoming():
 	
 func animate_display_reinforcement():
 	if self.reinforcement != null:
-		print("setting reinforcement indicator")
 		set_reinforcement_indicator(self.reinforcement.type)
 		
 func animate_display_laid_trap():
@@ -155,15 +148,12 @@ func set_revivable(flag):
 
 
 func set_reinforcement_indicator(type=null):
-	print("calling set reinforcement indicator")
 	if type != null:
-		print("showing in set reinforcement indicator")
 		get_node("ReinforcementIndicator").display(type)
 		get_node("ReinforcementIndicator").show()
 	else:
 		get_node("ReinforcementIndicator").hide()
-	
-	print("visible: ", get_node("ReinforcementIndicator").is_visible())
+		
 		
 func animate_arm_trap():
 	get_node("ReinforcementIndicator").animate_summon()
@@ -173,8 +163,8 @@ func animate_arm_trap():
 		set_reinforcement_indicator(null)
 	get_node("TrapSymbol").show()
 
-func animate_reinforcement_summon():
-	get_node("ReinforcementIndicator").animate_summon()
+func animate_reinforcement_summon(animation_speed):
+	get_node("ReinforcementIndicator").animate_summon(animation_speed)
 	yield(get_node("ReinforcementIndicator"), "animation_done")
 	emit_signal("animation_done")
 	if self.reinforcement == null:
@@ -222,14 +212,8 @@ func animate_lightning():
 
 #when another unit is able to move to this location, it calls this function
 func movement_highlight():
-	if !self.deploying_flag:
-		get_node("HighlightSprite").show()
-		
-func start_deploy_phase():
-	self.deploying_flag = true
-	
-func deploy():
-	self.deploying_flag = false
+	get_node("HighlightSprite").show()
+
 	
 func attack_highlight():
 	get_node("HighlightSprite").show()

@@ -163,6 +163,8 @@ shadow/item_mask = 1
 
 [node name="CollisionArea" parent="." instance=ExtResource( 11 )]
 
+transform/pos = Vector2( 0, -4 )
+
 [node name="Timer" type="Timer" parent="."]
 
 process_mode = 1

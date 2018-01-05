@@ -19,6 +19,6 @@ func get_trial2_hints():
 func get_trial3_hints():
 	var tutorial = TutorialPrototype.instance()
 	var text = ["The Stormdancer leaves behind a Storm Tile when it moves.", 
-	"If an Enemy takes 2 or more damage while standing on a Storm Tile, it is attacked again for 2 damage."]
+	"If an Enemy takes 2 or more damage while standing on a Storm Tile, it is struck by lightning for 2 damage."]
 	add_hint(tutorial, 1, text)
 	return tutorial

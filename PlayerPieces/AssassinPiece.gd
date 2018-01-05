@@ -160,11 +160,11 @@ func activate_bloodlust():
 	self.handle_assist()
 	get_parent().selected = null
 
-#neede for tutorials
+#not exactly sure why I need this now that I'm not emitting the signal for tutorial forced actions
 func emit_animated_placed():
 	get_node("AnimationPlayer").stop(true)
 	animate_unglow()
-	emit_signal("animated_placed")
+	#emit_signal("animated_placed")
 
 func predict(new_coords):
 	if _is_within_attack_range(new_coords):

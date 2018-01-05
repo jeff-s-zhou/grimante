@@ -39,14 +39,8 @@ func stormdancer_trials():
 	return LevelTypes.Trial.new(10022, "Stormdancer Trials", challenges)
 	
 func stormdancer_practice(hard=false):
-	var pieces
-	var score_guide
-	if hard:
-		pieces = load_level("stormdancer_practice_hard.level")
-		score_guide = {1:5, 2:5, 3:5, 4:4} #not tested
-	else:
-		pieces = load_level("stormdancer_practice.level")
-		score_guide = {1:5, 2:5, 3:4, 4:3} #not tested
+	var pieces = load_level("stormdancer_practice.level")
+	var score_guide = {1:5, 2:5, 3:4, 4:3} #not tested
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -66,7 +60,7 @@ func nemesis():
 
 func nemesis_big_fight():
 	var pieces = load_level("nemesis_big_fight.level")
-	var score_guide = {1:5, 2:5, 3:5, 4:4, 5:4, 6:3} 
+	var score_guide = {1:5, 2:5, 3:4, 4:4, 5:3, 6:3} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -76,7 +70,7 @@ func nemesis_big_fight():
 
 func trickshot():
 	var pieces = load_level("trickshot.level")
-	var score_guide = {1:5, 2:5, 3:5} 
+	var score_guide = {1:5, 2:5, 3:4} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)

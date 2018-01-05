@@ -8,7 +8,6 @@ func _ready():
 	var fullscreened = Globals.get("display/fullscreen")
 	get_node("CheckBox").set_pressed(fullscreened)
 	get_node("CheckBox").connect("pressed", self, "handle_pressed")
-	get_node("/root/State").get_setting("fullscreen")
 	
 func handle_pressed():
 	if OS.is_window_fullscreen():

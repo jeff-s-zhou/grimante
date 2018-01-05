@@ -62,7 +62,7 @@ func _is_within_movement_range(new_coords):
 func jump_to(new_coords):
 	add_anim_count()
 	self.mid_leaping_animation = true
-	set_z(3)
+	set_z(get_z() + 3)
 	
 	var speed = 350
 	var location = get_parent().locations[new_coords]
@@ -104,7 +104,7 @@ func jump_to(new_coords):
 	Vector2(0.3, 0.3), Vector2(1.6, 1.6), 0.7, Tween.TRANS_QUAD, Tween.EASE_OUT, 0.1)
 	tween.start()
 	self.mid_leaping_animation = false
-	set_z(0)
+	set_z(get_z() - 3)
 	get_node("SamplePlayer 2").play("explode3")
 	emit_signal("shake")
 	emit_signal("animation_done")
@@ -127,7 +127,7 @@ func jump_to(new_coords):
 func start_jump_to(new_coords, dust=false):
 	add_anim_count()
 	self.mid_leaping_animation = true
-	set_z(3)
+	set_z(get_z() + 3)
 	
 	var speed = 350
 	var location = get_parent().locations[new_coords]
@@ -166,7 +166,7 @@ func finish_jump_to(new_coords):
 
 	self.mid_leaping_animation = false
 
-	set_z(0)
+	set_z(get_z() - 3)
 	get_node("SamplePlayer 2").play("explode3")
 	emit_signal("shake")
 	emit_signal("animation_done")
@@ -178,7 +178,7 @@ func finish_jump_to(new_coords):
 func jump_back(new_coords):
 	add_anim_count()
 	self.mid_leaping_animation = true
-	set_z(3)
+	set_z(get_z() + 3)
 	
 	var speed = 300
 	var location = get_parent().locations[new_coords]
@@ -201,7 +201,7 @@ func jump_back(new_coords):
 	get_node("Tween 2").start()
 	yield(get_node("Tween 2"), "tween_complete")
 	self.mid_leaping_animation = false
-	set_z(0)
+	set_z(get_z() - 3)
 	emit_signal("animation_done")
 	subtract_anim_count()
 

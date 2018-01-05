@@ -24,7 +24,8 @@ func get_movement_range():
 	var player_pieces =  get_tree().get_nodes_in_group("player_pieces")
 	var fly_range = []
 	for piece in player_pieces:
-		fly_range += get_parent().get_range(piece.coords, [1, 2])
+		if piece != self and piece.coords != null:
+			fly_range += get_parent().get_range(piece.coords, [1, 2])
 	
 	if self.movement_value > 0:
 		fly_range +=  get_parent().get_radial_range(self.coords, [1, self.movement_value])
@@ -59,8 +60,8 @@ func get_lights_range():
 func act(new_coords):
 	if _is_within_movement_range(new_coords):
 		handle_pre_assisted()
-		var args = [new_coords, 300, true]
-		add_animation(self, "animate_move_and_hop", true, args)
+		var args = [new_coords]
+		add_animation(self, "animate_intervention", true, args)
 		set_coords(new_coords)
 		silence(new_coords)
 		placed()
@@ -149,6 +150,28 @@ func animate_silence():
 	yield(tween, "tween_complete")
 	
 	tween.queue_free()
+	
+	
+#calls animate_move_to_pos as the last part of sequence
+#animate_move_to_pos is what emits the required signals
+func animate_intervention(new_coords):
+	add_anim_count()
+	get_node("Tween 2").interpolate_property(self, "visibility/opacity", 1, 0, 0.7, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").interpolate_property(get_node("Flash"), "visibility/opacity", 0, 1, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
+	yield(get_node("Tween 2"), "tween_complete")
+	emit_signal("animation_done")
+	var location = get_parent().locations[new_coords]
+	var new_position = location.get_pos()
+	set_pos(new_position)
+	
+	get_node("Tween 2").interpolate_property(self, "visibility/opacity", 0, 1, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").interpolate_property(get_node("Flash"), "visibility/opacity", 1, 0, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").start()
+	yield(get_node("Tween 2"), "tween_complete")
+	
+	subtract_anim_count()
 	
 
 func predict(new_coords):

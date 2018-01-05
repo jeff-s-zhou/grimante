@@ -1,35 +1,35 @@
 [gd_scene load_steps=24 format=1]
 
 [ext_resource path="res://UI/ReinforcementIndicator.gd" type="Script" id=1]
-[ext_resource path="res://Assets/UI/reinforcement_friendly.png" type="Texture" id=2]
-[ext_resource path="res://Assets/UI/laid_trap_indicator.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/reinforcement_preview_red.png" type="Texture" id=2]
+[ext_resource path="res://Assets/UI/reinforcement_preview_yellow.png" type="Texture" id=3]
 [ext_resource path="res://Assets/UI/reinforcement_grey.png" type="Texture" id=4]
 [ext_resource path="res://Assets/UI/reinforcement_preview_green.png" type="Texture" id=5]
-[ext_resource path="res://Assets/UI/reinforcement_preview_yellow.png" type="Texture" id=6]
-[ext_resource path="res://Assets/UI/reinforcement_preview_red.png" type="Texture" id=7]
-[ext_resource path="res://Assets/UI/reinforcement_friendly_glow.png" type="Texture" id=8]
-[ext_resource path="res://Assets/UI/laid_trap_indicator_glow.png" type="Texture" id=9]
+[ext_resource path="res://Assets/UI/laid_trap_indicator.png" type="Texture" id=6]
+[ext_resource path="res://Assets/UI/reinforcement_friendly.png" type="Texture" id=7]
+[ext_resource path="res://Assets/UI/reinforcement_preview_red_glow.png" type="Texture" id=8]
+[ext_resource path="res://Assets/UI/reinforcement_preview_yellow_glow.png" type="Texture" id=9]
 [ext_resource path="res://Assets/UI/reinforcement_grey_glow.png" type="Texture" id=10]
 [ext_resource path="res://Assets/UI/reinforcement_preview_green_glow.png" type="Texture" id=11]
-[ext_resource path="res://Assets/UI/reinforcement_preview_yellow_glow.png" type="Texture" id=12]
-[ext_resource path="res://Assets/UI/reinforcement_preview_red_glow.png" type="Texture" id=13]
-[ext_resource path="res://Assets/UI/laid_trap_indicator_fill.png" type="Texture" id=14]
-[ext_resource path="res://Assets/UI/reinforcement_grey_fill.png" type="Texture" id=15]
-[ext_resource path="res://Assets/UI/reinforcement_preview_green_fill.png" type="Texture" id=16]
-[ext_resource path="res://Assets/UI/reinforcement_preview_yellow_fill.png" type="Texture" id=17]
-[ext_resource path="res://Assets/UI/reinforcement_preview_red_fill.png" type="Texture" id=18]
+[ext_resource path="res://Assets/UI/laid_trap_indicator_glow.png" type="Texture" id=12]
+[ext_resource path="res://Assets/UI/reinforcement_friendly_glow.png" type="Texture" id=13]
+[ext_resource path="res://Assets/UI/reinforcement_preview_red_fill.png" type="Texture" id=14]
+[ext_resource path="res://Assets/UI/reinforcement_preview_yellow_fill.png" type="Texture" id=15]
+[ext_resource path="res://Assets/UI/reinforcement_grey_fill.png" type="Texture" id=16]
+[ext_resource path="res://Assets/UI/reinforcement_preview_green_fill.png" type="Texture" id=17]
+[ext_resource path="res://Assets/UI/laid_trap_indicator_fill.png" type="Texture" id=18]
 
 [sub_resource type="SpriteFrames" id=1]
 
 animations = [ {
 "frames": [ ExtResource( 2 ) ],
 "loop": true,
-"name": "friendly",
+"name": "attack",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 3 ) ],
 "loop": true,
-"name": "trap",
+"name": "assist",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 4 ) ],
@@ -42,19 +42,19 @@ animations = [ {
 "name": "selfish",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 6 ) ],
-"loop": true,
-"name": "assist",
-"speed": 5.0
-}, {
 "frames": [  ],
 "loop": true,
 "name": "boss",
 "speed": 5.0
 }, {
+"frames": [ ExtResource( 6 ) ],
+"loop": true,
+"name": "trap",
+"speed": 5.0
+}, {
 "frames": [ ExtResource( 7 ) ],
 "loop": true,
-"name": "attack",
+"name": "friendly",
 "speed": 5.0
 } ]
 
@@ -63,12 +63,12 @@ animations = [ {
 animations = [ {
 "frames": [ ExtResource( 8 ) ],
 "loop": true,
-"name": "friendly",
+"name": "attack",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 9 ) ],
 "loop": true,
-"name": "trap",
+"name": "assist",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 10 ) ],
@@ -81,19 +81,19 @@ animations = [ {
 "name": "selfish",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 12 ) ],
-"loop": true,
-"name": "assist",
-"speed": 5.0
-}, {
 "frames": [  ],
 "loop": true,
 "name": "boss",
 "speed": 5.0
 }, {
+"frames": [ ExtResource( 12 ) ],
+"loop": true,
+"name": "trap",
+"speed": 5.0
+}, {
 "frames": [ ExtResource( 13 ) ],
 "loop": true,
-"name": "attack",
+"name": "friendly",
 "speed": 5.0
 } ]
 
@@ -145,27 +145,27 @@ tracks/1/keys = {
 animations = [ {
 "frames": [ ExtResource( 14 ) ],
 "loop": true,
-"name": "trap",
+"name": "attack",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 15 ) ],
 "loop": true,
-"name": "nemesis",
+"name": "assist",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 16 ) ],
 "loop": true,
-"name": "selfish",
+"name": "nemesis",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 17 ) ],
 "loop": true,
-"name": "assist",
+"name": "selfish",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 18 ) ],
 "loop": true,
-"name": "attack",
+"name": "trap",
 "speed": 5.0
 } ]
 
@@ -203,5 +203,12 @@ autoplay = "Glow"
 visibility/opacity = 0.0
 frames = SubResource( 5 )
 animation = "attack"
+
+[node name="Timer" type="Timer" parent="."]
+
+process_mode = 1
+wait_time = 1.0
+one_shot = false
+autostart = false
 
 

@@ -27,6 +27,8 @@ var cooldown = 0
 
 var assist_flag = false
 
+var diagonal_guide_prediction_flag = false
+
 var movement_value = 1 setget , get_movement_value
 var attack_bonus = 0
 
@@ -413,6 +415,7 @@ func unhovered():
 	if self.state != States.DEAD:
 		self.hovered_flag = false
 		get_node("Physicals/OverlayLayers/White").hide()
+		self.grid.reset_prediction()
 		if get_parent().selected == null:
 			#print(get_name() + " is calling clearing display state in unhovered" )
 			get_parent().clear_display_state()
@@ -434,6 +437,11 @@ func hovered():
 			get_parent().temp_remove_piece(self.coords)
 			display_action_range()
 			get_parent().temp_add_piece(self.coords, self)
+		
+		#might break things
+		elif get_parent().selected != null and get_parent().selected != self:
+			self.grid.predict(self.coords)
+		
 
 func star_input_event(event):
 	if self.state == States.PLACED:
@@ -545,8 +553,6 @@ func placed(ending_turn=false):
 	if self.state != States.PLACED:
 		add_animation(self, "animate_placed", false, [ending_turn])
 	get_node("SelectedGlow").hide()
-	
-	check_for_traps()
 	self.state = States.PLACED
 	self.attack_bonus = 0
 	self.movement_value = self.DEFAULT_MOVEMENT_VALUE
@@ -576,6 +582,8 @@ func animate_placed(ending_turn=false):
 	get_node("Tween").start()
 	#if we're calling it from end_turn() in combat, don't trigger all the individual placed checks
 	if !ending_turn:
+		print(self.unit_name)
+		print("emitting animate_placed signal")
 		emit_signal("animated_placed")
 
 
@@ -609,9 +617,7 @@ func get_sprite():
 	
 func is_enemy():
 	return false
-	
-func displays_line():
-	return false
+
 
 #OVERRIDEN OR INHERITED FUNCTIONS
 func act(new_coords):

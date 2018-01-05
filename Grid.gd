@@ -7,6 +7,7 @@ extends Node2D
 
 var locations = {}
 var pieces = {}
+var reinforcements = {}
 
 var assassin = null
 var saint = null
@@ -77,7 +78,7 @@ func _ready():
 func handle_revive(coords):
 	var dead_heroes = get_tree().get_nodes_in_group("dead_heroes")
 	if dead_heroes.size() == 1:
-		dead_heroes[0].resurrect(self.coords)
+		dead_heroes[0].resurrect(coords)
 		return true
 	elif dead_heroes.size() > 1:
 		get_node("ReviveSelector").handle(coords)
@@ -110,13 +111,22 @@ func is_within_deploy_range(coords):
 	return coords in self.deploy_tiles
 	
 	
+func toggle_hex_diagonal_guide(flag, coords=null):
+	if flag:
+		get_node("DiagonalGuide").set_pos(self.locations[coords].get_pos())
+	#needed so it's not too fast and reset prediction is after prediction
+	get_node("/root/AnimationQueue").enqueue(get_node("DiagonalGuide"), "set_hidden", false, [!flag])
+	
+
 func predict(coords):
+	print("predicting")
 	if !self.deploying and self.selected != null:
-		if self.selected.displays_line():
-			if self.pieces.has(coords):
-				get_node("DottedLine").draw_dotted(self.selected.get_pos(), self.pieces[coords].get_pos())
-				get_node("DottedLine").show()
+#			if self.pieces.has(coords):
+#				get_node("DottedLine").draw_dotted(self.selected.get_pos(), self.pieces[coords].get_pos())
+#				get_node("DottedLine").show()
 		self.selected.predict(coords)
+		if self.selected.diagonal_guide_prediction_flag:
+			toggle_hex_diagonal_guide(true, coords)
 	
 func initialize(flags):
 	if flags.has("hide_indirect_highlighting"):
@@ -132,12 +142,20 @@ func debug():
 func set_target(target):
 	if self.selected != null:
 		self.selected.select_action_target(target)
+		
+		
+func set_reinforcement(coords, enemy_piece):
+	self.reinforcements[coords] = true
+	self.locations[coords].set_reinforcement(enemy_piece)
+	
 
 
 func handle_incoming(first=false):
-	for location in self.locations.values():
-		location.handle_incoming(first)
-		
+	var animation_speed = 0.9
+	for coords in self.reinforcements.keys():
+		self.locations[coords].deploy_enemy(animation_speed, first)
+		animation_speed -= (animation_speed * 0.15)
+	self.reinforcements = {}
 		
 func display_incoming():
 	for location in self.locations.values():
@@ -326,7 +344,8 @@ func set_revive_tiles(flag):
 #right click flag is so if we know to check immediately after if cursor is still in a piece's area
 #and apparently so we know to clear flyovers...lol
 func clear_display_state(right_click_flag=false):
-	#print("clearing display state")
+	print("clearing display state")
+	toggle_hex_diagonal_guide(false)
 	get_node("DottedLine").hide()
 	for location in locations.values():
 		location.reset_highlight()
@@ -336,10 +355,13 @@ func clear_display_state(right_click_flag=false):
 
 #called when moved off of a tile while a player unit is selected
 func reset_prediction():
-	#print("reseting prediction")
-	get_node("DottedLine").hide()
+	print("reseting prediction")
+	#get_node("DottedLine").hide()
 	if !self.deploying:
-		if self.selected != null:
+		if self.selected != null:	
+			if self.selected.diagonal_guide_prediction_flag:
+				#print("resetting prediction")
+				toggle_hex_diagonal_guide(false)
 			for piece in pieces.values():
 				piece.reset_prediction_highlight()
 		else:

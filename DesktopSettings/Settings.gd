@@ -13,6 +13,5 @@ func _ready():
 func initialize():
 	.initialize()
 	get_node("BackButton").connect("pressed", get_parent(), "back_from_settings")
-	var settings = get_node("/root/State").settings
 	
 	

@@ -97,7 +97,6 @@ func animate_half_placed():
 	yield(tween, "tween_complete")
 	print("opacity: ", get_node("Physicals/GlowSprite").get_opacity())
 	tween.queue_free()
-	#emit_signal("animated_placed")
 
 
 #have to do this manually because for prediction, we need to specifically ignore the corsair's piece
@@ -134,6 +133,7 @@ func display_action_range():
 	var action_range = movement_range + get_melee_range() # get_hookshot_range() + get_pull_range()
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
+	self.grid.toggle_hex_diagonal_guide(true, self.coords)
 	.display_action_range()
 	highlight_indirect_range(movement_range)
 	

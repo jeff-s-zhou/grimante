@@ -34,11 +34,17 @@ func initialize(unused_piece):
 	add_child(mock_piece)
 	self.current_pos += Vector2(0, 120)
 	
+func get_open_spot():
+	var deploy_coords = [Vector2(1, 6), Vector2(2, 6), Vector2(3, 7), Vector2(4, 7), Vector2(5, 8)]
+	for coords in deploy_coords:
+		if !self.grid.has_ally(coords):
+			return coords
+	
 	
 func select(piece):
 	var coords
 	if self.currently_selected == null:
-		coords = Vector2(3, 7)
+		coords = get_open_spot()
 	else:
 		coords = self.currently_selected.coords
 		self.currently_selected.set_pos(Vector2(-999, -999))

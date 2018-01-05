@@ -4,8 +4,8 @@
 [ext_resource path="res://PlayerPieces/StormdancerPiece.gd" type="Script" id=2]
 [ext_resource path="res://Assets/Allies/stormdancer_piece_cooldown.png" type="Texture" id=3]
 [ext_resource path="res://Assets/Allies/stormdancer_piece.png" type="Texture" id=4]
-[ext_resource path="res://Assets/Allies/stormdancer_piece_red.png" type="Texture" id=5]
-[ext_resource path="res://Assets/Allies/stormdancer_piece_sepia.png" type="Texture" id=6]
+[ext_resource path="res://Assets/Allies/stormdancer_piece_sepia.png" type="Texture" id=5]
+[ext_resource path="res://Assets/Allies/stormdancer_piece_red.png" type="Texture" id=6]
 [ext_resource path="res://Assets/Allies/stormdancer_glow.png" type="Texture" id=7]
 [ext_resource path="res://PlayerPieces/Components/SpinningStormdancer.tscn" type="PackedScene" id=8]
 [ext_resource path="res://PlayerPieces/Components/ShunpoIn.tres" type="Animation" id=9]
@@ -16,19 +16,19 @@
 [sub_resource type="SpriteFrames" id=1]
 
 animations = [ {
-"frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
+"frames": [ ExtResource( 4 ) ],
 "loop": true,
-"name": "hurt",
+"name": "default",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 6 ) ],
+"frames": [ ExtResource( 5 ) ],
 "loop": true,
 "name": "cooldown",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 4 ) ],
+"frames": [ ExtResource( 4 ), ExtResource( 6 ) ],
 "loop": true,
-"name": "default",
+"name": "hurt",
 "speed": 5.0
 } ]
 
