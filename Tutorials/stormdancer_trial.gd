@@ -7,7 +7,7 @@ extends "res://Tutorials/tutorial.gd"
 func get_trial1_hints():
 	var tutorial = TutorialPrototype.instance()
 	var text = ["The Stormdancer throws a Shuriken in each of the 6 hex diagonal directions, dealing 2 damage to the first enemies hit."]
-	add_hint(tutorial, 1, text)
+	add_hint(tutorial, 1, text, Vector2(3, 6))
 	return tutorial
 	
 func get_trial2_hints():

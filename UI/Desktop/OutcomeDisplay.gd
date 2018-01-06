@@ -24,17 +24,27 @@ func _ready():
 	get_node("RetryButton").connect("pressed", self, "restart")
 	set_opacity(0)
 	
+
+func _enter_tree():
+	set_pos(get_node("/root/global").get_resolution()/2)
+	
+	
 func fade_in():
+	get_parent().blur_darken(0.3)
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.3, Tween.TRANS_CUBIC, Tween.EASE_OUT)
 	get_node("Tween").start()
 	if self.victory_flag:
 		get_node("OutcomeMessage").animate_glow()
+	else:
+		get_node("AnimationPlayer").play("lose")
 		
 func fade_out():
 	get_parent().blur_lighten(0.2)
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 0.3, Tween.TRANS_LINEAR, Tween.EASE_OUT)
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
+	get_parent().transition_out()
+	yield(get_parent(), "animation_done")
 	emit_signal("animation_done")
 	
 	

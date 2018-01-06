@@ -115,11 +115,11 @@ func toggle_hex_diagonal_guide(flag, coords=null):
 	if flag:
 		get_node("DiagonalGuide").set_pos(self.locations[coords].get_pos())
 	#needed so it's not too fast and reset prediction is after prediction
-	get_node("/root/AnimationQueue").enqueue(get_node("DiagonalGuide"), "set_hidden", false, [!flag])
+	get_node("DiagonalGuide").set_hidden(!flag)
+	#get_node("/root/AnimationQueue").enqueue(get_node("DiagonalGuide"), "set_hidden", false, [!flag])
 	
 
 func predict(coords):
-	print("predicting")
 	if !self.deploying and self.selected != null:
 #			if self.pieces.has(coords):
 #				get_node("DottedLine").draw_dotted(self.selected.get_pos(), self.pieces[coords].get_pos())
@@ -344,7 +344,6 @@ func set_revive_tiles(flag):
 #right click flag is so if we know to check immediately after if cursor is still in a piece's area
 #and apparently so we know to clear flyovers...lol
 func clear_display_state(right_click_flag=false):
-	print("clearing display state")
 	toggle_hex_diagonal_guide(false)
 	get_node("DottedLine").hide()
 	for location in locations.values():
@@ -355,7 +354,6 @@ func clear_display_state(right_click_flag=false):
 
 #called when moved off of a tile while a player unit is selected
 func reset_prediction():
-	print("reseting prediction")
 	#get_node("DottedLine").hide()
 	if !self.deploying:
 		if self.selected != null:	

@@ -15,7 +15,7 @@ func get_trial1_hints():
 	
 	var hint = ["The Corsair's Direct Attack, Slash, deals 3 damage to an adjacent Enemy."]
 	
-	add_hint(tutorial, 1, hint)
+	add_hint(tutorial, 1, hint, Vector2(3, 4))
 	
 	return tutorial
 	

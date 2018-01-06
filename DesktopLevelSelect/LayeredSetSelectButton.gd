@@ -21,13 +21,11 @@ func _ready():
 func set_disabled(flag):
 	get_node("GreyedButton").set_disabled(flag)
 	if flag:
-		print("setting greyed")
 		set_full_visibility(true, get_node("GreyedButton"))
 		set_full_visibility(false, get_node("RegularButton"))
 		get_node("GoldenButton").hide()
 	else:
 		if self.obtained_stars == self.total_stars: #completed
-			print(str(self.obtained_stars) + "/" + str(self.total_stars))
 			set_full_visibility(false, get_node("GreyedButton"))
 			set_full_visibility(false, get_node("RegularButton"))
 			get_node("GoldenButton").show()
@@ -42,13 +40,11 @@ func initialize(level_set):
 	self.obtained_stars = stars[0]
 	self.total_stars = stars[1]
 
-#	var unlocked = get_node("/root/State").is_set_unlocked(level_set.id)
-#	set_disabled(!unlocked)
-	set_disabled(false)
+	var unlocked = get_node("/root/State").is_set_unlocked(self.level_set.id)
+	set_disabled(!unlocked)
 	get_node("GreyedButton/Toppings/Label").set_text(str(self.level_set.id))
 	get_node("RegularButton/Toppings/Label").set_text(str(self.level_set.id))
 	get_node("GoldenButton/Toppings/Label").set_text(str(self.level_set.id))
-	
 	
 	if self.obtained_stars > 0:
 		var star_str = str(self.obtained_stars) + "/" + str(self.total_stars)
@@ -56,7 +52,12 @@ func initialize(level_set):
 		get_node("RegularButton/Toppings/StarLabel").set_text(star_str)
 		get_node("GoldenButton/Toppings/StarLabel").show()
 		get_node("GoldenButton/Toppings/StarLabel").set_text(star_str)
-	
+		
+		
+func debug():
+	set_disabled(false)
+
+
 func is_pressed():
 	emit_signal("pressed", self.level_set)
 	
@@ -72,10 +73,7 @@ func goldify():
 func set_full_visibility(flag, node):
 	if flag:
 		var material = node.get("material/material")
-		print(get_name())
-		print("before:", material.get("shader_param/strength"))
 		material.set("shader_param/strength", 0)
-		print("after:", material.get("shader_param/strength"))
 		node.show()
 	else:
 		var material = node.get("material/material")

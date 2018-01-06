@@ -15,6 +15,7 @@ func _ready():
 	get_node("T/SettingsButton").connect("pressed", self, "go_to_settings")
 	get_node("T/BackButton").connect("pressed", self, "exit_menu")
 	get_node("T/ExitButton").connect("pressed", self, "exit_game")
+	get_node("T/LevelSelectButton").connect("pressed", self, "go_to_level_select")
 
 func _input(event):
 	if get_node("/root/InputHandler").is_ui_cancel(event):
@@ -63,6 +64,13 @@ func go_to_settings():
 	
 	self.settings.set_pos(Vector2(236, 150))
 	self.settings.animate_slide_in()
+	
+	
+func go_to_level_select():
+	get_parent().transition_out()
+	yield(get_parent(), "animation_done")
+	var level_set = get_node("/root/State").current_level_set
+	get_node("/root/global").goto_scene("res://DesktopLevelSelect/LevelSelect.tscn", {"level_set":level_set})
 	
 
 func back_from_settings():

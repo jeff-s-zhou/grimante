@@ -15,16 +15,26 @@ signal rule_finished
 
 var current_rule = null
 
-var continue_text = "Click anywhere to continue [%s/%s]"
+var resolution
+
+var continue_text = "Click anywhere to continue (%s/%s)"
 
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	var screen_size = get_viewport().get_rect().size
-	var halfway = screen_size/2
-	get_node("Label").set_global_pos(halfway - (get_node("Label").get_size()/2) + Vector2(0, -100))
-	get_node("TapLabel").set_global_pos(halfway - (get_node("TapLabel").get_size()/2) + Vector2(0, 100))
-	
+	pass
+	var material = get_node("Text").get_material()
+	#material.set("shader_param/strength", 1.5)
+#	var screen_size = get_viewport().get_rect().size
+#	var halfway = screen_size/2
+#	get_node("Text/Label").set_global_pos(halfway - (get_node("Text/Label").get_size()/2) + Vector2(0, -100))
+#	get_node("Text/TapText/Label").set_global_pos(halfway - (get_node("Text/TapText/Label").get_size()/2) + Vector2(0, 100))
+#
+
+func _enter_tree():
+#	._enter_tree()
+	self.resolution = get_node("/root/global").get_resolution()
+	get_node("Text").set_global_pos(resolution/2)
 
 func decorate(string):
 	string = string.replace("{", "[color=#ff3333]")
@@ -66,21 +76,16 @@ func has_forced_action(turn):
 
 
 func display_forced_action(turn):
-	get_node("Timer").set_wait_time(0.5)
-	get_node("Timer").start()
-	yield(get_node("Timer"), "timeout")
-	
 	var forced_action = self.forced_actions[turn][0]
 	var initial_coords = forced_action.get_initial_coords()
 	var target_coords = forced_action.get_final_coords()
 	
 	var initial_pos = get_parent().get_node("Grid").locations[initial_coords].get_global_pos()
 	var target_pos = get_parent().get_node("Grid").locations[target_coords].get_global_pos()
-	get_parent().get_node("Grid").focus_coords(initial_coords, target_coords)
 	
 	#so the text is more readable
 	if forced_action.has_text():
-		get_node("Sprite").set_opacity(0.6)
+		get_node("Sprite").set_opacity(0.8)
 	else:
 		get_node("Sprite").set_opacity(0.6)
 	get_node("Sprite").set_pos(initial_pos)
@@ -91,6 +96,11 @@ func display_forced_action(turn):
 	if forced_action.has_arrow():
 		get_node("Arrow").set_pos(initial_pos)
 		get_node("Arrow").show()
+		
+		
+	get_parent().get_node("Grid").focus_coords(initial_coords, target_coords)
+	get_node("AnimationPlayer 2").play("fade_in")
+	yield(get_node("AnimationPlayer 2"), "finished")
 
 
 func move_is_valid(turn, coords):
@@ -101,10 +111,12 @@ func move_is_valid(turn, coords):
 			forced_action.update()
 			if forced_action.is_finished():
 				get_parent().get_node("Grid").unfocus()
+				get_node("AnimationPlayer 2").play("fade_out")
+				yield(get_node("AnimationPlayer 2"), "finished")
 				get_node("Sprite").hide()
 				get_node("Light2D").hide()
 				get_node("Arrow").hide()
-				get_node("Label").hide()
+				get_node("Text").hide()
 				get_node("Sprite").set_opacity(0.6)
 				
 				if self.forced_actions[turn][0].has_result():
@@ -113,14 +125,18 @@ func move_is_valid(turn, coords):
 				
 			#only need to update anything on screen if we're displaying visible arrows
 			elif forced_action.has_arrow():
-				if forced_action.has_text():
-					get_node("Label").set_bbcode(decorate(forced_action.text))
-					get_node("Label").show()
-				
 				var target_coords = forced_action.get_final_coords()
 				var target_pos = get_parent().get_node("Grid").locations[target_coords].get_global_pos()
 				get_node("Arrow").set_pos(target_pos)
 				get_node("Arrow").show()
+				
+				if forced_action.has_text():
+#					if target_pos.y > (self.resolution/2).y:
+					get_node("Text").set_global_pos(self.resolution/2 + Vector2(0, -225))
+#					else:
+#						get_node("Text").set_global_pos(self.resolution/2 + Vector2(0, 200))
+					get_node("Text/Label").set_bbcode(decorate(forced_action.text))
+					get_node("Text").show()
 		return valid
 	return true
 
@@ -128,6 +144,7 @@ func has_forced_action_result(turn):
 	return self.current_rule != null
 
 func handle_forced_action_result(turn):
+	print("handling forced action result")
 	update_rule()
 	
 
@@ -174,12 +191,15 @@ func update_rule(next=false):
 	var line = rule.get_next_line()
 	if line == null:
 		self.current_rule = null
+		get_node("AnimationPlayer 2").play("fade_out")
+		yield(get_node("AnimationPlayer 2"), "finished")
+		set_opacity(1)
 		get_node("RuleOverlay").hide()
 		get_node("Sprite").set_opacity(0.6)
 		get_node("Sprite").hide()
 		get_node("Light2D").hide()
-		get_node("Label").hide()
-		get_node("TapLabel").hide()
+		get_node("Text").hide()
+		get_node("Text/TapLabel").hide()
 		emit_signal("rule_finished")
 	else:
 		if typeof(line) == TYPE_ARRAY: #WTF? Oh this is for when we have images
@@ -191,20 +211,25 @@ func update_rule(next=false):
 				get_node("Timer").set_wait_time(0.5)
 				get_node("Timer").start()
 				yield(get_node("Timer"), "timeout")
-
-			get_node("Label").set_bbcode(line)
-			get_node("Label").show()
+				
+			get_node("Text").set_global_pos(self.resolution/2)
+			get_node("Text/Label").set_bbcode(line)
+			get_node("Text").show()
 			
 			var filled_cont_text = continue_text % [rule.get_index(), rule.get_size()]
-			get_node("TapLabel").set_text(filled_cont_text)
-			get_node("TapLabel").show()
+			get_node("Text/TapLabel").set_text(filled_cont_text)
+			get_node("Text/TapLabel").show()
 			if coords != null:
 				var new_pos = get_parent().get_node("Grid").locations[coords].get_global_pos()
-				get_node("Sprite").set_opacity(0.6)
+				get_node("Sprite").set_opacity(0.8)
 				get_node("Sprite").set_pos(new_pos)
 				get_node("Sprite").show()
 			else:
 				get_node("RuleOverlay").show()
+			
+			print("is currently visible: ", is_visible())
+			if !is_visible():
+				get_node("AnimationPlayer 2").play("fade_in")
 			
 			get_node("Timer").set_wait_time(0.3)
 			get_node("Timer").start()

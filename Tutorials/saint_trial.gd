@@ -23,7 +23,7 @@ func get_trial2_hints():
 	var text = ["The Saint has a unique movement range.",
 	"The Saint by default has 0 movement range (1 when Inspired with Movement).",
 	"Instead, the Saint can move adjacent to any other Hero."]
-	add_player_start_rule(tutorial, 1, text, Vector2(4, 7))
+	add_player_start_rule(tutorial, 1, text)
 	return tutorial
 	
 func get_trial3_hints():

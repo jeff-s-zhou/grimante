@@ -103,7 +103,6 @@ func set_health(hp):
 
 func set_modifiers(modifiers):
 	for modifier in modifiers:
-		print(modifier)
 		if modifier == enemy_modifiers["Poisonous"]:
 			self.set_poisonous(true)
 		elif modifier == enemy_modifiers["Shield"]:

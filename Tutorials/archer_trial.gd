@@ -18,8 +18,7 @@ func get_trial1_hints():
 	"The first set of Trials is to unlock the Archer.",
 	"The Archer's Direct Attack is to shoot an Arrow from a distance for 3 damage."]
 	
-	add_hint(tutorial, 1, hint)
-	
+	add_hint(tutorial, 1, hint, Vector2(3, 7))
 	hint = ["If the Archer's Arrow kills, it continues travelling and deals 1 less damage to successive enemies."]
 	
 	add_hint(tutorial, 2, hint)
@@ -29,7 +28,7 @@ func get_trial1_hints():
 func get_trial2_hints():
 	var tutorial = TutorialPrototype.instance()
 	
-	var hint = ["When the Archer moves, her Indirect Attack causes her to automatically fire a Piercing Arrow upwards."]
+	var hint = ["When the Archer moves, its Indirect Attack allows it to automatically fire a Piercing Arrow upwards."]
 	
 	add_hint(tutorial, 1, hint)
 	

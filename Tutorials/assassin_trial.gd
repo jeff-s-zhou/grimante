@@ -9,8 +9,8 @@ func get_trial1_hints():
 	var tutorial = TutorialPrototype.instance()
 	
 	var text = ["The Assassin is now at your disposal.",
-	"The Assassin's Backstab teleports him 1 tile above the target and deals {1} damage."]
-	add_hint(tutorial, 1, text)
+	"The Assassin's Backstab teleports it 1 tile above the target and deals {1} damage."]
+	add_hint(tutorial, 1, text, Vector2(3, 7))
 	
 	text = ["After killing an Enemy, the Assassin can act again."]
 	add_hint(tutorial, 2, text)

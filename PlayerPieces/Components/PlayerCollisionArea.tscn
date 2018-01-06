@@ -12,7 +12,7 @@ points = Vector2Array( 50, -87, -50, -87, -100, 0, -50, 87, 50, 87, 100, 0 )
 transform/pos = Vector2( 0, -6 )
 input/pickable = true
 shapes/0/shape = SubResource( 1 )
-shapes/0/transform = Matrix32( 0.506, 0, 0, 0.5, 0, 0 )
+shapes/0/transform = Matrix32( 0.506, 0, 0, 0.52, 0, 0 )
 shapes/0/trigger = true
 gravity_vec = Vector2( 0, 1 )
 gravity = 98.0
@@ -23,7 +23,7 @@ collision/mask = 2
 
 [node name="CollisionShape2D" parent="." instance=ExtResource( 1 )]
 
-transform/scale = Vector2( 0.506, 0.5 )
+transform/scale = Vector2( 0.506, 0.52 )
 trigger = true
 
 

@@ -34,7 +34,7 @@ tracks/1/keys = {
 
 transform/pos = Vector2( 32, -32 )
 transform/rot = -15.0
-z/z = 85
+z/z = 42
 z/relative = false
 
 [node name="Sprite" type="Sprite" parent="."]

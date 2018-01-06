@@ -42,7 +42,7 @@ func get():
 	add_forced_action(tutorial, 2, Vector2(2, 3), Vector2(5, 3), text)
 	
 	#TURN 3
-	text = ["When the Berserker kills an Enemy, he moves to its tile.",
+	text = ["When the Berserker kills an Enemy, the Berserker moves to its tile.",
 	"Clear the board of remaining enemies to win."]
 	add_forced_action(tutorial, 3, Vector2(5, 6), Vector2(5, 5), text)
 	

@@ -49,6 +49,8 @@ func _ready():
 	# Initialization here
 	get_node("CollisionArea").connect("mouse_enter", self, "hovered")
 	get_node("CollisionArea").connect("mouse_exit", self, "unhovered")
+#	connect("mouse_enter", self, "hovered")
+#	connect("mouse_exit", self, "unhovered")
 
 	self.side = "PLAYER"
 	
@@ -99,7 +101,6 @@ func lighten(time):
 func set_shield(flag, delay=0.0):
 	if self.shielded != flag:
 		self.shielded = flag
-		print("calling the set shield animation here?")
 		add_animation(self, "animate_set_shield", false, [flag, delay])
 
 
@@ -582,8 +583,6 @@ func animate_placed(ending_turn=false):
 	get_node("Tween").start()
 	#if we're calling it from end_turn() in combat, don't trigger all the individual placed checks
 	if !ending_turn:
-		print(self.unit_name)
-		print("emitting animate_placed signal")
 		emit_signal("animated_placed")
 
 
@@ -600,7 +599,6 @@ func attacked(attacker=null):
 
 func enemy_attacked(delay=0.0):
 	if !self.shielded:
-		print("in enemy attacked")
 		delete_self(true, delay)
 		return true
 	else:

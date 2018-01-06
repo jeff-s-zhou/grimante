@@ -13,6 +13,8 @@ func _ready():
 		var id_str = "T/" + str(level_set.id)
 		get_node(id_str).connect("pressed", self, "goto_level_set")
 		get_node(id_str).initialize(level_set)
+		
+	set_process_input(true)
 	
 	
 	var first_clear = get_node("/root/global").get_param("cleared_level_set")
@@ -20,14 +22,19 @@ func _ready():
 	if first_clear:
 		var id_str = "T/" + str(get_node("/root/State").current_level_set.id)
 		#get the button associated  with the next level set and play its cleared animation
-		get_node("T/5").defrost()
+		get_node(id_str).defrost()
 	
 	get_node("/root/State").current_level_set = null
 	
-	
-		
 	get_node("T").initialize()
 	get_node("T").animate_slide_in()
+	
+	
+func _input(event):
+	if get_node("/root/InputHandler").is_debug(event):
+		for i in range(1, 10):
+			var node_str = "T/" + str(i)
+			get_node(node_str).debug()
 
 
 func goto_level_set(level_set):

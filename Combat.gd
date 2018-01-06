@@ -415,7 +415,6 @@ func computer_input(event):
 			if get_node("/root/AnimationQueue").is_animating():
 				yield(get_node("/root/AnimationQueue"), "animations_finished")
 			get_node("/root/AnimationQueue").stop()
-			print("debug level skip")
 			get_node("/root/global").goto_scene(self.combat_resource, {"level": self.level_schematic.next_level})
 			
 			
@@ -688,12 +687,8 @@ func player_win():
 	else:
 		var win_screen = self.outcome_screen_prototype.instance()
 		add_child(win_screen)
-		var screen_size = get_node("/root/global").get_resolution()
 		win_screen.initialize_victory(self.level_schematic.next_level, self.level_schematic, self.turn_count)
-		win_screen.set_pos(Vector2(screen_size.x/2, screen_size.y/2))
-		blur_darken(0.3)
 		win_screen.fade_in()
-		get_node("AnimationPlayer").play("transition_out")
 
 
 func enemy_win():
@@ -719,16 +714,9 @@ func enemy_win():
 		yield(get_node("Timer2"), "timeout")
 #
 		var lose_screen = self.outcome_screen_prototype.instance()
-		var screen_size = get_node("/root/global").get_resolution()
-		print("screen size: ", screen_size)
 		add_child(lose_screen)
 		lose_screen.initialize_defeat(self.level_schematic.next_level, self.level_schematic)
-		lose_screen.set_pos(Vector2(screen_size.x/2, screen_size.y/2))
-		#lose_screen.set_pos(Vector2(512, 384))
-		print("lose screen pos: ", lose_screen.get_pos())
-		blur_darken(0.3)
 		lose_screen.fade_in()
-		get_node("AnimationPlayer").play("transition_out")
 #	
 
 func damage_defenses():
@@ -766,7 +754,13 @@ func lighten(time=0.4):
 	get_node("Tween").start()
 	yield(get_node("Tween"), "tween_complete")
 	emit_signal("animation_done")
+	
 
+func transition_out():
+	get_node("AnimationPlayer").play("transition_out_fast")
+	yield(get_node("AnimationPlayer"), "finished")
+	emit_signal("animation_done")
+	
 func handle_invalid_move():
 	get_node("SamplePlayer").play("error")
 	#get_node("InvalidMoveIndicator/AnimationPlayer").play("flash")

@@ -154,7 +154,6 @@ func animate_move_to_pos(position, speed, blocking=false, trans_type=Tween.TRANS
 	else:
 		
 		var dim_distance = dim_multi_distance(distance)
-		print("got dim distance")
 		tween.interpolate_property(self, "transform/pos", get_pos(), position, float(dim_distance)/speed, trans_type, ease_type, delay)
 		tween.start()
 		yield(tween, "tween_complete")

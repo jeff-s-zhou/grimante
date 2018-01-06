@@ -44,3 +44,7 @@ func is_ui_accept(event):
 		return event.type == InputEvent.SCREEN_DRAG
 	elif self.platform == self.PLATFORMS.PC:
 		return event.is_action("ui_accept") and event.is_pressed()
+		
+		
+func is_debug(event):
+	return event.is_action("test_action") and event.is_pressed()

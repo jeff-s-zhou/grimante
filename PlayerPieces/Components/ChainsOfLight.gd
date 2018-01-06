@@ -9,8 +9,8 @@ var line_end
 var line_distance
 var full_length
 
-const DIAMOND = preload("res://Assets/Effects/light_chain_diamond.png")
-const CIRCLE = preload("res://Assets/Effects/light_chain_dot.png")
+const DIAMOND = preload("res://Assets/effects/light_chain_diamond.png")
+const CIRCLE = preload("res://Assets/effects/light_chain_dot.png")
 
 var unit_distance = 15
 

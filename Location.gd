@@ -52,10 +52,10 @@ func set_endzone():
 	
 func set_targetable(flag):
 	if flag:
-		set_opacity(self.highlight_opacity)
+		#set_opacity(self.highlight_opacity)
 		set_pickable(true)
 	else:
-		set_opacity(self.default_opacity)
+		#set_opacity(self.default_opacity)
 		set_pickable(false)
 
 func is_targetable():
@@ -232,9 +232,9 @@ func _mouse_entered():
 	get_node("SamplePlayer").play("magic tile hover")
 	get_node("Sprite").set_opacity(self.highlight_opacity)
 	#we needed this in case you exited from a tile and it reset AFTER another tile called predict lol
-#	get_node("Timer").set_wait_time(0.01)
-#	get_node("Timer").start()
-#	yield(get_node("Timer"), "timeout")
+	get_node("Timer").set_wait_time(0.01)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
 	get_parent().predict(self.coords)
 #	var hovered = get_node("/root/Combat").get_hovered() #if we're staying on the tile, predict
 #	print("hovered in mouse_entered", hovered)

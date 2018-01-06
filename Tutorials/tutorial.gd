@@ -18,11 +18,11 @@ func _ready():
 #	hint.initialize(text_list)
 #	tutorial.add_hint(hint, turn)
 
-
-func add_hint(tutorial, turn, text_list):
+#identical, I'm just too lazy to fix this shit at this point aaaaa
+func add_hint(tutorial, turn, text_list, coords=null):
 	var player_start_rule = RulePrototype.instance()
 	player_start_rule.initialize(text_list)
-	tutorial.add_player_turn_start_rule(player_start_rule, turn, null)
+	tutorial.add_player_turn_start_rule(player_start_rule, turn, coords)
 
 
 func add_player_start_rule(tutorial, turn, text_list, coords=null):

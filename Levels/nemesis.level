@@ -1,21 +1,22 @@
-{"hp":"5", "turn":0, "pos_x":4, "name":"ranged", "modifiers":{}, "pos_y":2}
 {"hp":"3", "turn":0, "pos_x":2, "name":"nemesis", "modifiers":{"mirrored_hero":"Berserker"}, "pos_y":4}
-{"turn":0, "pos_x":3, "name":"stormdancer", "pos_y":6}
+{"hp":"5", "turn":0, "pos_x":4, "name":"ranged", "modifiers":{}, "pos_y":2}
 {"hp":"2", "turn":0, "pos_x":6, "name":"drummer", "modifiers":{}, "pos_y":3}
-{"hp":"5", "turn":0, "pos_x":2, "name":"ranged", "modifiers":{}, "pos_y":1}
+{"turn":0, "pos_x":3, "name":"stormdancer", "pos_y":6}
 {"turn":0, "pos_x":4, "name":"berserker", "pos_y":7}
+{"hp":"5", "turn":0, "pos_x":2, "name":"ranged", "modifiers":{}, "pos_y":1}
 {"hp":"2", "turn":0, "pos_x":0, "name":"drummer", "modifiers":{}, "pos_y":0}
-{"turn":0, "pos_x":2, "name":"corsair", "pos_y":6}
 {"turn":0, "pos_x":3, "name":"archer", "pos_y":7}
-{"hp":"3", "turn":0, "pos_x":4, "name":"nemesis", "modifiers":{"mirrored_hero":"stormdancer"}, "pos_y":5}
-{"hp":"2", "turn":0, "pos_x":0, "name":"grunt", "modifiers":{}, "pos_y":1}
-{"hp":"3", "turn":0, "pos_x":2, "name":"drummer", "modifiers":{}, "pos_y":2}
+{"turn":0, "pos_x":2, "name":"corsair", "pos_y":6}
 {"hp":"3", "turn":0, "pos_x":4, "name":"drummer", "modifiers":{}, "pos_y":3}
-{"hp":"2", "turn":0, "pos_x":6, "name":"grunt", "modifiers":{}, "pos_y":4}
-{"hp":"3", "turn":0, "pos_x":3, "name":"flanker", "modifiers":{"Unstable":"Unstable"}, "pos_y":1}
-{"hp":"2", "turn":0, "pos_x":1, "name":"slime", "modifiers":{"Shield":"Shield"}, "pos_y":3}
-{"hp":"2", "turn":0, "pos_x":5, "name":"slime", "modifiers":{"Shield":"Shield"}, "pos_y":5}
+{"hp":"3", "turn":0, "pos_x":2, "name":"drummer", "modifiers":{}, "pos_y":2}
+{"hp":"2", "turn":0, "pos_x":0, "name":"grunt", "modifiers":{}, "pos_y":1}
+{"hp":"3", "turn":0, "pos_x":4, "name":"nemesis", "modifiers":{"mirrored_hero":"stormdancer"}, "pos_y":5}
 {"hp":"7", "turn":0, "pos_x":3, "name":"nemesis", "modifiers":{"mirrored_hero":"archer"}, "pos_y":3}
-{"hp":"8", "turn":2, "pos_x":3, "name":"nemesis", "modifiers":{"mirrored_hero":"Corsair"}, "pos_y":4}
-{"hp":"2", "turn":2, "pos_x":5, "name":"slime", "modifiers":{}, "pos_y":5}
+{"hp":"2", "turn":0, "pos_x":5, "name":"slime", "modifiers":{"Shield":"Shield"}, "pos_y":5}
+{"hp":"2", "turn":0, "pos_x":1, "name":"slime", "modifiers":{"Shield":"Shield"}, "pos_y":3}
+{"hp":"3", "turn":0, "pos_x":3, "name":"flanker", "modifiers":{"Unstable":"Unstable"}, "pos_y":1}
+{"hp":"2", "turn":0, "pos_x":6, "name":"grunt", "modifiers":{}, "pos_y":4}
+{"hp":"3", "turn":2, "pos_x":3, "name":"grunt", "modifiers":{}, "pos_y":6}
+{"hp":"7", "turn":2, "pos_x":3, "name":"nemesis", "modifiers":{"mirrored_hero":"Corsair"}, "pos_y":3}
 {"hp":"2", "turn":2, "pos_x":1, "name":"slime", "modifiers":{}, "pos_y":3}
+{"hp":"2", "turn":2, "pos_x":5, "name":"slime", "modifiers":{}, "pos_y":5}

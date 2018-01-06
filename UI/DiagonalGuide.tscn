@@ -18,7 +18,7 @@ tracks/0/keys = {
 "times": FloatArray( 0, 1.5, 3 ),
 "transitions": FloatArray( 1, 1, 1 ),
 "update": 0,
-"values": [ 0.3, 1.0, 0.3 ]
+"values": [ 0.4, 1.0, 0.4 ]
 }
 
 [node name="DiagonalGuide" type="Node2D"]
