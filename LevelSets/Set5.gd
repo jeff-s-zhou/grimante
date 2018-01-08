@@ -86,7 +86,7 @@ func fray(hard=false):
 		score_guide = {1:5, 2:5, 3:5, 4:4} #not tested
 	else:
 		pieces = load_level("fray.level")
-		score_guide = {1:5, 2:5, 3:5, 4:4} 
+		score_guide = {1:5, 2:5, 3:4, 4:4} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)

@@ -6,6 +6,8 @@
 
 [node name="ReviveSelect" type="Node2D"]
 
+z/z = 42
+z/relative = false
 script/script = ExtResource( 1 )
 
 [node name="Sprite" type="Sprite" parent="."]

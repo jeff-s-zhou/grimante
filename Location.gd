@@ -39,7 +39,11 @@ func soft_reset():
 	set_deployable_indicator(false)
 	
 func debug():
-	get_node("Label").set_text(str(coords.x) + "," + str(coords.y))
+	if get_node("Coords").is_visible():
+		get_node("Coords").hide()
+	else:
+		get_node("Coords").show()
+		get_node("Coords/Label").set_text(str(coords.x) + "," + str(coords.y))
 
 func hide_indirect_highlighting():
 	self.indirect_highlighting = false

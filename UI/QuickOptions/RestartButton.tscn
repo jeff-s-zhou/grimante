@@ -10,6 +10,7 @@ extents = Vector2( 12, 12 )
 
 [node name="RestartButton" type="Area2D"]
 
+visibility/opacity = 0.5
 input/pickable = true
 shapes/0/shape = SubResource( 1 )
 shapes/0/transform = Matrix32( 1, 0, 0, 1, 0, 0 )

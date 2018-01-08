@@ -609,11 +609,12 @@ func attacked(amount, unit, delay=0.0, blocking=false):
 	
 	if unit != null:
 		if get_parent().locations[coords].raining and damage > 1:
-			var tile = get_parent().locations[coords]
-			add_animation(tile, "animate_lightning", true)
-			var action = get_new_action()
-			action.add_call("attacked", [2, "stormdancer"], self.coords)
-			action.execute()
+			if !(typeof(unit) == TYPE_STRING and unit == "stormdancer"):
+				var tile = get_parent().locations[coords]
+				add_animation(tile, "animate_lightning", true)
+				var action = get_new_action()
+				action.add_call("attacked", [2, "stormdancer"], self.coords)
+				action.execute()
 
 
 func fireball_attacked(damage, unit):

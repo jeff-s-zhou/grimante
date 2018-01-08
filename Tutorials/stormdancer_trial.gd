@@ -22,3 +22,9 @@ func get_trial3_hints():
 	"If an Enemy takes 2 or more damage while standing on a Storm Tile, it is struck by lightning for 2 damage."]
 	add_hint(tutorial, 1, text)
 	return tutorial
+
+func get_trial4_hints():
+	var tutorial = TutorialPrototype.instance()
+	var text = ["Remember that the Lightning is triggered by any source of damage."]
+	add_hint(tutorial, 1, text)
+	return tutorial

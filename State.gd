@@ -82,13 +82,13 @@ func is_set_unlocked(level_set_id):
 		return true
 #	print("is set unlocked: ", level_set_id)
 #	print(self.completed_level_sets.keys())
-	var previous_set_id = str(level_set_id - 1)
-	return previous_set_id in self.completed_level_sets.keys()
+	var previous_set_id = level_set_id - 1
+	return (previous_set_id in self.completed_level_sets.keys() or str(previous_set_id) in self.completed_level_sets.keys())
 	
 func is_set_completed(level_set=null):
 	if level_set == null:
 		level_set = self.current_level_set
-	return str(level_set.id) in self.completed_level_sets.keys()
+	return str(level_set.id) in self.completed_level_sets.keys() or level_set.id in self.completed_level_sets.keys()
 	
 func get_level_set_progress(level_set=null):
 	if level_set == null:

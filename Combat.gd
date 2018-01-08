@@ -107,7 +107,7 @@ func _ready():
 	get_node("Grid").display_incoming()
 	
 	get_node("AnimationPlayer").play("transition_in")
-	yield(get_node("AnimationPlayer"), "finished")
+	#yield(get_node("AnimationPlayer"), "finished")
 	
 	unpause()
 		
@@ -172,11 +172,13 @@ func debug_full_roster():
 	
 func pause():
 	set_process_input(false)
+	get_node("PauseMenu").set_process_input(true)
 	get_node("ControlBar").set_disabled(true)
 	
 
 func unpause():
 	set_process_input(true)
+	get_node("PauseMenu").set_process_input(false)
 	#needed otherwise the control bar can still process the exact same inputs that unpaused lol
 	get_node("Timer").set_wait_time(0.1) 
 	get_node("Timer").start()
@@ -312,8 +314,7 @@ func handle_deploy():
 	
 	
 func display_pause_menu():
-		pause()
-		get_node("PauseMenu").show()
+		get_node("PauseMenu").display()
 	
 		
 func restart():
@@ -381,17 +382,24 @@ func computer_input(event):
 		return
 
 			
-	elif get_node("InputHandler").is_deselect(event): 
-		if get_node("Grid").selected != null:
+	elif get_node("InputHandler").is_deselect(event) and get_node("Grid").selected != null:
 			get_node("Grid").deselect()
+			
+	elif get_node("InputHandler").is_deselect(event) and self.has_active_star:
+		var star_bar = get_node("ControlBar/Combat/StarBar")
+		star_bar.refund()
+		set_active_star(false)
 
-	
+	elif get_node("InputHandler").is_ui_cancel(event):
+		get_node("PauseMenu").toggle()
+
 	elif get_node("InputHandler").is_ui_accept(event):
 		if self.state == self.STATES.deploying:
 			emit_signal("deployed")
 		if self.state == self.STATES.player_turn:
 			end_turn()
-			
+
+
 	elif event.is_action("detailed_description"):
 		if event.is_pressed() and !event.is_echo():
 			var hovered_piece = get_node("CursorArea").get_piece_hovered()
@@ -420,6 +428,9 @@ func computer_input(event):
 			
 	elif event.is_action("restart") and event.is_pressed():
 		restart()
+		
+	elif event.is_action("toggle_coords") and event.is_pressed():
+		debug_mode()
 
 			
 	elif event.is_action("test_action") and event.is_pressed():
@@ -428,18 +439,9 @@ func computer_input(event):
 		debug_mode()
 		for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
 			enemy_piece.debug()
-			
-		for location in get_node("Grid").locations.values():
-			location.debug()
-			
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			player_piece.debug()
 			
-	elif event.is_action("test_action2") and event.is_pressed():
-		pass
-
-		#print(get_node("Grid").pieces)
-
 
 func _process(delta):
 	get_node('FpsLabel').set_text(str(OS.get_frames_per_second()))

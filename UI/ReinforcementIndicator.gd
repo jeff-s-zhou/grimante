@@ -14,7 +14,8 @@ func _ready():
 func display(type):
 	get_node("Sprite").play(type)
 	get_node("Sprite 2").play(type)
-	get_node("Sprite 3").play(type)
+	if !type == "friendly":
+		get_node("Sprite 3").play(type)
 	
 func animate_summon(animation_speed):
 	get_parent().play_summon_sound()

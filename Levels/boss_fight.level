@@ -1,18 +1,16 @@
-{"hp":"5", "turn":0, "pos_x":3, "name":"spectre", "modifiers":{}, "pos_y":5}
-{"hp":"4", "turn":0, "pos_x":5, "name":"slime", "modifiers":{}, "pos_y":5}
-{"hp":"4", "turn":0, "pos_x":1, "name":"slime", "modifiers":{}, "pos_y":3}
-{"hp":"1", "turn":0, "pos_x":5, "name":"flanker", "modifiers":{}, "pos_y":3}
-{"hp":"1", "turn":0, "pos_x":1, "name":"flanker", "modifiers":{}, "pos_y":1}
-{"hp":"7", "turn":0, "pos_x":5, "name":"grunt", "modifiers":{}, "pos_y":4}
-{"hp":"7", "turn":0, "pos_x":1, "name":"grunt", "modifiers":{}, "pos_y":2}
-{"hp":"7", "turn":0, "pos_x":6, "name":"grunt", "modifiers":{}, "pos_y":4}
-{"hp":"7", "turn":0, "pos_x":0, "name":"grunt", "modifiers":{}, "pos_y":1}
-{"hp":"1", "turn":0, "pos_x":4, "name":"flanker", "modifiers":{}, "pos_y":3}
+{"hp":"7", "turn":0, "pos_x":0, "name":"grunt", "modifiers":{}, "pos_y":2}
 {"hp":"9", "turn":0, "pos_x":4, "name":"ranged", "modifiers":{"Shield":"Shield"}, "pos_y":2}
-{"hp":"1", "turn":0, "pos_x":2, "name":"flanker", "modifiers":{}, "pos_y":2}
-{"hp":"9", "turn":0, "pos_x":2, "name":"ranged", "modifiers":{"Shield":"Shield"}, "pos_y":1}
-{"turn":0, "pos_x":4, "name":"archer", "pos_y":7}
-{"turn":0, "pos_x":5, "name":"berserker", "pos_y":8}
+{"hp":"7", "turn":0, "pos_x":6, "name":"grunt", "modifiers":{}, "pos_y":5}
 {"turn":0, "pos_x":1, "name":"cavalier", "pos_y":6}
+{"turn":0, "pos_x":4, "name":"archer", "pos_y":7}
+{"hp":"9", "turn":0, "pos_x":2, "name":"ranged", "modifiers":{"Shield":"Shield"}, "pos_y":1}
+{"hp":"7", "turn":0, "pos_x":1, "name":"grunt", "modifiers":{}, "pos_y":2}
 {"turn":0, "pos_x":2, "name":"corsair", "pos_y":6}
-{"hp":"6", "turn":0, "pos_x":3, "name":"boss_grunt", "modifiers":{}, "pos_y":3}
+{"hp":"3", "turn":0, "pos_x":2, "name":"flanker", "modifiers":{}, "pos_y":2}
+{"hp":"3", "turn":0, "pos_x":4, "name":"flanker", "modifiers":{}, "pos_y":3}
+{"hp":"7", "turn":0, "pos_x":5, "name":"grunt", "modifiers":{}, "pos_y":4}
+{"hp":"7", "turn":0, "pos_x":3, "name":"boss_grunt", "modifiers":{}, "pos_y":3}
+{"turn":0, "pos_x":5, "name":"berserker", "pos_y":8}
+{"hp":"4", "turn":0, "pos_x":1, "name":"slime", "modifiers":{}, "pos_y":3}
+{"hp":"4", "turn":0, "pos_x":5, "name":"slime", "modifiers":{}, "pos_y":5}
+{"hp":"5", "turn":0, "pos_x":3, "name":"spectre", "modifiers":{}, "pos_y":5}

@@ -66,6 +66,8 @@ func defrost():
 	set_full_visibility(false, get_node("RegularButton"))
 	get_node("RegularButton").show()
 	get_node("AnimationPlayer").play("defrost")
+	yield(get_node("AnimationPlayer"), "finished")
+	get_node("GreyedButton").hide()
 	
 func goldify():
 	pass

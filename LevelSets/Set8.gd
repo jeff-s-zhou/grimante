@@ -18,7 +18,7 @@ func saint_trials():
 	var flags = ["no_stars"]
 	var challenges = []
 	var base_id = 10030
-	for i in range(1, 5):
+	for i in range(1, 5): #31, 32, 33, 34
 		var trial_hint = funcref(tutorial, "get_trial" + str(i) + "_hints")
 		var extras = {"free_deploy":false, "tutorial":trial_hint, "flags":flags}
 		var pieces = load_level("saint_trial" + str(i) +".level")
@@ -26,7 +26,7 @@ func saint_trials():
 		var heroes = pieces[1]
 		var challenge = LevelTypes.Timed.new(base_id + i, "", heroes, enemies, 1, null, extras) 
 		challenges.append(challenge)
-	return LevelTypes.Trial.new(10033, "Saint Trials", challenges)
+	return LevelTypes.Trial.new(10034, "Saint Trials", challenges)
 	
 func saint_practice():
 	var pieces

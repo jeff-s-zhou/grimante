@@ -1,16 +1,18 @@
-extends "QuickButton.gd"
+extends Node
 
 # class member variables go here, for example:
 # var a = 2
 # var b = "textvar"
 
-
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	pass
+	connect("mouse_enter", self, "hover")
+	connect("mouse_exit", self, "unhover")
 
 
-func _input_event(viewport, event, shape_idx):
-	if get_node("/root/InputHandler").is_select(event):
-		get_node("/root/Combat").restart()
+func hover():
+	set_opacity(1)
+
+func unhover():
+	set_opacity(0.5)

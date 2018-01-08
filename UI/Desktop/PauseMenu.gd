@@ -10,7 +10,7 @@ const SettingsPrototype = preload("res://DesktopSettings/Settings.tscn")
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	set_process_input(true)
+	set_process_input(false)
 	get_node("T").initialize()
 	get_node("T/SettingsButton").connect("pressed", self, "go_to_settings")
 	get_node("T/BackButton").connect("pressed", self, "exit_menu")
@@ -19,13 +19,21 @@ func _ready():
 
 func _input(event):
 	if get_node("/root/InputHandler").is_ui_cancel(event):
-		if is_visible():
-			exit_menu()
-		else:
-			show()
-			get_node("T").animate_slide_in()
-			get_parent().blur_darken(0.2)
-			get_parent().pause()
+		toggle()
+
+
+func toggle():
+	if is_visible():
+		exit_menu()
+	else:
+		display()
+
+
+func display():
+	show()
+	get_node("T").animate_slide_in()
+	get_parent().blur_darken(0.2)
+	get_parent().pause()
 
 func exit_menu():
 	get_node("T").animate_slide_out()

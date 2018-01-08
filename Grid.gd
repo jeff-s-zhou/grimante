@@ -137,6 +137,10 @@ func initialize(flags):
 func debug():
 	for key in self.locations.keys():
 		self.locations[key].debug()
+		
+func display_coords():
+	for key in self.locations.keys():
+		self.locations[key].debug()
 
 #so we know what target
 func set_target(target):

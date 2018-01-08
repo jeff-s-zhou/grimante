@@ -25,14 +25,15 @@ func initialize(flags, combat_scene):
 	if flags.has("no_fifth"):
 		get_node("FinalHeroScreen").set_pos(Vector2(-500, -500))
 		get_node("FinalHeroScreen").set_opacity(0)
-		
+		get_node("Combat").show()
+	else:
+		get_node("Combat").hide()
 
 
 func set_deploying(flag):
 	get_node("Combat/EndTurnButton").set_deploying(flag)
 	if flag:
 		get_node("FinalHeroScreen").show()
-		get_node("Combat").hide()
 	else:
 		get_node("FinalHeroScreen").queue_free()
 		get_node("Combat/EndTurnButton").show()

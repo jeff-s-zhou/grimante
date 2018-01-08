@@ -6,16 +6,16 @@
 [ext_resource path="res://Assets/UI/location_red.png" type="Texture" id=4]
 [ext_resource path="res://Assets/UI/location_orange.png" type="Texture" id=5]
 [ext_resource path="res://Effects/StormEffect.tscn" type="PackedScene" id=6]
-[ext_resource path="res://Assets/processed_fonts/info_overlay_body_rubik_26_med.fnt" type="BitmapFont" id=7]
-[ext_resource path="res://Assets/processed_sounds/magic tile hover.smp" type="Sample" id=8]
-[ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=9]
-[ext_resource path="res://Assets/processed_sounds/summon2.smp" type="Sample" id=10]
-[ext_resource path="res://Assets/processed_sounds/summon3.smp" type="Sample" id=11]
-[ext_resource path="res://Assets/processed_sounds/summon4.smp" type="Sample" id=12]
-[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=13]
-[ext_resource path="res://UI/ReinforcementIndicator.tscn" type="PackedScene" id=14]
-[ext_resource path="res://Assets/UI/endzone_single.png" type="Texture" id=15]
-[ext_resource path="res://UI/ReviveSymbol.tscn" type="PackedScene" id=16]
+[ext_resource path="res://Assets/processed_sounds/magic tile hover.smp" type="Sample" id=7]
+[ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=8]
+[ext_resource path="res://Assets/processed_sounds/summon2.smp" type="Sample" id=9]
+[ext_resource path="res://Assets/processed_sounds/summon3.smp" type="Sample" id=10]
+[ext_resource path="res://Assets/processed_sounds/summon4.smp" type="Sample" id=11]
+[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=12]
+[ext_resource path="res://UI/ReinforcementIndicator.tscn" type="PackedScene" id=13]
+[ext_resource path="res://Assets/UI/endzone_single.png" type="Texture" id=14]
+[ext_resource path="res://UI/ReviveSymbol.tscn" type="PackedScene" id=15]
+[ext_resource path="res://Assets/processed_fonts/info_overlay_body_rubik_26_med.fnt" type="BitmapFont" id=16]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 
@@ -61,37 +61,37 @@ animations = [ {
 "db": -22.0,
 "pitch": 1.5,
 "priority": 0,
-"sample": ExtResource( 8 )
+"sample": ExtResource( 7 )
 }
 samples/mouseover = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 9 )
+"sample": ExtResource( 8 )
 }
 samples/summon2 = {
 "db": 0.0,
 "pitch": 1.2,
 "priority": 0,
-"sample": ExtResource( 10 )
+"sample": ExtResource( 9 )
 }
 samples/summon3 = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 11 )
+"sample": ExtResource( 10 )
 }
 samples/summon4 = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 12 )
+"sample": ExtResource( 11 )
 }
 samples/tile_hover = {
 "db": -20.0,
 "pitch": 0.9,
 "priority": 0,
-"sample": ExtResource( 13 )
+"sample": ExtResource( 12 )
 }
 
 [node name="Location" type="Area2D"]
@@ -130,42 +130,6 @@ animation = "default"
 
 [node name="StormEffect" parent="." instance=ExtResource( 6 )]
 
-[node name="Label" type="Label" parent="."]
-
-focus/ignore_mouse = true
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 0
-margin/left = -25.0
-margin/top = -22.0
-margin/right = 27.0
-margin/bottom = 25.0
-custom_fonts/font = ExtResource( 7 )
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-align = 1
-valign = 1
-percent_visible = 1.0
-lines_skipped = 0
-max_lines_visible = -1
-
-[node name="Label1" type="Label" parent="."]
-
-focus/ignore_mouse = true
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 0
-margin/left = -24.0
-margin/top = 5.0
-margin/right = 28.0
-margin/bottom = 52.0
-custom_fonts/font = ExtResource( 7 )
-custom_colors/font_color = Color( 0, 0, 0, 1 )
-align = 1
-valign = 1
-percent_visible = 1.0
-lines_skipped = 0
-max_lines_visible = -1
-
 [node name="SamplePlayer" type="SamplePlayer" parent="."]
 
 config/polyphony = 1
@@ -183,11 +147,11 @@ default/reverb_room = 2
 default/reverb_send = 0.0
 default/chorus_send = 0.0
 
-[node name="DeployIndicator" parent="." instance=ExtResource( 14 )]
+[node name="DeployIndicator" parent="." instance=ExtResource( 13 )]
 
 visibility/visible = false
 
-[node name="ReinforcementIndicator" parent="." instance=ExtResource( 14 )]
+[node name="ReinforcementIndicator" parent="." instance=ExtResource( 13 )]
 
 visibility/visible = false
 transform/pos = Vector2( 0, 1 )
@@ -196,9 +160,9 @@ transform/pos = Vector2( 0, 1 )
 
 visibility/visible = false
 transform/pos = Vector2( 2, 0 )
-texture = ExtResource( 15 )
+texture = ExtResource( 14 )
 
-[node name="ReviveSymbol" parent="." instance=ExtResource( 16 )]
+[node name="ReviveSymbol" parent="." instance=ExtResource( 15 )]
 
 [node name="Timer" type="Timer" parent="."]
 
@@ -206,5 +170,29 @@ process_mode = 1
 wait_time = 1.0
 one_shot = false
 autostart = false
+
+[node name="Coords" type="Node2D" parent="."]
+
+visibility/visible = false
+z/z = 99
+z/relative = false
+
+[node name="Label" type="Label" parent="Coords"]
+
+focus/ignore_mouse = true
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 0
+margin/left = -25.0
+margin/top = -22.0
+margin/right = 27.0
+margin/bottom = 25.0
+custom_fonts/font = ExtResource( 16 )
+custom_colors/font_color = Color( 0, 0, 0, 1 )
+align = 1
+valign = 1
+percent_visible = 1.0
+lines_skipped = 0
+max_lines_visible = -1
 
 

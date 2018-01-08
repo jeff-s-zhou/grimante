@@ -20,9 +20,12 @@ func _ready():
 	var first_clear = get_node("/root/global").get_param("cleared_level_set")
 	#either null, false, or true
 	if first_clear:
-		var id_str = "T/" + str(get_node("/root/State").current_level_set.id)
-		#get the button associated  with the next level set and play its cleared animation
-		get_node(id_str).defrost()
+		var id = get_node("/root/State").current_level_set.id
+		if id < 9: #current level cap:
+			var id_str = "T/" + str(id + 1)
+			#get the button associated  with the next level set and play its cleared animation
+			get_node(id_str).defrost()
+	
 	
 	get_node("/root/State").current_level_set = null
 	

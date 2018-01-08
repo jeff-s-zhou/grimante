@@ -17,3 +17,7 @@ func initialize(level, score, disabled=false):
 
 func is_pressed():
 	emit_signal("pressed", self.level)
+	
+	
+func debug():
+	set_disabled(false)

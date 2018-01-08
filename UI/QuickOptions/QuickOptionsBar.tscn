@@ -6,8 +6,6 @@
 
 [node name="QuickOptionsBar" type="Node2D"]
 
-visibility/opacity = 0.5
-
 [node name="RestartButton" parent="." instance=ExtResource( 1 )]
 
 [node name="SoundToggle" parent="." instance=ExtResource( 2 )]

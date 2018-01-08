@@ -1,4 +1,4 @@
-extends Node2D
+extends "QuickButton.gd"
 
 # class member variables go here, for example:
 # var a = 2
@@ -13,5 +13,5 @@ func _ready():
 
 func _input_event(viewport, event, shape_idx):
 	if get_node("/root/InputHandler").is_select(event):
-		get_node("/root/Combat").displaying_settings()
+		get_node("/root/Combat").display_pause_menu()
 	

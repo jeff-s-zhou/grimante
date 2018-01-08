@@ -19,7 +19,7 @@ func stormdancer_trials():
 	var flags = ["hints", "no_stars"]
 	var challenges = []
 	var base_id = 10018
-	for i in range(1, 4):
+	for i in range(1, 5):
 		var trial_hint = funcref(tutorial, "get_trial" + str(i) + "_hints")
 		var extras = {"free_deploy":false, "tutorial":trial_hint, "flags":flags}
 		var pieces = load_level("stormdancer_trial" + str(i) +".level")
@@ -27,15 +27,7 @@ func stormdancer_trials():
 		var heroes = pieces[1]
 		var challenge = LevelTypes.Timed.new(base_id + i, "", heroes, enemies, 1, null, extras) 
 		challenges.append(challenge)
-		
-	var extras = {"free_deploy":false, "flags":flags}
-	var pieces = load_level("stormdancer_trial4.level")
-	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(pieces[0])
-	var heroes = pieces[1]
-	var challenge = LevelTypes.Timed.new(10022, "", heroes, enemies, 1, null, extras) 
-	challenges.append(challenge)
-	
-	
+
 	return LevelTypes.Trial.new(10022, "Stormdancer Trials", challenges)
 	
 func stormdancer_practice(hard=false):

@@ -23,7 +23,7 @@ tracks/0/keys = {
 
 [node name="DiagonalGuide" type="Node2D"]
 
-z/z = 92
+z/z = 43
 z/relative = false
 script/script = ExtResource( 1 )
 

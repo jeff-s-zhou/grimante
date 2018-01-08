@@ -87,9 +87,7 @@ func refund():
 	self.star_count += 1
 	var star = self.star_prototype.instance()
 	star.set_pos(FRONT_POS)
-	print("is this the buggy area")
 	add_child(star)
-	print("ending buggy area")
 	self.stars.push_front(star)
 
 	star.max_out() #increase to a full star

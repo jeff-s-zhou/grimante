@@ -8,13 +8,15 @@ const level_set_button_prototype = preload("res://DesktopLevelSelect/LongTexture
 
 var level_set
 
+var level_buttons = []
+
 var level_count = 0
 
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	#add_child(levels)
-	
+	set_process_input(true)
 	var y_position = 170
 	var hard_y_position = 170
 	
@@ -38,6 +40,13 @@ func _ready():
 
 	get_node("T").initialize()
 	get_node("T").animate_slide_in()
+	
+	
+func _input(event):
+	if get_node("/root/InputHandler").is_debug(event):
+		for level_button in self.level_buttons:
+			level_button.debug()
+
 
 func create_new_level_button(level, y_position, disabled=false):
 	var score = get_node("/root/State").get_level_score(level.id, self.level_set.id)
@@ -47,6 +56,7 @@ func create_new_level_button(level, y_position, disabled=false):
 	level_button.set_pos(Vector2(screen_size.x/2, y_position))
 	level_button.connect("pressed", self, "goto_level")
 	get_node("T").add_child(level_button)
+	self.level_buttons.append(level_button)
 
 	
 func goto_level(level):
