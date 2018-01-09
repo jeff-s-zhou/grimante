@@ -580,6 +580,7 @@ func set_silenced(flag):
 		set_unstable(false)
 		add_animation(self, "animate_silenced", false)
 		get_node("CollisionArea").set_pickable(true)
+		self.grid.animate_clear_speed_up(self.coords)
 	else:
 		add_animation(self, "animate_unsilenced", false)
 	self.silenced = flag

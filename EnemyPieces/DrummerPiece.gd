@@ -11,8 +11,8 @@ func initialize(max_hp, modifiers, prototype):
 	.initialize("Griffon", DESCRIPTION, Vector2(0, 1), max_hp, modifiers, prototype, TYPES.assist)
 
 func added_to_grid():
-	animate_wind()
 	.added_to_grid()
+	self.grid.animate_speed_up(self.coords)
 
 #okay, I think we need a system for temporary buffs?
 #every enemy turn, update all units in its column? after resetting all units? but then this update has to be called first...
@@ -20,14 +20,18 @@ func added_to_grid():
 
 func turn_start():
 	if !self.silenced:
-		var column_range = get_parent().get_range(self.coords, [1, 8], "ENEMY", false, [3, 4])
+		self.double_time = true
+		var column_range = self.grid.get_range(coords, [1, 8], "ENEMY", false, [3, 4])
 		for coords in column_range:
-			self.double_time = true
-			get_parent().pieces[coords].double_time = true
+			self.grid.pieces[coords].double_time = true
 	else:
 		self.double_time = false
 		
-func animate_wind():
-	get_parent().get_node("FieldEffects").emit_wind(self.coords)
-	get_node("Tween 3").interpolate_callback(self, 5.1, "animate_wind")
-	get_node("Tween 3").start()
+func delete_self(isolated_call=true, delay=0.0):
+	self.grid.animate_clear_speed_up(self.coords)
+	.delete_self(isolated_call, delay)
+	
+func turn_attack_update():
+	if !self.silenced:
+		self.grid.animate_speed_up(self.coords)
+	.turn_attack_update()

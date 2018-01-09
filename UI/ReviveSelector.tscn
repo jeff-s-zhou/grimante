@@ -12,6 +12,8 @@ radius = 33.0
 
 [node name="ReviveSelector" type="Area2D"]
 
+z/z = 42
+z/relative = false
 input/pickable = false
 shapes/0/shape = SubResource( 1 )
 shapes/0/transform = Matrix32( 1, 0, 0, 1.2, 0, 0 )

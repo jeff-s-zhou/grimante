@@ -50,6 +50,8 @@ func set_targetable(flag):
 	get_node("CollisionArea").set_pickable(flag)
 		
 func is_targetable():
+	print("is targetable: ", get_node("CollisionArea").is_pickable())
+	print("mid animation: ", self.mid_animation)
 	return get_node("CollisionArea").is_pickable()
 	
 func add_anim_count():

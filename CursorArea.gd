@@ -46,7 +46,7 @@ func _input(ev):
 func get_piece_hovered():
 	var areas = get_overlapping_areas()
 	for area in areas:
-		if area.get_name() == "CollisionArea": #hackey, since CollisionArea is the one that has monitorable enabled but ClickArea doesn't
+		if area.get_name() == "CollisionArea":
 			return area.get_parent()
 	return null
 	
@@ -72,6 +72,7 @@ func get_piece_or_location_hovered():
 			if area.is_targetable():
 				return area
 	return null
+
 
 func get_modifier_mock_hovered():
 	var areas = get_overlapping_areas()

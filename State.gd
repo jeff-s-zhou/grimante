@@ -164,7 +164,7 @@ func save_level_progress(level_id, score):
 
 
 func set_completed_level_set(id):
-	self.completed_level_sets[id] = true
+	self.completed_level_sets[str(id)] = true
 	save_state()
 
 #USER_ID BUSINESS

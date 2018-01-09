@@ -351,6 +351,9 @@ func computer_input(event):
 			instant_lighten()
 			var has_selected = get_node("Grid").selected != null
 			var hovered = get_node("CursorArea").get_piece_or_location_hovered()
+			print("hovered: ", hovered)
+			if hovered != null:
+				print("is targetable: ", hovered.is_targetable())
 			if hovered and hovered.is_targetable():
 				print("detected hovered and targetable on input")
 				var star_bar = get_node("ControlBar/Combat/StarBar")
@@ -383,7 +386,7 @@ func computer_input(event):
 
 			
 	elif get_node("InputHandler").is_deselect(event) and get_node("Grid").selected != null:
-			get_node("Grid").deselect()
+		get_node("Grid").deselect()
 			
 	elif get_node("InputHandler").is_deselect(event) and self.has_active_star:
 		var star_bar = get_node("ControlBar/Combat/StarBar")
@@ -457,7 +460,7 @@ func enemy_phase():
 		pause()
 		yield(self.tutorial, "rule_finished")
 		unpause()
-
+	
 	var enemy_pieces = get_enemies(false)
 	for enemy_piece in enemy_pieces:
 		enemy_piece.turn_start()
@@ -470,6 +473,8 @@ func enemy_phase():
 	
 	enemy_phase_helper(true)
 	yield(self, "enemy_turn_done")
+	
+	get_node("Grid").clear_animations()
 	
 	enemy_pieces = get_enemies(false)
 	for enemy_piece in enemy_pieces:

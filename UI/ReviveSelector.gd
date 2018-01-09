@@ -23,7 +23,6 @@ func handle(coords):
 	self.coords = coords
 	self.revive_pos = get_parent().locations[coords].get_pos()
 	set_pos(self.revive_pos)
-	print("in revive selector, pos: ", get_pos())
 	show()
 	self.dead_heroes = get_tree().get_nodes_in_group("dead_heroes")
 	var current_option = dead_heroes[0]
@@ -45,15 +44,19 @@ func swap(increment):
 	print(self.index)
 	print(selector)
 	var current_option = self.dead_heroes[selector]
+	print("current option:", current_option.unit_name)
 	current_option.set_opacity(1)
+	print("revive pos: ", self.revive_pos)
 	current_option.set_pos(self.revive_pos)
+	print("current pos: ", current_option.get_pos())
+	print("swapping")
 	current_option.animate_possible_revive()
 	
 	
 func _input_event(viewport, event, shape_idx):
 	if get_node("/root/InputHandler").is_select(event):
 		print("triggered input event")
-		emit_signal("selected", self.dead_heroes[index], coords)
+		emit_signal("selected", self.dead_heroes[index % dead_heroes.size()], coords)
 		self.index = 0
 		self.dead_heroes = null
 		self.revive_pos = null

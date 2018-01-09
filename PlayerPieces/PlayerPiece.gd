@@ -198,7 +198,8 @@ func walk_off(coords_distance, exits_bottom=true):
 
 
 func delete_self(isolated_call=true, delay=0.0):
-	set_targetable(false)
+	get_node("CollisionArea").set_pickable(false)
+	#get_node("CollisionArea").set_monitorable(false)
 	add_to_group("dead_heroes")
 	add_animation(self, "animate_delete_self", false, [delay])
 	self.state = States.DEAD
@@ -224,6 +225,10 @@ func animate_delete_self(delay=0.0):
 	get_node("Timer").set_wait_time(0.5)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
+	#hacky ass shit. Can't disable, because then on revive you can't select it
+	#can't move the whole pos out of the way, because then on using the revive selector,
+	#switching to another piece causes the sprite to disappear entirely somehow
+	get_node("CollisionArea").set_pos(Vector2(-100, -100))
 	explosion.queue_free()
 	subtract_anim_count()
 
@@ -237,11 +242,14 @@ func resurrect(coords):
 	self.coords = coords
 	var pos = self.grid.locations[coords].get_pos()
 	set_pos(pos)
+	get_node("CollisionArea").set_pos(Vector2(0, -6))
 	add_to_group("player_pieces")
 	remove_from_group("dead_heroes")
 	set_z(0)
 	get_parent().add_piece(self.coords, self, true)
 	add_animation(self, "animate_resurrect", true)
+	get_node("CollisionArea").set_pickable(true)
+	#get_node("CollisionArea").set_monitorable(true)
 	self.state = States.DEFAULT
 
 
@@ -276,10 +284,14 @@ func animate_resurrect(blocking=true):
 	subtract_anim_count() #will set targetable to true, since state is no longer DEAD
 	if(get_node("CollisionArea").overlaps_area(self.cursor_area)):
 		self.hovered()
-		
+#		
 		
 func animate_possible_revive():
+	print("animating possible revive for:", self.unit_name)
+	print("opacity before: ", get_node("Physicals/AnimatedSprite").get_opacity())
 	get_node("Physicals/AnimatedSprite").set_opacity(1)
+	print("opacity after: ", get_node("Physicals/AnimatedSprite").get_opacity())
+	get_node("CollisionArea").set_pos(Vector2(0, -6))
 	get_node("AnimationPlayer").play("possible_revive")
 
 

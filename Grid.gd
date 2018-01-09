@@ -9,6 +9,8 @@ var locations = {}
 var pieces = {}
 var reinforcements = {}
 
+var speed_up_rows = {}
+
 var assassin = null
 var saint = null
 var pyromancer = null
@@ -204,6 +206,28 @@ func handle_field_of_lights(hero):
 func handle_enemy_death(coords):
 	if self.pyromancer != null:
 		self.pyromancer.gather_charges(coords)
+		
+		
+func clear_animations():
+	for coords in self.speed_up_rows.values():
+		print("clearing coords: ", coords)
+		self.speed_up_rows.erase(coords.x)
+		get_node("FieldEffects").clear_speed_up(coords)
+
+func animate_speed_up(coords):
+	#if a griffin is already in the row and it's above this one (or it is this one), no need to speed up
+	if coords.x in self.speed_up_rows and coords.y >= self.speed_up_rows[coords.x].y:
+		return
+	
+	#if we're the top griffin in the row, we cast the animation from here
+	self.speed_up_rows[coords.x] = coords
+	get_node("FieldEffects").emit_speed_up(coords)
+
+
+func animate_clear_speed_up(coords):
+	if coords.x in self.speed_up_rows and coords.y == self.speed_up_rows[coords.x].y:
+		self.speed_up_rows.erase(coords.x)
+		get_node("FieldEffects").clear_speed_up(coords)
 
 
 func remove_piece(coords):
