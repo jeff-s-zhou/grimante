@@ -17,12 +17,12 @@ func get():
 	var text = ["You've learned how to use {Direct Attacks}. However, that's not all Heroes can do."]
 	add_player_start_rule(tutorial, 1, text)
 	
-	text = ["The Cavalier can damage multiple Enemies with its {Indirect Attack}: Trample.",
-	"Trample deals {2} damage to each Enemy in the Cavalier's path."]
+	text = ["The Cavalier can damage multiple enemies with its {Indirect Attack}: Trample.",
+	"Trample deals {2} damage to each enemy in the Cavalier's path."]
 	add_forced_action(tutorial, 1, Vector2(2, 6), Vector2(2, 2), text)
 	
 	text = ["When the Berserker moves to an empty tile, it uses his Indirect Attack, Ground Slam.", 
-	"Ground Slam deals {2} damage to Enemies adjacent to the destination."]
+	"Ground Slam deals {2} damage to enemies adjacent to the destination."]
 	add_forced_action(tutorial, 1, Vector2(4, 7), Vector2(4, 5), text)
 
 	
@@ -34,7 +34,7 @@ func get():
 	add_forced_action(tutorial, 2, Vector2(2, 2), Vector2(6, 6), text)
 	
 	text = ["The Berserker's Indirect Attack also {Stuns} enemies.", \
-	"The Stun Effect prevents enemies from moving their next turn.", 
+	"The Stun effect prevents enemies from moving their next turn.", 
 	]
 	add_forced_action(tutorial, 2, Vector2(4, 5), Vector2(4, 3), text)
 	

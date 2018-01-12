@@ -21,7 +21,7 @@
 [sub_resource type="Animation" id=1]
 
 resource/name = "transition_in"
-length = 1.4
+length = 1.0
 loop = false
 step = 0.1
 tracks/0/type = "value"
@@ -29,7 +29,7 @@ tracks/0/path = NodePath("TransitionMask:material/material:shader_param/strength
 tracks/0/interp = 1
 tracks/0/imported = false
 tracks/0/keys = {
-"times": FloatArray( 0, 1.4 ),
+"times": FloatArray( 0.1, 1 ),
 "transitions": FloatArray( 1, 1 ),
 "update": 0,
 "values": [ 0.0, 2.4 ]
@@ -55,7 +55,7 @@ tracks/0/keys = {
 [sub_resource type="Animation" id=3]
 
 resource/name = "transition_out_fast"
-length = 1.6
+length = 0.9
 loop = false
 step = 0.1
 tracks/0/type = "value"
@@ -63,7 +63,7 @@ tracks/0/path = NodePath("TransitionMask:material/material:shader_param/strength
 tracks/0/interp = 1
 tracks/0/imported = false
 tracks/0/keys = {
-"times": FloatArray( 0, 1.4 ),
+"times": FloatArray( 0, 0.8 ),
 "transitions": FloatArray( 1, 1 ),
 "update": 0,
 "values": [ 2.4, 0.0 ]
@@ -91,7 +91,7 @@ COLOR.a -= (pow(strength + 1, 10) - 1) * value;
 shader/shader = SubResource( 4 )
 shader/shading_mode = 0
 shader_param/mask = ExtResource( 3 )
-shader_param/strength = 2.0
+shader_param/strength = 0.0
 
 [sub_resource type="SampleLibrary" id=6]
 

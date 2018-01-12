@@ -6,6 +6,10 @@ extends Node2D
 
 const level_set_button_prototype = preload("res://DesktopLevelSelect/LongTextureLabelButton.tscn")
 
+const SettingsPrototype = preload("res://DesktopSettings/Settings.tscn")
+
+var settings
+
 var level_set
 
 var level_buttons = []
@@ -64,6 +68,24 @@ func goto_level(level):
 	yield(get_node("T"), "animation_done")
 	get_node("/root/State").request_attempt_session_id()
 	get_node("/root/global").goto_scene(get_node("/root/global").combat_resource, {"level":level})
+	
+	
+func go_to_settings():
+	get_node("T").animate_slide_out()
+	yield(get_node("T"), "animation_done")
+	self.settings = SettingsPrototype.instance()
+	add_child(self.settings)
+	self.settings.initialize() #do this after backbutton so that backbutton also gets initialized
+	self.settings.set_pos(Vector2(236, 150))
+	self.settings.animate_slide_in()
+
+
+func back_from_settings():
+	self.settings.animate_slide_out()
+	yield(self.settings, "animation_done")
+	self.settings.queue_free()
+	get_node("T").animate_slide_in()
+
 	
 func back():
 	get_node("T").animate_slide_out()

@@ -13,7 +13,7 @@ func _ready():
 func get_trial1_hints():
 	var tutorial = TutorialPrototype.instance()
 	
-	var hint = ["The Corsair's Direct Attack, Slash, deals 3 damage to an adjacent Enemy."]
+	var hint = ["The Corsair's Direct Attack, Slash, deals 3 damage to an adjacent enemy."]
 	
 	add_hint(tutorial, 1, hint, Vector2(3, 4))
 	

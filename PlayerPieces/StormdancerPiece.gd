@@ -214,6 +214,10 @@ func tango(new_coords):
 	self.rain_coords_dict[self.coords] = true
 	swap_coords_and_pos(target)
 	
+	if target.unit_name.to_lower() != "saint": #if swapping with saint, should only trigger field of lights once
+		self.grid.handle_field_of_lights(self)
+	self.grid.handle_field_of_lights(target)
+	
 func animate_shunpo(new_coords):
 	add_anim_count()
 	get_node("AnimationPlayer 2").play("ShunpoOut")

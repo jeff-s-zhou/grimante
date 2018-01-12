@@ -18,20 +18,20 @@ func get_set():
 func inspire_trials():
 	var tutorial = load("res://Tutorials/inspire_trial.gd").new()
 	var flags = ["hints", "no_stars"]
-	var base_id = 10026
+	var base_id = 10034
 	var challenges = []
-	for i in range(1, 5):
+	for i in range(1, 6):
 		var trial_hint = funcref(tutorial, "get_trial" + str(i) + "_hints")
 		var extras = {"free_deploy":false, "tutorial":trial_hint, "flags":flags}
 		var pieces = load_level("inspire_trial" + str(i) +".level")
 		var enemies = EnemyWrappers.FiniteCuratedWrapper.new(pieces[0])
 		var heroes = pieces[1]
 		var turns = 1
-		if i == 3 or i == 4:
+		if i == 5:
 			turns = 2
-		var challenge = LevelTypes.Timed.new(base_id + i, "", heroes, enemies, turns, null, extras) 
+		var challenge = LevelTypes.Timed.new(base_id + i, "Inspire Trial " + str(i), heroes, enemies, turns, null, extras) 
 		challenges.append(challenge)
-	return LevelTypes.Trial.new(10030, "Inspire Trials", challenges)
+	return LevelTypes.Trial.new(10039, "Inspire Trials", challenges)
 
 
 func inspire(hard=false):
@@ -42,10 +42,8 @@ func inspire(hard=false):
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var tutorial = load("res://Tutorials/shield_inspire.gd").new()
-	var tutorial_func = funcref(tutorial, "get")
 	var flags = ["no_fifth"]
-	var extras = {"free_deploy":false, "flags":flags, "tutorial": tutorial_func, "score_guide":score_guide}
+	var extras = {"free_deploy":false, "flags":flags, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00031, "Power of Friendship", allies, enemies, 3, null, extras)
 
 

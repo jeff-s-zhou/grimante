@@ -4,6 +4,10 @@ extends Node2D
 # var a = 2
 # var b = "textvar"
 
+const SettingsPrototype = preload("res://DesktopSettings/Settings.tscn")
+
+var settings
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
@@ -45,3 +49,20 @@ func goto_level_set(level_set):
 	yield(get_node("T"), "animation_done")
 	get_node("/root/State").current_level_set = level_set
 	get_node("/root/global").goto_scene("res://DesktopLevelSelect/LevelSelect.tscn", {"level_set":level_set})
+	
+	
+func go_to_settings():
+	get_node("T").animate_slide_out()
+	yield(get_node("T"), "animation_done")
+	self.settings = SettingsPrototype.instance()
+	add_child(self.settings)
+	self.settings.initialize() #do this after backbutton so that backbutton also gets initialized
+	self.settings.set_pos(Vector2(236, 150))
+	self.settings.animate_slide_in()
+	
+	
+func back_from_settings():
+	self.settings.animate_slide_out()
+	yield(self.settings, "animation_done")
+	self.settings.queue_free()
+	get_node("T").animate_slide_in()

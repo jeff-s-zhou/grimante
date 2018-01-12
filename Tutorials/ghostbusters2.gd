@@ -8,8 +8,7 @@ extends "res://Tutorials/tutorial.gd"
 func get():
 	var tutorial = TutorialPrototype.instance()
 	
-	var text = ["Hint: Think carefully about your choice of 5th Hero.",
-	"Some Heroes are better at dealing with certain enemies than others."]
+	var text = ["Hint: Some Heroes are better at dealing with certain enemies than others."]
 	add_player_start_rule(tutorial, 0, text)
 
 	

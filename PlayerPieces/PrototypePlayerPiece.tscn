@@ -109,7 +109,6 @@ visibility/visible = false
 
 [node name="Physicals" type="Node2D" parent="."]
 
-visibility/opacity = 0.7
 transform/pos = Vector2( 0, -5 )
 
 [node name="CooldownSprite" type="Sprite" parent="Physicals"]

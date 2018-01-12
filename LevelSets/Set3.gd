@@ -26,9 +26,9 @@ func assassin():
 	var enemies2 = EnemyWrappers.FiniteCuratedWrapper.new(load_level("assassin_trial2.level"))
 	var enemies3 = EnemyWrappers.FiniteCuratedWrapper.new(load_level("assassin_trial3.level"))
 	
-	var challenge1 = LevelTypes.Timed.new(10005, "", allies1, enemies1, 3, null, extras1) 
-	var challenge2 = LevelTypes.Timed.new(10006, "", allies2, enemies2, 1, null, extras2)
-	var challenge3 = LevelTypes.Timed.new(10007, "", allies2, enemies3, 1, null, extras3)
+	var challenge1 = LevelTypes.Timed.new(10005, "Assassin Trial 1", allies1, enemies1, 3, null, extras1) 
+	var challenge2 = LevelTypes.Timed.new(10006, "Assassin Trial 2", allies2, enemies2, 1, null, extras2)
+	var challenge3 = LevelTypes.Timed.new(10007, "Assassin Trial 3", allies2, enemies3, 1, null, extras3)
 	return LevelTypes.Trial.new(10007, "Assassin", [challenge1, challenge2, challenge3])
 
 
@@ -65,7 +65,7 @@ func star_power():
 		var pieces = load_level("star_power" + str(i) +".level")
 		var enemies = EnemyWrappers.FiniteCuratedWrapper.new(pieces)
 		var heroes = allies[i-1]
-		var challenge = LevelTypes.Timed.new(base_id + i, "", heroes, enemies, 1, null, extras) 
+		var challenge = LevelTypes.Timed.new(base_id + i, "Star Trial " + str(i), heroes, enemies, 1, null, extras) 
 		challenges.append(challenge)
 	return LevelTypes.Trial.new(10025, "Star Power", challenges)
 

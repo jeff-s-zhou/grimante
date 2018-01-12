@@ -9,7 +9,7 @@ colors = ColorArray( 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0 )
 
 [node name="SpeedUpIndicator" type="Particles2D"]
 
-visibility/opacity = 0.8
+visibility/opacity = 0.9
 z/z = 41
 z/relative = false
 config/amount = 8

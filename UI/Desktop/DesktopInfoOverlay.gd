@@ -10,8 +10,8 @@ signal description_finished
 
 
 var indirect_body_header_text = "[color=#ffd824][b]%s[/b] [i]%s[/i][/color]"
-var direct_body_header_text = "[color=#ff5151][b]%s[/b] [i](%s) Ability[/i][/color]"
-var continue_text = "CLICK ANYWHERE TO CONTINUE (%s/%s)"
+var direct_body_header_text = "[color=#ff5151][b]%s[/b] [i]%s Ability[/i][/color]"
+var continue_text = "CLICK TO CYCLE TEXT (%s/%s)"
 var count = 0
 
 func _ready():
@@ -20,16 +20,17 @@ func _ready():
 	pass
 	
 func _input(event):
-	if get_node("InputHandler").is_select(event):
+	if get_node("/root/InputHandler").is_ui_cycle(event):
 		if self.count < self.description_sequence.size():
 			display_description()
 		else:
 			self.count = 0
-			set_process_input(false)
-			emit_signal("description_finished")
-			hide()
+			display_description()
+#				set_process_input(false)
+#				emit_signal("description_finished")
+#				hide()
 			
-	elif get_node("InputHandler").is_deselect(event):
+	elif get_node("/root/InputHandler").is_deselect(event) or get_node("/root/InputHandler").is_description(event):
 		self.count = 0
 		set_process_input(false)
 		emit_signal("description_finished")

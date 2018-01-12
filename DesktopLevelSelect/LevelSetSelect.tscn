@@ -1,9 +1,11 @@
-[gd_scene load_steps=5 format=1]
+[gd_scene load_steps=7 format=1]
 
 [ext_resource path="res://DesktopLevelSelect/LevelSetSelect.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Backgrounds/new_style_background_desktop.png" type="Texture" id=2]
 [ext_resource path="res://DesktopLevelSelect/SetSelectTransitionHelper.gd" type="Script" id=3]
 [ext_resource path="res://DesktopLevelSelect/LayeredSetSelectButton.tscn" type="PackedScene" id=4]
+[ext_resource path="res://DesktopLevelSelect/LevelSelectOptionsButton.tscn" type="PackedScene" id=5]
+[ext_resource path="res://UI/QuickOptions/SoundToggle.tscn" type="PackedScene" id=6]
 
 [node name="LevelSetSelect" type="Node2D"]
 
@@ -34,38 +36,46 @@ playback/speed = 1.0
 
 [node name="1" parent="T" instance=ExtResource( 4 )]
 
-transform/pos = Vector2( 394, 190 )
+transform/pos = Vector2( 394, 180 )
 
 [node name="2" parent="T" instance=ExtResource( 4 )]
 
-transform/pos = Vector2( 510, 118 )
+transform/pos = Vector2( 510, 108 )
 
 [node name="3" parent="T" instance=ExtResource( 4 )]
 
-transform/pos = Vector2( 626, 190 )
+transform/pos = Vector2( 626, 180 )
 
 [node name="4" parent="T" instance=ExtResource( 4 )]
 
-transform/pos = Vector2( 626, 326 )
+transform/pos = Vector2( 626, 316 )
 
 [node name="5" parent="T" instance=ExtResource( 4 )]
 
-transform/pos = Vector2( 510, 398 )
+transform/pos = Vector2( 510, 388 )
 
 [node name="6" parent="T" instance=ExtResource( 4 )]
 
-transform/pos = Vector2( 394, 469 )
+transform/pos = Vector2( 394, 459 )
 
 [node name="7" parent="T" instance=ExtResource( 4 )]
 
-transform/pos = Vector2( 394, 604 )
+transform/pos = Vector2( 394, 594 )
 
 [node name="8" parent="T" instance=ExtResource( 4 )]
 
-transform/pos = Vector2( 510, 672 )
+transform/pos = Vector2( 510, 662 )
 
 [node name="9" parent="T" instance=ExtResource( 4 )]
 
-transform/pos = Vector2( 626, 604 )
+transform/pos = Vector2( 626, 594 )
+
+[node name="LevelSelectOptionsButton" parent="T" instance=ExtResource( 5 )]
+
+transform/pos = Vector2( 26, 26 )
+
+[node name="SoundToggle" parent="T" instance=ExtResource( 6 )]
+
+transform/pos = Vector2( 60, 26 )
 
 

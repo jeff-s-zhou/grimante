@@ -23,9 +23,10 @@ func _input(event):
 			display_description()
 		else:
 			self.count = 0
-			set_process_input(false)
-			emit_signal("description_finished")
-			hide()
+			display_description()
+#			set_process_input(false)
+#			emit_signal("description_finished")
+#			hide()
 			
 	elif get_node("InputHandler").is_deselect(event):
 		self.count = 0

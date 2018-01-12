@@ -25,7 +25,7 @@ func corsair_trials():
 		var pieces = load_level("corsair_trial" + str(i) +".level")
 		var enemies = EnemyWrappers.FiniteCuratedWrapper.new(pieces[0])
 		var heroes = pieces[1]
-		var challenge = LevelTypes.Timed.new(base_id + i, "", heroes, enemies, 1, null, extras) 
+		var challenge = LevelTypes.Timed.new(base_id + i, "Corsair Trial " + (str(i)), heroes, enemies, 1, null, extras) 
 		challenges.append(challenge)
 	return LevelTypes.Trial.new(10018, "Corsair Trials", challenges)
 
@@ -65,16 +65,16 @@ func ghostbusters2():
 	var extras = {"flags":flags, "free_deploy":true, "tutorial":tutorial_func, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00026, "Ghostbusters 2", allies, enemies, 5, null, extras)
 
-#pseudo tutorial, can just give 5 stars
 func boss_fight():
 	var pieces = load_level("boss_fight.level")
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth", "no_inspire"]
+	var score_guide = {1:5, 2:5, 3:4} 
 	var tutorial = load("res://Tutorials/boss_fight.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
-	var extras = {"tutorial":tutorial_func, "flags":flags, "free_deploy":false}
+	var extras = {"tutorial":tutorial_func, "flags":flags, "free_deploy":false, "score_guide":score_guide}
 
 	return LevelTypes.Timed.new(00027, "Boss Fight", allies, enemies, 3, null, extras)
 	
@@ -96,16 +96,11 @@ func fray(hard=false):
 	return LevelTypes.Timed.new(00028, "Fray", allies, enemies, 4, null, extras)
 
 
-#doesn't seem too hard?
 func big_boss_fight(hard=false):
 	var pieces
 	var score_guide
-	if hard:
-		pieces = load_level("big_boss_fight_hard.level")
-		score_guide = {1:5, 2:5, 3:4} #not tested
-	else:
-		pieces = load_level("big_boss_fight.level")
-		score_guide = {1:5, 2:5, 3:4} 
+	pieces = load_level("big_boss_fight.level")
+	score_guide = {1:5, 2:5, 3:4} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)

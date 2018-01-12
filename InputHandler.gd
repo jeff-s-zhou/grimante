@@ -36,6 +36,12 @@ func is_deselect(event):
 func is_ui_cancel(event):
 	return event.is_action("ui_cancel") and event.is_pressed()
 	
+func is_ui_cycle(event):
+	return event.is_action("ui_cycle") and event.is_pressed()
+	
+func is_description(event):
+	return event.is_action("detailed_description") and event.is_pressed()
+	
 func is_ui_accept(event):
 	if self.platform == self.PLATFORMS.Android:
 		return false

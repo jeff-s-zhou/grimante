@@ -6,6 +6,8 @@ extends Area2D
 
 var coords
 
+var grid
+
 #STATE
 var raining = false
 var deployable = false
@@ -33,6 +35,7 @@ func _ready():
 	get_node("Sprite").set_opacity(self.default_opacity)
 	connect("mouse_enter", self, "_mouse_entered")
 	connect("mouse_exit", self, "_mouse_exited")
+	self.grid = get_parent()
 	
 func soft_reset():
 	set_rain(false)
@@ -95,8 +98,8 @@ func deploy_enemy(animation_speed, first=false):
 		if !first:
 			get_node("/root/AnimationQueue").enqueue(self, "animate_reinforcement_summon", true, [animation_speed])
 		
-		if get_parent().pieces.has(coords):
-			var blocking_piece = get_parent().pieces[coords]
+		if self.grid.pieces.has(coords):
+			var blocking_piece = self.grid.pieces[coords]
 			if blocking_piece.side == "PLAYER":
 				blocking_piece.block_summon()
 				self.reinforcement.queue_free()
@@ -105,7 +108,7 @@ func deploy_enemy(animation_speed, first=false):
 				self.reinforcement.queue_free()
 				
 		else:
-			get_parent().add_piece(coords, self.reinforcement, true)
+			self.grid.add_piece(coords, self.reinforcement, true)
 			
 		self.reinforcement = null
 
@@ -117,8 +120,8 @@ func arm_trap(first=false):
 		else:
 			get_node("TrapSymbol").show()
 	
-		if get_parent().pieces.has(coords):
-			var blocking_piece = get_parent().pieces[coords]
+		if self.grid.pieces.has(coords):
+			var blocking_piece = self.grid.pieces[coords]
 			if blocking_piece.side == "PLAYER":
 				blocking_piece.block_summon()
 			else:
@@ -236,31 +239,31 @@ func _mouse_entered():
 	get_node("SamplePlayer").play("magic tile hover")
 	get_node("Sprite").set_opacity(self.highlight_opacity)
 	#we needed this in case you exited from a tile and it reset AFTER another tile called predict lol
-	get_node("Timer").set_wait_time(0.01)
-	get_node("Timer").start()
-	yield(get_node("Timer"), "timeout")
-	get_parent().predict(self.coords)
+#	get_node("Timer").set_wait_time(0.005)
+#	get_node("Timer").start()
+#	yield(get_node("Timer"), "timeout")
+	self.grid.predict(self.coords)
 #	var hovered = get_node("/root/Combat").get_hovered() #if we're staying on the tile, predict
 #	print("hovered in mouse_entered", hovered)
 #	if hovered == self:
 #		print("matched self, which is ", self)
-#		get_parent().predict(self.coords)
+#		self.grid.predict(self.coords)
 
 func _mouse_exited():
 	#print("mouse exited")
 	get_node("Sprite").set_opacity(self.default_opacity)
-	if get_parent().selected != null:
-		get_parent().reset_prediction()
+	if self.grid.selected != null:
+		self.grid.reset_prediction()
 
 #
 func star_input_event(event):
 	if self.revivable:
-		return get_parent().handle_revive(self.coords)
+		return self.grid.handle_revive(self.coords)
 	return false
 
 	
 func input_event(event, has_selected):
-	get_parent().set_target(self)
+	self.grid.set_target(self)
 
 func external_set_opacity(value=self.highlight_opacity):
 	get_node("Sprite").set_opacity(value)

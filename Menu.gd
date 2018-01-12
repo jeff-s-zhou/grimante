@@ -6,7 +6,7 @@ extends Node2D
 # var a=2
 # var b="textvar"
 
-const levels_prototype = preload("res://LevelSets/Set4.gd")
+const levels_prototype = preload("res://LevelSets/Set8.gd")
 
 onready var levels = levels_prototype.new()
 
@@ -15,6 +15,6 @@ func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	#add_child(levels)
-	get_node("/root/global").goto_scene("res://DesktopCombat.tscn", {"level":levels.sandbox()})
+	get_node("/root/global").goto_scene("res://DesktopCombat.tscn", {"level":levels.god_is_faceless()})
 
 

@@ -25,7 +25,7 @@ func stormdancer_trials():
 		var pieces = load_level("stormdancer_trial" + str(i) +".level")
 		var enemies = EnemyWrappers.FiniteCuratedWrapper.new(pieces[0])
 		var heroes = pieces[1]
-		var challenge = LevelTypes.Timed.new(base_id + i, "", heroes, enemies, 1, null, extras) 
+		var challenge = LevelTypes.Timed.new(base_id + i, "Stormdancer Trial " + str(i), heroes, enemies, 1, null, extras) 
 		challenges.append(challenge)
 
 	return LevelTypes.Trial.new(10022, "Stormdancer Trials", challenges)

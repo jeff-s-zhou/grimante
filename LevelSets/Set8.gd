@@ -24,7 +24,7 @@ func saint_trials():
 		var pieces = load_level("saint_trial" + str(i) +".level")
 		var enemies = EnemyWrappers.FiniteCuratedWrapper.new(pieces[0])
 		var heroes = pieces[1]
-		var challenge = LevelTypes.Timed.new(base_id + i, "", heroes, enemies, 1, null, extras) 
+		var challenge = LevelTypes.Timed.new(base_id + i, "Saint Trial " + (str(i)), heroes, enemies, 1, null, extras) 
 		challenges.append(challenge)
 	return LevelTypes.Trial.new(10034, "Saint Trials", challenges)
 	

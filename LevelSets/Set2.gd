@@ -31,10 +31,10 @@ func archer():
 	var enemies4 = EnemyWrappers.FiniteCuratedWrapper.new(load_level("archer_trial4.level"))
 	
 	
-	var challenge1 = LevelTypes.Timed.new(10001, "", allies1, enemies1, 2, null, extras1) 
-	var challenge2 = LevelTypes.Timed.new(10002, "", allies1, enemies2, 1, null, extras2)
-	var challenge3 = LevelTypes.Timed.new(10003, "", allies1, enemies3, 1, null, extras3)
-	var challenge4 = LevelTypes.Timed.new(10004, "", allies3, enemies4, 1, null, extras4)
+	var challenge1 = LevelTypes.Timed.new(10001, "Archer Trial 1", allies1, enemies1, 2, null, extras1) 
+	var challenge2 = LevelTypes.Timed.new(10002, "Archer Trial 2", allies1, enemies2, 1, null, extras2)
+	var challenge3 = LevelTypes.Timed.new(10003, "Archer Trial 3", allies1, enemies3, 1, null, extras3)
+	var challenge4 = LevelTypes.Timed.new(10004, "Archer Trial 4", allies3, enemies4, 1, null, extras4)
 	return LevelTypes.Trial.new(10004, "Archer Trials", [challenge1, challenge2, challenge3, challenge4])
 
 

@@ -85,6 +85,7 @@ func _ready():
 	
 	if !get_node("/root/MusicPlayer").is_playing():
 		get_node("/root/MusicPlayer").play()
+		
 
 	#key is the coords, value is the piece
 	for key in self.level_schematic.allies.keys():
@@ -351,9 +352,6 @@ func computer_input(event):
 			instant_lighten()
 			var has_selected = get_node("Grid").selected != null
 			var hovered = get_node("CursorArea").get_piece_or_location_hovered()
-			print("hovered: ", hovered)
-			if hovered != null:
-				print("is targetable: ", hovered.is_targetable())
 			if hovered and hovered.is_targetable():
 				print("detected hovered and targetable on input")
 				var star_bar = get_node("ControlBar/Combat/StarBar")
@@ -416,6 +414,8 @@ func computer_input(event):
 				get_node("InfoOverlay").display_player_info(hovered_piece)
 			
 			pause()
+			#need to disable so the escape only triggers on the InfoOverlay
+			get_node("PauseMenu").set_process_input(false)
 			yield(get_node("InfoOverlay"), "description_finished")
 			unpause()
 
@@ -705,8 +705,6 @@ func enemy_win():
 	self.state = STATES.end
 	pause()
 	if self.level_schematic.seamless:
-		get_node("AnimationPlayer").play("transition_out_fast")
-		yield(get_node("AnimationPlayer"), "finished")
 		restart()
 	else:
 		get_node("/root/AnimationQueue").stop()

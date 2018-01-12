@@ -7,11 +7,4 @@
 
 script/script = ExtResource( 2 )
 
-[node name="Label" parent="."]
-
-margin/left = -27.0
-margin/top = -19.0
-margin/right = 25.0
-margin/bottom = 18.0
-
 

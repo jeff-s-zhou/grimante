@@ -115,6 +115,12 @@ func is_within_deploy_range(coords):
 	
 func toggle_hex_diagonal_guide(flag, coords=null):
 	if flag:
+		var timer = Timer.new()
+		add_child(timer)
+		timer.set_wait_time(0.01)
+		timer.start()
+		yield(timer, "timeout")
+		timer.queue_free()
 		get_node("DiagonalGuide").set_pos(self.locations[coords].get_pos())
 	#needed so it's not too fast and reset prediction is after prediction
 	get_node("DiagonalGuide").set_hidden(!flag)
@@ -123,9 +129,6 @@ func toggle_hex_diagonal_guide(flag, coords=null):
 
 func predict(coords):
 	if !self.deploying and self.selected != null:
-#			if self.pieces.has(coords):
-#				get_node("DottedLine").draw_dotted(self.selected.get_pos(), self.pieces[coords].get_pos())
-#				get_node("DottedLine").show()
 		self.selected.predict(coords)
 		if self.selected.diagonal_guide_prediction_flag:
 			toggle_hex_diagonal_guide(true, coords)
@@ -382,11 +385,9 @@ func clear_display_state(right_click_flag=false):
 
 #called when moved off of a tile while a player unit is selected
 func reset_prediction():
-	#get_node("DottedLine").hide()
 	if !self.deploying:
 		if self.selected != null:	
 			if self.selected.diagonal_guide_prediction_flag:
-				#print("resetting prediction")
 				toggle_hex_diagonal_guide(false)
 			for piece in pieces.values():
 				piece.reset_prediction_highlight()

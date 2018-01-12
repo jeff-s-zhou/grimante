@@ -39,12 +39,12 @@ func frost_knight():
 	var enemies5 = EnemyWrappers.FiniteCuratedWrapper.new(load_level("frost_knight_trial5.level"))
 	var enemies6 = EnemyWrappers.FiniteCuratedWrapper.new(load_level("frost_knight_trial6.level"))
 	
-	var challenge1 = LevelTypes.Timed.new(10008, "", allies1, enemies1, 1, null, extras1) 
-	var challenge2 = LevelTypes.Timed.new(10009, "", allies2, enemies2, 1, null, extras2) 
-	var challenge3 = LevelTypes.Timed.new(10010, "", allies3, enemies3, 1, null, extras3)
-	var challenge4 = LevelTypes.Timed.new(10011, "", allies4, enemies4, 1, null, extras4)
-	var challenge5 = LevelTypes.Timed.new(10012, "", allies5, enemies5, 1, null, extras5)
-	var challenge6 = LevelTypes.Timed.new(10013, "", allies6, enemies6, 1, null, extras6)
+	var challenge1 = LevelTypes.Timed.new(10008, "Frost Knight Trial 1", allies1, enemies1, 1, null, extras1) 
+	var challenge2 = LevelTypes.Timed.new(10009, "Frost Knight Trial 2", allies2, enemies2, 1, null, extras2) 
+	var challenge3 = LevelTypes.Timed.new(10010, "Frost Knight Trial 3", allies3, enemies3, 1, null, extras3)
+	var challenge4 = LevelTypes.Timed.new(10011, "Frost Knight Trial 4", allies4, enemies4, 1, null, extras4)
+	var challenge5 = LevelTypes.Timed.new(10012, "Frost Knight Trial 5", allies5, enemies5, 1, null, extras5)
+	var challenge6 = LevelTypes.Timed.new(10013, "Frost Knight Trial 6", allies6, enemies6, 1, null, extras6)
 	return LevelTypes.Trial.new(10013, "Frost Knight Trials", [challenge1, challenge2, challenge3, challenge4, challenge5, challenge6])
 	
 
@@ -106,12 +106,8 @@ func shield():
 func big_fight(hard=false):
 	var pieces
 	var score_guide
-	if hard:
-		pieces = load_level("big_fight_hard.level")
-		score_guide = {1:5, 2:5, 3:5, 4:5, 5:4, 6:3} #this hasn't been tested
-	else:
-		pieces = load_level("big_fight.level")
-		score_guide = {1:5, 2:5, 3:5, 4:4, 5:4, 6:3}
+	pieces = load_level("big_fight.level")
+	score_guide = {1:5, 2:5, 3:5, 4:4, 5:4, 6:3}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)

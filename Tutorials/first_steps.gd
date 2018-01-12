@@ -15,7 +15,7 @@ func get():
 	
 	var text = ["Shortcuts: Press {D} or {Right Click} to deselect a Hero.",
 	"Press {SPACE} to quickly end your turn, and {R} to quickly restart.",
-	"Clear the board of Enemies to win."]
+	"Clear the board of enemies to win."]
 	add_player_start_rule(tutorial, 1, text)
 	
 	return tutorial

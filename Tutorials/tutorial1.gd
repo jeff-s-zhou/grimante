@@ -13,7 +13,7 @@ func _ready():
 func get():
 	var tutorial = TutorialPrototype.instance()
 	
-	var text = ["Clear the board of Enemies to win."]
+	var text = ["Clear the board of enemies to win."]
 	add_player_start_rule(tutorial, 1, text)
 	
 	#TURN 1
@@ -29,20 +29,20 @@ func get():
 	add_forced_action(tutorial, 1, Vector2(2, 6), Vector2(2, 3), text, true, fa_text)
 	
 	text = ["Enemies {move down} 1 tile each {Enemy Phase}.", \
-	"If an Enemy {exits} from the bottom of the board, you {lose}."]
+	"If an enemy {exits} from the bottom of the board, you {lose}."]
 	add_enemy_end_rule(tutorial, 1, text)
 	
 	#TURN 2
-	text = ["You have attacked an Enemy.", 
+	text = ["You have attacked an enemy.", 
 	"The Berserker's Direct Attack deals {4} damage to an Enemy."]
 	add_forced_action(tutorial, 2, Vector2(5, 6), Vector2(5, 4), text)
 	
-	text = ["The Cavalier's Charge deals {3 + 1 damage for each tile travelled} to the first Enemy it hits.",
-	"If an Enemy's health reaches {0}, it is killed."]
+	text = ["The Cavalier's Charge deals {3 + 1 damage for each tile travelled} to the first enemy it hits.",
+	"If an enemy's health reaches {0}, it is killed."]
 	add_forced_action(tutorial, 2, Vector2(2, 3), Vector2(5, 3), text)
 	
 	#TURN 3
-	text = ["When the Berserker kills an Enemy, the Berserker moves to its tile.",
+	text = ["When the Berserker kills an enemy, the Berserker moves to its tile.",
 	"Clear the board of remaining enemies to win."]
 	add_forced_action(tutorial, 3, Vector2(5, 6), Vector2(5, 5), text)
 	

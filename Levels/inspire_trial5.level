@@ -1,0 +1,9 @@
+{"hp":"2", "turn":0, "pos_x":4, "name":"ranged", "modifiers":{}, "pos_y":2}
+{"hp":"2", "turn":0, "pos_x":2, "name":"grunt", "modifiers":{}, "pos_y":3}
+{"turn":0, "pos_x":4, "name":"frost_knight", "pos_y":7}
+{"hp":"2", "turn":0, "pos_x":2, "name":"ranged", "modifiers":{}, "pos_y":1}
+{"turn":0, "pos_x":2, "name":"berserker", "pos_y":5}
+{"hp":"2", "turn":0, "pos_x":5, "name":"grunt", "modifiers":{}, "pos_y":4}
+{"hp":"2", "turn":0, "pos_x":4, "name":"grunt", "modifiers":{}, "pos_y":5}
+{"hp":"4", "turn":0, "pos_x":3, "name":"grunt", "modifiers":{}, "pos_y":3}
+{"hp":"2", "turn":0, "pos_x":3, "name":"ranged", "modifiers":{}, "pos_y":1}

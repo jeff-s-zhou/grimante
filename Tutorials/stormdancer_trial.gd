@@ -6,25 +6,25 @@ extends "res://Tutorials/tutorial.gd"
 # var b = "textvar"
 func get_trial1_hints():
 	var tutorial = TutorialPrototype.instance()
-	var text = ["The Stormdancer throws a Shuriken in each of the 6 hex diagonal directions, dealing 2 damage to the first enemies hit."]
+	var text = ["The Stormdancer throws a shuriken in each of the 6 hex diagonal directions, dealing 2 damage to the first enemies hit."]
 	add_hint(tutorial, 1, text, Vector2(3, 6))
 	return tutorial
 	
 func get_trial2_hints():
 	var tutorial = TutorialPrototype.instance()
-	var text = ["The Stormdancer can swap positions with Enemies and Allies."]
+	var text = ["The Stormdancer can swap positions with enemies and Heroes."]
 	add_hint(tutorial, 1, text)
 	return tutorial
 	
 func get_trial3_hints():
 	var tutorial = TutorialPrototype.instance()
 	var text = ["The Stormdancer leaves behind a Storm Tile when it moves.", 
-	"If an Enemy takes 2 or more damage while standing on a Storm Tile, it is struck by lightning for 2 damage."]
+	"If an enemy takes 2 or more damage while standing on a Storm Tile, it is struck by lightning for 2 damage."]
 	add_hint(tutorial, 1, text)
 	return tutorial
 
 func get_trial4_hints():
 	var tutorial = TutorialPrototype.instance()
-	var text = ["Remember that the Lightning is triggered by any source of damage."]
+	var text = ["Remember that lightning is triggered by any source of damage."]
 	add_hint(tutorial, 1, text)
 	return tutorial
