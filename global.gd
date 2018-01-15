@@ -14,7 +14,7 @@ var combat_resource
 
 const VERSION = "0.9.94"
 
-var online_logging_flag = false
+var online_logging_flag = true
 var http_thread
 
 func _ready():

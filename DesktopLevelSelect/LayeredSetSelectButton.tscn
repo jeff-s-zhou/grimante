@@ -63,7 +63,7 @@ shader/shading_mode = 0
 shader_param/mask = ExtResource( 10 )
 shader_param/strength = 0.0
 
-[sub_resource type="CanvasItemShader" id=8]
+[sub_resource type="CanvasItemShader" id=5]
 
 _code = {
 "fragment": "uniform texture mask;
@@ -80,9 +80,9 @@ COLOR.a -= (pow(strength + 1, 10) - 1) * value;
 "vertex_ofs": 0
 }
 
-[sub_resource type="CanvasItemMaterial" id=9]
+[sub_resource type="CanvasItemMaterial" id=6]
 
-shader/shader = SubResource( 8 )
+shader/shader = SubResource( 5 )
 shader/shading_mode = 0
 shader_param/mask = ExtResource( 10 )
 shader_param/strength = 1.0
@@ -166,12 +166,13 @@ focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
-margin/left = -9.0
+margin/left = -14.0
 margin/top = 53.0
-margin/right = 36.0
+margin/right = 31.0
 margin/bottom = 69.0
 custom_fonts/font = ExtResource( 8 )
 custom_colors/font_color = Color( 0.988235, 1, 0.694118, 1 )
+align = 2
 valign = 1
 percent_visible = 1.0
 lines_skipped = 0
@@ -232,12 +233,13 @@ focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 0
-margin/left = -9.0
+margin/left = -14.0
 margin/top = 53.0
-margin/right = 36.0
+margin/right = 31.0
 margin/bottom = 69.0
 custom_fonts/font = ExtResource( 8 )
 custom_colors/font_color = Color( 0.282353, 1, 0.890196, 1 )
+align = 2
 valign = 1
 percent_visible = 1.0
 lines_skipped = 0
@@ -251,7 +253,7 @@ texture = ExtResource( 14 )
 
 [node name="GreyedButton" parent="." instance=ExtResource( 2 )]
 
-material/material = SubResource( 9 )
+material/material = SubResource( 6 )
 
 [node name="TextureButton" parent="GreyedButton"]
 

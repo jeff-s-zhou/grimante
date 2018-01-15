@@ -220,6 +220,10 @@ func update_rule(next=false):
 			get_node("Text/TapLabel").set_text(filled_cont_text)
 			get_node("Text/TapLabel").show()
 			if coords != null:
+				if coords == Vector2(3, 4):
+					get_node("Text").set_global_pos(self.resolution/2 + Vector2(0, -150))
+				elif coords == Vector2(3, 3):
+					get_node("Text").set_global_pos(self.resolution/2 + Vector2(0, 150))
 				var new_pos = get_parent().get_node("Grid").locations[coords].get_global_pos()
 				get_node("Sprite").set_opacity(0.8)
 				get_node("Sprite").set_pos(new_pos)

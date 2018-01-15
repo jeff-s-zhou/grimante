@@ -58,7 +58,7 @@ func frost_knight_drive(hard=false):
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth", "no_inspire"]
-	var score_guide = {1:5, 2:5, 3:4, 4:4, 5:3} 
+	var score_guide = {1:5, 2:5, 3:4, 4:3, 5:2} 
 	var extras = {"flags":flags, "free_deploy":false, "hard":hard, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00017, "Frost Knight Drive", allies, enemies, 5, null, extras)
 
@@ -71,7 +71,7 @@ func wyvern(hard=false):
 		score_guide = {1:5, 2:5, 3:4, 4:4, 5:3} 
 	else:
 		pieces = load_level("wyvern.level")
-		score_guide = {1:5, 2:5, 3:4, 4:4, 5:3} 
+		score_guide = {1:5, 2:5, 3:4, 4:3, 5:2} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)

@@ -20,9 +20,9 @@ func _input_event(viewport, event, shape_idx):
 		
 		if !self.sound_flag:
 			AudioServer.set_fx_global_volume_scale(0)
-			get_node("AnimatedSprite").play("off")
+			get_node("Sprite").play("off")
 		else:
 			AudioServer.set_fx_global_volume_scale(0.3)
-			get_node("AnimatedSprite").play("on")
+			get_node("Sprite").play("on")
 			
 	

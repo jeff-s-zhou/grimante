@@ -1,4 +1,4 @@
-extends "res://UI/QUickOptions/QuickButton.gd"
+extends "res://UI/QuickOptions/QuickButton.gd"
 
 # class member variables go here, for example:
 # var a = 2

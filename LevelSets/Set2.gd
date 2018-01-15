@@ -45,11 +45,11 @@ func rule_of_three():
 	var flags = ["no_stars", "no_inspire", "no_waves"]
 	var tutorial = load("res://Tutorials/rule_of_three.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
-	var score_guide = {1:5, 2:5, 3:4, 4:4, 5:3} 
+	var score_guide = {1:5, 2:5, 3:4, 4:3} 
 	var extras = {"free_deploy":false, "flags":flags, "tutorial":tutorial_func, "score_guide":score_guide}
 	
 	
-	return LevelTypes.Timed.new(00007, "Love Triangle Hexagons", allies, enemies, 5, null, extras)
+	return LevelTypes.Timed.new(00007, "Love Triangle Hexagons", allies, enemies, 4, null, extras)
 	
 func tutorial4():
 	var allies = {2: Cavalier, 4:Archer}
@@ -61,7 +61,7 @@ func tutorial4():
 	var reinforcements = {3: { Vector2(2, 6): Berserker}}
 	var extras = {"free_deploy":false, "flags":flags, "tutorial":tutorial_func, "reinforcements":reinforcements}
 	
-	return LevelTypes.Timed.new(00008, "Negative Reinforcement", allies, enemies, 6, null, extras)
+	return LevelTypes.Timed.new(00008, "Negative Reinforcement", allies, enemies, 5, null, extras)
 
 	
 func tick_tock():

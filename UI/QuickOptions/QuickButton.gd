@@ -9,10 +9,11 @@ func _ready():
 	# Initialization here
 	connect("mouse_enter", self, "hover")
 	connect("mouse_exit", self, "unhover")
+	get_node("Sprite").set_opacity(0.5)
 
 
 func hover():
-	set_opacity(1)
+	get_node("Sprite").set_opacity(1)
 
 func unhover():
-	set_opacity(0.5)
+	get_node("Sprite").set_opacity(0.5)

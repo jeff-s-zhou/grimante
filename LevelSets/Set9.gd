@@ -35,6 +35,6 @@ func final_level2():
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var extras = {"free_deploy":false, "flags":[], "score_guide":score_guide}
-	return LevelTypes.Timed.new(53, "53", allies, enemies, 6, null, extras)
+	return LevelTypes.Timed.new(53, "Mayhem", allies, enemies, 6, null, extras)
 
 
