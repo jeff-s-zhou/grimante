@@ -133,7 +133,6 @@ func display_action_range():
 	var action_range = movement_range + get_melee_range() # get_hookshot_range() + get_pull_range()
 	for coords in action_range:
 		get_parent().get_at_location(coords).movement_highlight()
-	self.grid.toggle_hex_diagonal_guide(true, self.coords)
 	.display_action_range()
 	highlight_indirect_range(movement_range)
 	

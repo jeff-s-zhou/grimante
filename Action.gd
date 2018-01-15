@@ -19,6 +19,9 @@ func add_call(func_ref, args, affected_range):
 		affected_range = [affected_range]
 	func_calls.append({"func_ref":func_ref, "args":args, "affected_range":affected_range})
 	
+func frozen_first_sort(first, second):
+	return !first.frozen and second.frozen
+	
 func execute():
 	var death_flag = false
 	
@@ -29,6 +32,7 @@ func execute():
 		var args = func_call.args
 		var affected_range = func_call.affected_range
 		var pieces = []
+		
 		for coords in affected_range:
 			if get_node("/root/Combat/Grid").pieces.has(coords):
 				var piece = get_node("/root/Combat/Grid").pieces[coords]
@@ -37,6 +41,7 @@ func execute():
 				#keep a set of pieces that had something done to them
 				if !affected_pieces.has(piece):
 					affected_pieces[piece] = true
+		pieces.sort_custom(self, "frozen_first_sort") #this way frozen will usually resolve before seraphs
 		for piece in pieces:
 			if args == []:
 				piece.call(func_ref)

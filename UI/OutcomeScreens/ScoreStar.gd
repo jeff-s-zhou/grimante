@@ -18,7 +18,13 @@ func animate_spin_in(time, delay=0):
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, time, Tween.TRANS_LINEAR, Tween.EASE_IN, delay)
 	#get_node("Tween").interpolate_property(get_node("Node2D"), "transform/rot", 60, 0, time, Tween.TRANS_QUAD, Tween.EASE_IN, delay)
 	get_node("Tween").interpolate_property(get_node("Node2D/AnimatedSprite"), "transform/rot", 0, -360, time, Tween.TRANS_CUBIC, Tween.EASE_OUT, delay)
+	get_node("Tween").interpolate_callback(self, delay, "play_sound")
 	get_node("Tween").start()
+	yield(get_node("Tween"), "tween_complete")
+	
+
+func play_sound():
+	get_node("SamplePlayer").play("score_star")
 	
 func animate_fade_in(delay):
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 1, Tween.TRANS_LINEAR, Tween.EASE_IN, delay)

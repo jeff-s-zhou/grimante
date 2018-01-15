@@ -203,7 +203,7 @@ func animate_throw_shurikens(attack_range):
 			shuriken = self.shuriken_prototype.instance()
 			add_child(shuriken)
 		var global_position = self.grid.locations[attack_coords].get_global_pos()
-		shuriken.animate_attack(global_position, 900)
+		shuriken.animate_attack(global_position, 1200)
 	yield(shuriken, "animation_done")
 	emit_signal("animation_done")
 	

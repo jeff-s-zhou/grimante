@@ -124,6 +124,8 @@ PopupMenu/styles/separator = null
 
 [node name="Resolution" instance=ExtResource( 1 )]
 
+z/z = 101
+z/relative = false
 script/script = ExtResource( 2 )
 
 [node name="Label" parent="."]
@@ -131,7 +133,12 @@ script/script = ExtResource( 2 )
 margin/right = 118.0
 text = "RESOLUTION"
 
-[node name="OptionButton" type="OptionButton" parent="."]
+[node name="Node2D" type="Node2D" parent="."]
+
+z/z = 102
+z/relative = false
+
+[node name="OptionButton" type="OptionButton" parent="Node2D"]
 
 focus/ignore_mouse = false
 focus/stop_mouse = true

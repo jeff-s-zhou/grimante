@@ -11,6 +11,8 @@
 
 [node name="Settings" type="Node2D"]
 
+z/z = 100
+z/relative = false
 script/script = ExtResource( 1 )
 
 [node name="Graphics" parent="." instance=ExtResource( 2 )]

@@ -40,7 +40,7 @@ func draw_chains(s, e):
 	translate(Vector2(0, -14))
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 0, 1, 0.3, Tween.TRANS_LINEAR, Tween.EASE_IN)
 	get_node("Tween").start()
-	get_node("/root/Combat").darken(0.3, 0.3)
+	get_node("/root/Combat").darken(0.2, 0.1)
 	yield(get_node("Tween"), "tween_complete")
 	get_node("Timer").set_wait_time(0.1)
 	get_node("Timer").start()

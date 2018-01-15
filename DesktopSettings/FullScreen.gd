@@ -5,7 +5,10 @@ extends "Setting.gd"
 # var b = "textvar"
 
 func _ready():
-	var fullscreened = Globals.get("display/fullscreen")
+	var saved_fullscreened = Globals.get("display/fullscreen")
+	var fullscreened = OS.is_window_fullscreen()
+	if fullscreened != saved_fullscreened:
+		Globals.set("display_fullscreen", fullscreened)
 	get_node("CheckBox").set_pressed(fullscreened)
 	get_node("CheckBox").connect("pressed", self, "handle_pressed")
 	

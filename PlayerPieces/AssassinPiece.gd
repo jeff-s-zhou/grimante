@@ -32,9 +32,9 @@ func queue_free():
 	get_parent().assassin = null
 	.queue_free()
 
-func resurrect():
+func resurrect(coords):
 	get_parent().assassin = self
-	.resurrect()
+	.resurrect(coords)
 
 
 func get_backstab_damage(coords):

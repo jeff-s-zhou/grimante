@@ -27,7 +27,7 @@ func is_unpress(event):
 		return event.is_action("select") and !event.is_pressed()
 	else:
 		return false
-		
+
 	
 func is_deselect(event):
 	var is_mouse = event.is_action("deselect") and event.is_pressed()

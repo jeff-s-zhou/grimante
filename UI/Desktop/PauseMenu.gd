@@ -24,7 +24,10 @@ func _input(event):
 
 func toggle():
 	if is_visible():
-		exit_menu()
+		if self.settings != null: #in the settings screen
+			back_from_settings()
+		else:
+			exit_menu()
 	else:
 		display()
 
@@ -85,6 +88,7 @@ func back_from_settings():
 	self.settings.animate_slide_out()
 	yield(self.settings, "animation_done")
 	self.settings.queue_free()
+	self.settings = null
 	get_node("T").animate_slide_in()
 	
 	

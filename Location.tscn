@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=1]
+[gd_scene load_steps=20 format=1]
 
 [ext_resource path="res://Location.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/location.png" type="Texture" id=2]
@@ -6,16 +6,15 @@
 [ext_resource path="res://Assets/UI/location_red.png" type="Texture" id=4]
 [ext_resource path="res://Assets/UI/location_orange.png" type="Texture" id=5]
 [ext_resource path="res://Effects/StormEffect.tscn" type="PackedScene" id=6]
-[ext_resource path="res://Assets/processed_sounds/magic tile hover.smp" type="Sample" id=7]
-[ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=8]
-[ext_resource path="res://Assets/processed_sounds/summon2.smp" type="Sample" id=9]
-[ext_resource path="res://Assets/processed_sounds/summon3.smp" type="Sample" id=10]
-[ext_resource path="res://Assets/processed_sounds/summon4.smp" type="Sample" id=11]
-[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=12]
-[ext_resource path="res://UI/ReinforcementIndicator.tscn" type="PackedScene" id=13]
-[ext_resource path="res://Assets/UI/endzone_single.png" type="Texture" id=14]
-[ext_resource path="res://UI/ReviveSymbol.tscn" type="PackedScene" id=15]
-[ext_resource path="res://Assets/processed_fonts/info_overlay_body_rubik_26_med.fnt" type="BitmapFont" id=16]
+[ext_resource path="res://Assets/processed_sounds/lightning.smp" type="Sample" id=7]
+[ext_resource path="res://Assets/processed_sounds/magic tile hover.smp" type="Sample" id=8]
+[ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=9]
+[ext_resource path="res://Assets/processed_sounds/summon4.smp" type="Sample" id=10]
+[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=11]
+[ext_resource path="res://UI/ReinforcementIndicator.tscn" type="PackedScene" id=12]
+[ext_resource path="res://Assets/UI/endzone_single.png" type="Texture" id=13]
+[ext_resource path="res://UI/ReviveSymbol.tscn" type="PackedScene" id=14]
+[ext_resource path="res://Assets/processed_fonts/info_overlay_body_rubik_26_med.fnt" type="BitmapFont" id=15]
 
 [sub_resource type="ConvexPolygonShape2D" id=1]
 
@@ -57,41 +56,35 @@ animations = [ {
 
 [sub_resource type="SampleLibrary" id=4]
 
+samples/lightning = {
+"db": 0.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 7 )
+}
 "samples/magic tile hover" = {
 "db": -22.0,
 "pitch": 1.5,
 "priority": 0,
-"sample": ExtResource( 7 )
+"sample": ExtResource( 8 )
 }
 samples/mouseover = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 8 )
-}
-samples/summon2 = {
-"db": 0.0,
-"pitch": 1.2,
-"priority": 0,
 "sample": ExtResource( 9 )
-}
-samples/summon3 = {
-"db": 0.0,
-"pitch": 1.0,
-"priority": 0,
-"sample": ExtResource( 10 )
 }
 samples/summon4 = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 11 )
+"sample": ExtResource( 10 )
 }
 samples/tile_hover = {
 "db": -20.0,
 "pitch": 0.9,
 "priority": 0,
-"sample": ExtResource( 12 )
+"sample": ExtResource( 11 )
 }
 
 [node name="Location" type="Area2D"]
@@ -147,11 +140,11 @@ default/reverb_room = 2
 default/reverb_send = 0.0
 default/chorus_send = 0.0
 
-[node name="DeployIndicator" parent="." instance=ExtResource( 13 )]
+[node name="DeployIndicator" parent="." instance=ExtResource( 12 )]
 
 visibility/visible = false
 
-[node name="ReinforcementIndicator" parent="." instance=ExtResource( 13 )]
+[node name="ReinforcementIndicator" parent="." instance=ExtResource( 12 )]
 
 visibility/visible = false
 transform/pos = Vector2( 0, 1 )
@@ -160,9 +153,9 @@ transform/pos = Vector2( 0, 1 )
 
 visibility/visible = false
 transform/pos = Vector2( 2, 0 )
-texture = ExtResource( 14 )
+texture = ExtResource( 13 )
 
-[node name="ReviveSymbol" parent="." instance=ExtResource( 15 )]
+[node name="ReviveSymbol" parent="." instance=ExtResource( 14 )]
 
 [node name="Timer" type="Timer" parent="."]
 
@@ -187,7 +180,7 @@ margin/left = -25.0
 margin/top = -22.0
 margin/right = 27.0
 margin/bottom = 25.0
-custom_fonts/font = ExtResource( 16 )
+custom_fonts/font = ExtResource( 15 )
 custom_colors/font_color = Color( 0, 0, 0, 1 )
 align = 1
 valign = 1

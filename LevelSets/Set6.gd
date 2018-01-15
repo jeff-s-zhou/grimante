@@ -101,12 +101,12 @@ func ghost_boss(hard=false):
 	var score_guide
 	if hard:
 		pieces = load_level("ghost_boss_hard.level")
-		score_guide = {1:5, 2:5, 3:5, 4:4, 5:3, 6:2} #not tested
+		score_guide = {1:5, 2:5, 3:5, 4:4, 5:3} #not tested
 	else:
 		pieces = load_level("ghost_boss.level")
-		score_guide = {1:5, 2:5, 3:5, 4:4, 5:3, 6:2}
+		score_guide = {1:5, 2:5, 3:5, 4:4, 5:3}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var extras = {"free_deploy":true, "flags":[], "hard":hard, "score_guide":score_guide}
-	return LevelTypes.Timed.new(00035, "Ghostbusters MAX", allies, enemies, 6, null, extras)
+	var extras = {"free_deploy":false, "flags":[], "hard":hard, "score_guide":score_guide}
+	return LevelTypes.Timed.new(00035, "Ghostbusters MAX", allies, enemies, 5, null, extras)

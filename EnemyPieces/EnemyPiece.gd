@@ -609,13 +609,14 @@ func attacked(amount, unit, delay=0.0, blocking=false):
 	modify_hp(damage * -1, delay, blocking)
 	
 	if unit != null:
-		if get_parent().locations[coords].raining and damage > 1:
-			if !(typeof(unit) == TYPE_STRING and unit == "stormdancer"):
-				var tile = get_parent().locations[coords]
-				add_animation(tile, "animate_lightning", true)
-				var action = get_new_action()
-				action.add_call("attacked", [2, "stormdancer"], self.coords)
-				action.execute()
+		if get_parent().locations[coords].raining:
+			var tile = get_parent().locations[coords]
+			tile.set_rain(false)
+			add_animation(tile, "animate_lightning", true)
+			var action = get_new_action()
+			action.add_call("attacked", [2, "stormdancer"], self.coords)
+			action.execute()
+
 
 
 func fireball_attacked(damage, unit):
@@ -850,7 +851,7 @@ func turn_update():
 #called after all pieces finish moving
 func turn_attack_update():
 	if self.unstable:
-		attacked(1, null) #so it won't bait the assassin into suiciding lmayo
+		modify_hp(-1) #so it doesn't trigger shield or assassin or storm shit
 	if self.frozen:
 		set_frozen(false)
 	

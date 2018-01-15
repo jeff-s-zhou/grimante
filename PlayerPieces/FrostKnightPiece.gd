@@ -127,14 +127,17 @@ func shield_bash(new_coords):
 	
 func frostbringer(new_coords):
 	#get enemies to the left and right
-	add_animation(self, "animate_frostbringer", true, [new_coords])
+	
 	var horizontal_range = get_horizontal_range(new_coords)
+	if horizontal_range != []:
+		add_animation(self, "animate_frostbringer", true, [new_coords])
 	var action = get_new_action(false)
 	action.add_call("set_frozen", [true], horizontal_range)
 	action.execute()
 	
 func animate_frostbringer(new_coords):
 	get_parent().get_node("FieldEffects").emit_frost(new_coords)
+	get_node("SamplePlayer 2").play("freeze")
 	get_node("Timer").set_wait_time(0.5)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")

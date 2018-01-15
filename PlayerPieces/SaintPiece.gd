@@ -75,6 +75,9 @@ func handle_break_chains(hero):
 
 #called by the saint after it moves
 func self_handle_field_of_lights():
+	if self.state == States.DEAD:
+		return
+	
 	for hero in get_tree().get_nodes_in_group("player_pieces"): #update here in case pieces have moved
 		self.recorded_hero_coords[hero.unit_name] = hero.coords
 	var lights_range = get_lights_range()
@@ -84,6 +87,9 @@ func self_handle_field_of_lights():
 #needs to be called after receiving shove
 #needs to be called after a piece moves
 func handle_field_of_lights(hero):
+	if self.state == States.DEAD:
+		return
+	
 	if (!self.recorded_hero_coords.has(hero.unit_name) 
 	or hero.coords != self.recorded_hero_coords[hero.unit_name]): #check if the hero has moved
 		self.recorded_hero_coords[hero.unit_name] = hero.coords
@@ -123,14 +129,14 @@ func animate_cast_chain(start_pos, end_pos):
 
 func silence(new_coords):
 	var adjacent_enemy_range = get_parent().get_range(new_coords, [1, 2], "ENEMY")
-	add_animation(self, "animate_silence", false)
+	if adjacent_enemy_range != []:
+		add_animation(self, "animate_silence", false)
 	var action = get_new_action(false)
 	action.add_call("set_silenced", [true], adjacent_enemy_range)
 	action.execute()
 
 
 func animate_silence():
-	get_node("/root/Combat").darken(0.1, 0.2)
 	var ring = get_node("Physicals/SilenceRing")
 	var explosion = get_node("Physicals/SilenceExplosion")
 	ring.set_enabled(true)
@@ -144,8 +150,8 @@ func animate_silence():
 	tween.interpolate_property(ring, "transform/scale", \
 	Vector2(0.3, 0.3), Vector2(1.6, 1.6), 0.5, Tween.TRANS_QUAD, Tween.EASE_OUT)
 	tween.start()
+	get_node("SamplePlayer 2").play("silence")
 	yield(tween, "tween_complete")
-	get_node("/root/Combat").lighten(0.2)
 	yield(tween, "tween_complete")
 	yield(tween, "tween_complete")
 	

@@ -79,7 +79,7 @@ func seraph():
 	var flags = ["no_inspire", "no_fifth"]
 	var score_guide = {1:5, 2:5, 3:4, 4:4, 5:3} 
 	var extras = {"flags":flags, "free_deploy":false, "score_guide":score_guide, "tutorial":tutorial_func}
-	return LevelTypes.Timed.new(00014, "Death Wish", allies, enemies, 6, null, extras)
+	return LevelTypes.Timed.new(00014, "Death Wish", allies, enemies, 5, null, extras)
 
 
 func sludge_lord():

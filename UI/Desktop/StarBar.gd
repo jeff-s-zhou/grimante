@@ -104,7 +104,8 @@ func is_pressed():
 	if self.star_count > 0 and !get_node("/root/Combat").has_active_star:
 		get_node("/root/Combat").set_active_star(true)
 		self.star_count -= 1
-		get_node("/root/AnimationQueue").enqueue(self, "animate_remove_star", false, [self.star_count])
+		animate_remove_star(self.star_count) #probably don't need/shouldn't use animationqueue, since it's async
+		#get_node("/root/AnimationQueue").enqueue(self, "animate_remove_star", false, [self.star_count])
 		if self.star_count == 0:
 			get_node("TextureButton").set_disabled(true)
 			

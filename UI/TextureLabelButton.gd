@@ -29,10 +29,12 @@ func _ready():
 	#have them move downward the difference in y height of the default texture and the pressed texture
 	
 func is_pressed():
+	get_node("SamplePlayer").play("button_press")
 	emit_signal("pressed")
 	
 func is_button_down():
 	emit_signal("button_down")
+	get_node("SamplePlayer").play("button_press")
 	get_node("Toppings").translate(Vector2(0, self.y_difference))
 	
 func is_button_up():
@@ -49,6 +51,7 @@ func set_disabled(flag):
 
 func hover():
 	if !get_node("TextureButton").is_disabled():
+		get_node("SamplePlayer").play("magic tile hover")
 		set_scale(Vector2(1.04, 1.04))
 	
 func unhover():

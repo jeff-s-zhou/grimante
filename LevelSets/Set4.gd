@@ -93,26 +93,23 @@ func wyvern2():
 #needs a harder level probably
 func shield():
 	var pieces = load_level("shield.level")
-	var score_guide = {1:5, 2:5, 3:4, 4:4, 5:3, 6:3} #clearable on 2
+	var score_guide = {1:5, 2:5, 3:4, 4:4, 5:3} #clearable on 2
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth", "no_inspire"]
 	var extras = {"flags":flags, "free_deploy":false, "score_guide":score_guide}
-	return LevelTypes.Timed.new(00020, "Knockoff Shields", allies, enemies, 6, null, extras)
+	return LevelTypes.Timed.new(00020, "Knockoff Shields", allies, enemies, 5, null, extras)
 	
-#needs an easier version
-#this is really hard lol
+
 func big_fight(hard=false):
 	var pieces
 	var score_guide
 	pieces = load_level("big_fight.level")
-	score_guide = {1:5, 2:5, 3:5, 4:4, 5:4, 6:3}
+	score_guide = {1:5, 2:5, 3:5, 4:4, 5:3}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var flags = ["no_fifth", "no_inspire"]
-	var tutorial = load("res://Tutorials/big_fight.gd").new()
-	var tutorial_func = funcref(tutorial, "get")
-	var extras = {"flags":flags, "tutorial":tutorial_func, "hard":hard, "score_guide":score_guide}
-	return LevelTypes.Timed.new(00021, "Big Fight", allies, enemies, 6, null, extras)
+	var flags = ["no_inspire"]
+	var extras = {"free_deploy":false, "flags":flags, "hard":hard, "score_guide":score_guide}
+	return LevelTypes.Timed.new(00021, "Big Fight", allies, enemies, 5, null, extras)

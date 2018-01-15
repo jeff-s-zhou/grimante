@@ -42,7 +42,7 @@ func stormdancer_practice(hard=false):
 
 func nemesis():
 	var pieces = load_level("nemesis.level")
-	var score_guide = {1:5, 2:5, 3:4, 4:4} 
+	var score_guide = {1:5, 2:5, 3:4, 4:3} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -52,12 +52,12 @@ func nemesis():
 
 func nemesis_big_fight():
 	var pieces = load_level("nemesis_big_fight.level")
-	var score_guide = {1:5, 2:5, 3:4, 4:4, 5:3, 6:3} 
+	var score_guide = {1:5, 2:5, 3:4, 4:3, 5:2} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var extras = {"free_deploy":true, "flags":[], "score_guide":score_guide}
-	return LevelTypes.Timed.new(00039, "Nemesis 2", allies, enemies, 6, null, extras)
+	var extras = {"free_deploy":false, "flags":[], "score_guide":score_guide}
+	return LevelTypes.Timed.new(00039, "Nemesis 2", allies, enemies, 5, null, extras)
 
 
 func trickshot():

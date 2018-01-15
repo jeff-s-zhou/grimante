@@ -19,6 +19,20 @@ func _ready():
 	# Initialization here
 	pass
 	
+func _enter_tree():
+	var resolution = get_node("/root/global").get_resolution()
+	get_node("ExitButton").set_global_pos(Vector2(resolution.x - 34
+	, 10))
+	get_node("ExitButton").connect("pressed", self, "close")
+
+
+func close():
+	set_process_input(false)
+	self.count = 0
+	emit_signal("description_finished")
+	hide()
+
+
 func _input(event):
 	if get_node("/root/InputHandler").is_ui_cycle(event):
 		if self.count < self.description_sequence.size():
@@ -31,10 +45,7 @@ func _input(event):
 #				hide()
 			
 	elif get_node("/root/InputHandler").is_deselect(event) or get_node("/root/InputHandler").is_description(event):
-		self.count = 0
-		set_process_input(false)
-		emit_signal("description_finished")
-		hide()
+		close()
 
 func display_description():
 	var filled_continue_text = continue_text % [str(self.count + 1), str(self.description_sequence.size())]

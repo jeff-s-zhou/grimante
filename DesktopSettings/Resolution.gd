@@ -14,10 +14,10 @@ func _ready():
 	var resolution = Vector2(x, y)
 	self.current_resolution = resolution
 	if resolution == Vector2(1024, 768):
-		get_node("OptionButton").select(0)
+		get_node("Node2D/OptionButton").select(0)
 	elif resolution == Vector2(800, 600):
-		get_node("OptionButton").select(1)
-	get_node("OptionButton").connect("item_selected", self, "handle_resolution_selected")
+		get_node("Node2D/OptionButton").select(1)
+	get_node("Node2D/OptionButton").connect("item_selected", self, "handle_resolution_selected")
 	
 func handle_resolution_selected(item):
 	var resolution

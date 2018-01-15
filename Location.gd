@@ -212,6 +212,7 @@ func rotate_shifting():
 	pass
 		
 func animate_lightning():
+	get_node("SamplePlayer").play("lightning")
 	get_node("StormEffect").animate_lightning()
 	yield(get_node("StormEffect"), "animation_done")
 	emit_signal("animation_done")

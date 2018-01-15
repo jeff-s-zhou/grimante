@@ -20,6 +20,7 @@ func _ready():
 	
 
 func handle(coords):
+	set_process_input(true)
 	self.coords = coords
 	self.revive_pos = get_parent().locations[coords].get_pos()
 	set_pos(self.revive_pos)
@@ -56,10 +57,21 @@ func swap(increment):
 func _input_event(viewport, event, shape_idx):
 	if get_node("/root/InputHandler").is_select(event):
 		print("triggered input event")
-		emit_signal("selected", self.dead_heroes[index % dead_heroes.size()], coords)
-		self.index = 0
-		self.dead_heroes = null
-		self.revive_pos = null
-		self.coords = null
-		set_pickable(false)
-		hide()
+		revive()
+		
+		
+func _input(event):
+	if get_node("/root/InputHandler").is_ui_accept(event):
+		revive()
+
+func revive():
+	print("triggered revive")
+	emit_signal("selected", self.dead_heroes[self.index % self.dead_heroes.size()], self.coords)
+	self.index = 0
+	self.dead_heroes = null
+	self.revive_pos = null
+	self.coords = null
+	set_pickable(false)
+	set_process_input(false)
+	hide()
+	

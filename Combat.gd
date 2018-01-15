@@ -252,10 +252,12 @@ func handle_piece_placed():
 			set_forced_action(false)
 	
 	#this has to be before the other or it's a race condition
-	if get_node("ControlBar/Combat/StarBar").has_star():
-		get_node("ControlBar/Combat/StarBar").star_flash(true)
+	if get_node("ControlBar/Combat/StarBar").has_star() or self.has_active_star:
+		if get_node("ControlBar/Combat/StarBar").has_star(): #only flash if star is on the bar and not active
+			get_node("ControlBar/Combat/StarBar").star_flash(true)
 		return
-		
+
+
 	#check if we can automatically end turn
 	var player_pieces = get_tree().get_nodes_in_group("player_pieces")
 	for player_piece in player_pieces:

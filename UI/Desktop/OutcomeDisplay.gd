@@ -35,9 +35,11 @@ func fade_in():
 	get_node("Tween").start()
 	if self.victory_flag:
 		get_node("OutcomeMessage").animate_glow()
+		get_node("SamplePlayer").play("victory")
 	else:
 		get_node("AnimationPlayer").play("lose")
-		
+		get_node("SamplePlayer").play("defeat")
+
 func fade_out():
 	get_parent().blur_lighten(0.2)
 	get_node("Tween").interpolate_property(self, "visibility/opacity", 1, 0, 0.3, Tween.TRANS_LINEAR, Tween.EASE_OUT)

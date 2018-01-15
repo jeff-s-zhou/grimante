@@ -12,7 +12,7 @@ var PLATFORMS = {"Android":1, "iOS":2, "PC":3}
 var platform = PLATFORMS.PC
 var combat_resource
 
-const VERSION = "0.9.93"
+const VERSION = "0.9.94"
 
 var online_logging_flag = false
 var http_thread

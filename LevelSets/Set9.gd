@@ -18,11 +18,11 @@ func final_level():
 	var pieces
 	var score_guide
 	pieces = load_level("final_level.level")
-	score_guide = {1:5, 2:5, 3:5, 4:4, 5:4, 6:3} #not tested
+	score_guide = {1:5, 2:5, 3:5, 4:4, 5:3, 6:2} #not tested
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var extras = {"free_deploy":true, "flags":[], "score_guide":score_guide}
+	var extras = {"free_deploy":false, "flags":[], "score_guide":score_guide}
 	return LevelTypes.Timed.new(52, "Penultimatum", allies, enemies, 6, null, extras)
 	
 	
@@ -30,11 +30,11 @@ func final_level2():
 	var pieces
 	var score_guide
 	pieces = load_level("final_level2.level")
-	score_guide = {1:5, 2:5, 3:5, 4:4, 5:4, 6:3} #not tested
+	score_guide = {1:5, 2:5, 3:5, 4:4, 5:3, 6:2} #not tested
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var extras = {"free_deploy":true, "flags":[], "score_guide":score_guide}
+	var extras = {"free_deploy":false, "flags":[], "score_guide":score_guide}
 	return LevelTypes.Timed.new(53, "53", allies, enemies, 6, null, extras)
 
 
