@@ -10,7 +10,6 @@ colors = ColorArray( 1, 1, 1, 1, 1, 1, 1, 0 )
 
 [node name="Unstable" type="Node2D"]
 
-transform/pos = Vector2( 0, -2 )
 script/script = ExtResource( 1 )
 
 [node name="UnstableParticles" type="Particles2D" parent="."]
@@ -45,12 +44,12 @@ color/color_ramp = SubResource( 1 )
 [node name="ParticleAttractor2D" type="ParticleAttractor2D" parent="UnstableParticles"]
 
 transform/pos = Vector2( 0, -2 )
-transform/scale = Vector2( 0.95, 1 )
+transform/scale = Vector2( 0.93, 1 )
 enabled = true
 radius = 48.0
 disable_radius = 0.0
-gravity = 70.0
-absorption = 0.0
+gravity = 76.0
+absorption = 0.5
 particles_path = NodePath("..")
 
 

@@ -12,6 +12,8 @@ var PLATFORMS = {"Android":1, "iOS":2, "PC":3}
 var platform = PLATFORMS.PC
 var combat_resource
 
+const cursor_sprite = preload("res://Assets/UI/cursor.png")
+
 const VERSION = "0.9.94"
 
 var online_logging_flag = true
@@ -20,6 +22,8 @@ var http_thread
 func _ready():
 	var root = get_tree().get_root()
 	current_scene = root.get_child( root.get_child_count() -1 )
+	
+	Input.set_custom_mouse_cursor(cursor_sprite, Vector2(7, 5))
 	
 	if self.platform == PLATFORMS.PC:
 		combat_resource = "res://DesktopCombat.tscn"

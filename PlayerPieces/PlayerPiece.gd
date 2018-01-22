@@ -228,7 +228,7 @@ func animate_delete_self(delay=0.0):
 	#hacky ass shit. Can't disable, because then on revive you can't select it
 	#can't move the whole pos out of the way, because then on using the revive selector,
 	#switching to another piece causes the sprite to disappear entirely somehow
-	get_node("CollisionArea").set_pos(Vector2(-100, -100))
+	get_node("CollisionArea").set_global_pos(Vector2(-100, -100))
 	explosion.queue_free()
 	subtract_anim_count()
 

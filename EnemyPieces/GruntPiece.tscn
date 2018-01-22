@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=1]
+[gd_scene load_steps=25 format=1]
 
 [ext_resource path="res://EnemyPieces/GruntPiece.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Allies/piece_shadow.png" type="Texture" id=2]
@@ -17,9 +17,10 @@
 [ext_resource path="res://EnemyPieces/Components/EnemyCollisionArea.tscn" type="PackedScene" id=15]
 [ext_resource path="res://Assets/processed_fonts/flyover.fnt" type="BitmapFont" id=16]
 [ext_resource path="res://Assets/processed_fonts/info_overlay_body_rubik_26_italic.fnt" type="BitmapFont" id=17]
-[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 5.smp" type="Sample" id=18]
-[ext_resource path="res://Assets/processed_sounds/rocket glass explosion thud 2.smp" type="Sample" id=19]
-[ext_resource path="res://Assets/processed_sounds/window glass break smash 3.smp" type="Sample" id=20]
+[ext_resource path="res://Assets/processed_sounds/landing_thump.smp" type="Sample" id=18]
+[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 5.smp" type="Sample" id=19]
+[ext_resource path="res://Assets/processed_sounds/rocket glass explosion thud 2.smp" type="Sample" id=20]
+[ext_resource path="res://Assets/processed_sounds/window glass break smash 3.smp" type="Sample" id=21]
 
 [sub_resource type="SpriteFrames" id=1]
 
@@ -38,36 +39,42 @@ animations = [ {
 "name": "default",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
-"loop": true,
-"name": "damaged",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 5 ) ],
 "loop": true,
 "name": "attack_range",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
+"loop": true,
+"name": "damaged",
 "speed": 5.0
 } ]
 
 [sub_resource type="SampleLibrary" id=3]
 
-"samples/rocket glass explosion 5" = {
-"db": 0.0,
+samples/landing_thump = {
+"db": -2.0,
 "pitch": 1.0,
 "priority": 0,
 "sample": ExtResource( 18 )
 }
-"samples/rocket glass explosion thud 2" = {
+"samples/rocket glass explosion 5" = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,
 "sample": ExtResource( 19 )
 }
-"samples/window glass break smash 3" = {
+"samples/rocket glass explosion thud 2" = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,
 "sample": ExtResource( 20 )
+}
+"samples/window glass break smash 3" = {
+"db": 0.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 21 )
 }
 
 [node name="GruntPiece" type="KinematicBody2D"]
@@ -112,8 +119,6 @@ editor/display_folded = true
 [node name="HealthDisplay" parent="Physicals" instance=ExtResource( 8 )]
 
 [node name="EnemyEffects" parent="Physicals" instance=ExtResource( 9 )]
-
-editor/display_folded = true
 
 [node name="FogEffect" parent="Physicals" instance=ExtResource( 10 )]
 

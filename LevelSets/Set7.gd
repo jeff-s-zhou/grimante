@@ -86,6 +86,6 @@ func mirror_world():
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var extras = {"free_deploy":true, "flags":[], "score_guide":score_guide}
+	var extras = {"free_deploy":false, "flags":[], "score_guide":score_guide}
 	return LevelTypes.Timed.new(00044, "Mirror World", allies, enemies, 4, null, extras)
 	

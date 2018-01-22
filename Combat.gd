@@ -85,7 +85,7 @@ func _ready():
 	
 	if !get_node("/root/MusicPlayer").is_playing():
 		get_node("/root/MusicPlayer").play()
-		
+#		
 
 	#key is the coords, value is the piece
 	for key in self.level_schematic.allies.keys():
@@ -355,6 +355,9 @@ func computer_input(event):
 			var has_selected = get_node("Grid").selected != null
 			var hovered = get_node("CursorArea").get_piece_or_location_hovered()
 			if hovered and hovered.is_targetable():
+				if "unit_name" in hovered:
+					print("unit name: ", hovered.unit_name)
+					print("node name: ", hovered.get_name())
 				print("detected hovered and targetable on input")
 				var star_bar = get_node("ControlBar/Combat/StarBar")
 				#if a star is active, handle it appropriately

@@ -10,7 +10,7 @@ var animation_state = ANIMATION_STATES.default
 
 const DEFAULT_SHOOT_DAMAGE = 3
 const DEFAULT_PASSIVE_DAMAGE = 3
-const DEFAULT_MOVEMENT_VALUE = 2
+const DEFAULT_MOVEMENT_VALUE = 1
 const DEFAULT_SHIELD = false
 
 var shoot_damage = DEFAULT_SHOOT_DAMAGE setget , get_shoot_damage

@@ -1,55 +1,62 @@
-[gd_resource type="SampleLibrary" load_steps=8 format=1]
+[gd_resource type="SampleLibrary" load_steps=9 format=1]
 
-[ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=1]
-[ext_resource path="res://Assets/processed_sounds/revive2.smp" type="Sample" id=2]
-[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 5.smp" type="Sample" id=3]
-[ext_resource path="res://Assets/processed_sounds/rocket glass explosion thud 2.smp" type="Sample" id=4]
-[ext_resource path="res://Assets/processed_sounds/star_reactivate.smp" type="Sample" id=5]
-[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=6]
-[ext_resource path="res://Assets/processed_sounds/window glass break smash 3.smp" type="Sample" id=7]
+[ext_resource path="res://Assets/processed_sounds/landing_thump.smp" type="Sample" id=1]
+[ext_resource path="res://Assets/processed_sounds/mouseover.smp" type="Sample" id=2]
+[ext_resource path="res://Assets/processed_sounds/revive2.smp" type="Sample" id=3]
+[ext_resource path="res://Assets/processed_sounds/rocket glass explosion 5.smp" type="Sample" id=4]
+[ext_resource path="res://Assets/processed_sounds/rocket glass explosion thud 2.smp" type="Sample" id=5]
+[ext_resource path="res://Assets/processed_sounds/star_reactivate.smp" type="Sample" id=6]
+[ext_resource path="res://Assets/processed_sounds/tile_hover.smp" type="Sample" id=7]
+[ext_resource path="res://Assets/processed_sounds/window glass break smash 3.smp" type="Sample" id=8]
 
 [resource]
 
-samples/mouseover = {
+samples/landing_thump = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,
 "sample": ExtResource( 1 )
 }
+samples/mouseover = {
+"db": 0.0,
+"pitch": 1.0,
+"priority": 0,
+"sample": ExtResource( 2 )
+}
 samples/revive2 = {
 "db": -5.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 2 )
+"sample": ExtResource( 3 )
 }
 "samples/rocket glass explosion 5" = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 3 )
+"sample": ExtResource( 4 )
 }
 "samples/rocket glass explosion thud 2" = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 4 )
+"sample": ExtResource( 5 )
 }
 samples/star_reactivate = {
 "db": -4.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 5 )
+"sample": ExtResource( 6 )
 }
 samples/tile_hover = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 6 )
+"sample": ExtResource( 7 )
 }
 "samples/window glass break smash 3" = {
 "db": 0.0,
 "pitch": 1.0,
 "priority": 0,
-"sample": ExtResource( 7 )
+"sample": ExtResource( 8 )
 }
 

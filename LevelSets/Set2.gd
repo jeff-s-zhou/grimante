@@ -61,7 +61,7 @@ func tutorial4():
 	var reinforcements = {3: { Vector2(2, 6): Berserker}}
 	var extras = {"free_deploy":false, "flags":flags, "tutorial":tutorial_func, "reinforcements":reinforcements}
 	
-	return LevelTypes.Timed.new(00008, "Negative Reinforcement", allies, enemies, 5, null, extras)
+	return LevelTypes.Timed.new(00008, "Negative Reinforcement", allies, enemies, 6, null, extras)
 
 	
 func tick_tock():

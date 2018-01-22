@@ -9,8 +9,9 @@ var description_sequence
 signal description_finished
 
 
-var indirect_body_header_text = "[color=#ffd824][b]%s[/b] [i]%s[/i][/color]"
+var indirect_body_header_text = "[color=#ffd824][b]%s[/b] [i]%s Ability[/i][/color]"
 var direct_body_header_text = "[color=#ff5151][b]%s[/b] [i]%s Ability[/i][/color]"
+var passive_body_header_text = "[color=#995ffc][b]%s[/b] [i]%s Ability[/i][/color]"
 var continue_text = "CLICK TO CYCLE TEXT (%s/%s)"
 var count = 0
 
@@ -57,6 +58,8 @@ func display_description():
 		var text = description["text"]
 		if type.to_lower() == "indirect":
 			get_node("BodyHeader").set_bbcode(self.indirect_body_header_text % [name, type])
+		elif type.to_lower() == "passive":
+			get_node("BodyHeader").set_bbcode(self.passive_body_header_text % [name, type])
 		else:
 			get_node("BodyHeader").set_bbcode(self.direct_body_header_text % [name, type])
 		get_node("Body").set_bbcode(text)

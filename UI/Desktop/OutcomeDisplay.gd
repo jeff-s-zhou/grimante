@@ -82,7 +82,7 @@ func initialize_defeat(next_level, current_level):
 			get_node("NextLevelButton").set_disabled(true)
 	self.next_level = next_level
 	self.current_level = current_level
-	get_node("/root/State").save_level_progress(self.current_level.name, 0)
+	get_node("/root/State").save_level_progress(self.current_level.id, 0)
 	set_progress_label()
 	
 func set_progress_label():

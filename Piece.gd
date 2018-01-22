@@ -209,6 +209,7 @@ func animate_move_and_hop(new_coords, speed=250, blocking=true, trans_type=Tween
 		yield(tween, "tween_complete")
 		subtract_anim_count()
 		tween.queue_free()
+	get_node("SamplePlayer").play("landing_thump")
 
 func animate_short_hop(speed, new_coords):
 	#add_anim_count()

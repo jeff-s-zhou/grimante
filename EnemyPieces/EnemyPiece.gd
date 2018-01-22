@@ -601,14 +601,14 @@ func heal(amount, delay=0.0):
 
 
 func attacked(amount, unit, delay=0.0, blocking=false):
-	var damage = get_actual_damage(amount, unit)
+	var damage = get_actual_damage(amount, unit) #this will return 0 if shielded, needed for prediction
 	
 	if self.shielded:
 		set_shield(false)
 	
 	modify_hp(damage * -1, delay, blocking)
 	
-	if unit != null:
+	if unit != null and damage > 0:
 		if get_parent().locations[coords].raining:
 			var tile = get_parent().locations[coords]
 			tile.set_rain(false)
@@ -622,11 +622,7 @@ func attacked(amount, unit, delay=0.0, blocking=false):
 func fireball_attacked(damage, unit):
 	attacked(damage, unit)
 
-		
-func lightning_attacked():
-	var tile = get_parent().locations[coords]
-	add_animation(tile, "animate_lightning", false)
-	#modify_hp(-2)
+
 
 #called by the assassin's passive
 #func opportunity_attacked(amount):

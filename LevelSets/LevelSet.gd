@@ -127,12 +127,12 @@ func sandbox():
 	var flags = ["bonus_star"]
 	var score_guide = {0:2, 1:4}
 	
-	var raw_enemies = {0:{Vector2(3, 3): make(Drummer, 6)}}
+	var raw_enemies = {0:{Vector2(3, 3): make(Drummer, 6, [shield]), Vector2(4, 4): make(Grunt, 3)}}
 
 	var extras1 = {"free_deploy":false, "flags":flags, "score_guide":score_guide}
 	
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var heroes = {3: Archer, 2:Stormdancer} 
+	var heroes = {3: Archer, 2:Stormdancer, 4:Berserker} 
 	return LevelTypes.Timed.new(33333, "Sandbox", heroes, enemies, 4, null, extras1) 
 #	
 func background():
