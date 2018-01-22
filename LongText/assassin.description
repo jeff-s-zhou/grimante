@@ -1,5 +1,5 @@
 Direct/Backstab/Teleport to the empty tile directly above an enemy within movement range and deal 1 damage. +2 damage if the enemy has no other enemies adjacent to it.
 
-Indirect/Opportunity Strikes/If an enemy adjacent to the Assassin takes damage, the Assassin attacks it for 1 damage. Cannot inspire.
+Indirect/Opportunity Strikes/If an enemy adjacent to the Assassin is attacked, the Assassin attacks it for 1 damage. Cannot inspire.
 
 Passive/Bloodlust/If the Assassin kills an enemy, it may act again.

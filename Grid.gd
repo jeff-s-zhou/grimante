@@ -13,6 +13,7 @@ var speed_up_rows = {}
 
 var assassin = null
 var saint = null
+var stormdancer = null
 var pyromancer = null
 
 var deploying = false
@@ -185,6 +186,8 @@ func add_piece(coords, piece, child_free=false):
 		self.assassin = piece
 	elif piece.unit_name == "Saint":
 		self.saint = piece
+	elif piece.unit_name == "Stormdancer":
+		self.stormdancer = piece
 	elif piece.unit_name == "Pyromancer":
 		self.pyromancer = piece
 	
@@ -197,6 +200,11 @@ func add_piece(coords, piece, child_free=false):
 func handle_assassin_passive(attack_range, caller):
 	if self.assassin != null and caller != self.assassin:
 		self.assassin.trigger_passive(attack_range)
+		
+func handle_lightning(attack_range, caller):
+	if self.stormdancer != null:
+		self.stormdancer.handle_lightning(attack_range)
+
 		
 func handle_field_of_lights(hero):
 	print("handling field of lights")

@@ -607,15 +607,6 @@ func attacked(amount, unit, delay=0.0, blocking=false):
 		set_shield(false)
 	
 	modify_hp(damage * -1, delay, blocking)
-	
-	if unit != null and damage > 0:
-		if get_parent().locations[coords].raining:
-			var tile = get_parent().locations[coords]
-			tile.set_rain(false)
-			add_animation(tile, "animate_lightning", true)
-			var action = get_new_action()
-			action.add_call("attacked", [2, "stormdancer"], self.coords)
-			action.execute()
 
 
 

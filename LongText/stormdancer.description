@@ -1,6 +1,6 @@
 
 Direct/Tango/Swap positions with any piece within movement range.
 
-Passive/Rain Dance/Leave behind a Storm when moving from a tile. If an enemy on a Storm tile takes damage, Lightning strikes them for an additional 2 damage. The Storm is then removed.
+Passive/Rain Dance/Leave behind a Storm when moving from a tile. If an enemy on a Storm tile is attacked, Lightning strikes them for an additional 2 damage. The Storm is then removed.
 
 Indirect/Shuriken Storm/Throw a Shuriken in each of the 6 hex diagonal directions, dealing 2 damage to the first enemies hit. Projectiles are blocked by other Heroes.

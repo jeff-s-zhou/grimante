@@ -47,7 +47,7 @@ func sludge():
 func star_power():
 	
 	var allies1 = {3: Berserker}
-	var allies2 = {2: Archer, 4: Assassin}
+	var allies2 = {1: Archer, 5: Berserker}
 	var allies3 = {2: Berserker, 4: Archer}
 	var allies4 = {2: Cavalier, 4:Berserker}
 

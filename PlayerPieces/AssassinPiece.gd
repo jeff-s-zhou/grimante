@@ -194,7 +194,7 @@ func trigger_passive(attack_range):
 		
 		#animate direct target
 		add_animation(self, "animate_passive", true, [attack_coords])
-		var action = get_new_action(false)
+		var action = get_new_action(true, false)
 		passive_range.append(attack_coords) #add all the coords back together again to deal damage
 		action.add_call("attacked", [self.passive_damage, self], passive_range)
 		action.execute()

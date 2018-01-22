@@ -5,14 +5,16 @@ extends Node
 # var b = "textvar"
 
 var affected_range
-var trigger_assassin_passive #if disabled, won't trigger assassin's passive. probs only used by the assassin's passive lol
+var inflicts_damage #if disabled, won't trigger assassin's passive. probs only used by the assassin's passive lol
+var assassin_passive
 var func_calls = []
 var caller = null
 #onready var grid = get_node("/root/Combat/Grid")
 
-func _init(caller, trigger_assassin_passive=true).():
+func _init(caller, inflicts_damage=true, assassin_passive=false).():
 	self.caller = caller
-	self.trigger_assassin_passive = trigger_assassin_passive
+	self.inflicts_damage = inflicts_damage
+	self.assassin_passive = assassin_passive
 
 func add_call(func_ref, args, affected_range):
 	if typeof(affected_range) == TYPE_VECTOR2:
@@ -70,17 +72,25 @@ func execute():
 		if piece.side == "ENEMY" and piece.hp == 0:
 			death_flag = true
 	
-	if trigger_assassin_passive:
-		var assassin_passive_range = []
+	if inflicts_damage:
+		if !assassin_passive: #assassin passive can't trigger itself
+			var assassin_passive_range = []
+			for piece in affected_pieces.keys():
+				#if the piece is still alive after all deathrattles are resolved, let it trigger assassin's passive
+				if piece.side == "ENEMY" and piece.hp != 0:
+					assassin_passive_range.append(piece.coords)
+	
+			get_node("/root/Combat/Grid").handle_assassin_passive(assassin_passive_range, self.caller)
+		
+		var lightning_range = []
 		for piece in affected_pieces.keys():
 			#if the piece is still alive after all deathrattles are resolved, let it trigger assassin's passive
 			if piece.side == "ENEMY" and piece.hp != 0:
-				assassin_passive_range.append(piece.coords)
-
-		get_node("/root/Combat/Grid").handle_assassin_passive(assassin_passive_range, self.caller)
+				lightning_range.append(piece.coords)
+		get_node("/root/Combat/Grid").handle_lightning(lightning_range, self.caller)
 	
 	#the assassin's passive can't trigger Inspire
-	if death_flag and self.caller.has_method("trigger_assist_flag") and trigger_assassin_passive:
+	if death_flag and self.caller.has_method("trigger_assist_flag") and inflicts_damage and !assassin_passive:
 		self.caller.trigger_assist_flag()
 		
 	queue_free()

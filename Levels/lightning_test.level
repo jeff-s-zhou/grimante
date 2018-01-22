@@ -1,6 +1,6 @@
-{"turn":0, "pos_x":1, "name":"assassin", "pos_y":6}
+{"turn":0, "pos_x":3, "name":"assassin", "pos_y":6}
+{"hp":"5", "turn":0, "pos_x":2, "name":"grunt", "modifiers":{}, "pos_y":3}
 {"hp":"4", "turn":0, "pos_x":2, "name":"grunt", "modifiers":{}, "pos_y":5}
-{"hp":"3", "turn":0, "pos_x":4, "name":"spectre", "modifiers":{}, "pos_y":3}
+{"hp":"3", "turn":0, "pos_x":4, "name":"grunt", "modifiers":{}, "pos_y":4}
+{"turn":0, "pos_x":2, "name":"saint", "pos_y":2}
 {"turn":0, "pos_x":3, "name":"stormdancer", "pos_y":4}
-{"turn":0, "pos_x":5, "name":"cavalier", "pos_y":8}
-{"hp":"5", "turn":0, "pos_x":1, "name":"grunt", "modifiers":{}, "pos_y":3}

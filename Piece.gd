@@ -65,8 +65,8 @@ func subtract_anim_count():
 	self.mid_animation = false
 
 
-func get_new_action(trigger_assassin_passive=true):
-	var action = self.Action.new(self, trigger_assassin_passive)
+func get_new_action(inflicts_damage=true, assassin_passive=false):
+	var action = self.Action.new(self, inflicts_damage, assassin_passive)
 	add_child(action)
 	return action
 	

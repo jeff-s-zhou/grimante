@@ -104,6 +104,18 @@ func deselect(acting=false):
 	add_animation(self, "animate_unglow", false)
 	get_node("SelectedGlow").hide()
 
+
+func handle_lightning(attack_range):
+	for coords in attack_range:
+		if self.grid.locations[coords].raining:
+			var tile = self.grid.locations[coords]
+			tile.set_rain(false)
+			add_animation(tile, "animate_lightning", true)
+			var action = get_new_action()
+			action.add_call("attacked", [2, "stormdancer"], coords)
+			action.execute()
+
+
 func shuriken_storm(new_coords):
 	var attack_range_dict = {}
 	var attack_range = self.grid.get_diagonal_range(new_coords, [1, 8], "ENEMY", true)
