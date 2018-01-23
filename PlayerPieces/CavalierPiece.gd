@@ -53,6 +53,7 @@ func animate_hop(old_coords, new_coords, down=false, enemy=null):
 	if(down):
 		set_z(0)
 		self.mid_leaping_animation = false
+	get_node("SamplePlayer").play("landing_thump")
 	
 	if enemy != null:
 		enemy.animate_hit()

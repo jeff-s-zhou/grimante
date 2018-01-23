@@ -35,13 +35,15 @@ func toggle():
 func display():
 	show()
 	get_node("T").animate_slide_in()
-	get_parent().blur_darken(0.2)
-	get_parent().pause()
+	get_node("BlurDarkenLayer").animate_darken(0.2, false)
+	set_process_input(true)
+	get_parent().pause(true)
 
 func exit_menu():
 	get_node("T").animate_slide_out()
-	get_parent().blur_lighten(0.2)
-	get_parent().unpause()
+	get_node("BlurDarkenLayer").animate_lighten(0.2, false)
+	set_process_input(false)
+	get_parent().unpause(true)
 	yield(get_node("T"), "animation_done")
 	hide()
 

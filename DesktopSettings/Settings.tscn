@@ -11,7 +11,7 @@
 
 [node name="Settings" type="Node2D"]
 
-z/z = 100
+z/z = 104
 z/relative = false
 script/script = ExtResource( 1 )
 

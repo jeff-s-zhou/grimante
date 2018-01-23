@@ -169,22 +169,28 @@ func debug_full_roster():
 	var FrostKnight = load("res://PlayerPieces/FrostKnightPiece.tscn")
 	var Saint = load("res://PlayerPieces/SaintPiece.tscn")
 	var Corsair = load("res://PlayerPieces/CorsairPiece.tscn")
-	pass
 	
-func pause():
+	
+func pause(pause_tutorial=false):
 	set_process_input(false)
-	get_node("PauseMenu").set_process_input(true)
 	get_node("ControlBar").set_disabled(true)
+#	if pause_tutorial and self.tutorial != null:
+#		self.tutorial.set_process_input(false)
 	
-
-func unpause():
+func unpause(unpause_tutorial=false):
 	set_process_input(true)
-	get_node("PauseMenu").set_process_input(false)
 	#needed otherwise the control bar can still process the exact same inputs that unpaused lol
 	get_node("Timer").set_wait_time(0.1) 
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
+#	if unpause_tutorial and self.tutorial != null:
+#		get_node("Timer").set_wait_time(0.3) 
+#		get_node("Timer").start()
+#		yield(get_node("Timer"), "timeout")
+#		self.tutorial.set_process_input(true)
 	get_node("ControlBar").set_disabled(false)
+	
+
 	
 func set_forced_action(flag):
 	self.mid_forced_action = flag

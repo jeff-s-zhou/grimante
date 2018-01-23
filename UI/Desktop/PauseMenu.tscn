@@ -1,15 +1,16 @@
-[gd_scene load_steps=7 format=1]
+[gd_scene load_steps=8 format=1]
 
 [ext_resource path="res://UI/Desktop/PauseMenu.gd" type="Script" id=1]
-[ext_resource path="res://UI/TransitionHelper.tscn" type="PackedScene" id=2]
-[ext_resource path="res://Assets/processed_fonts/pause_menu_header.fnt" type="BitmapFont" id=3]
-[ext_resource path="res://Assets/processed_fonts/turn_subtext.fnt" type="BitmapFont" id=4]
-[ext_resource path="res://UI/Desktop/SmallTextureLabelButton.tscn" type="PackedScene" id=5]
-[ext_resource path="res://UI/BackButton.tscn" type="PackedScene" id=6]
+[ext_resource path="res://UI/BlurDarkenLayer.tscn" type="PackedScene" id=2]
+[ext_resource path="res://UI/TransitionHelper.tscn" type="PackedScene" id=3]
+[ext_resource path="res://Assets/processed_fonts/pause_menu_header.fnt" type="BitmapFont" id=4]
+[ext_resource path="res://Assets/processed_fonts/turn_subtext.fnt" type="BitmapFont" id=5]
+[ext_resource path="res://UI/Desktop/SmallTextureLabelButton.tscn" type="PackedScene" id=6]
+[ext_resource path="res://UI/BackButton.tscn" type="PackedScene" id=7]
 
 [node name="PauseMenu" type="Node2D"]
 
-z/z = 100
+z/z = 102
 z/relative = false
 script/script = ExtResource( 1 )
 
@@ -20,7 +21,9 @@ wait_time = 1.0
 one_shot = false
 autostart = false
 
-[node name="T" parent="." instance=ExtResource( 2 )]
+[node name="BlurDarkenLayer" parent="." instance=ExtResource( 2 )]
+
+[node name="T" parent="." instance=ExtResource( 3 )]
 
 [node name="Label" type="Label" parent="T"]
 
@@ -32,7 +35,7 @@ margin/left = 0.0
 margin/top = 132.0
 margin/right = 1024.0
 margin/bottom = 232.0
-custom_fonts/font = ExtResource( 3 )
+custom_fonts/font = ExtResource( 4 )
 text = "MENU"
 align = 1
 valign = 1
@@ -50,17 +53,17 @@ margin/left = 0.0
 margin/top = 214.0
 margin/right = 1024.0
 margin/bottom = 264.0
-custom_fonts/normal_font = ExtResource( 4 )
+custom_fonts/normal_font = ExtResource( 5 )
 bbcode/enabled = true
 bbcode/bbcode = ""
 visible_characters = -1
 percent_visible = 1.0
 
-[node name="LevelSelectButton" parent="T" instance=ExtResource( 5 )]
+[node name="LevelSelectButton" parent="T" instance=ExtResource( 6 )]
 
 transform/pos = Vector2( 516, 403 )
 
-[node name="SettingsButton" parent="T" instance=ExtResource( 5 )]
+[node name="SettingsButton" parent="T" instance=ExtResource( 6 )]
 
 transform/pos = Vector2( 516, 322 )
 
@@ -68,7 +71,7 @@ transform/pos = Vector2( 516, 322 )
 
 text = "SETTINGS"
 
-[node name="ExitButton" parent="T" instance=ExtResource( 5 )]
+[node name="ExitButton" parent="T" instance=ExtResource( 6 )]
 
 transform/pos = Vector2( 516, 484 )
 
@@ -76,7 +79,7 @@ transform/pos = Vector2( 516, 484 )
 
 text = "EXIT GAME"
 
-[node name="BackButton" parent="T" instance=ExtResource( 6 )]
+[node name="BackButton" parent="T" instance=ExtResource( 7 )]
 
 transform/pos = Vector2( 517, 567 )
 
@@ -90,7 +93,7 @@ margin/left = 662.0
 margin/top = 738.0
 margin/right = 1022.0
 margin/bottom = 764.0
-custom_fonts/font = ExtResource( 4 )
+custom_fonts/font = ExtResource( 5 )
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1

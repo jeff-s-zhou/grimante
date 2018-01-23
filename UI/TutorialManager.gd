@@ -146,7 +146,6 @@ func has_forced_action_result(turn):
 func handle_forced_action_result(turn):
 	print("handling forced action result")
 	update_rule()
-	
 
 
 func _input(event):

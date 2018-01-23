@@ -10,7 +10,7 @@ colors = ColorArray( 1, 1, 1, 0, 1, 1, 1, 1, 1, 1, 1, 0 )
 [node name="Fireflies" type="Particles2D"]
 
 transform/pos = Vector2( 512, 384 )
-z/z = 101
+z/z = 103
 z/relative = false
 config/amount = 10
 config/lifetime = 4.0
