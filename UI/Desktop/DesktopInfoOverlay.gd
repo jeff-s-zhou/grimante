@@ -13,7 +13,6 @@ var indirect_body_header_text = "[color=#ffd824][b]%s[/b] [i]%s Ability[/i][/col
 var direct_body_header_text = "[color=#ff5151][b]%s[/b] [i]%s Ability[/i][/color]"
 var passive_body_header_text = "[color=#995ffc][b]%s[/b] [i]%s Ability[/i][/color]"
 var continue_text = "CLICK TO CYCLE TEXT (%s/%s)"
-var count = 0
 
 var resolution 
 func _ready():
@@ -30,44 +29,43 @@ func _enter_tree():
 
 func close():
 	set_process_input(false)
-	self.count = 0
 	emit_signal("description_finished")
 	hide()
 
 
 func _input(event):
-	if get_node("/root/InputHandler").is_ui_cycle(event):
-		if self.count < self.description_sequence.size():
-			display_description()
-		else:
-			self.count = 0
-			display_description()
+#	if get_node("/root/InputHandler").is_ui_cycle(event):
+#		if self.count < self.description_sequence.size():
+#			display_description()
+#		else:
+#			self.count = 0
+#			display_description()
 #				set_process_input(false)
 #				emit_signal("description_finished")
 #				hide()
 			
-	elif get_node("/root/InputHandler").is_deselect(event) or get_node("/root/InputHandler").is_description(event):
+	if get_node("/root/InputHandler").is_deselect(event) or get_node("/root/InputHandler").is_description(event):
 		close()
+		get_node("InfoTabs").clear()
 
 func display_description():
-	var filled_continue_text = continue_text % [str(self.count + 1), str(self.description_sequence.size())]
-	var description = self.description_sequence[self.count]
+	var description = self.description_sequence[0]
 	
 	if typeof(description) == TYPE_DICTIONARY: #for Heroes
-		var name = description["name"]
-		var type = description["type"]
-		var text = description["text"]
-		if type.to_lower() == "indirect":
-			get_node("BodyHeader").set_bbcode(self.indirect_body_header_text % [name, type])
-		elif type.to_lower() == "passive":
-			get_node("BodyHeader").set_bbcode(self.passive_body_header_text % [name, type])
-		else:
-			get_node("BodyHeader").set_bbcode(self.direct_body_header_text % [name, type])
-		get_node("Body").set_bbcode(text)
+		get_node("InfoTabs").show()
+		get_node("InfoTabs").initialize(self.description_sequence)
+#		var name = description["name"]
+#		var type = description["type"]
+#		var text = description["text"]
+#		if type.to_lower() == "indirect":
+#			get_node("BodyHeader").set_bbcode(self.indirect_body_header_text % [name, type])
+#		elif type.to_lower() == "passive":
+#			get_node("BodyHeader").set_bbcode(self.passive_body_header_text % [name, type])
+#		else:
+#			get_node("BodyHeader").set_bbcode(self.direct_body_header_text % [name, type])
+#		get_node("Body").set_bbcode(text)
 	else:
 		get_node("Body").set_bbcode(description)
-	get_node("ContinueLabel").set_text(filled_continue_text)
-	self.count += 1
 
 
 func display_enemy_info(hovered_piece):
@@ -129,13 +127,11 @@ func display_player_info(hovered_piece):
 	if get_node("HeroInfoSubOverlay").is_displaying_icons():
 		print("is displaying icons")
 		get_node("HeroInfoSubOverlay").set_pos(Vector2(x, 114))
-		get_node("BodyHeader").set_pos(Vector2(x, 160))
-		get_node("Body").set_pos(Vector2(x, 198))
+		get_node("InfoTabs").set_pos(Vector2(x, 160))
 	else:
 		print("not displaying icons")
-		get_node("BodyHeader").set_pos(Vector2(x, 130))
-		get_node("Body").set_pos(Vector2(x, 165))
-	get_node("ContinueLabel").set_pos(Vector2(x, 483))
+		get_node("InfoTabs").set_pos(Vector2(x, 130))
+	get_node("ContinueLabel").set_pos(Vector2(x, 520))
 	
 	display_description()
 	show()

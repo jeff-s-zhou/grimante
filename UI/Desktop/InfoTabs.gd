@@ -13,11 +13,7 @@ var active_position = Vector2(130, 0)
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	var test_description = {"type":"inactive", "name":"Flashing Blade", "description":"asdf"}
-	var test_description2 = {"type":"passive", "name":"Molasses", "description":"asdf"}
-	var test_description3 = {"type":"active", "name":"Storm", "description":"asdf"}
-	var descriptions = [test_description, test_description2, test_description3]
-	initialize(descriptions)
+	pass
 
 func initialize(descriptions):
 	for description in descriptions:
@@ -30,6 +26,14 @@ func initialize(descriptions):
 		tabs.append(tab)
 	self.tabs[0].set_active()
 	
+	
+func clear():
+	hide()
+	for tab in self.tabs:
+		tab.queue_free()
+	self.tabs = []
+	self.active_tab_id = null
+	
 
 func set_active_tab(active_tab_id, skill):
 	print("setting active tab")
@@ -39,6 +43,6 @@ func set_active_tab(active_tab_id, skill):
 	self.active_tab_id = active_tab_id
 	get_node("ActiveTabSprite").play(str(active_tab_id + 1))
 	var skill_name = skill["name"]
-	var skill_description = skill["description"]
+	var skill_description = skill["text"]
 	get_node("SkillName").set_text(skill_name)
 	get_node("SkillDescription").set_bbcode(skill_description)

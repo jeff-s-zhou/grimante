@@ -92,7 +92,7 @@ margin/top = 357.0
 margin/right = 512.0
 margin/bottom = 398.0
 custom_fonts/font = ExtResource( 9 )
-text = "CLICK ANYWHERE TO CONTINUE"
+text = "CLICK TO CLOSE"
 percent_visible = 1.0
 lines_skipped = 0
 max_lines_visible = -1
@@ -101,21 +101,5 @@ max_lines_visible = -1
 
 transform/pos = Vector2( 220, -11 )
 texture = ExtResource( 7 )
-
-[node name="EscapeLabel" type="Label" parent="ContinueLabel"]
-
-focus/ignore_mouse = true
-focus/stop_mouse = true
-size_flags/horizontal = 2
-size_flags/vertical = 0
-margin/left = 0.0
-margin/top = 38.0
-margin/right = 443.0
-margin/bottom = 79.0
-custom_fonts/font = ExtResource( 9 )
-text = "PRESS  D OR ESCAPE TO TO CLOSE"
-percent_visible = 1.0
-lines_skipped = 0
-max_lines_visible = -1
 
 

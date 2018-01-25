@@ -9,26 +9,14 @@
 
 script/script = ExtResource( 2 )
 
-[node name="Body" parent="."]
+[node name="ContinueLabel" parent="."]
 
-margin/right = 530.0
-
-[node name="BodyHeader" parent="."]
-
-margin/bottom = 187.0
+custom_colors/font_color = Color( 1, 1, 1, 1 )
 
 [node name="InfoTabs" parent="." instance=ExtResource( 3 )]
 
 visibility/visible = false
 transform/pos = Vector2( 64, 164 )
-
-[node name="ContinueLabel" parent="."]
-
-custom_colors/font_color = Color( 1, 1, 1, 1 )
-
-[node name="EscapeLabel" parent="ContinueLabel"]
-
-text = "PRESS ESCAPE TO CLOSE"
 
 [node name="ExitButton" type="TextureButton" parent="."]
 
