@@ -136,7 +136,7 @@ func sandbox():
 	return LevelTypes.Timed.new(33333, "Sandbox", heroes, enemies, 4, null, extras1) 
 #	
 func background():
-	var pieces = load_level("lightning_test.level")
+	var pieces = load_level("screenshot2.level")
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)

@@ -23,7 +23,7 @@ func _ready():
 	var root = get_tree().get_root()
 	current_scene = root.get_child( root.get_child_count() -1 )
 	
-	Input.set_custom_mouse_cursor(cursor_sprite, Vector2(7, 5))
+	#Input.set_custom_mouse_cursor(cursor_sprite, Vector2(7, 5))
 	
 	if self.platform == PLATFORMS.PC:
 		combat_resource = "res://DesktopCombat.tscn"

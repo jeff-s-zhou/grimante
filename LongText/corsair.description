@@ -1,7 +1,5 @@
 Direct/Slash/Deal 3 damage to an adjacent enemy. 
 
-Indirect/En Garde!/After moving, Slash the enemy directly in front of it.
-
-Indirect/Trick Shot/While moving in any hex or hex diagonal direction, shoot a bullet in the opposite direction that deals 2 damage to the first enemy it hits. Projectiles are blocked by other Heroes.
+Indirect/Pivoting Shot/While moving in any hex or hex diagonal direction, shoot a bullet in the opposite direction that deals 2 damage to the first enemy it hits. After moving, Slash the enemy directly in front of Corsair.
 
 Passive/Double Time/The Corsair can act twice in a single turn.

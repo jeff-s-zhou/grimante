@@ -1,3 +1,3 @@
 Indirect/Frostbringer/After moving to a tile, all enemies along the same horizontal line as the Frost Knight are frozen. Freeze: Enemy is stunned and if killed while frozen, deals 2 damage to all adjacent enemies.
 
-Direct/Ice Bash/Shove a piece 1 tile away and freeze it if it's an enemy. If the shoved piece lands on an enemy, the enemy takes 4 damage (if it lands on a Hero, the Hero is damaged). Shoving a piece off the top, left, and right edges of the map kills it.
+Direct/Ice Bash/Shove a piece 1 tile away and freeze it if it's an enemy. If the shoved piece lands on an enemy, the enemy takes 4 damage (if it lands on a Hero, the Hero is damaged). Shoving a piece off all edges of the map (except bottom) kills it.

@@ -13,7 +13,7 @@ var completed_level_sets = {}
 var user_info = {}
 var current_level_set = null
 var session_id = null #get a new one from server every time you go to a new level
-var current_user = "Jeff"
+var current_user = "user"
 
 func _ready():
 	# Called every time the node is added to the scene.

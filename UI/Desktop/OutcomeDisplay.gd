@@ -37,7 +37,7 @@ func fade_in():
 		get_node("OutcomeMessage").animate_glow()
 		get_node("SamplePlayer").play("victory")
 	else:
-		get_node("AnimationPlayer").play("lose")
+		#get_node("AnimationPlayer").play("lose")
 		get_node("SamplePlayer").play("defeat")
 
 func fade_out():

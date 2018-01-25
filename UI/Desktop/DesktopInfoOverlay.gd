@@ -15,13 +15,14 @@ var passive_body_header_text = "[color=#995ffc][b]%s[/b] [i]%s Ability[/i][/colo
 var continue_text = "CLICK TO CYCLE TEXT (%s/%s)"
 var count = 0
 
+var resolution 
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
 	pass
 	
 func _enter_tree():
-	var resolution = get_node("/root/global").get_resolution()
+	self.resolution = get_node("/root/global").get_resolution()
 	get_node("ExitButton").set_global_pos(Vector2(resolution.x - 34
 	, 10))
 	get_node("ExitButton").connect("pressed", self, "close")

@@ -50,10 +50,11 @@ func animate_hop(old_coords, new_coords, down=false, enemy=null):
 		get_node("Physicals").get_pos(), old_position, time/2, Tween.TRANS_CUBIC, Tween.EASE_IN)
 	get_node("Tween 2").start()
 	yield(get_node("Tween 2"), "tween_complete")
+	get_node("SamplePlayer").play("landing_thump")
 	if(down):
 		set_z(0)
 		self.mid_leaping_animation = false
-	get_node("SamplePlayer").play("landing_thump")
+	
 	
 	if enemy != null:
 		enemy.animate_hit()

@@ -19,6 +19,8 @@ var resolution
 
 var continue_text = "Click anywhere to continue (%s/%s)"
 
+var processing_input = false
+
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
@@ -148,8 +150,10 @@ func handle_forced_action_result(turn):
 	update_rule()
 
 
-func _input(event):
-	if get_node("InputHandler").is_select(event):
+#func _input(event):
+func _input_event(viewport, event, shape_idx):
+	if get_node("InputHandler").is_select(event) and self.processing_input:
+		print("handling click in input")
 		update_rule(true)
 		
 
@@ -178,7 +182,9 @@ func display_enemy_turn_end_rule(turn):
 
 
 func update_rule(next=false):
-	set_process_input(false)
+	self.processing_input = false #needed because even if we hide the collision shape, will stick catch events
+	get_node("CollisionShape2D").hide()
+	#set_process_input(false)
 	var rule
 	var coords
 	if typeof(self.current_rule) == TYPE_DICTIONARY:
@@ -238,5 +244,7 @@ func update_rule(next=false):
 			get_node("Timer").start()
 			yield(get_node("Timer"), "timeout")
 			
-			set_process_input(true)
+			#set_process_input(true)
+			self.processing_input = true
+			get_node("CollisionShape2D").show()
 

@@ -100,10 +100,6 @@ func handle_field_of_lights(hero):
 
 func cast_field_of_lights(start_coords, end_coords):
 	
-	var start_pos = self.grid.locations[start_coords].get_pos()
-	var end_pos = self.grid.locations[end_coords].get_pos()
-	add_animation(self, "animate_cast_chain", true, [start_pos, end_pos])
-	
 	var unit = self.grid.hex_normalize(end_coords - start_coords)
 	var current_coords = start_coords + unit
 	var attack_range = []
@@ -111,6 +107,11 @@ func cast_field_of_lights(start_coords, end_coords):
 		if self.grid.has_enemy(current_coords):
 			attack_range.append(current_coords)
 		current_coords += unit
+		
+	if attack_range != []:
+		var start_pos = self.grid.locations[start_coords].get_pos()
+		var end_pos = self.grid.locations[end_coords].get_pos()
+		add_animation(self, "animate_cast_chain", true, [start_pos, end_pos])
 	
 	var action = get_new_action()
 	action.add_call("attacked", [1, self], attack_range)
