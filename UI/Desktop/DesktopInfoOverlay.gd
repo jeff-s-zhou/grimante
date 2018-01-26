@@ -12,7 +12,6 @@ signal description_finished
 var indirect_body_header_text = "[color=#ffd824][b]%s[/b] [i]%s Ability[/i][/color]"
 var direct_body_header_text = "[color=#ff5151][b]%s[/b] [i]%s Ability[/i][/color]"
 var passive_body_header_text = "[color=#995ffc][b]%s[/b] [i]%s Ability[/i][/color]"
-var continue_text = "CLICK TO CYCLE TEXT (%s/%s)"
 
 var resolution 
 func _ready():
@@ -22,12 +21,9 @@ func _ready():
 	
 func _enter_tree():
 	self.resolution = get_node("/root/global").get_resolution()
-	get_node("ExitButton").set_global_pos(Vector2(resolution.x - 34
-	, 10))
-	get_node("ExitButton").connect("pressed", self, "close")
-
 
 func close():
+	get_node("InfoTabs").clear()
 	set_process_input(false)
 	emit_signal("description_finished")
 	hide()
@@ -44,9 +40,10 @@ func _input(event):
 #				emit_signal("description_finished")
 #				hide()
 			
-	if get_node("/root/InputHandler").is_deselect(event) or get_node("/root/InputHandler").is_description(event):
+	if get_node("/root/InputHandler").is_select(event) \
+	or get_node("/root/InputHandler").is_deselect(event) \
+	or get_node("/root/InputHandler").is_description(event):
 		close()
-		get_node("InfoTabs").clear()
 
 func display_description():
 	var description = self.description_sequence[0]
@@ -54,18 +51,8 @@ func display_description():
 	if typeof(description) == TYPE_DICTIONARY: #for Heroes
 		get_node("InfoTabs").show()
 		get_node("InfoTabs").initialize(self.description_sequence)
-#		var name = description["name"]
-#		var type = description["type"]
-#		var text = description["text"]
-#		if type.to_lower() == "indirect":
-#			get_node("BodyHeader").set_bbcode(self.indirect_body_header_text % [name, type])
-#		elif type.to_lower() == "passive":
-#			get_node("BodyHeader").set_bbcode(self.passive_body_header_text % [name, type])
-#		else:
-#			get_node("BodyHeader").set_bbcode(self.direct_body_header_text % [name, type])
-#		get_node("Body").set_bbcode(text)
 	else:
-		get_node("Body").set_bbcode(description)
+		get_node("EnemyInfo/Body").set_bbcode(description)
 
 
 func display_enemy_info(hovered_piece):
@@ -77,19 +64,19 @@ func display_enemy_info(hovered_piece):
 	var modifier_descriptions = hovered_piece.modifier_descriptions
 	
 	print("modifier_descriptions:", modifier_descriptions)
-	
-	get_node("BodyHeader").set_bbcode("")
+
 	get_node("Overlay").set_global_pos(pos)
 	
 	if pos.x > get_viewport_rect().size.width/2:
 		get_node("Header").set_pos(Vector2(40, 40))
-		get_node("Body").set_pos(Vector2(40, 150))
-		get_node("ContinueLabel").set_pos(Vector2(40, 430))
+		get_node("EnemyInfo").set_pos(Vector2(40, 150))
+		get_node("ContinueLabel").set_pos(Vector2(63, 560))
 	else:
 		var x = (get_viewport_rect().size.width/2) + 20
 		get_node("Header").set_pos(Vector2(x, 40))
-		get_node("Body").set_pos(Vector2(x, 150))
-		get_node("ContinueLabel").set_pos(Vector2(x, 430))
+		get_node("EnemyInfo").set_pos(Vector2(x, 150))
+		get_node("ContinueLabel").set_pos(Vector2(x + 23, 560))
+	get_node("EnemyInfo").show()
 	
 	get_node("Header").set_text(title.to_upper())
 	if modifier_descriptions.keys() != []:
@@ -105,6 +92,7 @@ func display_enemy_info(hovered_piece):
 	show()
 	
 func display_player_info(hovered_piece):
+	get_node("EnemyInfo").hide()
 	set_process_input(true)
 	var shielded = hovered_piece.DEFAULT_SHIELD
 	var inspire_type = hovered_piece.assist_type
@@ -131,7 +119,7 @@ func display_player_info(hovered_piece):
 	else:
 		print("not displaying icons")
 		get_node("InfoTabs").set_pos(Vector2(x, 130))
-	get_node("ContinueLabel").set_pos(Vector2(x, 520))
+	get_node("ContinueLabel").set_pos(Vector2(x + 20, 600))
 	
 	display_description()
 	show()

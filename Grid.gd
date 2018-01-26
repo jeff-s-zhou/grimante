@@ -152,6 +152,8 @@ func display_coords():
 func set_target(target):
 	if self.selected != null:
 		self.selected.select_action_target(target)
+		return true
+	return false
 		
 		
 func set_reinforcement(coords, enemy_piece):

@@ -231,7 +231,8 @@ func get_modifiers():
 func input_event(event, has_selected):
 	print("in enemy input event")
 	if event.is_pressed():
-		self.grid.set_target(self)
+		if !self.grid.set_target(self): #if there's no hero selected, display description
+			get_node("/root/Combat").display_description(self)
 
 
 func hovered():

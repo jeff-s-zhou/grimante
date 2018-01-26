@@ -36,7 +36,6 @@ func clear():
 	
 
 func set_active_tab(active_tab_id, skill):
-	print("setting active tab")
 	for tab in self.tabs:
 		if tab.id != active_tab_id:
 			tab.set_inactive()

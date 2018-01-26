@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=1]
+[gd_scene load_steps=6 format=1]
 
 [ext_resource path="res://UI/InfoOverlay.tscn" type="PackedScene" id=1]
 [ext_resource path="res://UI/Desktop/DesktopInfoOverlay.gd" type="Script" id=2]
-[ext_resource path="res://UI/Desktop/InfoTabs.tscn" type="PackedScene" id=3]
-[ext_resource path="res://Assets/UI/x.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/Desktop/enemy_info_underlay.png" type="Texture" id=3]
+[ext_resource path="res://Assets/processed_fonts/info_overlay_text.fnt" type="BitmapFont" id=4]
+[ext_resource path="res://UI/Desktop/InfoTabs.tscn" type="PackedScene" id=5]
 
 [node name="InfoOverlay" instance=ExtResource( 1 )]
 
@@ -13,29 +14,31 @@ script/script = ExtResource( 2 )
 
 custom_colors/font_color = Color( 1, 1, 1, 1 )
 
-[node name="InfoTabs" parent="." instance=ExtResource( 3 )]
+[node name="EnemyInfo" type="Sprite" parent="."]
 
-visibility/visible = false
-transform/pos = Vector2( 64, 164 )
+transform/pos = Vector2( 69, 121 )
+texture = ExtResource( 3 )
+centered = false
 
-[node name="ExitButton" type="TextureButton" parent="."]
+[node name="Body" type="RichTextLabel" parent="EnemyInfo"]
 
 focus/ignore_mouse = false
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
-margin/left = 0.0
-margin/top = 0.0
-margin/right = 24.0
-margin/bottom = 24.0
-toggle_mode = false
-click_on_press = true
-enabled_focus_mode = 2
-shortcut = null
-textures/normal = ExtResource( 4 )
-textures/pressed = ExtResource( 4 )
-textures/hover = ExtResource( 4 )
-params/resize_mode = 0
-params/stretch_mode = 0
+margin/left = 26.0
+margin/top = 22.0
+margin/right = 420.0
+margin/bottom = 300.0
+custom_fonts/normal_font = ExtResource( 4 )
+bbcode/enabled = true
+bbcode/bbcode = "Fire an arrow down a line. Deal 3 damage to the first enemy hit. If the arrow kills, it continues along the line, dealing 1 less damage to successive enemies. The arrow is blocked by heroes."
+visible_characters = -1
+percent_visible = 1.0
+
+[node name="InfoTabs" parent="." instance=ExtResource( 5 )]
+
+visibility/visible = false
+transform/pos = Vector2( 64, 164 )
 
 

@@ -383,6 +383,7 @@ func computer_input(event):
 			#we add this case so we don't trigger the invalid move during a forced action
 			elif self.tutorial != null and self.tutorial.has_forced_action(get_turn_count()):
 				pass
+				
 			
 			elif has_selected:
 				handle_invalid_move()
@@ -417,18 +418,7 @@ func computer_input(event):
 			var hovered_piece = get_node("CursorArea").get_piece_hovered()
 			if hovered_piece == null:
 				return
-			
-			elif hovered_piece.side == "ENEMY":
-				hovered_piece.set_seen(true)
-				get_node("InfoOverlay").display_enemy_info(hovered_piece)
-			else: #elif hovered_piece.side == "PLAYER"
-				get_node("InfoOverlay").display_player_info(hovered_piece)
-			
-			pause()
-			#need to disable so the escape only triggers on the InfoOverlay
-			get_node("PauseMenu").set_process_input(false)
-			yield(get_node("InfoOverlay"), "description_finished")
-			unpause()
+			display_description(hovered_piece)
 
 
 	elif event.is_action("debug_level_skip") and event.is_pressed():
@@ -456,6 +446,18 @@ func computer_input(event):
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			player_piece.debug()
 			
+
+func display_description(piece):
+	if piece.side == "ENEMY":
+		piece.set_seen(true)
+		get_node("InfoOverlay").display_enemy_info(piece)
+	else: #elif hovered_piece.side == "PLAYER"
+		get_node("InfoOverlay").display_player_info(piece)
+	pause()
+	#need to disable so the escape only triggers on the InfoOverlay
+	get_node("PauseMenu").set_process_input(false)
+	yield(get_node("InfoOverlay"), "description_finished")
+	unpause()
 
 func _process(delta):
 	get_node('FpsLabel').set_text(str(OS.get_frames_per_second()))

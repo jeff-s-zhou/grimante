@@ -466,7 +466,11 @@ func star_input_event(event):
 #called when an event happens inside the click area hitput
 func input_event(event, has_selected):
 	if self.state != States.DEAD and self.hovered_flag:
-		if self.deploying_flag: #if in deploy phase
+		if self.state == States.CLICKED: #if already selected and clicking oneself again
+			get_parent().deselect()
+			get_node("/root/Combat").display_description(self)
+		
+		elif self.deploying_flag: #if in deploy phase
 			deploy_input_event(event, has_selected)
 			return
 	

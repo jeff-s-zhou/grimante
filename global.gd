@@ -14,7 +14,7 @@ var combat_resource
 
 const cursor_sprite = preload("res://Assets/UI/cursor.png")
 
-const VERSION = "0.9.94"
+const VERSION = "1.0"
 
 var online_logging_flag = false
 var http_thread
