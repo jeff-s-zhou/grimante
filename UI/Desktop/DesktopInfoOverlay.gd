@@ -69,13 +69,13 @@ func display_enemy_info(hovered_piece):
 	
 	if pos.x > get_viewport_rect().size.width/2:
 		get_node("Header").set_pos(Vector2(40, 40))
-		get_node("EnemyInfo").set_pos(Vector2(40, 150))
-		get_node("ContinueLabel").set_pos(Vector2(63, 560))
+		get_node("EnemyInfo").set_pos(Vector2(38, 150))
+		get_node("ContinueLabel").set_pos(Vector2(62, 560))
 	else:
 		var x = (get_viewport_rect().size.width/2) + 20
 		get_node("Header").set_pos(Vector2(x, 40))
-		get_node("EnemyInfo").set_pos(Vector2(x, 150))
-		get_node("ContinueLabel").set_pos(Vector2(x + 23, 560))
+		get_node("EnemyInfo").set_pos(Vector2(x - 2, 150))
+		get_node("ContinueLabel").set_pos(Vector2(x + 22, 560))
 	get_node("EnemyInfo").show()
 	
 	get_node("Header").set_text(title.to_upper())
@@ -106,9 +106,9 @@ func display_player_info(hovered_piece):
 	get_node("Overlay").set_global_pos(pos)
 	var x
 	if pos.x > get_viewport_rect().size.width/2:
-		x = 40
+		x = 38
 	else:
-		x = (get_viewport_rect().size.width/2) + 20
+		x = (get_viewport_rect().size.width/2) + 18
 		
 	get_node("Header").set_pos(Vector2(x, 40))
 	get_node("Header").set_text(title.to_upper())
@@ -119,7 +119,7 @@ func display_player_info(hovered_piece):
 	else:
 		print("not displaying icons")
 		get_node("InfoTabs").set_pos(Vector2(x, 130))
-	get_node("ContinueLabel").set_pos(Vector2(x + 20, 600))
+	get_node("ContinueLabel").set_pos(Vector2(x + 18, 600))
 	
 	display_description()
 	show()

@@ -70,7 +70,7 @@ func placed(ending_turn=false):
 		check_for_traps()
 
 func resurrect(coords):
-	self.moves_remaing = 2
+	self.moves_remaining = 2
 	.resurrect(coords)
 
 func animate_resurrect(blocking=true):

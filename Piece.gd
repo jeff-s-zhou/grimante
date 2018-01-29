@@ -323,12 +323,71 @@ func receive_shove(distance, damage):
 			add_animation(self, "animate_move_and_hop", false, [self.coords, 300, false])
 		else: #means this piece can move to the tile
 			set_coords(new_coords)
+			
+			
+			
+func receive_shove_enemy(distance, damage):
+	var new_coords = self.coords + distance
+	
+	var unit_distance = get_parent().hex_normalize(distance)
+	#gets knocked off
+	if !get_parent().locations.has(new_coords):
+		if unit_distance == Vector2(0, 1) and self.side == "ENEMY":
+			add_animation(self, "animate_receive_shove_noise", false)
+			walk_off(distance)
+		
+	#will land on something
+	elif get_parent().pieces.has(new_coords):
+		add_animation(self, "animate_receive_shove_noise", false)
+		add_animation(self, "animate_move_and_hop", true, [new_coords, 300])
+		var action = get_new_action()
+		if get_parent().pieces[new_coords].side == "ENEMY":
+			action.add_call("attacked", [damage, "frost knight"], [new_coords])
+		else:
+			action.add_call("attacked", [self], [new_coords])
+		action.execute()
+		if get_parent().pieces.has(new_coords): #leap backwards if something's still there
+			add_animation(self, "animate_move_and_hop", false, [self.coords, 300, false])
+		else: #means this piece can move to the tile
+			set_coords(new_coords)
 
 	#otherwise just move forward
 	else:
 		add_animation(self, "animate_receive_shove_noise", false)
 		add_animation(self, "animate_move_and_hop", false, [new_coords, 300, false])
 		set_coords(new_coords)
+		
+		
+func receive_shove_player(distance, damage):
+	var new_coords = self.coords + distance
+	var unit_distance = get_parent().hex_normalize(distance)
+	#gets knocked off
+	if !get_parent().locations.has(new_coords):
+		add_animation(self, "animate_receive_shove_noise", false)
+		walk_off(distance, false) #delete self instead of triggering a lose condition
+		
+	#will land on something
+	elif get_parent().pieces.has(new_coords):
+		add_animation(self, "animate_receive_shove_noise", false)
+		add_animation(self, "animate_move_and_hop", true, [new_coords, 300])
+		var action = get_new_action()
+		if get_parent().pieces[new_coords].side == "ENEMY":
+			action.add_call("attacked", [damage, "frost knight"], [new_coords])
+		else:
+			action.add_call("attacked", [self], [new_coords])
+		action.execute()
+		if get_parent().pieces.has(new_coords): #leap backwards if something's still there
+			add_animation(self, "animate_move_and_hop", false, [self.coords, 300, false])
+		else: #means this piece can move to the tile
+			set_coords(new_coords)
+			self.grid.handle_field_of_lights(self)
+
+	#otherwise just move forward
+	else:
+		add_animation(self, "animate_receive_shove_noise", false)
+		add_animation(self, "animate_move_and_hop", false, [new_coords, 300, false])
+		set_coords(new_coords)
+		self.grid.handle_field_of_lights(self)
 
 
 func animate_receive_shove_noise():

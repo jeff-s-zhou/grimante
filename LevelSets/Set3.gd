@@ -88,5 +88,5 @@ func sludge_lord():
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_inspire", "no_fifth"]
 	var score_guide = {1:5, 2:5, 3:4} 
-	var extras = {"flags":flags, "free_deploy":false}
+	var extras = {"flags":flags, "free_deploy":false, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00015, "Jake Paul and Crew", allies, enemies, 3, null, extras)

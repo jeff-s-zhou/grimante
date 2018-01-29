@@ -11,7 +11,7 @@ signal active
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here
-	connect("mouse_enter", self, "set_active")
+	get_node("TextureButton").connect("mouse_enter", self, "set_active")
 
 func initialize(id, skill_description):
 	self.id = id
@@ -20,12 +20,12 @@ func initialize(id, skill_description):
 	
 	
 func set_active():
-	get_node("Sprite").hide()
+	get_node("TextureButton").hide()
 	get_node("Label").set_opacity(1.0)
 	emit_signal("active", self.id, self.skill_description)
 	
 	
 func set_inactive():
 	get_node("Label").set_opacity(0.5)
-	get_node("Sprite").show()
+	get_node("TextureButton").show()
 	

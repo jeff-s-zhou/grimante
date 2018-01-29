@@ -129,6 +129,7 @@ func handle_pre_assisted():
 
 #called from Actions
 func trigger_assist_flag():
+	print("triggering assist flag")
 	self.assist_flag = true
 
 

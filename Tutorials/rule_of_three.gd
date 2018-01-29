@@ -7,7 +7,7 @@ extends "res://Tutorials/tutorial.gd"
 
 func get():
 	var tutorial = TutorialPrototype.instance()
-	var text = ["If you forget what a piece does, press Tab on it to bring up a summary."]
+	var text = ["If you forget what a piece does, double click on it to bring up a summary."]
 	add_player_start_rule(tutorial, 1, text)
 	return tutorial
 	

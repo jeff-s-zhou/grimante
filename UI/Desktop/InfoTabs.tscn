@@ -2,8 +2,8 @@
 
 [ext_resource path="res://UI/Desktop/InfoTabs.gd" type="Script" id=1]
 [ext_resource path="res://Assets/UI/Desktop/active_info_tab3.png" type="Texture" id=2]
-[ext_resource path="res://Assets/UI/Desktop/active_info_tab2.png" type="Texture" id=3]
-[ext_resource path="res://Assets/UI/Desktop/active_info_tab1.png" type="Texture" id=4]
+[ext_resource path="res://Assets/UI/Desktop/active_info_tab1.png" type="Texture" id=3]
+[ext_resource path="res://Assets/UI/Desktop/active_info_tab2.png" type="Texture" id=4]
 [ext_resource path="res://Assets/processed_fonts/info_overlay_text.fnt" type="BitmapFont" id=5]
 [ext_resource path="res://Assets/processed_fonts/info_overlay_text_italic.fnt" type="BitmapFont" id=6]
 
@@ -17,12 +17,12 @@ animations = [ {
 }, {
 "frames": [ ExtResource( 3 ) ],
 "loop": true,
-"name": "2",
+"name": "1",
 "speed": 5.0
 }, {
 "frames": [ ExtResource( 4 ) ],
 "loop": true,
-"name": "1",
+"name": "2",
 "speed": 5.0
 } ]
 

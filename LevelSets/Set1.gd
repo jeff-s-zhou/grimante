@@ -58,7 +58,7 @@ func first_steps():
 	var tutorial_func = funcref(tutorial, "get")
 	var extras = {"free_deploy":false, "tutorial": tutorial_func, "flags":flags}
 	
-	return LevelTypes.Timed.new(00004, "Baby's First Battle", allies, enemies, 5, null, extras)
+	return LevelTypes.Timed.new(00004, "A Smashing Time", allies, enemies, 5, null, extras)
 
 func second_steps():
 	var allies = {2: Berserker, 4: Cavalier}

@@ -153,7 +153,11 @@ func backstab(new_coords):
 		add_animation(self, "emit_animated_placed", false)
 		self.grid.handle_field_of_lights(self)
 		activate_bloodlust()
-		
+
+
+func trigger_assist_flag():
+	print("triggering assassin assist flag")
+	self.assist_flag = true
 
 
 func activate_bloodlust():
@@ -194,7 +198,7 @@ func trigger_passive(attack_range):
 		
 		#animate direct target
 		add_animation(self, "animate_passive", true, [attack_coords])
-		var action = get_new_action(true, false)
+		var action = get_new_action(true, true)
 		passive_range.append(attack_coords) #add all the coords back together again to deal damage
 		action.add_call("attacked", [self.passive_damage, self], passive_range)
 		action.execute()

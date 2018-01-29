@@ -13,7 +13,7 @@ func get():
 	var tutorial = TutorialPrototype.instance()
 	
 	var text = ["Special enemies with abilities have appeared!", 
-	"Press Tab over enemies to read what their abilities do."]
+	"Click on them to read what they do."]
 	add_enemy_end_rule(tutorial, 1, text)
 
 	return tutorial

@@ -45,7 +45,7 @@ func rule_of_three():
 	var flags = ["no_stars", "no_inspire", "no_waves"]
 	var tutorial = load("res://Tutorials/rule_of_three.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
-	var score_guide = {1:5, 2:5, 3:4, 4:3} 
+	var score_guide = {1:5, 2:5, 3:5, 4:4} 
 	var extras = {"free_deploy":false, "flags":flags, "tutorial":tutorial_func, "score_guide":score_guide}
 	
 	

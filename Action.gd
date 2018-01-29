@@ -91,6 +91,8 @@ func execute():
 	
 	#the assassin's passive can't trigger Inspire
 	if death_flag and self.caller.has_method("trigger_assist_flag") and inflicts_damage and !assassin_passive:
+		print(self.caller.unit_name, " is triggering assist flag in action")
+		print(func_calls)
 		self.caller.trigger_assist_flag()
 		
 	queue_free()
