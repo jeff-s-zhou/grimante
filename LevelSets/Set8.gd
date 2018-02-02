@@ -92,9 +92,9 @@ func saints_row():
 	var pieces
 	var score_guide
 	pieces = load_level("saints_row.level")
-	score_guide = {1:5, 2:5, 3:5, 4:4, 5:3} #not tested
+	score_guide = {1:5, 2:5, 3:5, 4:4, 5:3, 6:2} #not tested
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var extras = {"free_deploy":false, "flags":[], "score_guide":score_guide}
-	return LevelTypes.Timed.new(00051, "March", allies, enemies, 5, null, extras)
+	return LevelTypes.Timed.new(00051, "March", allies, enemies, 6, null, extras)

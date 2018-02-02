@@ -132,11 +132,11 @@ func sandbox():
 	var extras1 = {"free_deploy":false, "flags":flags, "score_guide":score_guide}
 	
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
-	var heroes = {3: FrostKnight, 2:Assassin} 
+	var heroes = {3: Corsair, 2:Assassin} 
 	return LevelTypes.Timed.new(33333, "Sandbox", heroes, enemies, 4, null, extras1) 
 #	
 func background():
-	var pieces = load_level("screenshot2.level")
+	var pieces = load_level("saint_chains_test.level")
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)

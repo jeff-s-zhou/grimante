@@ -67,11 +67,7 @@ func act(new_coords):
 		placed()
 	else:
 		invalid_move()
-		
-func handle_break_chains(hero):
-	#chain is already formed
-	if self.recorded_hero_coords.has(hero.unit_name):
-		pass
+
 
 #called by the saint after it moves
 func self_handle_field_of_lights():
@@ -80,9 +76,11 @@ func self_handle_field_of_lights():
 	
 	for hero in get_tree().get_nodes_in_group("player_pieces"): #update here in case pieces have moved
 		self.recorded_hero_coords[hero.unit_name] = hero.coords
-	var lights_range = get_lights_range()
-	for coords in lights_range:
+	var lights_range = get_lights_range() #this returns player pieces lined up in any of the 12 directions
+
+	for coords in lights_range: 
 		cast_field_of_lights(self.coords, coords)
+
 
 #needs to be called after receiving shove
 #needs to be called after a piece moves
@@ -99,7 +97,6 @@ func handle_field_of_lights(hero):
 
 
 func cast_field_of_lights(start_coords, end_coords):
-	
 	var unit = self.grid.hex_normalize(end_coords - start_coords)
 	var current_coords = start_coords + unit
 	var attack_range = []
@@ -112,10 +109,9 @@ func cast_field_of_lights(start_coords, end_coords):
 		var start_pos = self.grid.locations[start_coords].get_pos()
 		var end_pos = self.grid.locations[end_coords].get_pos()
 		add_animation(self, "animate_cast_chain", true, [start_pos, end_pos])
-	
-	var action = get_new_action()
-	action.add_call("attacked", [1, self], attack_range)
-	action.execute()
+		var action = get_new_action()
+		action.add_call("attacked", [1, self], attack_range)
+		action.execute()
 
 
 func animate_cast_chain(start_pos, end_pos):

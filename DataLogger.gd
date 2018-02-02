@@ -36,17 +36,14 @@ func log_attempt_helper(level_id, attempt_type, turn):
 
 func log_restart(level_id, turn):
 	var attempt = log_attempt_helper(level_id, ATTEMPT_TYPES.restart, turn)
-	save_state(attempt)
 	log_online(attempt)
 
 func log_lose(level_id, turn):
 	var attempt = log_attempt_helper(level_id, ATTEMPT_TYPES.lose, turn)
-	save_state(attempt)
 	log_online(attempt)
 
 func log_win(level_id, turn):
 	var attempt = log_attempt_helper(level_id, ATTEMPT_TYPES.win, turn)
-	save_state(attempt)
 	log_online(attempt)
 
 func save_state(attempt):

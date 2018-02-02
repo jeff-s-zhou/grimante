@@ -115,7 +115,7 @@ func shield_bash(new_coords):
 		action.add_call("set_frozen", [true], new_coords)
 		action.execute()
 	
-	target.receive_shove(unit_distance, self.shield_bash_damage)
+	target.receive_shove(self, unit_distance, self.shield_bash_damage)
 
 	add_animation(self, "animate_move_to_pos", true, [original_pos, 200, true])
 	

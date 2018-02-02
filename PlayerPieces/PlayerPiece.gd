@@ -351,12 +351,7 @@ func turn_update():
 func set_coords(new_coords):
 	get_parent().move_piece(self.coords, new_coords)
 	self.coords = new_coords
-	
-	#for moving on and off the unit select bar
-	if coords.y == 99:
-		set_opacity(0.5)
-	else:
-		set_opacity(1.0)
+
 
 #ANIMATION FUNCTIONS
 
@@ -578,18 +573,9 @@ func placed(ending_turn=false):
 	if ending_turn:
 		clear_assist()
 	else:
-		self.grid.handle_field_of_lights(self)
+		#can't be in set_coords because stormdancer for example needs to set_coords before executing swap attacks
+		self.grid.handle_field_of_lights(self) 
 		handle_assist()
-
-
-func check_for_traps():
-	if self.grid.locations[self.coords].is_trapped():
-		self.grid.locations[self.coords].trigger_trap()
-		if !self.shielded:
-			delete_self()
-		else:
-			set_shield(false)
-		
 
 
 func animate_placed(ending_turn=false):

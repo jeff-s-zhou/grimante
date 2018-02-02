@@ -67,7 +67,6 @@ func placed(ending_turn=false):
 		self.handle_assist()
 		self.grid.handle_field_of_lights(self)
 		add_animation(self, "animate_half_placed", false)
-		check_for_traps()
 
 func resurrect(coords):
 	self.moves_remaining = 2

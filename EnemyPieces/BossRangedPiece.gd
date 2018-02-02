@@ -15,3 +15,13 @@ func initialize(max_hp, modifiers, prototype):
 	set_boss(true)
 	add_to_group("boss_pieces")
 	
+func delete_self(delay, blocking):
+	.delete_self(delay, blocking)
+	remove_from_group("boss_pieces")
+	get_node("/root/Combat").handle_boss_death()
+	
+func smashed(attacker):
+	set_shield(false)
+	return false
+
+	

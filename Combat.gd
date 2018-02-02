@@ -36,6 +36,7 @@ signal deployed
 signal animation_done
 
 func _ready():
+	
 	var material = get_node("TransitionMask").get("material/material")
 	material.set("shader_param/strength", 0)
 	
@@ -82,9 +83,7 @@ func _ready():
 	get_node("/root/AssistSystem").initialize(self.level_schematic.flags)
 	
 	get_node("Grid").initialize(self.level_schematic.flags)
-	
-	if !get_node("/root/MusicPlayer").is_playing():
-		get_node("/root/MusicPlayer").play()
+
 #		
 
 	#key is the coords, value is the piece

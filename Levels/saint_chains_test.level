@@ -1,0 +1,7 @@
+{"turn":0, "pos_x":4, "name":"saint", "pos_y":7}
+{"hp":"1", "turn":0, "pos_x":2, "name":"slime", "modifiers":{}, "pos_y":5}
+{"hp":"9", "turn":0, "pos_x":2, "name":"drummer", "modifiers":{}, "pos_y":3}
+{"turn":0, "pos_x":5, "name":"frost_knight", "pos_y":7}
+{"turn":0, "pos_x":2, "name":"cavalier", "pos_y":6}
+{"turn":0, "pos_x":3, "name":"assassin", "pos_y":4}
+{"hp":"3", "turn":0, "pos_x":1, "name":"spectre", "modifiers":{}, "pos_y":4}
