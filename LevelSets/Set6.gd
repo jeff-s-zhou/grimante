@@ -38,7 +38,7 @@ func inspire(hard=false):
 	var pieces
 	var score_guide
 	pieces = load_level("shield_inspire.level")
-	score_guide = {1:5, 2:5, 3:4} 
+	score_guide = {1:6, 2:5, 3:4} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -52,7 +52,7 @@ func unstable(hard=false):
 	var score_guide
 	pieces = load_level("unstable.level")
 	#score_guide = {1:5, 2:5, 3:5, 4:4, 5:3}
-	score_guide = {1:5, 2:5, 3:4, 4:3}
+	score_guide = {1:6, 2:5, 3:4, 4:3}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -65,7 +65,7 @@ func fray2(hard=false):
 	var pieces
 	var score_guide
 	pieces = load_level("fray2.level")
-	score_guide = {1:5, 2:5, 3:4}
+	score_guide = {1:6, 2:5, 3:4}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -76,7 +76,7 @@ func fray2(hard=false):
 	
 func griffon():
 	var pieces = load_level("griffon.level")
-	var score_guide = {1:5, 2:5, 3:4, 4:3}
+	var score_guide = {1:6, 2:5, 3:4, 4:3}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var traps = pieces[2]
@@ -88,7 +88,7 @@ func griffon():
 #might be too hard
 func defuse_the_bomb():
 	var pieces = load_level("defuse_the_bomb.level")
-	var score_guide = {1:5, 2:5, 3:4}
+	var score_guide = {1:6, 2:5, 3:4}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -104,7 +104,7 @@ func ghost_boss(hard=false):
 		score_guide = {1:5, 2:5, 3:5, 4:4, 5:3} #not tested
 	else:
 		pieces = load_level("ghost_boss.level")
-		score_guide = {1:5, 2:5, 3:5, 4:4, 5:3}
+		score_guide = {1:6, 2:6, 3:5, 4:4, 5:3}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)

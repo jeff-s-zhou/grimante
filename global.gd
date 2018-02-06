@@ -10,13 +10,16 @@ var _params = null
 
 var PLATFORMS = {"Android":1, "iOS":2, "PC":3} 
 var platform = PLATFORMS.PC
+
+var steam_enabled = true
+
 var combat_resource
 
 const cursor_sprite = preload("res://Assets/UI/cursor.png")
 
 const VERSION = "0.9.99"
 
-var online_logging_flag = true
+var online_logging_flag = false
 var http_thread
 
 func _ready():

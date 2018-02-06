@@ -38,6 +38,8 @@ signal animation_done
 #achievement signals
 signal ach_smash
 signal ach_level_complete
+signal restart
+signal loss
 
 func _ready():
 	
@@ -67,6 +69,9 @@ func _ready():
 			print("adding tutorial")
 
 	get_node("/root/DataLogger").log_start_attempt(self.level_schematic.id)
+			
+	if get_node("/root/global").steam_enabled:
+		get_node("/root/SteamHandler").initialize(self.level_schematic.id)
 	
 	#is here the big divide?
 
@@ -329,8 +334,11 @@ func display_pause_menu():
 		get_node("PauseMenu").display()
 	
 		
-func restart():
+func restart(seamless_loss=false):
 	pause()
+	if !seamless_loss:
+		emit_signal("restart")
+		
 	get_node("/root/AnimationQueue").stop()
 	if get_node("/root/AnimationQueue").is_animating():
 		yield(get_node("/root/AnimationQueue"), "animations_finished")
@@ -709,7 +717,6 @@ func player_win():
 		yield(get_node("AnimationPlayer"), "finished")
 		get_node("/root/global").goto_scene(self.combat_resource, {"level": self.level_schematic.next_level})
 	else:
-		emit_signal("ach_level_complete", self.level_schematic.id)
 		var win_screen = self.outcome_screen_prototype.instance()
 		add_child(win_screen)
 		win_screen.initialize_victory(self.level_schematic.next_level, self.level_schematic, self.turn_count)
@@ -723,8 +730,9 @@ func enemy_win():
 	self.state = STATES.end
 	pause()
 	if self.level_schematic.seamless:
-		restart()
+		restart(true)
 	else:
+		emit_signal("loss")
 		get_node("/root/AnimationQueue").stop()
 		get_node("/root/DataLogger").log_lose(self.level_schematic.id, self.turn_count)
 		

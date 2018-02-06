@@ -58,7 +58,7 @@ func frost_knight_drive(hard=false):
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth", "no_inspire"]
-	var score_guide = {1:5, 2:5, 3:4, 4:3, 5:2} 
+	var score_guide = {1:6, 2:5, 3:4, 4:3, 5:2} 
 	var extras = {"flags":flags, "free_deploy":false, "hard":hard, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00017, "Frost Knight Drive", allies, enemies, 5, null, extras)
 
@@ -71,7 +71,7 @@ func wyvern(hard=false):
 		score_guide = {1:5, 2:5, 3:4, 4:4, 5:3} 
 	else:
 		pieces = load_level("wyvern.level")
-		score_guide = {1:5, 2:5, 3:4, 4:3, 5:2} 
+		score_guide = {1:6, 2:5, 3:4, 4:3, 5:2} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -81,7 +81,7 @@ func wyvern(hard=false):
 	
 	
 func wyvern2():
-	var score_guide = {1:5, 2:5, 3:4} 
+	var score_guide = {1:6, 2:5, 3:4} 
 	var pieces = load_level("wyvern2.level")
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
@@ -93,7 +93,7 @@ func wyvern2():
 #needs a harder level probably
 func shield():
 	var pieces = load_level("shield.level")
-	var score_guide = {1:5, 2:5, 3:4, 4:4, 5:3} #clearable on 2
+	var score_guide = {1:6, 2:5, 3:4, 4:4, 5:3} #clearable on 2
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -106,7 +106,7 @@ func big_fight(hard=false):
 	var pieces
 	var score_guide
 	pieces = load_level("big_fight.level")
-	score_guide = {1:5, 2:5, 3:5, 4:4, 5:3}
+	score_guide = {1:6, 2:5, 3:5, 4:4, 5:3}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)

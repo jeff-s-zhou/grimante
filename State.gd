@@ -104,6 +104,14 @@ func get_level_set_progress(level_set=null):
 			completed += 1
 	return [completed, level_set.get_level_count()]
 	
+	
+func get_total_stars():
+	var total_stars = 0
+	for set_stars in self.level_set_data.values():
+		for level_stars in set_stars.values():
+			total_stars += level_stars
+	return total_stars
+	
 
 func get_stars(level_set=null):
 	if level_set == null:

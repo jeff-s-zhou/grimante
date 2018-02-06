@@ -32,7 +32,7 @@ func stormdancer_trials():
 	
 func stormdancer_practice(hard=false):
 	var pieces = load_level("stormdancer_practice.level")
-	var score_guide = {1:5, 2:5, 3:4, 4:3} #not tested
+	var score_guide = {1:6, 2:5, 3:4, 4:3} #not tested
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -42,7 +42,7 @@ func stormdancer_practice(hard=false):
 
 func nemesis():
 	var pieces = load_level("nemesis.level")
-	var score_guide = {1:5, 2:5, 3:4, 4:3} 
+	var score_guide = {1:6, 2:5, 3:4, 4:3} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -52,7 +52,7 @@ func nemesis():
 
 func nemesis_big_fight():
 	var pieces = load_level("nemesis_big_fight.level")
-	var score_guide = {1:5, 2:5, 3:4, 4:3, 5:2} 
+	var score_guide = {1:6, 2:5, 3:4, 4:3, 5:2} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -62,7 +62,7 @@ func nemesis_big_fight():
 
 func trickshot():
 	var pieces = load_level("trickshot.level")
-	var score_guide = {1:5, 2:5, 3:4} 
+	var score_guide = {1:6, 2:5, 3:4} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -72,7 +72,7 @@ func trickshot():
 	
 func double_boss():
 	var pieces = load_level("double_boss.level")
-	var score_guide = {1:5, 2:5, 3:4, 4:3} 
+	var score_guide = {1:6, 2:5, 3:4, 4:3} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -82,10 +82,10 @@ func double_boss():
 	
 func mirror_world():
 	var pieces = load_level("mirror_world.level")
-	var score_guide = {1:5, 2:5, 3:5, 4:4} 
+	var score_guide = {1:6, 2:6, 3:5, 4:4, 5:3} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var extras = {"free_deploy":false, "flags":[], "score_guide":score_guide}
-	return LevelTypes.Timed.new(00044, "Mirror World", allies, enemies, 4, null, extras)
+	return LevelTypes.Timed.new(00044, "Mirror World", allies, enemies, 5, null, extras)
 	

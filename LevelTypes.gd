@@ -76,9 +76,12 @@ class BaseLevelType:
 		
 	func get_score(turn_count):
 		if self.score_guide.has(turn_count):
-			return self.score_guide[turn_count]
+			return min(self.score_guide[turn_count], 5)
 		else:
 			return 5
+	
+	func is_new_record(turn_count):
+		return self.score_guide.has(turn_count) and self.score_guide[turn_count] == 6
 			
 	#ok, the problem is that you can have the same score for multiple turns
 	#so instead of "You cleared in 4 turns", we need something like

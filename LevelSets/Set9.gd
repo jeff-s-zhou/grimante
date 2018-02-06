@@ -18,7 +18,7 @@ func final_level():
 	var pieces
 	var score_guide
 	pieces = load_level("final_level.level")
-	score_guide = {1:5, 2:5, 3:5, 4:4, 5:3, 6:2} 
+	score_guide = {1:6, 2:6, 3:5, 4:4, 5:3, 6:2} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -30,7 +30,7 @@ func final_level2():
 	var pieces
 	var score_guide
 	pieces = load_level("final_level2.level")
-	score_guide = {1:5, 2:5, 3:4, 4:3, 5:2}
+	score_guide = {1:6, 2:5, 3:4, 4:3, 5:2}
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)

@@ -50,7 +50,7 @@ func exit_menu():
 func initialize(level_schematic):
 	get_node("T/Label").set_text(level_schematic.name.to_upper())
 	var score = get_node("/root/State").get_level_score(level_schematic.id)
-	var has_previous_score = score != null and score != 5
+	var has_previous_score = score != null and score != 0 and score < 5
 	if has_previous_score: #already attempted but not full score
 		var turn = level_schematic.get_turn_to_improve_score(score)
 		if turn == 1:

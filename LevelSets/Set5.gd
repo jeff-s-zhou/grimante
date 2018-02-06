@@ -32,7 +32,7 @@ func corsair_trials():
 	
 func corsair_drive():
 	var pieces = load_level("corsair_drive2.level")
-	var score_guide = {1:5, 2:5, 3:4, 4:3} 
+	var score_guide = {1:6, 2:5, 3:4, 4:3} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -43,7 +43,7 @@ func corsair_drive():
 	
 func football():
 	var pieces = load_level("football.level")
-	var score_guide = {1:5, 2:5, 3:4, 4:3} 
+	var score_guide = {1:6, 2:5, 3:4, 4:3} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -55,7 +55,7 @@ func football():
 #probably too hard
 func ghostbusters2():
 	var pieces = load_level("ghostbusters2.level")
-	var score_guide = {1:5, 2:5, 3:4, 4:3, 5:2} 
+	var score_guide = {1:6, 2:5, 3:4, 4:3, 5:2} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -71,7 +71,7 @@ func boss_fight():
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_fifth", "no_inspire"]
-	var score_guide = {1:5, 2:5, 3:4} 
+	var score_guide = {1:6, 2:5, 3:4} 
 	var tutorial = load("res://Tutorials/boss_fight.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
 	var extras = {"tutorial":tutorial_func, "flags":flags, "free_deploy":false, "score_guide":score_guide}
@@ -86,7 +86,7 @@ func fray(hard=false):
 		score_guide = {1:5, 2:5, 3:5, 4:4} #not tested
 	else:
 		pieces = load_level("fray.level")
-		score_guide = {1:5, 2:5, 3:4, 4:3} 
+		score_guide = {1:6, 2:5, 3:4, 4:3} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -100,7 +100,7 @@ func big_boss_fight(hard=false):
 	var pieces
 	var score_guide
 	pieces = load_level("big_boss_fight.level")
-	score_guide = {1:5, 2:5, 3:4} 
+	score_guide = {1:6, 2:5, 3:4} 
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)

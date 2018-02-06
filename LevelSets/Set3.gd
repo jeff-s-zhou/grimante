@@ -39,7 +39,7 @@ func sludge():
 	var tutorial = load("res://Tutorials/sludge.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
 	var flags = ["no_inspire", "no_fifth", "no_stars"]
-	var score_guide = {1:5, 2:5, 3:4, 4:4, 5:3} 
+	var score_guide = {1:6, 2:5, 3:4, 4:4, 5:3} 
 	var extras = {"flags":flags, "free_deploy":false, "tutorial":tutorial_func, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00013, "A Sticky Situation", allies, enemies, 5, null, extras)
 	
@@ -77,7 +77,7 @@ func seraph():
 	var tutorial = load("res://Tutorials/seraph.gd").new()
 	var tutorial_func = funcref(tutorial, "get")
 	var flags = ["no_inspire", "no_fifth"]
-	var score_guide = {1:5, 2:5, 3:4, 4:4, 5:3} 
+	var score_guide = {1:6, 2:5, 3:4, 4:4, 5:3} 
 	var extras = {"flags":flags, "free_deploy":false, "score_guide":score_guide, "tutorial":tutorial_func}
 	return LevelTypes.Timed.new(00014, "Death Wish", allies, enemies, 5, null, extras)
 
@@ -87,6 +87,6 @@ func sludge_lord():
 	var raw_enemies = load_level("sludge_lord.level")
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
 	var flags = ["no_inspire", "no_fifth"]
-	var score_guide = {1:5, 2:5, 3:4} 
+	var score_guide = {1:6, 2:5, 3:4} 
 	var extras = {"flags":flags, "free_deploy":false, "score_guide":score_guide}
 	return LevelTypes.Timed.new(00015, "Jake Paul and Crew", allies, enemies, 3, null, extras)

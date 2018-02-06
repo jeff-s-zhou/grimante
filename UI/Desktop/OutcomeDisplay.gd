@@ -65,6 +65,8 @@ func initialize_victory(next_level, current_level, cleared_turn):
 	get_node("/root/State").save_level_progress(self.current_level.id, score)
 	set_progress_label()
 	
+	get_node("/root/SteamHandler").set_level_complete(self.current_level, cleared_turn)
+	
 	get_node("/root/State").request_attempt_session_id()
 	
 	if next_level == null:

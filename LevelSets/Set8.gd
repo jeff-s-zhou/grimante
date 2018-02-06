@@ -32,7 +32,7 @@ func saint_practice():
 	var pieces
 	var score_guide
 	pieces = load_level("saint_drive2.level")
-	score_guide = {1:5, 2:5, 3:5, 4:4} #not tested
+	score_guide = {1:6, 2:6, 3:5, 4:4} #not tested
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -44,7 +44,7 @@ func assault():
 	var pieces
 	var score_guide
 	pieces = load_level("assault.level")
-	score_guide = {1:5, 2:5, 3:5, 4:4, 5:3} #not tested
+	score_guide = {1:6, 2:6, 3:5, 4:4, 5:3} #not tested
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -56,7 +56,7 @@ func god_is_faceless():
 	var pieces
 	var score_guide
 	pieces = load_level("god_is_faceless.level")
-	score_guide = {1:5, 2:5, 3:4, 4:3} #not tested
+	score_guide = {1:6, 2:5, 3:4, 4:3} #not tested
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -68,7 +68,7 @@ func top_of_the_morning():
 	var pieces
 	var score_guide
 	pieces = load_level("top_of_the_morning.level")
-	score_guide = {1:5, 2:5, 3:4, 4:3} #not tested
+	score_guide = {1:6, 2:5, 3:4, 4:3} #not tested
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -80,7 +80,7 @@ func seraph_hell():
 	var pieces
 	var score_guide
 	pieces = load_level("seraph_hell.level")
-	score_guide = {1:5, 2:5, 3:4, 4:3} #not tested
+	score_guide = {1:6, 2:5, 3:4, 4:3} #not tested
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)
@@ -92,7 +92,7 @@ func saints_row():
 	var pieces
 	var score_guide
 	pieces = load_level("saints_row.level")
-	score_guide = {1:5, 2:5, 3:5, 4:4, 5:3, 6:2} #not tested
+	score_guide = {1:6, 2:6, 3:5, 4:4, 5:3, 6:2} #not tested
 	var raw_enemies = pieces[0]
 	var allies = pieces[1]
 	var enemies = EnemyWrappers.FiniteCuratedWrapper.new(raw_enemies)

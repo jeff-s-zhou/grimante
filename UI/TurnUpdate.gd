@@ -25,7 +25,7 @@ func initialize(level_schematic):
 	self.turn_limit = level_schematic.num_turns
 	self.name = level_schematic.name
 	var score = get_node("/root/State").get_level_score(level_schematic.id)
-	self.has_previous_score = score != null and score != 5
+	self.has_previous_score = score != null and score != 0 and score < 5
 	if self.has_previous_score: #already attempted but not full score
 		var turn = level_schematic.get_turn_to_improve_score(score)
 		if turn == 1:
