@@ -35,6 +35,10 @@ signal deployed
 
 signal animation_done
 
+#achievement signals
+signal ach_smash
+signal ach_level_complete
+
 func _ready():
 	
 	var material = get_node("TransitionMask").get("material/material")
@@ -669,6 +673,7 @@ func handle_boss_death():
 
 
 func handle_enemy_death(coords):
+	emit_signal("ach_smash")
 	if get_node("/root/global").platform == PLATFORMS.PC:
 		get_node("ControlBar/Combat/StarBar").handle_enemy_death()
 	else:
@@ -704,6 +709,7 @@ func player_win():
 		yield(get_node("AnimationPlayer"), "finished")
 		get_node("/root/global").goto_scene(self.combat_resource, {"level": self.level_schematic.next_level})
 	else:
+		emit_signal("ach_level_complete", self.level_schematic.id)
 		var win_screen = self.outcome_screen_prototype.instance()
 		add_child(win_screen)
 		win_screen.initialize_victory(self.level_schematic.next_level, self.level_schematic, self.turn_count)

@@ -576,6 +576,7 @@ func animate_freeze_hide():
 	
 func set_silenced(flag):
 	if flag:
+		self.movement_value = Vector2(0, 1)
 		set_shield(false)
 		set_deadly(false)
 		set_unstable(false)
@@ -654,6 +655,7 @@ func delete_self(delay=0.0, blocking=false):
 		add_animation(self, "animate_delete_self", false, [delay])
 	delete_self_helper()
 	emit_signal("enemy_death", self.coords)
+
 
 #Do we just pass in another argument, so that the animation only blocks on smash killed??
 
