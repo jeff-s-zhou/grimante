@@ -19,7 +19,7 @@ func get_trial1_hints():
 	"The Archer's Direct Attack is to shoot an arrow from a distance for {3} damage."]
 	
 	add_hint(tutorial, 1, hint, Vector2(3, 7))
-	hint = ["If the Archer's Arrow {kills}, it continues travelling and deals {1 less damage to successive enemies}.}"]
+	hint = ["If the Archer's Arrow {kills}, it continues travelling and deals {1 less damage to successive enemies.}"]
 	
 	add_hint(tutorial, 2, hint)
 	

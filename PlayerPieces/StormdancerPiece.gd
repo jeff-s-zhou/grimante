@@ -217,6 +217,8 @@ func animate_throw_shurikens(attack_range):
 		var global_position = self.grid.locations[attack_coords].get_global_pos()
 		shuriken.animate_attack(global_position, 1200)
 	yield(shuriken, "animation_done")
+	if attack_range.size() == 6:
+		get_node("/root/SteamHandler").set_stormdancer_perfect_storm()
 	emit_signal("animation_done")
 	
 func tango(new_coords):

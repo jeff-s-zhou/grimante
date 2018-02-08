@@ -17,6 +17,8 @@ var passive_damage = DEFAULT_PASSIVE_DAMAGE setget , get_passive_damage
 
 var pathed_range
 
+var ach_kill_count = 0
+
 func _ready():
 	set_shield(DEFAULT_SHIELD)
 	self.movement_value = DEFAULT_MOVEMENT_VALUE
@@ -36,6 +38,12 @@ func resurrect(coords):
 	get_parent().assassin = self
 	.resurrect(coords)
 
+
+func inc_kill_counter():
+	self.ach_kill_count += 1
+	if self.ach_kill_count == 7:
+		get_node("/root/SteamHandler").set_assassin_bloodlust()
+	
 
 func get_backstab_damage(coords):
 	var neighbor_coords_range = get_parent().get_range(coords, [1,2], "ENEMY")
@@ -150,6 +158,7 @@ func backstab(new_coords):
 		placed()
 	else:
 		add_animation(self, "emit_animated_placed", false)
+		inc_kill_counter()
 		self.grid.handle_field_of_lights(self)
 		activate_bloodlust()
 
@@ -172,6 +181,13 @@ func emit_animated_placed():
 func predict(new_coords):
 	if _is_within_attack_range(new_coords):
 		get_parent().pieces[new_coords].predict(self.get_backstab_damage(new_coords), self)
+		
+
+#reset the achievement kill counter if ending turn
+func placed(ending_turn=false):
+	if ending_turn:
+		self.ach_kill_count = 0
+	.placed(ending_turn)
 
 
 #resets the assassin to be able to act again
@@ -202,12 +218,13 @@ func trigger_passive(attack_range):
 		action.add_call("attacked", [self.passive_damage, self], passive_range)
 		action.execute()
 		
-		#if any of the passive attacks killed, trigger bloodlust
+		#if any of the passive attacks killed, reset if placed
 		for attack_coords in passive_range:
-			if !get_parent().pieces.has(attack_coords) and self.state == States.PLACED:
-				#activate_bloodlust()
-				unplaced()
-				break
+			if !get_parent().pieces.has(attack_coords):
+				inc_kill_counter()
+				if self.state == States.PLACED:
+					unplaced()
+					break
 				
 		add_animation(self, "animate_passive_end", true, [self.coords])
 

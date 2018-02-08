@@ -112,6 +112,8 @@ func cast_field_of_lights(start_coords, end_coords):
 		var action = get_new_action()
 		action.add_call("attacked", [1, self], attack_range)
 		action.execute()
+		if attack_range.size() >= 4:
+			get_node("/root/SteamHandler").set_saint_infinite_light()
 
 
 func animate_cast_chain(start_pos, end_pos):

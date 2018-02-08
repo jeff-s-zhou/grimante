@@ -1,0 +1,5 @@
+{"hp":"3", "turn":0, "pos_x":2, "name":"grunt", "modifiers":{}, "pos_y":4}
+{"turn":0, "pos_x":4, "name":"frost_knight", "pos_y":7}
+{"turn":0, "pos_x":2, "name":"archer", "pos_y":6}
+{"turn":0, "pos_x":3, "name":"assassin", "pos_y":7}
+{"hp":"5", "turn":0, "pos_x":3, "name":"grunt", "modifiers":{}, "pos_y":4}

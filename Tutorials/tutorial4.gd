@@ -26,7 +26,7 @@ func get():
 	"If the Hero is not Shielded, it is {killed}."]
 	add_enemy_start_rule(tutorial, 2, text, Vector2(6, 7))
 	
-	text = ["Clear the board."]
+	text = ["Have at it."]
 	add_player_start_rule(tutorial, 3, text)
 	
 	text = ["If an enemy blocks a reinforcement, it absorbs the reinforcement's health."]

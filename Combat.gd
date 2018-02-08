@@ -40,6 +40,7 @@ signal ach_smash
 signal ach_level_complete
 signal restart
 signal loss
+signal ach_clutch
 
 func _ready():
 	
@@ -302,6 +303,10 @@ func initialize_enemy_piece(coords, prototype, health, modifiers, animation_sequ
 
 func end_turn():
 	if self.state == STATES.end:
+		if get_tree().get_nodes_in_group("enemy_pieces").size() == 0: 
+			#used every available move and killed all enemies
+			emit_signal("ach_clutch")
+			
 		return
 
 	self.state = STATES.transitioning
@@ -456,6 +461,10 @@ func computer_input(event):
 			enemy_piece.debug()
 		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
 			player_piece.debug()
+			
+	elif event.is_action("test_action2") and event.is_pressed():
+		pass
+#		Steam.resetAllStats(true) #THIS IS FOR DEBUGGING, REMOVE FROM FINAL
 			
 
 func display_description(piece):

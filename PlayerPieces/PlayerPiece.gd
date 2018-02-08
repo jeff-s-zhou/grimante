@@ -194,8 +194,32 @@ func is_placed():
 	
 func walk_off(coords_distance, exits_bottom=true):
 	add_animation(self, "animate_walk_off", true, [coords_distance])
+	get_node("CollisionArea").set_pickable(false)
+	self.state = States.DEAD
 	self.grid.remove_piece(self.coords)
+	add_to_group("dead_heroes")
 	remove_from_group("player_pieces")
+
+#add own version to not delete self lol
+func animate_walk_off(coords_distance):
+	add_anim_count()
+	get_node("/root/SteamHandler").set_what_do()
+	get_node("CollisionArea").set_global_pos(Vector2(-100, -100))
+	var speed = 300
+	var distance = get_parent().get_real_distance(coords_distance)
+	var time = distance.length()/speed
+	get_node("Tween").interpolate_property(self, "transform/pos", get_pos(), get_pos() + distance, time, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween").start()
+	get_node("Tween 2").interpolate_property(self, "visibility/opacity", 1, 0, time, Tween.TRANS_LINEAR, Tween.EASE_IN)
+	get_node("Tween 2").start()
+	animate_short_hop_to_pos(speed, distance.length())
+	yield(get_node("Tween"), "tween_complete")
+	#need this in because apparently Tween emits the signal slightly early
+	get_node("Timer").set_wait_time(0.1)
+	get_node("Timer").start()
+	yield(get_node("Timer"), "timeout")
+	emit_signal("animation_done")
+	subtract_anim_count()
 
 
 func delete_self(isolated_call=true, delay=0.0):
