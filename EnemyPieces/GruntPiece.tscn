@@ -39,21 +39,21 @@ animations = [ {
 "name": "default",
 "speed": 5.0
 }, {
-"frames": [ ExtResource( 5 ) ],
-"loop": true,
-"name": "attack_range",
-"speed": 5.0
-}, {
 "frames": [ ExtResource( 4 ), ExtResource( 5 ) ],
 "loop": true,
 "name": "damaged",
+"speed": 5.0
+}, {
+"frames": [ ExtResource( 5 ) ],
+"loop": true,
+"name": "attack_range",
 "speed": 5.0
 } ]
 
 [sub_resource type="SampleLibrary" id=3]
 
 samples/landing_thump = {
-"db": -2.0,
+"db": -3.0,
 "pitch": 1.0,
 "priority": 0,
 "sample": ExtResource( 18 )
