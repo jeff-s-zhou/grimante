@@ -12,8 +12,16 @@ var restart_count = 0
 var attempt_count = 0
 var level_id = 0 #we use this to keep track of if they're restarting on same level and stuff
 
+#lol the last star trial and the first stormdancer actually overlap
 var trial_ids = [1, 2, 3, 4, 5, 8,
-10004, 10007, 10013, 10018, 10022, 10034, 10025, 10039] #we use these to make sure we can't trigger some achievements during trials
+10001, 10002, 10003, 10004, 
+10005, 10006, 10007, 
+10008, 10009, 10010, 10011, 10012, 10013, 
+10014, 10015, 10016, 10017, 10018, 
+10019, 10020, 10021, 10022, 
+10023, 10024, 10025, 
+10031, 10032, 10033, 10034, 
+10035, 10036, 10037, 10038, 10039] #we use these to make sure we can't trigger some achievements during trials
 
 func _ready():
 	# Called every time the node is added to the scene.
