@@ -37,7 +37,7 @@ func animate_slide_out():
 			animate_individual_slide_out(node, start_pos, end_pos, delay)
 			delay += 0.05
 	get_node("Tween").start()
-	get_node("Timer").set_wait_time(delay + 0.20)
+	get_node("Timer").set_wait_time(delay + 0.30)
 	get_node("Timer").start()
 	yield(get_node("Timer"), "timeout")
 	emit_signal("animation_done")

@@ -12,6 +12,8 @@ var victory_flag = false
 
 var next_set_flag = false
 
+var credits_flag = false
+
 var already_completed_flag = false
 
 signal animation_done
@@ -70,7 +72,11 @@ func initialize_victory(next_level, current_level, cleared_turn):
 	get_node("/root/State").request_attempt_session_id()
 	
 	if next_level == null:
-		if get_node("/root/State").is_set_completed():
+		if get_node("/root/State").is_game_completed():
+			self.credits_flag = true
+			print("game is completed")
+			get_node("NextLevelButton/Toppings/Label").set_text("CREDITS")
+		elif get_node("/root/State").is_set_completed():
 			self.next_set_flag = true
 			get_node("NextLevelButton/Toppings/Label").set_text("NEXT SET")
 		else:
@@ -95,7 +101,10 @@ func set_progress_label():
 func next_level():
 	fade_out()
 	yield(self, "animation_done")
-	if self.next_set_flag:
+	if self.credits_flag:
+		get_node("/root/global").goto_scene("res://UI/Desktop/Credits.tscn",
+		{"beat_game":true})
+	elif self.next_set_flag:
 		get_node("/root/global").goto_scene("res://DesktopLevelSelect/LevelSetSelect.tscn", 
 		{"cleared_level_set":!self.already_completed_flag})
 	else:
@@ -111,7 +120,7 @@ func restart():
 func level_select():
 	fade_out()
 	yield(self, "animation_done")
-	if self.next_set_flag:
+	if self.next_set_flag or self.credits_flag:
 		get_node("/root/global").goto_scene("res://DesktopLevelSelect/LevelSetSelect.tscn", 
 		{"cleared_level_set":!self.already_completed_flag})
 	else:

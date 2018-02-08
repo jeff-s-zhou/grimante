@@ -776,11 +776,11 @@ func animate_set_hp(hp, value, delay=0):
 	
 	text.set_text(value_text)
 	
-	var destination = text.get_pos() - Vector2(0, 130)
+	var destination = text.get_pos() - Vector2(0, 140)
 	var tween = Tween.new()
 	add_child(tween)
-	tween.interpolate_property(text, "rect/pos", text.get_pos(), destination, 1.3, Tween.TRANS_EXPO, Tween.EASE_OUT_IN)
-	tween.interpolate_property(text, "visibility/opacity", 1, 0, 1.3, Tween.TRANS_EXPO, Tween.EASE_IN)
+	tween.interpolate_property(text, "rect/pos", text.get_pos(), destination, 1.3, Tween.TRANS_QUART, Tween.EASE_OUT_IN)
+	tween.interpolate_property(text, "visibility/opacity", 1, 0, 1.3, Tween.TRANS_QUART, Tween.EASE_IN)
 	tween.start()
 	
 	yield(tween, "tween_complete")

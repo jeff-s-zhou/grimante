@@ -13,6 +13,8 @@ func _ready():
 	# Initialization here
 	#add_child(levels)
 	
+	get_node("T/CreditsButton").connect("pressed", self, "go_to_credits")
+	
 	for level_set in get_node("/root/Levels").get_level_sets():
 		var id_str = "T/" + str(level_set.id)
 		get_node(id_str).connect("pressed", self, "goto_level_set")
@@ -60,6 +62,11 @@ func go_to_settings():
 	self.settings.set_pos(Vector2(236, 150))
 	self.settings.animate_slide_in()
 	
+	
+func go_to_credits():
+	get_node("T").animate_slide_out()
+	yield(get_node("T"), "animation_done")
+	get_node("/root/global").goto_scene("res://UI/Desktop/Credits.tscn")
 	
 func back_from_settings():
 	self.settings.animate_slide_out()

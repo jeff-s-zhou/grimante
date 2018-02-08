@@ -1,3 +1,3 @@
-Direct/Leap Strike/Deal 4 damage to an enemy within movement range. If the enemy is killed by the attack, move to its tile.
+Direct/Leap Strike/Deal {4} damage to an enemy within movement range. If the enemy is killed by the attack, move to its tile.
 
-Indirect/Earthslam/Moving to an empty tile deals 2 damage to all enemies adjacent to the tile and Stuns them. Stun: Enemy cannot act the following turn.
+Indirect/Earthslam/Moving to an empty tile deals {2} damage to all enemies adjacent to the tile and {Stuns} them. Stun: Enemy cannot act the following turn.

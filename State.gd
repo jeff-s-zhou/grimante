@@ -84,6 +84,10 @@ func is_set_unlocked(level_set_id):
 #	print(self.completed_level_sets.keys())
 	var previous_set_id = level_set_id - 1
 	return (previous_set_id in self.completed_level_sets.keys() or str(previous_set_id) in self.completed_level_sets.keys())
+
+func is_game_completed():
+	var level_set = self.current_level_set
+	return level_set.id == 9 and is_set_completed(level_set)
 	
 func is_set_completed(level_set=null):
 	if level_set == null:

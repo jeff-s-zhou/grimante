@@ -7,8 +7,6 @@ const ATTEMPT_TYPES = {"lose":-1, "restart":0, "win":1}
 const FILE_NAME_FORMAT = "%s %s_%s %s_%s"
 var file_name = ""
 
-const URL = "http://www.putsreq.com"
-
 func _ready():
 	# Called every time the node is added to the scene.
 	# Initialization here

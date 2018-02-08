@@ -33,7 +33,13 @@ func clear():
 		tab.queue_free()
 	self.tabs = []
 	self.active_tab_id = null
-	
+
+
+func decorate(string):
+	string = string.replace("{", "[color=#ff3333]")
+	string = string.replace("}", "[/color]")
+	return string
+
 
 func set_active_tab(active_tab_id, skill):
 	for tab in self.tabs:
@@ -44,4 +50,4 @@ func set_active_tab(active_tab_id, skill):
 	var skill_name = skill["name"]
 	var skill_description = skill["text"]
 	get_node("SkillName").set_text(skill_name)
-	get_node("SkillDescription").set_bbcode(skill_description)
+	get_node("SkillDescription").set_bbcode(decorate(skill_description))

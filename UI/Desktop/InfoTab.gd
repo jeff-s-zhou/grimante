@@ -13,6 +13,7 @@ func _ready():
 	# Initialization here
 	get_node("TextureButton").connect("mouse_enter", self, "set_active")
 
+
 func initialize(id, skill_description):
 	self.id = id
 	self.skill_description = skill_description

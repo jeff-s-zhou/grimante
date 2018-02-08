@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=1]
+[gd_scene load_steps=9 format=1]
 
 [ext_resource path="res://DesktopLevelSelect/LevelSetSelect.gd" type="Script" id=1]
 [ext_resource path="res://Assets/Backgrounds/new_style_background_desktop.png" type="Texture" id=2]
@@ -6,6 +6,8 @@
 [ext_resource path="res://DesktopLevelSelect/LayeredSetSelectButton.tscn" type="PackedScene" id=4]
 [ext_resource path="res://DesktopLevelSelect/LevelSelectOptionsButton.tscn" type="PackedScene" id=5]
 [ext_resource path="res://UI/QuickOptions/SoundToggle.tscn" type="PackedScene" id=6]
+[ext_resource path="res://Assets/UI/Desktop/credits_button.png" type="Texture" id=7]
+[ext_resource path="res://Assets/UI/Desktop/credits_hover.png" type="Texture" id=8]
 
 [node name="LevelSetSelect" type="Node2D"]
 
@@ -77,5 +79,25 @@ transform/pos = Vector2( 26, 26 )
 [node name="SoundToggle" parent="T" instance=ExtResource( 6 )]
 
 transform/pos = Vector2( 60, 26 )
+
+[node name="CreditsButton" type="TextureButton" parent="T"]
+
+visibility/opacity = 0.8
+focus/ignore_mouse = false
+focus/stop_mouse = true
+size_flags/horizontal = 2
+size_flags/vertical = 2
+margin/left = 943.0
+margin/top = 744.0
+margin/right = 1013.0
+margin/bottom = 784.0
+toggle_mode = false
+enabled_focus_mode = 2
+shortcut = null
+textures/normal = ExtResource( 7 )
+textures/pressed = ExtResource( 8 )
+textures/hover = ExtResource( 8 )
+params/resize_mode = 0
+params/stretch_mode = 0
 
 

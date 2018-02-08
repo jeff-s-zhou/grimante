@@ -119,7 +119,7 @@ func _ready():
 	get_node("AnimationPlayer").play("transition_in")
 	#yield(get_node("AnimationPlayer"), "finished")
 	
-	unpause()
+	
 		
 	if self.level_schematic.free_deploy:
 		get_node("DeployMessage").show()
@@ -155,6 +155,7 @@ func _ready():
 	
 	get_node("PhaseShifter").animate_player_phase(self.turn_count)
 	yield( get_node("PhaseShifter"), "animation_done" )
+	unpause()
 	
 	get_node("ControlBar/Combat/EndTurnButton").set_disabled(false)
 	
@@ -371,7 +372,6 @@ func _input(event):
 func computer_input(event):
 	#select a unit
 	if get_node("InputHandler").is_select(event):
-		print("handling select input")
 		if self.state == STATES.player_turn or STATES.deploying:
 			instant_lighten()
 			var has_selected = get_node("Grid").selected != null
@@ -437,14 +437,14 @@ func computer_input(event):
 			display_description(hovered_piece)
 
 
-	elif event.is_action("debug_level_skip") and event.is_pressed():
-		if(self.level_schematic.next_level != null):
-			pause()
-			if get_node("/root/AnimationQueue").is_animating():
-				yield(get_node("/root/AnimationQueue"), "animations_finished")
-			get_node("/root/AnimationQueue").stop()
-			get_node("/root/global").goto_scene(self.combat_resource, {"level": self.level_schematic.next_level})
-			
+#	elif event.is_action("debug_level_skip") and event.is_pressed():
+#		if(self.level_schematic.next_level != null):
+#			pause()
+#			if get_node("/root/AnimationQueue").is_animating():
+#				yield(get_node("/root/AnimationQueue"), "animations_finished")
+#			get_node("/root/AnimationQueue").stop()
+#			get_node("/root/global").goto_scene(self.combat_resource, {"level": self.level_schematic.next_level})
+#			
 			
 	elif event.is_action("restart") and event.is_pressed():
 		restart()
@@ -453,17 +453,17 @@ func computer_input(event):
 		debug_mode()
 
 			
-	elif event.is_action("test_action") and event.is_pressed():
-		print(get_tree().get_nodes_in_group("player_pieces"))
-		get_node("/root/AnimationQueue").debug()
-		debug_mode()
-		for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
-			enemy_piece.debug()
-		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
-			player_piece.debug()
+#	elif event.is_action("test_action") and event.is_pressed():
+#		print(get_tree().get_nodes_in_group("player_pieces"))
+#		get_node("/root/AnimationQueue").debug()
+#		debug_mode()
+#		for enemy_piece in get_tree().get_nodes_in_group("enemy_pieces"):
+#			enemy_piece.debug()
+#		for player_piece in get_tree().get_nodes_in_group("player_pieces"):
+#			player_piece.debug()
 			
-	elif event.is_action("test_action2") and event.is_pressed():
-		pass
+#	elif event.is_action("test_action2") and event.is_pressed():
+#		pass
 #		Steam.resetAllStats(true) #THIS IS FOR DEBUGGING, REMOVE FROM FINAL
 			
 

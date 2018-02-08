@@ -1,4 +1,4 @@
 
-Indirect/Trample/Moving through an enemy deals 2 damage to it.
+Indirect/Trample/Moving through an enemy deals {2} damage to it.
 
-Direct/Joust/Move in a straight line, dealing 3 + 1 damage for each tile travelled to the first enemy hit.
+Direct/Joust/Move in a straight line, dealing {3 + 1 damage for each tile travelled} to the first enemy hit.
