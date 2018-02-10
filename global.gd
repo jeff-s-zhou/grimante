@@ -19,7 +19,7 @@ const cursor_sprite = preload("res://Assets/UI/cursor.png")
 
 const VERSION = "1.0.0"
 
-var online_logging_flag = true
+var online_logging_flag = false
 var http_thread
 
 func _ready():

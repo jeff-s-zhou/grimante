@@ -33,16 +33,19 @@ func log_attempt_helper(level_id, attempt_type, turn):
 		return null
 
 func log_restart(level_id, turn):
-	var attempt = log_attempt_helper(level_id, ATTEMPT_TYPES.restart, turn)
-	log_online(attempt)
+	if get_node("/root/global").online_logging_flag:
+		var attempt = log_attempt_helper(level_id, ATTEMPT_TYPES.restart, turn)
+		log_online(attempt)
 
 func log_lose(level_id, turn):
-	var attempt = log_attempt_helper(level_id, ATTEMPT_TYPES.lose, turn)
-	log_online(attempt)
+	if get_node("/root/global").online_logging_flag:
+		var attempt = log_attempt_helper(level_id, ATTEMPT_TYPES.lose, turn)
+		log_online(attempt)
 
 func log_win(level_id, turn):
-	var attempt = log_attempt_helper(level_id, ATTEMPT_TYPES.win, turn)
-	log_online(attempt)
+	if get_node("/root/global").online_logging_flag:
+		var attempt = log_attempt_helper(level_id, ATTEMPT_TYPES.win, turn)
+		log_online(attempt)
 
 func save_state(attempt):
 	var save = File.new()
