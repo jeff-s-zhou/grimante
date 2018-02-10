@@ -53,7 +53,7 @@ animations = [ {
 [sub_resource type="SampleLibrary" id=3]
 
 samples/landing_thump = {
-"db": -3.0,
+"db": -5.0,
 "pitch": 1.0,
 "priority": 0,
 "sample": ExtResource( 18 )

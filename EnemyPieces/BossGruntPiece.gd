@@ -21,3 +21,6 @@ func delete_self(delay, blocking):
 func smashed(attacker):
 	set_shield(false)
 	return false
+	
+func set_silenced(flag):
+	pass

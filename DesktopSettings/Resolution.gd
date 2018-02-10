@@ -17,6 +17,8 @@ func _ready():
 		get_node("Node2D/OptionButton").select(0)
 	elif resolution == Vector2(800, 600):
 		get_node("Node2D/OptionButton").select(1)
+	elif resolution == Vector2(1280, 960):
+		get_node("Node2D/OptionButton").select(2)
 	get_node("Node2D/OptionButton").connect("item_selected", self, "handle_resolution_selected")
 	
 func handle_resolution_selected(item):
@@ -25,6 +27,8 @@ func handle_resolution_selected(item):
 		resolution = Vector2(1024, 768)
 	elif item == 1:
 		resolution = Vector2(800, 600)
+	elif item == 2:
+		resolution = Vector2(1280, 960)
 	
 	self.current_resolution = resolution
 	OS.set_window_size(resolution)

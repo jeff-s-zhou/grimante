@@ -156,6 +156,6 @@ text = " 1024 x 768"
 flat = false
 align = 0
 selected = 0
-items = [ " 1024 x 768", null, false, -1, null, " 800 x 600", null, false, -1, null ]
+items = [ " 1024 x 768", null, false, -1, null, " 800 x 600", null, false, -1, null, "1280 x 960", null, false, -1, null ]
 
 

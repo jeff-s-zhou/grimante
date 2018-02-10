@@ -45,10 +45,6 @@ script/script = ExtResource( 2 )
 frames = SubResource( 1 )
 animation = "default"
 
-[node name="CollisionArea" parent="."]
-
-input/pickable = false
-
 [node name="AnimationPlayer 2" type="AnimationPlayer" parent="."]
 
 playback/process_mode = 1
